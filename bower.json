@@ -1,0 +1,37 @@
+{
+  "name": "front",
+  "version": "0.1.0",
+  "homepage": "localhost",
+  "authors": [
+    {
+      "name": "Tycho Grouwstra",
+      "email": "tychogrouwstra@gmail.com"
+    }
+  ],
+  "description": "(frontend)",
+  "license": "-",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tycho01/front.git"
+  },
+  "main": [
+    "app.ts",
+    "style.less"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  },
+  "commented_dependencies": {
+    "es6-shim":"paulmillr/es6-shim",
+    "angular2-material":"urish/angular2-material-build",
+    "request":"https://rawgit.com/request/request/master/request.js"
+  },
+  "private": true
+}

@@ -1,0 +1,39 @@
+# import "./fetch";
+# import * as request from "./fetch";
+# import "./content";
+# import lol from "./content";
+# document.write(lol);
+
+# var req = require('request');
+rp = require('request-promise')
+options =
+  uri: 'http://www.google.com'
+  transform: (data) -> data
+  method: 'GET'
+
+App = ng
+.Component(
+  selector: 'app'
+)
+.View(
+  styles: [ require('./style.less') ]
+  template: require('./header.jade')
+)
+.Class(
+  constructor: ->
+    @name = 'Alice'
+    return
+  addUrl: (url) ->
+    # this.urls.push(url);
+    console.log url
+    return
+)
+
+document.addEventListener 'DOMContentLoaded', ->
+  ng.bootstrap App
+  # rp(options)
+  #   .then(console.log)
+  #   .catch(console.log);
+  # .then("then: " + x => console.log(x))
+  # .catch("catch: " + x => console.log(x))
+  return

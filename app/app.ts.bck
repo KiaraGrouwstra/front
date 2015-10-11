@@ -1,0 +1,84 @@
+/// <reference path="../typings/tsd.d.ts" />
+
+// switch back to TypeScript as soon as I can figure out how
+// to properly use imported libraries like that request-promise!
+// until I do... basically don't change stuff to prevent resyncing.
+
+// gulp && webpack --watch
+// live-server --port=8090
+
+import 'reflect-metadata';
+// ng2 decorators/services
+import {Directive, Component, View, ElementRef, Attribute, NgStyle, bootstrap} from 'angular2/angular2';
+// import {RouteConfig, Router} from 'angular2/router';
+// import {Http, Headers} from 'angular2/http';
+// ng2 directives
+// import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/angular2';
+// import {ROUTER_DIRECTIVES} from 'angular2/router';
+
+/*
+var ws = new WebSocket("ws://www.example.com/socketserver", "protocolOne");
+ws.onmessage = (msg) -> {
+  console.log(msg.data);
+  //JSON.parse(msg.data)
+};
+ws.send(JSON.stringify(obj));
+ws.onopen = (event) -> {
+  ws.send("hi");
+};
+ws.onclose = (msg) -> {
+  console.log(msg.data);
+};
+ws.onerror = (msg) -> {
+  console.log(msg.data);
+};
+ws.close();
+*/
+
+//Phoenix = require('phoenix-js-derp');
+//chan = Phoenix.channel ...
+
+// import "./fetch";
+// import * as request from "./fetch";
+// import "./content";
+// import lol from "./content";
+// document.write(lol);
+
+// var req = require('request');
+// var rp = require('request-promise');
+// import * as rp from 'request-promise';
+import * as rp from 'request-promise/lib/rp';
+var options = {
+  uri: 'http://www.google.com',
+  transform: (data) => { return data; },
+  method: 'GET'
+};
+
+@Component({
+  selector: 'app'
+})
+@View({
+  // directives: [ CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES ],
+  styles: [ require('./style.less') ],
+  template: require('./header.jade')
+})
+export class App {
+  name: string;
+  //data: Array<any> = []; // default data
+  //pass in variables to automate their declaration/assignment
+  constructor() {
+    this.name = 'Alice';
+  }
+  // onInit() {}
+  addUrl(url) {
+    // this.urls.push(url);
+    console.log(url);
+    rp(options)
+      .then(console.log)
+      .catch(console.log);
+      // .then("then: " + x => console.log(x))
+      // .catch("catch: " + x => console.log(x));
+  }
+}
+
+bootstrap(App);

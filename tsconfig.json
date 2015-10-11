@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+	  "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "listFiles": true,
+    "outDir": "dist"
+  },
+  "files": [
+    "typings/tsd.d.ts",
+    "./app/app.ts",
+    "./app/bootstrap.ts"
+  ]
+}

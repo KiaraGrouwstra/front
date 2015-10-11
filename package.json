@@ -1,0 +1,70 @@
+{
+	"name": "application-name",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"angular2": "latest"
+	},
+  "devDependencies": {
+		"bower": "latest",
+    "gulp": "latest",
+		"gulp-util": "latest",
+		"gulp-jade": "latest",
+		"gulp-less": "latest",
+		"jade": "latest",
+		"mocha": "latest",
+		"phoenix-js-derp": "latest",
+		"prelude-ls": "latest",
+		"reflect-metadata": "latest",
+		"request": "latest",
+		"request-promise": "latest",
+		"tsd":"latest",
+		"typescript@next":"latest",
+		"yo":"latest",
+
+		"autoprefixer-loader": "latest",
+		"babel-loader": "latest",
+		"coffee-loader": "latest",
+		"css-loader": "latest",
+		"cssnext-loader": "latest",
+		"exports-loader": "latest",
+    "expose-loader": "latest",
+		"file-loader": "latest",
+    "imports-loader": "latest",
+		"html-loader": "latest",
+		"jade-loader": "latest",
+		"jade-html-loader": "latest",
+		"json-loader": "latest",
+		"less-loader": "latest",
+		"livescript-loader": "latest",
+		"ngtemplate-loader": "latest",
+		"postcss-loader": "latest",
+		"raw-loader":"latest",
+		"style-loader": "latest",
+		"ts-loader":"latest",
+		"typescript-simple-loader": "latest",
+		"url-loader": "latest",
+
+		"webpack": "latest",
+		"webpack-dev-server": "latest"
+  },
+  "config": {
+    "reporter": "xunit"
+  },
+  "scripts": {
+		"update": "npm update && bower update && tsd update",
+		"tsc": "tsc -m commonjs -t es5 --emitDecoratorMetadata ./app/app.ts --experimentalDecorators --outDir ./dist/",
+		"start": "webpack",
+		"prod": "webpack -p # minifies",
+		"maps": "webpack -d # source maps",
+		"watch": "webpack -w",
+		"dev": "webpack-dev-server",
+
+		"test": "mocha test/ --reporter $npm_package_config_reporter",
+    "test:xunit": "npm run test -- --reporter xunit",
+
+    "prepublish": "npm run build # also runs npm run prebuild",
+    "prebuild": "npm run test # also runs npm run pretest",
+    "pretest": "npm run lint"
+  }
+}
