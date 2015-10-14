@@ -1,16 +1,7 @@
-// import "./fetch";
-// import * as request from "./fetch";
-// import "./content";
-// import lol from "./content";
-// document.write(lol);
-
-// var req = require('request');
-var rp = require('request-promise');
-var options = {
-  uri: 'http://www.google.com',
-  transform: (data) => { return data; },
-  method: 'GET'
-};
+// import WS from './websocket';
+import WS from './ws.ts';
+// WS = require('./ws.ts');
+global.ws = new WS();
 
 var App = ng
 .Component({
@@ -27,11 +18,7 @@ var App = ng
   addUrl: function(url) {
     // this.urls.push(url);
     console.log(url);
-    rp(options)
-      .then(console.log)
-      .catch(console.log);
-      // .then("then: " + x => console.log(x))
-      // .catch("catch: " + x => console.log(x));
+    chan.push("post:/urls", {user: "tycho", data: url})
   }
 });
 
