@@ -1,6 +1,4 @@
-// import WS from './websocket';
 import WS from './ws.ts';
-// WS = require('./ws.ts');
 global.ws = new WS();
 
 var App = ng
@@ -17,8 +15,7 @@ var App = ng
   },
   addUrl: function(url) {
     // this.urls.push(url);
-    console.log(url);
-    chan.push("post:/urls", {user: "tycho", data: url})
+    global.ws.send({ method: "POST", url: "/urls", body: url })
   }
 });
 

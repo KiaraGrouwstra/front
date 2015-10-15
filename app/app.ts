@@ -1,6 +1,3 @@
-// switch back to TypeScript as soon as I can figure out howto use imported libraries.
-// until I do... basically don't change stuff to prevent resyncing.
-
 /// <reference path="../typings/tsd.d.ts" />
 // gulp && webpack --watch
 // live-server --port=8090
@@ -14,8 +11,8 @@ import {Directive, Component, View, ElementRef, Attribute, NgStyle, bootstrap} f
 // import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/angular2';
 // import {ROUTER_DIRECTIVES} from 'angular2/router';
 
-// import WS from './websocket';
-// import WS from './ws.ts';
+import WS from './ws.ts';
+var _ = require('lodash');
 
 @Component({
   selector: 'app'
@@ -27,21 +24,27 @@ import {Directive, Component, View, ElementRef, Attribute, NgStyle, bootstrap} f
 })
 export class App {
   name: string;
-  chan: any;  // Phoenix websocket channel
+  ws: WS;
   //data: Array<any> = []; // default data
   //pass in variables to automate their declaration/assignment
-  constructor() { //WS: WS
+  constructor() {
     this.name = 'Alice';
-    // global.ws = new WS();
-    // this.chan = WS.init();
+    this.ws = new WS();
+    // global.ws = this.ws;
   }
-  // onInit() {}
   addUrl(url) {
     // this.urls.push(url);
-    console.log(url);
-    // chan.push("post:/urls", {user: "tycho", data: url})
+    this.ws.send("POST", "/urls", url)
+  }
+  toCurl(str) {
+    let found = str.match(/-H '([^']+)'/g);
+    let url = /'[^']+(?=')/.exec(str)[0].substr(1);
+    let headers = _.object(found.map(x =>
+      /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
+    ));
+    console.log(url, headers);
+    this.ws.send("POST", "/urls", url, headers)
   }
 }
 
-// bootstrap(App, [WS]);
-bootstrap(App);
+bootstrap(App, [WS]);
