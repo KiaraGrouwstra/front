@@ -1,11 +1,14 @@
+// Merge Phoenix.js with ng2/Rx (e.g. `Rx.DOM.fromWebSocket()`, RxSocketSubject)
+// then filter by `cb_id`? meh, no onComplete()?; performance, effort.
+
 var Q = require('q');
 var Phoenix = require('phoenix-js-derp');
 
-class Request {
-  constructor(
-    method = "POST", url = "/urls", body: string, headers = {}
-  ) {}
-}
+// class Request {
+//   constructor(
+//     method = "POST", url = "/urls", body: string, headers = {}
+//   ) {}
+// }
 
 export class WS {
   promises: any;
@@ -33,22 +36,29 @@ export class WS {
     this.chan.on("DONE", this.handle_done);
   }
 
-  // createConnection // JSON.parse(req.text())
-  // { method: "POST", url: "/urls", body: "http://www.baidu.com/" }
-  send(method = "POST", url = "/urls", body: string, headers = {}) {
+  // createConnection // JSON.parse(req.text()) // req: Request
+  send = (method = "POST", url = "/urls", body: string, headers = {}) => {
     var id = ++this.currentId;
     var route = `${method}:${url}`;
     let payload = { body: body, cb_id: id, headers: headers };
     this.chan.push(route, payload);
+    return id;
+  }
+
+  ask = (method = "POST", url = "/urls", body: string, headers = {}) => {
+    let id = this.send(method, url, body, headers);
     return this.promises[id] = Q.defer();
   }
 
-  ask(req: Request) {
-    let id = send(req);
-    return this.promises[id] = Q.defer();
+  ask_array = (arr: any[], method = "POST", url = "/urls", body: string, headers = {}) => {
+    let id = this.send(method, url, body, headers);
+    this.promises[id] = arr;  // ref, not a promise
   }
 
-  handle_send(data) {
+  // ^ make these into methods of send's result to prevent duplicate code here?
+  // or just rely on ng2's Rx/Request/Connection/ConnectionBackend wrapping?
+
+  handle_send = (data) => {
     var id = data.cb_id;
     var status = data.status || 200;
     if(this.promises.hasOwnProperty(id)) {
@@ -59,6 +69,16 @@ export class WS {
       }
       delete this.promises[id];
     }
+  }
+
+  handle_part = (data) => {
+    var id = data.cb_id;
+    this.promises[id].push(data.body);
+  }
+
+  handle_done = (data) => {
+    var id = data.cb_id;
+    delete this.promises[id];
   }
 
 }

@@ -4,7 +4,7 @@
 
 import 'reflect-metadata';
 // ng2 decorators/services
-import {Directive, Component, View, ElementRef, Attribute, NgStyle, bootstrap} from 'angular2/angular2';
+import {Directive, Component, View, ElementRef, Attribute, NgStyle, NgFor, bootstrap} from 'angular2/angular2';
 // import {RouteConfig, Router} from 'angular2/router';
 // import {Http, Headers} from 'angular2/http';
 // ng2 directives
@@ -18,23 +18,26 @@ var _ = require('lodash');
   selector: 'app'
 })
 @View({
-  // directives: [ CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES ],
+  directives: [ NgFor ], //, CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES
   styles: [ require('./style.less') ],
   template: require('./header.jade')
 })
 export class App {
   name: string;
   ws: WS;
+  items: Array<any>;
   //data: Array<any> = []; // default data
   //pass in variables to automate their declaration/assignment
   constructor() {
     this.name = 'Alice';
     this.ws = new WS();
     // global.ws = this.ws;
+    // this.items = [1, "foo", [1,2,3], {"foo": "bar"}];
+    this.items = [];
   }
   addUrl(url) {
     // this.urls.push(url);
-    this.ws.send("POST", "/urls", url)
+    this.ws.ask("POST", "/urls", url)
   }
   toCurl(str) {
     let found = str.match(/-H '([^']+)'/g);
@@ -43,7 +46,8 @@ export class App {
       /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
     ));
     console.log(url, headers);
-    this.ws.send("POST", "/urls", url, headers)
+    // this.ws.ask("POST", "/urls", url, headers)
+    this.ws.ask_array(this.items, "POST", "/check", url, headers)
   }
 }
 
