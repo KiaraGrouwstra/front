@@ -24,8 +24,8 @@ module.exports = {
 		loaders: [
 			{ test: /\.coffee$/, loader: 'coffee' },
 			{ test: /\.ls$/, loader: 'livescript' },
-			{ test: /\.tsx?$/, loader: 'babel!ts' },
-			{ test: /\.js$/, loader: 'babel', exclude: /node_modules/ },
+			{ test: /\.tsx?$/, loader: 'ts' },	//babel!
+			{ test: /\.js$/, loader: 'babel?presets[]=es2015', exclude: /node_modules/ },
 			{ test: /\.json$/, loader: "json" },
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },
@@ -33,7 +33,7 @@ module.exports = {
 			{ test: /\.less$/, loader: 'raw!less' },
 			{ test: /\.css$/, loader: 'raw' },
 			{ test: /\.(jpe?g|png)$/, loader: "url?limit=8192" }, // inline base64 URLs for <=8k images, direct URLs for the rest
-			{ test: /\.(gif|svg|woff|ttf|wav|mp3)$/, loader: "file" }
+			{ test: /\.(gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: "file" }
 		]
 	},
 	resolve: {
@@ -46,6 +46,11 @@ module.exports = {
 		root: __dirname
 	},
   plugins: [
+		new webpack.ProvidePlugin({
+	    $: "jquery",
+	    jQuery: "jquery",
+	    "Hammer": "hammerjs/hammer"
+		}),
 		//new webpack.optimize.UglifyJsPlugin(),
     new webpack.ResolverPlugin(
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])

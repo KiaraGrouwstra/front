@@ -1,11 +1,28 @@
-body {
-  background: yellow;
-}
-h1 {
-  color:red;
-}
-
 // AngularJS
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none;
+}
+
+//Materialize
+@font-face {
+    font-family: 'Roboto'; // -Bold, -Light, -Medium, -Regular, -Thin
+    src: url('materialize-css/dist/font/roboto/Roboto-Regular.woff2') format('woff2'),
+         url('materialize-css/dist/font/roboto/Roboto-Regular.woff') format('woff'),
+         url('materialize-css/dist/font/roboto/Roboto-Regular.ttf') format('truetype');
+}
+/*
+@font-face {
+    font-family: 'Material-Design-Icons';
+    src: url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.eot') format('embedded-opentype'),
+         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.woff2') format('woff2'),
+         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.woff') format('woff'),
+         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.ttf') format('truetype'),
+         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.svg') format('svg');
+}
+*/
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
 }
