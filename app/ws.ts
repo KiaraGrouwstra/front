@@ -8,10 +8,10 @@ import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 // }
 
 export class WS {
-  requests: any;
+  requests: {};
   id: number;
-  ws: any;
-  chan: any;
+  ws: any;  //Phoenix.Socket
+  chan: any;  //Phoenix.Channel
   _out: Observable<any>;
 
   constructor() {
@@ -29,7 +29,7 @@ export class WS {
     this.ws.connect({});
     this.chan = this.ws.channel(chan_name, {user: "tycho"});
     this.chan.join();
-    this.chan.on("msg", this.handle_stored);
+    //this.chan.on("msg", this.handle_stored);
   }
 
   // taken from https://github.com/robwormald/aim/, example at TickerService.ts (also exposed `in` Observer).
@@ -50,16 +50,24 @@ export class WS {
     return this._out;
   }
 
-  request = (url, pars: any, info = {cb: (data, info) => {}}) => {
+  ask = (url: string, pars: {}) => {
+    let id = this.id++;
+    this.chan.push(url, {body: pars, id: id});
+    return this.out.filter(_ => _.id == id);
+  }
+
+  ask_one = (url: string, pars: {}) => {
+    return this.ask(url, pars)
+      .single((x, idx) => true);
+  }
+
+  /*
+  request = (url: string, pars: {}, info = {cb: (data, info) => {}}) => {
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
     this.requests[id] = info;
   }
 
-  // Could I like expose websocket results in an Rx Observable so I could do .map()s and stuff?
-  // This would enable convenient post-processing like using JSON-Path to extract the meat...
-  // I think the tough part was their websocket to Observable wouldn't work with Phoenix WS.
-  // The hard part about making an Observable is normally they could only be operated by code running from the inside...
   handle_stored = (data) => {
     let id = data.id;
     let info = this.requests[id];
@@ -76,6 +84,7 @@ export class WS {
     Object.keys(data.body).forEach((k) => info.cols.add(k));
     info.rows.push(data.body);
   }
+*/
 
 }
 
