@@ -1,5 +1,6 @@
 var Phoenix = require('phoenix-js-derp');
 import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
+import { notify } from './rx_helpers';
 
 // class Request {
 //   constructor(
@@ -41,50 +42,39 @@ export class WS {
         chan.onClose(() => sub.complete());
         chan.onError(e => sub.error(e));
 		    chan.on("msg", e => sub.next(e));
-        return () => {
-          chan.leave();
-          this._out = null;
-        };
+        //return () => {
+        //  chan.leave();
+        //  this._out = null;
+        //};
       }).share();
     }
     return this._out;
   }
 
-  ask = (url: string, pars: {}) => {
+  ask_many = (url: string, pars: {}) => {
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
-    return this.out.filter(_ => _.id == id);
+    return this.out
+      .filter(_ => _.id == id)
+      .map(e => e['body']);
+  }
+  // ^ the server doesn't currently send complete events. Rx operators definitely affected by this:
+  // Last, SkipLast, TakeLast, To(Array/Map/Set), Sum, Reduce, Min, Max, Count, Concat, IgnoreElements
+  // Average, SequenceEqual, DefaultIfEmpty, (Contains), All, (Using), (TimeInterval), Do
+  // solution: use one of the below overrides which use pre-existing question-answer knowledge to complete.
+  // (trying this server-sided would suck too due to having to guarantee order of client reception.)
+
+  // like ask, but able to complete in the knowledge there will be only one item.
+  ask = (url: string, pars: {}, name = "dummy") => {
+    return this.ask_n(1, url, pars, name);
   }
 
-  ask_one = (url: string, pars: {}) => {
-    return this.ask(url, pars)
-      .single((x, idx) => true);
+  // like ask, but able to complete in the knowledge there will be only n items.
+  ask_n = (n, url: string, pars: {}, name = "dummy") => { //Function.caller
+    let obs = this.ask_many(url, pars).take(n);
+    notify(obs, name);
+    return obs;
   }
-
-  /*
-  request = (url: string, pars: {}, info = {cb: (data, info) => {}}) => {
-    let id = this.id++;
-    this.chan.push(url, {body: pars, id: id});
-    this.requests[id] = info;
-  }
-
-  handle_stored = (data) => {
-    let id = data.id;
-    let info = this.requests[id];
-    info.cb(data, info);
-  }
-
-  // callbacks to use within handle_stored
-
-  handle_part = (data, info) => {
-    info.data.push(data.body);
-  }
-
-  handle_table = (data, info) => {
-    Object.keys(data.body).forEach((k) => info.cols.add(k));
-    info.rows.push(data.body);
-  }
-*/
 
 }
 

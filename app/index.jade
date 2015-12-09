@@ -16,35 +16,20 @@ html
     //- link(rel='stylesheet',href='./style.css')
     //- link(rel='stylesheet',href='./vendor/angular2_material.css')
     //- script(src='./vendor/angular2_material.dev.js')
-
-    //- Is this crap even helping?
-    //- script(src='../bower_components/es6-shim/es6-shim.js')
-    //- script(src='https://rawgit.com/paulmillr/es6-shim/master/es6-shim.js')
-
-    //- TS version
-    //- script(src='https://github.jspm.io/jmcriffey/bower-traceur-runtime@0.0.87/traceur-runtime.js')
-    script(src='./vendor/traceur-runtime.js')
-    //- script(src='https://jspm.io/system@0.16.js')
-    script(src='./vendor/system@0.16.11.js')
-    //- script(src='./node_modules/angular2/angular2.js')
-    //- script(src='https://code.angularjs.org/2.0.0-alpha.37/angular2.dev.js')
-    script(src='./vendor/angular2_2.0.0-alpha.36.dev.js')
-    //- script(src='./vendor/angular2_2.0.0-alpha.37.dev.js')
-    //- ^ 37 yields 404: https://registry.jspm.io/app.js
-    script System.import('app');
-    
-    //- JS version
-    //- //- script(src='https://code.angularjs.org/2.0.0-alpha.28/angular2.sfx.dev.js')
-    //- script(src='./vendor/angular2_2.0.0-alpha.37.sfx.dev.js')
-    //- script(src='./app.js')
-
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
     //- link(type='text/css', rel='stylesheet', href='css/materialize.min.css', media='screen,projection')
     link(href='http://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
-    link(type='text/css', rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', media='screen,projection')
+    //- link(type='text/css', rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', media='screen,projection')
+    link(type='text/css', rel='stylesheet', href='./vendor/normalize.min.css', media='screen,projection')
+
+    //- TS version
+    //- script(src='https://code.angularjs.org/tools/system.js')
+    script(src='./vendor/system.js')
+    //- script(src='https://code.angularjs.org/tools/typescript.js')
+    //- script(src='./config.js')
+    script System.import('app.js').catch(console.error.bind(console));
 
   body
-    app ...
+    app Loading...
 
     //- script(src='https://code.jquery.com/jquery-2.1.1.min.js')
     //- script(src='js/materialize.min.js')

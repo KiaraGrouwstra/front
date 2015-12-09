@@ -46,6 +46,7 @@ module.exports = {
 		root: __dirname
 	},
   plugins: [
+		// Materialize
 		new webpack.ProvidePlugin({
 	    $: "jquery",
 	    jQuery: "jquery",
