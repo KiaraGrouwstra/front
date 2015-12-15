@@ -1,0 +1,13 @@
+//- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+.card
+  .card-content
+    span.card-title= k
+    table.bordered.highlight(id=id)
+      thead
+        - each col in cols
+          th(id=col.id)= col.k
+      tbody
+        - each r in rows
+          tr(id=r.id)
+            - each c in r.cells
+              td(id=id)!= val

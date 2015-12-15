@@ -9,7 +9,7 @@ import {IterableDiffers} from 'angular2/src/core/change_detection/differs/iterab
 //import { Observable } from '@reactivex/rxjs';  //, Subject, Subscriber, Subscription
 import { MarkedPipe } from './pipes';
 import WS from './ws';
-var _ = require('lodash');
+let _ = require('lodash');
 import Dummy from './dummy';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
 //import { notify } from './js.js';
@@ -19,6 +19,10 @@ let providers = [ROUTER_PROVIDERS];
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES];
 let pipes = [MarkedPipe];
 let regex_escape = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+let STYLES = [
+  require('materialize-css/dist/css/materialize.min.css'),
+  require('./style.less')
+]
 
 @Component({
   selector: 'app',
@@ -27,10 +31,7 @@ let regex_escape = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 })
 @View({
   template: require('./jade/materialize.jade'),
-  styles: [
-    require('materialize-css/dist/css/materialize.min.css'),
-    require('./style.less')
-  ],
+  styles: STYLES,
   directives: directives,
   pipes: pipes,
 })
@@ -43,7 +44,7 @@ export class App {
 
   constructor(dcl: DynamicComponentLoader, el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
     this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
-    this.ws = new WS();
+    //this.ws = new WS();
     global.ws = this.ws;
     //dcl.loadAsRoot(Dummy, "#foo", inj);
 
@@ -74,7 +75,7 @@ export class App {
       .get('./swagger/instagram.json')
       .map(_ => JSON.parse(_._body))
     //pars.subscribe(_ => this.loadHtmlTo('swagger', _, require('./jade/swagger.jade')))
-    notify(pars, "pars");
+    //notify(pars, "pars");
     //this.loadHtmlTo('swagger', pars, require('./jade/swagger.jade'));
 
     let $RefParser = require('json-schema-ref-parser');
@@ -89,13 +90,20 @@ export class App {
     .subscribe(_ => {
       $RefParser.dereference(_)
       .then((schema) => {
-        let html = parseVal([], schema);
-        console.log(html);
-        pars.subscribe(insta => this.loadHtmlTo('test', insta, html));
+        //pars.subscribe(insta => this.loadHtmlTo('test', insta, html));
+        pars.subscribe(insta => {
+          //let el = parseVal([], insta, schema);
+          //let html = el.outerHTML;
+          let html = parseVal([], schema);
+          //console.log(html);
+          this.loadHtmlTo('test', insta, html);
+        });
       })
+      /*
       .catch(function(err) {
         console.error("err", err);
       });
+      */
     })
 
   }
@@ -115,7 +123,7 @@ export class App {
   toCurl = (str: string) => {
     let found = str.match(/-H '([^']+)'/g);
     let url = /'[^']+(?=')/.exec(str)[0].substr(1);
-    let headers = _.object(found.map(x =>
+    let headers = _.zipObject(found.map(x =>
       /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
     ));
     let n = Object.keys(headers).length + 2;  // based on the current server implementation of 'try without each + all/none'
@@ -173,6 +181,7 @@ export class App {
       directives: directives,
       pipes: pipes,
       template: template,
+      styles: STYLES,
     })];
     return comp;
   }

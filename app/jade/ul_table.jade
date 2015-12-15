@@ -1,0 +1,8 @@
+//- {k, id, rows: [{id, val}]}
+table.bordered.highlight(id=id)
+  thead
+    th= k
+  tbody
+    - each r in rows
+      tr
+        td(id=r.id)!= r.val

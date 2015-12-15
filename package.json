@@ -20,7 +20,9 @@
     "normalize.css": "^3.0.3",
     "rx": "latest",
     "swagger-schema-official": "^1.2.0",
-    "systemjs": "^0.19.6"
+    "symbol-enum": "^3.2.1",
+    "systemjs": "^0.19.6",
+    "tv4": "tycho01/tv4"
   },
   "devDependencies": {
     "autoprefixer-loader": "latest",
