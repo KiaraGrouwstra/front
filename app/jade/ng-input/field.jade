@@ -1,0 +1,6 @@
+//- {html, k, label}
+.input-field
+  != html
+  label(for=k, data-error='wrong', data-success='right')= label
+  //- .alert.alert-danger([hidden]=`${k}.valid`)
+  //-   |= `${label} is required`

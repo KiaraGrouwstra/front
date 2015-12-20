@@ -1,22 +1,29 @@
 /// <reference path="../typings/tsd.d.ts" />
 
 import 'reflect-metadata';
-import {bootstrap, CORE_DIRECTIVES, FORM_DIRECTIVES, Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe,
-    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, Observable, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe,
+    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy} from 'angular2/core';  //, Observable
+import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from 'angular2/common';
 import {RouteConfig, Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS} from 'angular2/router';
 import {HTTP_BINDINGS, Http} from 'angular2/http'; //Http, Headers
 import {IterableDiffers} from 'angular2/src/core/change_detection/differs/iterable_differs';
 //import { Observable } from '@reactivex/rxjs';  //, Subject, Subscriber, Subscription
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+//import 'rxjs/add/observable/interval';
+// https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
+// difference with this? https://github.com/ReactiveX/RxJS/tree/master/src/operator
+// https://github.com/ReactiveX/RxJS
 import { MarkedPipe } from './pipes';
 import WS from './ws';
 let _ = require('lodash');
 import Dummy from './dummy';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
 //import { notify } from './js.js';
-import { parseVal } from './parser';
+import { parseVal, Templates, getPaths, method_form } from './parser';
 
 let providers = [ROUTER_PROVIDERS];
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES];
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES, NgForm];
 let pipes = [MarkedPipe];
 let regex_escape = s => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 let STYLES = [
@@ -30,7 +37,7 @@ let STYLES = [
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
 })
 @View({
-  template: require('./jade/materialize.jade'),
+  template: require('./jade/ng-output/materialize.jade'),
   styles: STYLES,
   directives: directives,
   pipes: pipes,
@@ -74,9 +81,9 @@ export class App {
     let pars = this.deps.http
       .get('./swagger/instagram.json')
       .map(_ => JSON.parse(_._body))
-    //pars.subscribe(_ => this.loadHtmlTo('swagger', _, require('./jade/swagger.jade')))
+    //pars.subscribe(_ => this.loadHtmlTo('swagger', _, require('./jade/ng-output/swagger.jade')))
     //notify(pars, "pars");
-    //this.loadHtmlTo('swagger', pars, require('./jade/swagger.jade'));
+    //this.loadHtmlTo('swagger', pars, require('./jade/ng-output/swagger.jade'));
 
     let $RefParser = require('json-schema-ref-parser');
     let swag = this.deps.http
@@ -92,11 +99,16 @@ export class App {
       .then((schema) => {
         //pars.subscribe(insta => this.loadHtmlTo('test', insta, html));
         pars.subscribe(insta => {
-          //let el = parseVal([], insta, schema);
-          //let html = el.outerHTML;
-          let html = parseVal([], schema);
-          //console.log(html);
-          this.loadHtmlTo('test', insta, html);
+          //let html = parseVal([], insta, schema);
+          //Object.assign(getPaths(["foo"]), )  //,"bar"
+          //let input = Templates.input({attrs: {'[(ngModel)]': "bar", ngControl: "hi", id: "lol", type: "text", required: true, "#hi": "ngForm"}})
+          //let field = Templates.field({html: input, k: "bar", label: "Name"})
+          //let html = Templates.form({fields: [field]})
+          let html = method_form(["paths", "/geographies/{geo-id}/media/recent", "get", "parameters"], insta.paths["/geographies/{geo-id}/media/recent"].get.parameters)
+          console.log('html', html);
+          //this.loadHtmlTo('test', insta, html);
+          this.loadHtmlTo('test', {bar: "haha"}, html);
+          //this.loadHtmlTo('test', {bar: "haha"}, `<div><button>lol</button></div>`);
         });
       })
       /*
@@ -146,7 +158,7 @@ export class App {
     let pars = { rows: rows, cols: cols };
     //let pars = { rows: [], cols: new Set([]) };
     //let comp =
-    this.loadHtmlTo(to, pars, require('./jade/table.jade'));
+    this.loadHtmlTo(to, pars, require('./jade/ng-output/table-a.jade'));
     //rows.subscribe(e => comp.rows = e);
     //cols.subscribe(e => comp.cols = e);
     //rows.subscribe(e => { comp.rows = e; this.deps.cdr.detectChanges(); });
@@ -188,10 +200,10 @@ export class App {
 
 }
 
-// I need to figure out how I can safely move this crap to main.js...
+// I need to figure out how I can safely move this crap to boot.js...
 // I think combining webpack plus whatever Angular added is complicating things.
 ///*
-//import {bootstrap} from 'angular2/angular2';
+import {bootstrap} from 'angular2/platform/browser';
 let singletons = [WS, HTTP_BINDINGS]; //Http
 bootstrap(App, singletons).catch(err => console.error(err));
 
@@ -201,6 +213,10 @@ require("materialize-css/dist/js/materialize.min");
 (function($){
   $(function(){
     $('.button-collapse').sideNav();
+    /*
+    $('select').material_select();
+    $('.datepicker').pickadate({ selectMonths: true, selectYears: 15 });
+    */
   })
 })(global.$)
 //*/

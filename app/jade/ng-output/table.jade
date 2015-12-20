@@ -1,0 +1,7 @@
+//- use ngAnimate with ngFor when the latter is out for ng? that yoyo animation looks spiffy.
+table
+  thead
+    th(*ngFor="#col of cols") {{col}}
+  tbody
+    tr(*ngFor="#row of rows")
+      td(*ngFor="#col of cols") {{row[col]}}

@@ -1,4 +1,5 @@
-import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, ChangeDetectorRef, Observable} from 'angular2/angular2';
+import {Component, View, ChangeDetectorRef} from 'angular2/core';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/common';
 //import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 //import {Subject, Observable, Subscriber, Subscription} from '@reactivex/rxjs/dist/cjs/Rx';
 //var Rx = require('@reactivex/rxjs/dist/cjs/Rx');
@@ -6,6 +7,8 @@ import {Component, View, CORE_DIRECTIVES, FORM_DIRECTIVES, ChangeDetectorRef, Ob
 //global.Rx = Rx;
 //import {Promise, ObservableWrapper, Observable, EventEmitter} from 'angular2/src/facade/async';
 //, Observable
+import {Observable} from 'rxjs/Observable';
+//import 'rxjs/add/operators/map';
 
 @Component({
   selector: 'dummy'

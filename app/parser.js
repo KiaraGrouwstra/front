@@ -1,7 +1,6 @@
 // let jsonPath = require('JSONPath');
 let _ = require('lodash');
 let tv4 = require('tv4');
-// let tv4 = require('tycho01/tv4');
 let $ = jQuery = require('jquery');
 let marked = require('marked');
 let jade = require('jade');
@@ -70,20 +69,20 @@ Element.prototype.appendChildren = function(html_coll) {
 // var Kinds = new SymbolEnum('FIXED', 'PATTERN', 'ADDITIONAL')  //Kinds.FIXED
 let SCALARS = ["boolean", "integer", "number", "string", "null", "scalar"];
 let Templates = _.mapValues({
-  card_object: require('!raw!./jade/card_object.jade'), //-
-  card_table: require('!raw!./jade/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
-    ul_table: require('!raw!./jade/ul_table.jade'), //- {k, id, rows: [{id, val}]}
-    dl_table: require('!raw!./jade/dl_table.jade'), //- {rows: [{k, id, val}]}
-    dl      : require('!raw!./jade/dl.jade'),       //- {rows: [{k, id, val}]}
+  // output
+  card_object: require('!raw!./jade/output/card_object.jade'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
+  card_table: require('!raw!./jade/output/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+    ul_table: require('!raw!./jade/output/ul_table.jade'), //- {k, id, rows: [{id, val}]}
+    dl_table: require('!raw!./jade/output/dl_table.jade'), //- {rows: [{k, id, val}]}
+    dl      : require('!raw!./jade/output/dl.jade'),       //- {rows: [{k, id, val}]}
+    // input
+    input: require('!raw!./jade/ng-input/input.jade'), //- {id, model, type, required, placeholder?, control?}
+    field: require('!raw!./jade/ng-input/field.jade'), //- {html, k, label}
+    form: require('!raw!./jade/ng-input/form.jade'), //- {fields: [html]}
 }, t => jade.compile(t, {}))
 
 let infer_type = (v) => Array.isArray(v) ? "array" : _.isObject(v) ? "object" : "scalar"
 
-// let try_schema = (val, swag) => infer_type(val)
-// let try_schema = (val, swag) => _.find(
-//   swag.oneOf || swag.anyOf || swag.allOf || [],
-//   (schema, idx, arr) => tv4.validate(val, schema)
-// ) || infer_type(val)
 let try_schema = (val, swag) => {
   let options = _.get(swag, ['oneOf']) || _.get(swag, ['anyOf']) || _.get(swag, ['allOf']) || []
   let tp = _.find(options, (schema, idx, arr) => tv4.validate(val, schema, false, false, false))
@@ -104,14 +103,10 @@ function parseVal(path, api_spec, swagger) {
     "object": parseObject,
     "scalar": parseScalar, //for string input consider pattern (regex), format: uri, email, regex
   };
-  // let tp = _.get(swagger, ['type'], try_schema(api_spec, swagger))
-  // let tp = _.get(swagger, ['type']) || try_schema(api_spec, swagger)
   swagger = _.get(swagger,['type']) ? swagger : try_schema(api_spec, swagger)
   let tp = _.get(swagger, ['type']) || infer_type(api_spec)
   let fn = getHandler(tp, type_map);
-  // return fn(path, swagger, k, id);
   return fn(path, api_spec, swagger);
-  // return makeTemplate(fn, path, api_spec, swagger);
   //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
 }
 
@@ -120,23 +115,16 @@ function parseArray(path, api_spec, swagger) {
   //no array of multiple, this'd be listed as anyOf/allOf or additionalItems, both currently unimplemented,
   //number: multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum
   //string: maxLength, minLength, format
-  // /*
   let type_map = {
-    "array": make_ul_table, //parseNested,
-    "object": parseCollection,
-    "scalar": make_ul_table, //parseList,
+    "array": make_ul, //parseNested,
+    "object": make_table,
+    "scalar": make_ul, //parseList,
   };
-  // let tp = _.get(swagger, ['items','type'], infer_type(api_spec[0]))
   let first = _.get(api_spec,[0])
   swagger = _.get(swagger, ['items', 'type']) ? swagger.items : try_schema(first, _.get(swagger, ['items']))
   let tp = _.get(swagger, ['type']) || infer_type(first)
   let fn = getHandler(tp, type_map);
-  //return fn(path.concat("[]"), arr);
-  //path.concat("[]")
   return makeTemplate(fn, path, api_spec, swagger);
-  // */
-  // return makeTemplate(make_ul, path, api_spec, swagger);
-  // // ^ temporarily keep this simple to test new structure.
 }
 
 // for a given object key get the appropriate swagger spec
@@ -191,13 +179,7 @@ function parseObject(path, api_spec, swagger) {
   }).clean())
 
   let [scalars, arrays, objects] = ['scalar','array','object'].map(x => Object.filter(coll, v => v.type == x))
-  // let div = elFromHtml(`<div class="card"><div class="card-content" id="${id}"><span class="card-title">${k}</span></div></div>`)
-  // let el = div.child(0)
-  // el.appendChild(make_dl_table(path, api_spec, swagger, scalars));
-  // Object.keys(objects).forEach(k => el.appendChild(parseObject(...objects[k].pars)));
-  // Object.keys(arrays).forEach(k => el.appendChild(parseArray(...arrays[k].pars)));
-  // return div;
-  let scal = make_dl_table(path, api_spec, swagger, scalars)
+  let scal = make_dl(path, api_spec, swagger, scalars)
   // ES7 Object.values...
   let obj = Object.keys(objects).map(k => parseObject(...objects[k].pars))
   let arr = Object.keys(arrays).map(k => parseArray(...arrays[k].pars))
@@ -208,37 +190,35 @@ let getPaths = (path) => {
   let k = path.last();
   let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
   let model = path.join('?.');  //ng2 elvis operator to prevent crashing if some element is missing
-  // return [k, id, model]
   return {k: k, id: id, model: model}
 }
 
 function makeTemplate(fn, path, api_spec, swagger) {
-  // let [k, id, model] = getPaths(path)
   let {k: k, id: id, model: model} = getPaths(path)
   return fn(path, api_spec, swagger, k, id, model);
 }
 
 // let tooltip = o => o.description ? ` class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="${o.description}"` : '';
 
-function make_ul_table(path, api_spec, swagger, k, id, model) {
+function make_ul(path, api_spec, swagger, k, id, model, template = Templates.ul_table) {
   let rows = (api_spec || []).map((v, idx) => {
     let path_k = path.concat(idx)
     let val = parseVal(path_k, v, _.get(swagger, ['items']))
     return Object.assign(getPaths(path_k), {val: val})
   });
-  return Templates.ul_table({k: k, id: id, rows: rows})
+  return template({k: k, id: id, rows: rows})
 }
 
-function make_dl_table(path, api_spec, swagger, scalar_coll) {
+function make_dl(path, api_spec, swagger, scalar_coll, template = Templates.dl_table) {
   // return `<dl id="${id}"><div *ng-for="#item of ${model}"><dt>{{item}}</dt><dd>{{item}}</dd></div></dl>\r\n`;
   let rows = Object.keys(scalar_coll).map(k => {
     let val = parseVal(...scalar_coll[k].pars)
     return Object.assign(getPaths(path.concat(k)), {val: val})
   });
-  return Templates.dl_table({rows: rows})
+  return template({rows: rows})
 }
 
-function parseCollection(path, api_spec, swagger, k, id, model) {
+function make_table(path, api_spec, swagger, k, id, model, template = Templates.card_table) {
   let fixed = get_fixed(swagger, api_spec)
   let patts = get_patts(swagger)
   let col_keys = Array.from(api_spec
@@ -247,7 +227,6 @@ function parseCollection(path, api_spec, swagger, k, id, model) {
   )
   let cols = col_keys.map(k => getPaths(path.concat(k)))
   let rows = api_spec.map((rw, idx) => {
-    // let [_k, id, model] = getPaths(path.concat(idx))
     let {k: k, id: id, model: model} = getPaths(path.concat(idx))
     let cells = col_keys.map(col => {
       let k_path = path.concat([idx, col])
@@ -256,24 +235,20 @@ function parseCollection(path, api_spec, swagger, k, id, model) {
     })
     return {id: id, cells: cells}
   });
-  return Templates.card_table({k: k, id: id, cols: cols, rows: rows})
+  return template({k: k, id: id, cols: cols, rows: rows})
 }
 
 // meant to use without makeTemplate
 function parseScalar(path, api_spec, swagger) {
   let val = `${api_spec}`
   if(path.last() == "description") {
-    console.log("gonna transform", val)
     val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
-    console.log("transformed", val)
   }
   switch (_.get(swagger, ['format'])) {
     case "uri": val = `<a href="${val}">${val}</a>`; break;
     case "email": val = `<a href="mailto:${val}">${val}</a>`; break;
     // default:
   }
-  // return elFromHtml(val);
-  console.log("done", val)
   return val;
 }
 
@@ -282,4 +257,53 @@ function parseScalar(path, api_spec, swagger) {
 // swagger editor ng1 html: https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html
 // json editor: functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js), [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
 
-export { parseVal };
+// http://swagger.io/specification/#parameterObject
+let param_field = (path, api_spec) => {
+  let {name: name, in: kind, description: desc, required: req, schema: schema, type: type, format: format, allowEmptyValue: allow_empty, items: items, collectionFormat: collectionFormat, default: def, maximum: max, exclusiveMaximum: ex_max, minimum: min, exclusiveMinimum: ex_min, maxLength: maxLength, minLength: minLength, pattern: pattern, maxItems: maxItems, minItems: minItems, uniqueItems: uniqueItems, enum: enum_options, multipleOf: multipleOf} = api_spec
+  /*
+  let defaults = {
+    string:  [select, text],
+    object:  [fieldset],
+    number:  [number],
+    integer: [integer],
+    boolean: [checkbox],
+    array:   [checkboxes, array],
+  }
+  */
+  // name: label, description?: placeholder (don't define if not available), type: input kind/type, in: decide how to handle (+ extra fields)
+  // let template = defaults(api_spec.type)  //fails if in:body
+  let {id: id, k: k, model: model} = getPaths(path)
+  let attrs = {
+    '[(ngModel)]': model,
+    ngControl: id,
+    id: id,
+    type: "text",
+    required: req,
+    // `#${id}`: "ngForm",
+    // placeholder: desc,
+  }
+  if(desc) attrs.placeholder = desc;
+  // console.log('attrs', attrs)
+  attrs[`#${attrs.ngControl}`] = "ngForm";
+  // attrs[`#${id}`] = "ngForm";
+  // console.log('ok')
+  let input = Templates.input({attrs: attrs})
+  // console.log('input', input)
+  let field = Templates.field({html: input, k: id, label: name})
+  console.log('field', field)
+  return field
+}
+
+let make_form = (fields, template = Templates.form) => {
+  return template({fields: fields})
+  // let form = template({fields: fields})
+  // console.log('form', form)
+  // return form
+}
+
+let method_form = (path, api_spec) => {
+  let fields = api_spec.map((v, idx) => param_field(path.concat(idx), v))
+  return make_form(fields)
+}
+
+export { parseVal, Templates, getPaths, method_form };

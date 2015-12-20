@@ -5,6 +5,7 @@ npm update
 
 tsd install angular2/
 tsd update
+// patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
 # ./node_modules/karma/bin/karma start
 # npm install -g karma-cli

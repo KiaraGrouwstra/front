@@ -4,8 +4,14 @@
 import 'reflect-metadata';
 import WS from './ws.ts';
 import {App} from './app';
-import {bootstrap} from 'angular2/angular2';
-let singletons = [WS];
+import {bootstrap}        from 'angular2/platform/browser';
+// <script src="node_modules/angular2/bundles/router.dev.js"></script>
+import {ROUTER_PROVIDERS} from 'angular2/router';
+
+let singletons = [
+  ROUTER_PROVIDERS,
+  WS,
+];
 bootstrap(App, singletons).catch(err => console.error(err));
 
 //Materialize

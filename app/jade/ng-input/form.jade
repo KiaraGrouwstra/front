@@ -1,0 +1,8 @@
+//- {fields: [html]}
+form((ngSubmit)='onSubmit()', #my_form='ngForm')
+  - each fld in fields
+    != fld
+  button.btn.waves-effect.waves-light(
+    type='submit'
+    [disabled]='!my_form.form.valid'
+  ) Submit

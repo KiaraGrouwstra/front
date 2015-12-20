@@ -1,0 +1,11 @@
+//- $('select').material_select();
+select(
+  required=''
+  [(ngModel)]='model.power'
+  ngControl='power'
+  #power='ngForm'
+)
+  option(
+    *ngFor='#p of powers'
+    [value]='p'
+  ) {{p}}

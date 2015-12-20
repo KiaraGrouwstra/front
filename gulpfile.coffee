@@ -21,6 +21,7 @@ paths =
   index: './app/index.jade'
   config: './app/config.js'
   tests: './app/unit-tests.jade'
+  # router: './node_modules/angular2/bundles/router.dev.js'
 
 gulp.task('default', [
   # 'watch'
@@ -50,6 +51,7 @@ copy = (glob, op = gutil.noop(), to = paths.dist) ->
 gulp.task 'vendor', -> copy(paths.vendor)
 gulp.task 'swagger', -> copy(paths.swagger)
 gulp.task 'config', -> copy(paths.config)
+# gulp.task 'root', -> copy(paths.router)
 # gulp.task 'js',     -> copy(paths.js)
 # gulp.task 'less',   -> copy(paths.less, less())
 # gulp.task 'jade',   -> copy(paths.jade, gulpJade({jade: jade, pretty: true}))
