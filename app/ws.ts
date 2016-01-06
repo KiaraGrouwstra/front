@@ -1,12 +1,7 @@
 var Phoenix = require('phoenix-js-derp');
 import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 import { notify } from './rx_helpers';
-
-// class Request {
-//   constructor(
-//     url = "/urls", body: string, headers = {}
-//   ) {}
-// }
+import { toast } from './js.js';
 
 export class WS {
   requests: {};
@@ -14,6 +9,7 @@ export class WS {
   ws: any;  //Phoenix.Socket
   chan: any;  //Phoenix.Channel
   _out: Observable<any>;
+  connected: boolean;
 
   constructor() {
   //constructor(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby") {
@@ -25,12 +21,19 @@ export class WS {
     let chan_name = "rooms:lobby";
     this.requests = {};
     this.id = 0;
-    let logger = ((kind, msg, data) => { console.log(`${kind}: ${msg}`, data) });
+    let logger = ((kind, msg, data) => {}); // console.log(`${kind}: ${msg}`, data)
     this.ws = new Phoenix.Socket(url, {logger: logger});
     this.ws.connect({});
     this.chan = this.ws.channel(chan_name, {user: "tycho"});
     this.chan.join();
-    //this.chan.on("msg", this.handle_stored);
+    this.ws.onOpen(() => {
+      this.connected = true;
+      toast.success('websocket connected!');
+    });
+    this.ws.onClose(() => {
+      this.connected = false;
+      toast.warn('websocket disconnected!');
+    });
   }
 
   // taken from https://github.com/robwormald/aim/, example at TickerService.ts (also exposed `in` Observer).
@@ -75,6 +78,8 @@ export class WS {
     notify(obs, name);
     return obs;
   }
+
+  // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security`?
 
 }
 

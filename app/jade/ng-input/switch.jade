@@ -1,9 +1,6 @@
 .switch
   label
     | Off
-    input(
-      type='checkbox'
-      [(ngmodel)]='model.name'
-    )
+    input(type='checkbox')&attributes(attrs)
     span.lever
     | On

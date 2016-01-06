@@ -1,5 +1,10 @@
-//- {fields: [html]}
-form((ngSubmit)='onSubmit()', #my_form='ngForm')
+//- {fields: [html], desc: html}
+//- '[ngFormModel]'='form'
+form(
+  '(ngSubmit)'='onSubmit()'
+  '#my_form'='ngForm'
+)
+  .fn_desc!= desc
   - each fld in fields
     != fld
   button.btn.waves-effect.waves-light(

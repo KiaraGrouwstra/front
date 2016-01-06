@@ -1,6 +1,13 @@
-//- {html, k, label}
+//- {html, k, label, validators: {k -> msg}}
 .input-field
   != html
-  label(for=k, data-error='wrong', data-success='right')= label
-  //- .alert.alert-danger([hidden]=`${k}.valid`)
-  //-   |= `${label} is required`
+  //- data-error='wrong'
+  //- data-success='right'
+  label(
+    for=k
+  )!= label
+  //- .alert.alert-danger(*ngIf=`${k}.dirty && !${k}.valid`)
+  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`${k}.valid`)
+    - each vldtr in Object.keys(validators)
+      //- `${label} is required`
+      .error(*ngIf=`${k}.errors.${vldtr}`)!= validators[vldtr]

@@ -7,6 +7,8 @@ tsd install angular2/
 tsd update
 // patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
+patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
+
 # ./node_modules/karma/bin/karma start
 # npm install -g karma-cli
 karma start &
@@ -18,5 +20,7 @@ gulp index && webpack --watch
 gulp index
 webpack --watch
 
-cd dist
-live-server --port=8090
+# cd dist
+# live-server --port=8090
+node server.js
+# apache: https://gist.github.com/leocaseiro/4305e06948aa97e77c93

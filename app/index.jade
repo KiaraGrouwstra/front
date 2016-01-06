@@ -1,36 +1,27 @@
 doctype html
 html
   head
-  
-    //- crap
-    //- title Tycho's thingie
-    //- meta(charset='utf-8')
+    title API console
+    meta(charset='utf-8')
     //- meta(http-equiv='X-UA-Compatible', content='IE=edge')
     //- meta(name='viewport', content='width=device-width, initial-scale=1')
     //- meta(name='description', content='Angular2 Webpack Starter')
     //- link(rel='shortcut icon', type='image/png', href='/assets/images/favicon.png')
     //- link(rel='icon', href='data:;base64,iVBORw0KGgo=')
     base(href='/')
-
     //- stylesheets
-    //- link(rel='stylesheet',href='./style.css')
-    //- link(rel='stylesheet',href='./vendor/angular2_material.css')
-    //- script(src='./vendor/angular2_material.dev.js')
-    //- link(type='text/css', rel='stylesheet', href='css/materialize.min.css', media='screen,projection')
     //- link(href='http://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
-    link(type='text/css', rel='stylesheet', href='./vendor/icon.css')
     //- link(type='text/css', rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css', media='screen,projection')
-    link(type='text/css', rel='stylesheet', href='./vendor/normalize.min.css', media='screen,projection')
+    link(type='text/css', rel='stylesheet', href='./vendor/css/normalize.min.css')
+    link(type='text/css', rel='stylesheet', href='./vendor/css/materialize.css')
+    //- link(type='text/css', rel='stylesheet', href='//cdn.bootcss.com/materialize/0.97.5/css/materialize.min.css')
+    //- link(type='text/css', rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css')
+    //- ^ both of these stylesheets must cover the entire body rather than just the app.
 
-    //- TS version
     //- script(src='https://code.angularjs.org/tools/system.js')
     script(src='./vendor/system.js')
     //- script(src='https://code.angularjs.org/tools/typescript.js')
     //- script(src='./config.js')
     script System.import('app.js').catch(console.error.bind(console));
-
   body
     app Loading...
-
-    //- script(src='https://code.jquery.com/jquery-2.1.1.min.js')
-    //- script(src='js/materialize.min.js')

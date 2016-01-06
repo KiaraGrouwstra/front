@@ -1,0 +1,9 @@
+//- {k, label}, block input
+.input-field
+  block input
+  label(
+    for=k
+    data-error='wrong'
+  )!= label
+  //- data-success='right'
+  //- .alert.alert-danger([hidden]=`${k}.valid`)= `${label} is required`

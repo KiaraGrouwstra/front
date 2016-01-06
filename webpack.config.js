@@ -75,6 +75,7 @@ module.exports = {
 		// __dirname: 'mock',
 		setImmediate: true
 	},
+	// noParse: [/\/dist\//],
 	progress: true,
   keepalive: true
 }
