@@ -28,9 +28,9 @@ include ./bool.jade
       
 //- #authed([hidden]="!auths['instagram']?.token")
 .row
-  #functions(#functions).col.s3
+  #functions(#functions).col.s4
   #input(#input).col.s6
-  #resp(#resp).col.s9
+  #resp(#resp).col.s8
     .row
       .col.s12
         ul.tabs
@@ -43,7 +43,8 @@ include ./bool.jade
           .card-content
             pre {{json}}
       #colored.col.s12
-        colored('json'='{{json}}')
+        //- colored('json'='{{json}}')
+        //- colored('[json]'='json')
 
 #output(#output)
 

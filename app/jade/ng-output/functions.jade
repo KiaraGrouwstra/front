@@ -4,7 +4,7 @@ ul.collapsible#fn-list(data-collapsible='accordion')
   li(*ngFor='#tag of tags')
     .collapsible-header.tooltipped.bold(
       '[ngClass]'=`{ 'grey lighten-3': !has_usable[tag.name]  }`
-      '[attr.data-tooltip]'='tag.description'
+      '[attr.data-tooltip]'='tag?.description'
     ) {{tag.name}}
     .collapsible-body
       .collection

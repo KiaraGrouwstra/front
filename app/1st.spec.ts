@@ -11,6 +11,4 @@ describe('1st tests', () => {
     () => expect(null).not.toEqual(undefined)
   );
 
-
-
 });

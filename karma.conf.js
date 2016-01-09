@@ -16,7 +16,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       '*.spec.ts',
-      '**/*.spec.ts'
+      '**/*.spec.ts',
+      '*.spec.js',
+      '**/*.spec.js',
     ],
 
 
@@ -38,13 +40,14 @@ module.exports = function(config) {
         target: 'ES5', // (optional) Specify ECMAScript target version: 'ES3' (default), or 'ES5'
         module: 'amd', // (optional) Specify module code generation: 'commonjs' or 'amd'
         noImplicitAny: true, // (optional) Warn on expressions and declarations with an implied 'any' type.
-        noResolve: true, // (optional) Skip resolution and preprocessing.
+        noResolve: false, // (optional) Skip resolution and preprocessing.
         removeComments: true, // (optional) Do not emit comments to output.
         concatenateOutput: false // (optional) Concatenate and emit output to single file. By default true if module option is omited, otherwise false.
       },
       // extra typing definitions to pass to the compiler (globs allowed)
       typings: [
-        'typings/tsd.d.ts'
+        'typings/tsd.d.ts',
+        'typings/jasmine/jasmine.d.ts',
       ],
       // transforming the filenames
       transformPath: function(path) {

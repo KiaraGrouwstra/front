@@ -13,8 +13,11 @@ patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
 # npm install -g karma-cli
 karma start &
 # karma run -- --grep=<pattern>
-live-server --port=8070
-http://127.0.0.1:8070/app/unit-tests.html
+# file:///C:/Users/T/Desktop/ng2/app/unit-tests.html
+# C:\Users\T\Desktop\ng2
+# live-server --port=8070
+# http://127.0.0.1:8070/app/unit-tests.html
+http://127.0.0.1:8090/tests.html
 
 gulp index && webpack --watch
 gulp index

@@ -3,13 +3,13 @@
 // https://github.com/angular-class/angular2-webpack-starter/blob/master/webpack.config.js
 var path = require('path');
 var webpack = require('webpack');
+// var JasmineWebpackPlugin = require('jasmine-webpack-plugin');
 
 module.exports = {
 	context: path.join(__dirname, 'app'),
 	entry: {
-		// vendor: './vendor.js',
-		// app: './app.ls'
-		app: './app'
+		specs: './specs',
+		boot: './boot',
 	},
 	output: {
 		// This is where images AND js will go
@@ -46,6 +46,7 @@ module.exports = {
 		root: __dirname
 	},
   plugins: [
+		// new JasmineWebpackPlugin(),
 		// Materialize
 		new webpack.ProvidePlugin({
 	    $: 'jquery',

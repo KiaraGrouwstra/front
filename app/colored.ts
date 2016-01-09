@@ -1,10 +1,11 @@
-import {Component, OnInit, Input} from 'angular2/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from 'angular2/core';
 
 @Component({
   selector: 'colored',
   template: '<pre><code id="coloredContainer">{{html}}</code></pre>',
   styles: require('./vendor/css/colored.css'),
   //inputs: ['str'],
+  changeDetection: ChangeDetectionStrategy.OnPush,    //restrict to immutable inputs
 })
 export class ColoredComp implements OnInit {  //NgOnInit
   @Input() str: string;

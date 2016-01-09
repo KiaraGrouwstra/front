@@ -20,8 +20,6 @@ html
 
     //- script(src='https://code.angularjs.org/tools/system.js')
     script(src='./vendor/system.js')
-    //- script(src='https://code.angularjs.org/tools/typescript.js')
-    //- script(src='./config.js')
-    script System.import('app.js').catch(console.error.bind(console));
+    script System.import('boot.js').catch(console.error.bind(console));
   body
     app Loading...

@@ -14,8 +14,6 @@
   },
   "files": [
     "typings/tsd.d.ts",
-    "./app/ws.ts",
-    "./app/boot.ts",
-    "./app/app.ts"
+    "./app/boot.ts"
   ]
 }

@@ -13,69 +13,21 @@ let jade = require('jade');
 import { arrToSet } from './rx_helpers';  //, elemToArr, arrToArr, elemToSet, setToSet, loggers, notify
 // require('rxjs/Observable');
 import {Observable} from 'rxjs/Observable';
-import { arr2obj, toast, mapBoth } from './js.js'; //, Obs_do, Obs_then
+import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, arr2obj, toast, mapBoth, String_stripOuter } from './js.js'; //, Obs_do, Obs_then
 // Observable.prototype.do = Obs_do;
 // Observable.prototype.then = Obs_then;
 import { Validators, Control } from 'angular2/common';
+Array.prototype.last = Array_last;
+Array.prototype.has = Array_has;
+Array.prototype.clean = Array_clean;
+Array.prototype.flatten = Array_flatten;
+String.prototype.stripOuter = String_stripOuter;
 
-Array.prototype.last = function() {
-  return this[this.length-1];
-}
-let Array_has = Array.prototype.has = function(k) {
-  return this.indexOf(k) >= 0;
-}
-Array.prototype.clean = function() {
-  return this.filter((el, idx, arr) => el);
-}
-//let truthy = (el, idx, arr) => el;
-Array.prototype.flatten = function() {
-  return this.reduce((a, b) => a.concat(b), []);
-}
-// ^ alt: _.flatten(arr, bool deep)
-// create an element from an HTML string (for now with a single root element)
-let elFromHtml = (html) => {
-  try {
-    return jQuery(html).toArray()[0] || elFromText(html)
-  }
-  catch (e) {
-    return elFromText(html)
-  }
-}
-// create an element from a text string (can also do some HTML but not dependent elements like td)
-let elFromText = (s) => {
-  let div = document.createElement('div');
-  div.innerHTML = s;
-  return div.firstChild;  //multiple: .childNodes
-}
-// immutable `appendChild`
-// Element.prototype.add = function(el) {
-//   let tmp = this.cloneNode(true);
-//   tmp.appendChild(el);
-//   return tmp;
-// }
 //let nuller = () => null;
 let nuller = (a, b, c, d, e) => {
   console.log("ERROR: no handler found", a, b, c, d, e);
   return null;
 };
-//let cloneOf = o => JSON.parse(JSON.stringify(o));
-// http://codereview.stackexchange.com/questions/84951/invert-a-javascript-object-hash-whose-values-are-arrays-to-produce-a-new-objec
-// function arrayAwareInvert(o) {
-//   let merge = (res, vals, k) => _.merge(res, _.mapValues(_.object(vals), (v) => k))
-//   return _.reduce(o, merge, {});
-// }
-// Object.filter
-let Object_filter = (obj, pred) => arr2obj(Object.keys(obj).filter(k => pred(obj[k])), k => obj[k])
-// Element.prototype.child = function(i) {
-//   return this.children.item(i)
-// }
-// Element.prototype.appendChildren = function(html_coll) {
-//   while(html_coll.length > 0) {
-//     this.appendChild(html_coll.item(0))
-//   }
-//   return this;
-// }
-let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
 // let Kinds = { FIXED: 1, PATTERN: 2, ADDITIONAL: 3 }
 // var SymbolEnum = require('symbol-enum')
@@ -144,6 +96,7 @@ function getHandler(type, map) {
   return map[key] || nuller;  // not actually nothing! just means I don't have sufficient info to infer the type...
 }
 
+// turns JSON plus its spec into html
 function parseVal(path, api_spec, swagger) {
   let type_map = {
     //array of multiple,
@@ -234,6 +187,7 @@ function parseObject(path, api_spec, swagger, named = false) {
   let arr = Object.keys(arrays).map(k => parseArray(...arrays[k].pars, true))
   return Templates.card_object({k: k, id: id, scal: scal, obj: obj, arr: arr, named: named })
 }
+
 
 let getPaths = (path) => {
   let k = path.last();
@@ -349,10 +303,12 @@ let param_field = (path, api_spec) => {
   // general parameters
   let { name: name, in: kind, description: desc, required: req, schema: schema, type: type, format: format, allowEmptyValue: allow_empty, items: items, collectionFormat: collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, maxLength: maxLength, minLength: minLength, pattern: pattern, maxItems: maxItems, minItems: minItems, uniqueItems: uniqueItems, enum: enum_options, multipleOf: multipleOf } = api_spec
   let label = marked(`**${name}:** ${desc}`);
-  desc = marked(desc || '')
-  let { id: id, k: k, model: model, variable: variable } = getPaths(path)
+  desc = marked(desc || '') //.stripOuter();
+  let { id: id, k: k, model: elvis, variable: variable } = getPaths(path)
+  let key = name  // variable
+  let model = `params.${key}.val`
   let attrs = {
-    '[(ngModel)]': `params['${name}'].val`,
+    '[(ngModel)]': model,
     ngControl: variable,
     id: id,
     required: req,
@@ -419,17 +375,17 @@ let param_field = (path, api_spec) => {
 
   // get the html template for the given settings
   attrs.type = input_type(type)
-  let opts = {attrs: attrs, type: type, opts: enum_options}
+  let opts = { attrs: attrs, type: type, opts: enum_options, model: model }
   let template = Templates[get_template(opts)]
   // console.log('template', template)
   let field =
     // is_node ?
-    template(Object.assign(opts, { k: variable, label: label, validators: val_msgs }))
+    template(Object.assign(opts, { id: id, model: model, label: label, validators: val_msgs }))
     //: Templates.field({html: template(opts), k: variable, label: desc})
 
   // return the html along with its initial key/value pair for the model
   let val = (typeof def !== 'undefined') ? def : get_default(type)
-  let obj = { type: kind, val: new Control(val, validator) }   //Object.assign(, _.object([obj_k, name]))  //, val: val
+  let obj = _.object([[key, { type: kind, val: val }]]) // new Control(val, validator)  //val
   return {html: field, obj: obj}
 }
 
@@ -446,16 +402,19 @@ let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
   let desc = marked(_.get(api_spec, _.dropRight(hops, 1).concat('description'), ''))
   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) })
   // console.log('html', html)
+  console.log('fields', fields)
   let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {}
+  console.log('obj', obj)
   return {html: html, obj: obj}
 }
 
 // return the form submit function for an API function
 let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
+  // console.log('form values', JSON.stringify(this.form.value));
   let base = `{uri_scheme}://${api_spec.host}${api_spec.basePath}`;  //${api_spec.schemes}
   let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
     let filtered = Object_filter(this.params, v => v.type == x);
-    return _.mapValues(filtered, 'val', '_value');
+    return _.mapValues(filtered, 'val');   //val._value    //val
   });
   let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
   //let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}`) +
@@ -521,5 +480,4 @@ let val_errors = {
 // http status codes: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpstatuscodes.js
 // async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81
 
-export { parseVal, Templates, getPaths, method_form, Object_filter, get_submit, Array_has };
-//module.exports = { parseVal: parseVal, Templates: Templates, getPaths: getPaths, method_form: method_form, Object_filter: Object_filter };
+export { parseVal, method_form, get_submit, Templates };

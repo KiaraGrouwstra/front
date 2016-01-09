@@ -31,7 +31,7 @@ paths =
   # jade: './app/**/*.jade'
   index: './app/index.jade'
   config: './app/config.js'
-  tests: './app/unit-tests.jade'
+  tests: './app/tests.jade'
   # router: './node_modules/angular2/bundles/router.dev.js'
 
 gulp.task('default', [
@@ -69,7 +69,7 @@ gulp.task 'config', -> copy(paths.config)
 # gulp.task 'less',   -> copy(paths.less, less())
 gulp.task 'jade',   -> copy(paths.jade, gulpJade({jade: jade, pretty: true}))
 gulp.task 'index',   -> copy(paths.index, gulpJade({jade: jade, pretty: true}))
-gulp.task 'tests',   -> copy(paths.tests, gulpJade({jade: jade, pretty: true}), paths.src)
+gulp.task 'tests',   -> copy(paths.tests, gulpJade({jade: jade, pretty: true})) #, paths.src
 # locals: YOUR_LOCALS
 
 # gulp.task 'webpack', (callback) ->
