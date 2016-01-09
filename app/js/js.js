@@ -152,7 +152,7 @@ let toasts = {
 };
 let TOAST_LEVEL = toasts.success.val;
 let LOG_LEVEL = toasts.info.val;
-let toast = arr2obj(Object.keys(toasts), (kind) => (msg, ms = 5000) => {
+let toast = arr2obj(Object.keys(toasts), (kind) => (msg, ms = 1000) => {
   let level = toasts[kind].val;
   if(level >= TOAST_LEVEL) Materialize.toast(msg, ms, toasts[kind].class);
   if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);

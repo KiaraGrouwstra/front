@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, OnInit } from 'angular2/core';
 import { FormBuilder, Control } from 'angular2/common';
-import { arr2obj, spawn_n } from './js.js';
+import { arr2obj, spawn_n, mapBoth } from './js.js';
 
 // a generic component class
 let gen_comp = (pars) => class implements OnInit {
@@ -9,12 +9,10 @@ let gen_comp = (pars) => class implements OnInit {
 	//};
   constructor(cdr: ChangeDetectorRef) {
     //, @Optional() @Host() parent: App
-    for (let k in pars) this[k] = pars[k];
-    //let update = () => { cdr.detectChanges() };
-    //setTimeout(update, 5000);
-    spawn_n(() => cdr.detectChanges(), 30)
-    // ^ ugly workaround to `loadAsRoot`: https://github.com/angular/angular/issues/3474
+    // v ugly workaround to `loadAsRoot`: https://github.com/angular/angular/issues/3474
     // still causes an exception with observables too -_-;
+    let pollTimer = window.setInterval(() => cdr.detectChanges(), 500);
+    for (let k in pars) this[k] = pars[k];
   }
   ngOnInit() {
     //TODO: get this to work, though the current promise works too?
@@ -26,8 +24,10 @@ let gen_comp = (pars) => class implements OnInit {
 // a component class for forms based on given form Controls
 let form_comp = (pars) => class {
   constructor(cdr: ChangeDetectorRef, builder: FormBuilder) {
+    let pollTimer = window.setInterval(() => cdr.detectChanges(), 500);
     for (let k in pars) this[k] = pars[k];
-    this['form'] = builder.group(arr2obj(Object.keys(pars.params), k => this['params'][k]));
+    this['form'] = builder.group(mapBoth(pars.params, (v, k) => this.params[k].val));
+    console.log('frm cmp', pars, this.params, this.form.controls);
   }
 }
 

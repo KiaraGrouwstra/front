@@ -74,6 +74,8 @@ export class App {
     global.app = this;
     this.auths = {};
     this.json = '{"test":"lol"}';
+    global.Control = Control;
+    //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
     this.apis = ['instagram', 'github'];
     this.apis.forEach(name => getKV(name).then((v) => this.auths[name] = v));
@@ -178,6 +180,7 @@ export class App {
       template: template,
       styles: STYLES,
     })];
+    // console.log('cls', comp);
     return comp;
   }
 
@@ -322,18 +325,18 @@ export class App {
         path_tooltips: path_tooltips,
         has_usable: has_usable,
         load_form: (fn_path) => {
-        // input form
-        let { html: html, obj: params } = method_form(api, fn_path);
-        // console.log('passing auth', this.auths[name]);
-        let onSubmit = get_submit(api, fn_path, () => this.auths[name].token, x => {
-            this.json = x;
-            this.refresh();
-        });
-        let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
-        // console.log('input html', html)
-        // console.log('inp_pars', inp_pars)
-        // console.log('loading input')
-        this.loadHtml('input', inp_pars, html).then(x => this.inputs = x);  //, form_comp
+          // input form
+          let { html: html, obj: params } = method_form(api, fn_path);
+          // console.log('passing auth', this.auths[name]);
+          let onSubmit = get_submit(api, fn_path, () => this.auths[name].token, x => {
+              this.json = x;
+              this.refresh();
+          });
+          let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
+          console.log('input html', html)
+          console.log('inp_pars', inp_pars)
+          // console.log('loading input')
+          this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
         },
     });
     // init: $('.collapsible')['collapsible']()

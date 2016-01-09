@@ -306,10 +306,10 @@ let param_field = (path, api_spec) => {
   desc = marked(desc || '') //.stripOuter();
   let { id: id, k: k, model: elvis, variable: variable } = getPaths(path)
   let key = name  // variable
-  let model = `params.${key}.val`
+  let model = `form.controls.${key}`
   let attrs = {
-    '[(ngModel)]': model,
-    ngControl: variable,
+    '[(ngModel)]': `${model}.value`,
+    ngControl: key,
     id: id,
     required: req,
   }
@@ -364,10 +364,10 @@ let param_field = (path, api_spec) => {
     //   break;
   }
 
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.object([k, true]) : null);
+  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.object([[k, true]]) : null);
   Object.assign(Validators, val_fns);
   // 'schema', 'format', 'items', 'collectionFormat', 'type'
-  let val_keys = ['maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf']
+  let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf']
   let used_vals = val_keys.filter(k => api_spec[k] != null)
   let validators = used_vals.map(k => Validators[k](api_spec[k]));
   let validator = Validators.compose(validators);
@@ -375,17 +375,16 @@ let param_field = (path, api_spec) => {
 
   // get the html template for the given settings
   attrs.type = input_type(type)
-  let opts = { attrs: attrs, type: type, opts: enum_options, model: model }
+  let opts = { attrs: attrs, type: type, opts: enum_options, id: id, ctrl: model, label: label, validators: val_msgs }
   let template = Templates[get_template(opts)]
   // console.log('template', template)
-  let field =
-    // is_node ?
-    template(Object.assign(opts, { id: id, model: model, label: label, validators: val_msgs }))
-    //: Templates.field({html: template(opts), k: variable, label: desc})
+  let field = template(opts)
 
   // return the html along with its initial key/value pair for the model
   let val = (typeof def !== 'undefined') ? def : get_default(type)
-  let obj = _.object([[key, { type: kind, val: val }]]) // new Control(val, validator)  //val
+  let ctrl = new Control(val, validator)
+  console.log('ctrl', ctrl);
+  let obj = _.object([[key, { type: kind, val: ctrl }]]) // ctrl  //val
   return {html: field, obj: obj}
 }
 
@@ -414,7 +413,7 @@ let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
   let base = `{uri_scheme}://${api_spec.host}${api_spec.basePath}`;  //${api_spec.schemes}
   let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
     let filtered = Object_filter(this.params, v => v.type == x);
-    return _.mapValues(filtered, 'val');   //val._value    //val
+    return _.mapValues(filtered, 'val._value');   //val._value    //val
   });
   let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
   //let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}`) +
@@ -442,6 +441,7 @@ let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
 // validators
 
 let val_conds = {
+  required: (v, par) => (v == null || v.length == 0),
   // schema: (v, par) => (v, par),
   // format: (v, par) => (v, par),
   // items: (v, par) => (v, par),
@@ -461,6 +461,7 @@ let val_conds = {
 }
 
 let val_errors = {
+  required: x => `This field is required.`,
   maximum: x => `Must not be more than ${x}.`,
   exclusiveMaximum: x => `Must be less than ${x}.`,
   minimum: x => `Must not be less than ${x}.`,

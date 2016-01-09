@@ -1,4 +1,4 @@
-//- {model, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+//- {ctrl, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
 input.tooltipped.validate(
-  '[ngClass]'=`{valid: ${model}.valid, invalid: ${model}.invalid}`
+  '[ngClass]'=`{valid: ${ctrl}.valid, invalid: ${ctrl}.invalid}`
 )&attributes(attrs)

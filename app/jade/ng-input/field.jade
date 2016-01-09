@@ -1,4 +1,4 @@
-//- {html, id, model, label, validators: {k -> msg}}
+//- {html, id, key, model, ctrl, label, validators: {k -> msg}}
 .input-field
   != html
   //- data-error='wrong'
@@ -6,9 +6,9 @@
   label(
     for=id
   )!= label
-  //- .alert.alert-danger(*ngIf=`${model}.dirty && !${model}.valid`)
-  p= `errors: {{ ${model}.errors | json }}`
-  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`${model}.valid`)
-    //- - each vldtr in Object.keys(validators)
-    //-   //- `${label} is required`
-    //-   .error(*ngIf=`${model}.errors.${vldtr}`)!= validators[vldtr]
+  //- p= `val: {{ ${ctrl}.value }}`
+  //- p= `errors: {{ ${ctrl}.errors | json }}`
+  //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !${ctrl}.valid`)
+  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`${ctrl}.valid`)
+    - each vldtr in Object.keys(validators)
+      .error(*ngIf=`${ctrl}.errors?.${vldtr}`)!= validators[vldtr]
