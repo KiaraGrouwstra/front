@@ -6,7 +6,7 @@ var webpack = require('webpack');
 // var JasmineWebpackPlugin = require('jasmine-webpack-plugin');
 
 module.exports = {
-	context: path.join(__dirname, 'app'),
+	context: path.join(__dirname, 'app/js'),
 	entry: {
 		specs: './specs',
 		boot: './boot',

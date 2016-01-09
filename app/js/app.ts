@@ -31,10 +31,10 @@ let providers = [ColoredComp]; //, RouteParams
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm];  //, ROUTER_DIRECTIVES
 let pipes = [MarkedPipe];
 let STYLES = [
-  require('../node_modules/materialize-css/dist/css/materialize.min.css'),
-  // require('./vendor/css/materialize.min.css'),
-  require('./style.less'),
-  require('./vendor/css/icon.css'),
+  // require('materialize-css/dist/css/materialize.min.css'),
+  require('../vendor/css/materialize.min.css'),
+  require('../style.less'),
+  require('../vendor/css/icon.css'),
 ];
 
 Promise.prototype.finally = Prom_finally;
@@ -47,7 +47,7 @@ Array.prototype.has = Array_has;
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
 })
 @View({
-  template: require('./jade/ng-output/materialize.jade'),
+  template: require('../jade/ng-output/materialize.jade'),
   styles: STYLES,
   directives: directives,
   pipes: pipes,
@@ -79,7 +79,7 @@ export class App {
     this.apis.forEach(name => getKV(name).then((v) => this.auths[name] = v));
 
     // https://github.com/simov/grant/blob/master/config/oauth.json
-    this.oauth_misc = require('./vendor/oauth.json');
+    this.oauth_misc = require('../vendor/oauth.json');
     //authorize_url, access_url, oauth, scope_delimiter
     // other crap: https://grant-oauth.herokuapp.com/providers
 
@@ -149,7 +149,7 @@ export class App {
     //notify(rows, "rows");
     //notify(cols, "cols");
     let pars = { rows: rows, cols: cols };
-    this.loadHtml(to, pars, require('./jade/ng-output/table-a.jade'));
+    this.loadHtml(to, pars, require('../jade/ng-output/table-a.jade'));
 
     //spawn_n(() => this.refresh(), 30)
   }
@@ -199,9 +199,9 @@ export class App {
     let pars = this.deps.http
       .get(`./swagger/${name}.json`)
       .map(x => JSON.parse(x._body));
-    //pars.subscribe(_ => this.loadHtml('swagger', _, require('./jade/ng-output/swagger.jade')));
+    //pars.subscribe(_ => this.loadHtml('swagger', _, require('../jade/ng-output/swagger.jade')));
     //notify(pars, "pars");
-    //this.loadHtml('swagger', pars, require('./jade/ng-output/swagger.jade'));
+    //this.loadHtml('swagger', pars, require('../jade/ng-output/swagger.jade'));
 
     let $RefParser = require('json-schema-ref-parser');
     let swag = this.deps.http
@@ -252,7 +252,7 @@ export class App {
   }
 
   load_auth_ui = (name, scopes, oauth_info) => {
-    let auth = require('./jade/ng-input/auth.jade');
+    let auth = require('../jade/ng-input/auth.jade');
     let onSubmit = function() {
     let scope = this.scopes_arr.filter(s => this.want_scope[s]).join(_.get(this.oauth_misc[name], ['scope_delimiter'], ' '));
     //let redirect_uri = `http://127.0.0.1:8090/callback/${name}/?` + global.$.param({scope: scope});
@@ -337,7 +337,7 @@ export class App {
         },
     });
     // init: $('.collapsible')['collapsible']()
-    let fn_view = require('./jade/ng-output/functions.jade');
+    let fn_view = require('../jade/ng-output/functions.jade');
     // console.log('loading functions')
     // console.log('fn_view', fn_view)
     // console.log('fn_pars', fn_pars)

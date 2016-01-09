@@ -48,7 +48,7 @@ let SCALARS = ["boolean", "integer", "number", "string", "null", "scalar"];
 //       // field: 'ng-input/field', //- {html, k, label}
 //       form: 'ng-input/form', //- {fields: [html]}
 //   }, x => {
-//     let path = `${__dirname}/jade/${x}.jade`
+//     let path = `..$/{__dirname}/jade/${x}.jade`
 //     let tmplt = fs.readFileSync(path, 'utf8')
 //     return jade.compile(tmplt, {filename: path})
 //     // ^ using `extends` needs file-system knowledge, so pre-render using `gulp-jade`... when I can load this ES6 from Gulp without errors.
@@ -57,23 +57,23 @@ let SCALARS = ["boolean", "integer", "number", "string", "null", "scalar"];
   let wrap = (wrapper, block) => (opts) => Templates[wrapper](Object.assign(opts, {html: Templates[block](opts)}))
   var Templates = _.mapValues({
     // output
-    card_object: require('!raw!./jade/output/card_object.jade'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
-    card_table: require('!raw!./jade/output/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
-      ul_table: require('!raw!./jade/output/ul_table.jade'), //- {k, id, rows: [{id, val}]}
-      dl_table: require('!raw!./jade/output/dl_table.jade'), //- {rows: [{k, id, val}]}
-      dl      : require('!raw!./jade/output/dl.jade'),       //- {rows: [{k, id, val}]}
+    card_object: require('!raw!../jade/output/card_object.jade'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
+    card_table: require('!raw!../jade/output/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+      ul_table: require('!raw!../jade/output/ul_table.jade'), //- {k, id, rows: [{id, val}]}
+      dl_table: require('!raw!../jade/output/dl_table.jade'), //- {rows: [{k, id, val}]}
+      dl      : require('!raw!../jade/output/dl.jade'),       //- {rows: [{k, id, val}]}
     // input
-    // input: require('!raw!./jade/ng-input/input-block.jade'), //- {id, model, type, required, placeholder?, control?}
-    input_s: require('!raw!./jade/ng-input/input.jade'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-    // input:   require('!raw!./jade/ng-input/input.jade'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-    switch: require('!raw!./jade/ng-input/switch.jade'),
-    // radio: require('!raw!./jade/ng-input/radio.jade'),
-    range: require('!raw!./jade/ng-input/range.jade'),
-    select: require('!raw!./jade/ng-input/select.jade'),
-    datalist: require('!raw!./jade/ng-input/datalist.jade'),
-    date: require('!raw!./jade/ng-input/date.jade'),
-    field: require('!raw!./jade/ng-input/field.jade'), //- {html, k, label}
-    form: require('!raw!./jade/ng-input/form.jade'), //- {fields: [html]}
+    // input: require('!raw!../jade/ng-input/input-block.jade'), //- {id, model, type, required, placeholder?, control?}
+    input_s: require('!raw!../jade/ng-input/input.jade'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+    // input:   require('!raw!../jade/ng-input/input.jade'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+    switch: require('!raw!../jade/ng-input/switch.jade'),
+    // radio: require('!raw!../jade/ng-input/radio.jade'),
+    range: require('!raw!../jade/ng-input/range.jade'),
+    select: require('!raw!../jade/ng-input/select.jade'),
+    datalist: require('!raw!../jade/ng-input/datalist.jade'),
+    date: require('!raw!../jade/ng-input/date.jade'),
+    field: require('!raw!../jade/ng-input/field.jade'), //- {html, k, label}
+    form: require('!raw!../jade/ng-input/form.jade'), //- {fields: [html]}
   }, t => jade.compile(t, {}))    //filename:
   Object.assign(Templates, {
     input: wrap('field', 'input_s'),

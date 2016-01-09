@@ -25,12 +25,11 @@ paths =
   static: './app/static/**/*.*'
   swagger: './app/swagger/**/*.*'
   # less: './app/**/*.less'
-  # ts: './app/**/*.ts'
-  # js: './app/*.js'
+  # ts: './app/js/**/*.ts'
+  # js: './app/js/*.js'
   # ^ skipping sub-folders due to overlap with vendor/ for a sec.
   # jade: './app/**/*.jade'
   index: './app/index.jade'
-  config: './app/config.js'
   tests: './app/tests.jade'
   # router: './node_modules/angular2/bundles/router.dev.js'
 
@@ -38,7 +37,6 @@ gulp.task('default', [
   # 'watch'
   'index'
   'tests'
-  'config'
   # 'vendor'
 ])
 
@@ -51,7 +49,6 @@ gulp.task 'watch', ->
   # gulp.watch(paths.jade, ['jade'])
   gulp.watch(paths.index, ['index'])
   gulp.watch(paths.tests, ['tests'])
-  gulp.watch(paths.config, ['config'])
   # gulp.watch(paths.ts, ['webpack'])
   # ^ this should be handled by webpack-dev-server...
 
@@ -63,7 +60,6 @@ copy = (glob, op = gutil.noop(), to = paths.dist) ->
 gulp.task 'vendor', -> copy(paths.vendor)
 gulp.task 'static', -> copy(paths.static)
 gulp.task 'swagger', -> copy(paths.swagger)
-gulp.task 'config', -> copy(paths.config)
 # gulp.task 'root', -> copy(paths.router)
 # gulp.task 'js',     -> copy(paths.js)
 # gulp.task 'less',   -> copy(paths.less, less())
@@ -98,7 +94,7 @@ gulp.task 'tdd', (done) ->
 
 # using `extends` needs file-system knowledge, so pre-render using `gulp-jade`... when I can load that ES6 from Gulp without errors.
 gulp.task 'render', ->
-  parser = require('./app/parser');
+  parser = require('./app/js/parser');
   json = fs.readFileSync('./app/swagger/instagram.json', 'utf8')
   insta = JSON.parse(json)
   fn = '/geographies/{geo-id}/media/recent'
