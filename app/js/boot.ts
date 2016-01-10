@@ -5,7 +5,7 @@ import { bootstrap } from 'angular2/platform/browser';
 // <script src="node_modules/angular2/bundles/router.dev.js"></script>
 // import {ROUTER_PROVIDERS} from 'angular2/router';
 import { HTTP_BINDINGS } from 'angular2/http'; //Http, Headers
-import { WS } from './ws.ts';
+import { WS } from './ws';
 
 let singletons = [WS, HTTP_BINDINGS]; //, ROUTER_PROVIDERS
 bootstrap(App, singletons).catch(err => console.error(err));

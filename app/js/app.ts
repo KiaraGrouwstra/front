@@ -60,7 +60,7 @@ export class App {
   constructor(dcl: DynamicComponentLoader, //router:Router, routeParams: RouteParams,
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
     this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
-    this.ws = new WS(() => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
+    this.ws = new WS("ws://127.0.0.1:8080/socket", "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
     global.ws = this.ws;
     global.app = this;
     this.auths = {};
