@@ -2,19 +2,15 @@
 
 import 'reflect-metadata';
 import { Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
-    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy } from 'angular2/core';  //, Observable
+    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy } from 'angular2/core';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, FormBuilder, Control, Validators } from 'angular2/common';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
 import { HTTP_BINDINGS, Http } from 'angular2/http'; //Http, Headers
 import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/fromArray';
-import 'rxjs/add/observable/from';
-//import 'rxjs/add/observable/interval';
+// import 'rxjs/add/observable/from';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
-// difference with this? https://github.com/ReactiveX/RxJS/tree/master/src/operator
-// https://github.com/ReactiveX/RxJS
 global.Observable = Observable;
 import { MarkedPipe } from './pipes';
 import WS from './ws';
@@ -29,7 +25,7 @@ let Immutable = require('immutable');
 String.prototype.stripOuter = String_stripOuter;
 // import { ColoredComp } from './colored';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm];  //, ROUTER_DIRECTIVES //, ColoredComp
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES];  //, ColoredComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
@@ -45,6 +41,10 @@ Array.prototype.has = Array_has;
   directives: directives, // one instance per component
   pipes: pipes,
 })
+@RouteConfig([
+//   {path:'/test',          name: 'CrisisCenter', component: genClass({}, html) },
+//   {path:'/hero/:id',      name: 'HeroDetail',   component: HeroDetailComponent},
+])
 export class App {
   deps: any;
   ws: WS;
@@ -60,7 +60,7 @@ export class App {
   apis: Array<string>;
   oauth_misc: {};
 
-  constructor(dcl: DynamicComponentLoader, //router:Router, routeParams: RouteParams,
+  constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
     this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
     this.ws = new WS("ws://127.0.0.1:8080/socket", "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
