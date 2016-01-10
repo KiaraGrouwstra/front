@@ -35,7 +35,8 @@
     .row
       .col.s12
         ul.tabs
-          - tabs = { raw: 'Raw', colored: 'Colored' }
+          - tabs = { colored: 'Colored', raw: 'Raw', rendered: 'Rendered' }
+          //- , expandable: 'Expandable'
           - each id in Object.keys(tabs)
             li.tab.col.s3
               a(href=`#${id}`)= tabs[id]
@@ -43,7 +44,9 @@
         .card
           .card-content
             pre#raw {{ json | async }}
-            pre#colored('innerHtml'=`{{ colored | async }}`)
+            pre#colored('innerHtml'='{{ colored | async }}')
+            //- #expandable
+            #rendered('innerHtml'='{{ rendered | async }}')
 
 #output(#output)
 

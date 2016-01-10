@@ -25,7 +25,7 @@ module.exports = {
 			{ test: /\.coffee$/, loader: 'coffee' },
 			{ test: /\.ls$/, loader: 'livescript' },
 			{ test: /\.tsx?$/, loader: 'ts' },	//babel!
-			{ test: /\.js$/, loader: 'babel?presets[]=es2015', exclude: /node_modules/ },
+			{ test: /\.js$/, loader: 'babel?presets[]=es2015,presets[]=stage-0', include: [ path.resolve(__dirname, "app"), ] },  // , exclude: [ path.resolve(__dirname, "node_modules"), ]
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },

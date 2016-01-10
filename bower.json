@@ -27,11 +27,7 @@
     "tests"
   ],
   "dependencies": {
-  },
-  "commented_dependencies": {
-    "es6-shim":"paulmillr/es6-shim",
-    "angular2-material":"urish/angular2-material-build",
-    "request":"https://rawgit.com/request/request/master/request.js"
+    "pretty-json": "warfares/pretty-json"
   },
   "private": true
 }

@@ -9,7 +9,9 @@ import { HTTP_BINDINGS, Http } from 'angular2/http'; //Http, Headers
 import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-// import 'rxjs/add/observable/from';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
 global.Observable = Observable;
 import { MarkedPipe } from './pipes';
@@ -32,6 +34,11 @@ Promise.prototype.finally = Prom_finally;
 Promise.prototype.do = Prom_do;
 Array.prototype.has = Array_has;
 
+// let backbone = require('backbone');
+//require('pretty-json/pretty-json-debug');   //import { PrettyJSON } from
+//require('http://warfares.github.io/pretty-json/pretty-json-min.js');
+// require('../vendor/pretty-json-min');
+
 @Component({
   selector: 'app',
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
@@ -45,6 +52,7 @@ Array.prototype.has = Array_has;
 //   {path:'/test',          name: 'CrisisCenter', component: genClass({}, html) },
 //   {path:'/hero/:id',      name: 'HeroDetail',   component: HeroDetailComponent},
 ])
+// <router-outlet></router-outlet>
 export class App {
   deps: any;
   ws: WS;
@@ -52,15 +60,16 @@ export class App {
   rows: any;
   cols: any;
   auths: {};
-  json: Observable<string>;
+  json: EventEmitter<string>;
   colored: Observable<string>;
+  rendered: Observable<string>;
   auth: any;
   functions: any;
   inputs: any;
   apis: Array<string>;
   oauth_misc: {};
 
-  constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params
+  constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
     this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
     this.ws = new WS("ws://127.0.0.1:8080/socket", "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
@@ -68,10 +77,11 @@ export class App {
     global.app = this;
     this.auths = {};
     this.json = new EventEmitter();
-    setTimeout(() => 
+    setTimeout(() =>
         this.json.emit('{"test":"lol"}')
     , 1000)
     this.colored = this.json.map(x => prettyPrint(x));
+    // this.json.subscribe((str) => new window.PrettyJSON.view.Node({el: $('#expandable'), data: JSON.parse(str) }).expandAll());
     global.Control = Control;
     //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
@@ -196,57 +206,53 @@ export class App {
   })
 
   load_ui = (name) => {
-    let pars = this.deps.http
-      .get(`./swagger/${name}.json`)
-      .map(x => JSON.parse(x._body));
     //pars.subscribe(_ => this.loadHtml('swagger', _, require('../jade/ng-output/swagger.jade')));
     //notify(pars, "pars");
     //this.loadHtml('swagger', pars, require('../jade/ng-output/swagger.jade'));
 
     let $RefParser = require('json-schema-ref-parser');
-    let swag = this.deps.http
-    .get('./swagger/swagger.json')
-    .map(x => x._body)
-    .map(x => {
-      let esc = RegExp_escape("http://json-schema.org/draft-04/schema");
-      return x.replace(new RegExp(esc, 'g'), "/swagger/schema.json");
-    })
-    .map(x => JSON.parse(x))
-    .subscribe(x => {
-      $RefParser.dereference(x).then((schema) => {
-        //pars.subscribe(api => this.loadHtml('test', api, html));
-        pars.subscribe(api => {
-
-          let sec_defs = api.securityDefinitions;
-          let oauth_sec = _.find(Object.keys(sec_defs), (k) => sec_defs[k].type == 'oauth2');
-          let oauth_info = sec_defs[oauth_sec];
-          let scopes = Object.keys(oauth_info.scopes);
-          // auth form
-          this.load_auth_ui(name, scopes, oauth_info).then(x => {
+      
+    this.deps.http
+    .get(`./swagger/${name}.json`)
+    .map(x => JSON.parse(x._body))
+    .mergeMap((api) => $RefParser.dereference(api))
+    .subscribe((api_full) => {
+    
+      this.deps.http
+      .get('./swagger/swagger.json')
+      .map(x => {
+        let esc = RegExp_escape("http://json-schema.org/draft-04/schema");
+        return x._body.replace(new RegExp(esc, 'g'), "/swagger/schema.json");
+      })
+      .map(x => JSON.parse(x))
+      .mergeMap(x => $RefParser.dereference(x))
+      .subscribe((schema) => {
+        
+        let sec_defs = api_full.securityDefinitions;
+        let oauth_sec = _.find(Object.keys(sec_defs), (k) => sec_defs[k].type == 'oauth2');
+        let oauth_info = sec_defs[oauth_sec];
+        let scopes = Object.keys(oauth_info.scopes);
+        // auth form
+        this.load_auth_ui(name, scopes, oauth_info).then(x => {
             this.auth = x;
 
             // function list
-            this.load_fn_ui(name, scopes, api, oauth_sec).then(x => {
-              this.functions = x;
-              this.refresh();
-              global.$('.collapsible#fn-list')['collapsible']();
-              spawn_n(() => {
-                global.$('.tooltipped')['tooltip']({delay: 0});
-              }, 3);
+            this.load_fn_ui(name, scopes, api_full, oauth_sec).then(x => {
+                this.functions = x;
+                this.refresh();
+                global.$('.collapsible#fn-list')['collapsible']();
+                spawn_n(() => {
+                    global.$('.tooltipped')['tooltip']({delay: 0});
+                }, 3);
             });
             // ^ why doesn't ngOnInit trigger in my generated class?
             //spawn_n(() => this.refresh(), 30);
-          });
-
-          // output
-          /*
-          $RefParser.dereference(api).then((api_full) => {
-            let html = parseVal([], api_full, schema);
-            this.loadHtml('output', {}, html);
-          });
-          */
-
         });
+
+        // output
+        // let html = parseVal([], api_full, schema);
+        // this.loadHtml('output', {}, html);
+
       })
     })
   }
@@ -335,6 +341,9 @@ export class App {
           //console.log('inp_pars', inp_pars)
           // console.log('loading input')
           this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
+          this.json.emit('[]');
+          this.rendered = this.json.map(x => JSON.parse(x)).map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
+          //ripple: .waves, sort: Rx map collection to _.sortByOrder(users, ['user'], ['asc']), arrow svg: http://iamisti.github.io/mdDataTable/ -> animated sort icon; rotating -> https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-style.css (transform: rotate)
         },
     });
     // init: $('.collapsible')['collapsible']()
