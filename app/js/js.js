@@ -183,4 +183,16 @@ let String_stripOuter = function() {
 }
 String.prototype.stripOuter = String_stripOuter;
 
-export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter };  //, Obs_do, Obs_then
+let prettyPrint = (str) => {
+  let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
+    ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
+    ((pVal) ? `<span class=${pVal[0] == '"' ? 'json-string' : 'json-value'}>${pVal}</span>` : '') + pEnd;
+  return JSON.stringify(JSON.parse(str), null, 3)
+  .replace(/&/g, '&amp;')
+  .replace(/\\"/g, '&quot;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg, replacer);
+}
+
+export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint };  //, Obs_do, Obs_then

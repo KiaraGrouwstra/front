@@ -1,7 +1,7 @@
 // /// <reference path="../typings/tsd.d.ts" />
 
 import 'reflect-metadata';
-import { Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit,
+import { Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
     DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy } from 'angular2/core';  //, Observable
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, FormBuilder, Control, Validators } from 'angular2/common';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
@@ -9,6 +9,8 @@ import { HTTP_BINDINGS, Http } from 'angular2/http'; //Http, Headers
 import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/fromArray';
+import 'rxjs/add/observable/from';
 //import 'rxjs/add/observable/interval';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
 // difference with this? https://github.com/ReactiveX/RxJS/tree/master/src/operator
@@ -17,17 +19,17 @@ global.Observable = Observable;
 import { MarkedPipe } from './pipes';
 import WS from './ws';
 let _ = require('lodash');
-import Dummy from './dummy';
+// import Dummy from './dummy';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
-import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter } from './js.js';
+import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter, prettyPrint } from './js.js';
 import { parseVal, method_form, get_submit } from './parser';
 let marked = require('marked');
 import { gen_comp, form_comp } from './dynamic_class';
 let Immutable = require('immutable');
 String.prototype.stripOuter = String_stripOuter;
-import { ColoredComp } from './colored';
+// import { ColoredComp } from './colored';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ColoredComp];  //, ROUTER_DIRECTIVES
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm];  //, ROUTER_DIRECTIVES //, ColoredComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
@@ -50,7 +52,8 @@ export class App {
   rows: any;
   cols: any;
   auths: {};
-  json: string;
+  json: Observable<string>;
+  colored: Observable<string>;
   auth: any;
   functions: any;
   inputs: any;
@@ -64,7 +67,11 @@ export class App {
     global.ws = this.ws;
     global.app = this;
     this.auths = {};
-    this.json = '{"test":"lol"}';
+    this.json = new EventEmitter();
+    setTimeout(() => 
+        this.json.emit('{"test":"lol"}')
+    , 1000)
+    this.colored = this.json.map(x => prettyPrint(x));
     global.Control = Control;
     //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
@@ -319,7 +326,8 @@ export class App {
           let { html: html, obj: params } = method_form(api, fn_path);
           // console.log('passing auth', this.auths[name]);
           let onSubmit = get_submit(api, fn_path, () => this.auths[name].token, x => {
-              this.json = x;
+              //this.json = x;
+              this.json.emit(x);
               this.refresh();
           });
           let inp_pars = { parent: this, onSubmit: onSubmit, params: params };

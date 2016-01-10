@@ -42,9 +42,8 @@
       .col.s12
         .card
           .card-content
-            pre#raw {{json}}
-            pre#colored
-              colored('[str]'='json')
+            pre#raw {{ json | async }}
+            pre#colored('innerHtml'=`{{ colored | async }}`)
 
 #output(#output)
 
