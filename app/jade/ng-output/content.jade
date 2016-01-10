@@ -1,6 +1,7 @@
 //- include ./swagger.jade
-- bool = { val: 'ws.connected', ok: 'connected', ng: 'connecting...' }
-include ./bool.jade
+#floating-buttons
+  - bool = { val: 'ws.connected', ok: 'connected', ng: 'connecting...' }
+  include ./bool.jade
 
 .row
   .col.s12
@@ -38,13 +39,12 @@ include ./bool.jade
           - each id in Object.keys(tabs)
             li.tab.col.s3
               a(href=`#${id}`)= tabs[id]
-      #raw.col.s12
+      .col.s12
         .card
           .card-content
-            pre {{json}}
-      #colored.col.s12
-        //- colored('json'='{{json}}')
-        //- colored('[json]'='json')
+            pre#raw {{json}}
+            pre#colored
+              colored('[str]'='json')
 
 #output(#output)
 

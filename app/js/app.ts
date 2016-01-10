@@ -22,20 +22,13 @@ import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } f
 import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter } from './js.js';
 import { parseVal, method_form, get_submit } from './parser';
 let marked = require('marked');
-import { ColoredComp } from './colored';
 import { gen_comp, form_comp } from './dynamic_class';
 let Immutable = require('immutable');
 String.prototype.stripOuter = String_stripOuter;
+import { ColoredComp } from './colored';
 
-let providers = [ColoredComp]; //, RouteParams
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm];  //, ROUTER_DIRECTIVES
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ColoredComp];  //, ROUTER_DIRECTIVES
 let pipes = [MarkedPipe];
-let STYLES = [
-  // require('materialize-css/dist/css/materialize.min.css'),
-  require('../vendor/css/materialize.min.css'),
-  require('../style.less'),
-  require('../vendor/css/icon.css'),
-];
 
 Promise.prototype.finally = Prom_finally;
 Promise.prototype.do = Prom_do;
@@ -43,13 +36,11 @@ Array.prototype.has = Array_has;
 
 @Component({
   selector: 'app',
-  providers: providers, // one instance per component
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
 })
 @View({
   template: require('../jade/ng-output/materialize.jade'),
-  styles: STYLES,
-  directives: directives,
+  directives: directives, // one instance per component
   pipes: pipes,
 })
 export class App {
@@ -174,11 +165,10 @@ export class App {
     comp['parameters'] = [ChangeDetectorRef, FormBuilder];
     comp['annotations'] = [new ComponentMetadata({
       selector: 'comp',  // no name clash?
-      providers: providers,
+      //providers: providers,
       directives: directives,
       pipes: pipes,
       template: template,
-      styles: STYLES,
     })];
     // console.log('cls', comp);
     return comp;
@@ -235,7 +225,7 @@ export class App {
               global.$('.collapsible#fn-list')['collapsible']();
               spawn_n(() => {
                 global.$('.tooltipped')['tooltip']({delay: 0});
-              }, 1);
+              }, 3);
             });
             // ^ why doesn't ngOnInit trigger in my generated class?
             //spawn_n(() => this.refresh(), 30);
@@ -333,8 +323,8 @@ export class App {
               this.refresh();
           });
           let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
-          console.log('input html', html)
-          console.log('inp_pars', inp_pars)
+          //console.log('input html', html)
+          //console.log('inp_pars', inp_pars)
           // console.log('loading input')
           this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
         },

@@ -1,3 +1,28 @@
+// Material icons
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(http://fonts.gstatic.com/s/materialicons/v10/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 // ng2 forms
 .ng-valid[required] {
   border-left: 5px solid #42A948; /* green */
@@ -6,23 +31,6 @@
   border-left: 5px solid #a94442; /* red */
 }
 
-//Materialize
-@font-face {
-    font-family: 'Roboto'; // -Bold, -Light, -Medium, -Regular, -Thin
-    src: url('materialize-css/dist/font/roboto/Roboto-Regular.woff2') format('woff2'),
-         url('materialize-css/dist/font/roboto/Roboto-Regular.woff') format('woff'),
-         url('materialize-css/dist/font/roboto/Roboto-Regular.ttf') format('truetype');
-}
-/*
-@font-face {
-    font-family: 'Material-Design-Icons';
-    src: url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.eot') format('embedded-opentype'),
-         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.woff2') format('woff2'),
-         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.woff') format('woff'),
-         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.ttf') format('truetype'),
-         url('materialize-css/dist/font/material-design-icons/Material-Design-Icons.svg') format('svg');
-}
-*/
 .icon-block {
   padding: 0 15px;
 }
@@ -97,4 +105,28 @@ pre {
 
 .bold {
   font-weight: bold;
+}
+
+// json colored
+
+.json-key {
+  color: brown;
+}
+.json-value {
+  color: navy;
+}
+.json-string {
+  color: olive;
+}
+
+// misc
+
+#floating-buttons {
+  position: fixed;
+  left: 0;
+}
+
+.material-tooltip p {
+  margin-before: 0.5 em;
+  margin-after: 0.5 em;
 }

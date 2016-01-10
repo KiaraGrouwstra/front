@@ -383,7 +383,7 @@ let param_field = (path, api_spec) => {
   // return the html along with its initial key/value pair for the model
   let val = (typeof def !== 'undefined') ? def : get_default(type)
   let ctrl = new Control(val, validator)
-  console.log('ctrl', ctrl);
+  //console.log('ctrl', ctrl);
   let obj = _.object([[key, { type: kind, val: ctrl }]]) // ctrl  //val
   return {html: field, obj: obj}
 }
@@ -401,9 +401,9 @@ let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
   let desc = marked(_.get(api_spec, _.dropRight(hops, 1).concat('description'), ''))
   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) })
   // console.log('html', html)
-  console.log('fields', fields)
+  //console.log('fields', fields)
   let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {}
-  console.log('obj', obj)
+  //console.log('obj', obj)
   return {html: html, obj: obj}
 }
 

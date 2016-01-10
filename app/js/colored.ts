@@ -1,21 +1,23 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, View, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from 'angular2/core';
 
 @Component({
   selector: 'colored',
-  template: '<pre><code id="coloredContainer">{{html}}</code></pre>',
-  styles: require('../vendor/css/colored.css'),
   //inputs: ['str'],
-  changeDetection: ChangeDetectionStrategy.OnPush,    //restrict to immutable inputs
+  //changeDetection: ChangeDetectionStrategy.OnPush,    //restrict to immutable inputs
 })
-export class ColoredComp implements OnInit {  //NgOnInit
+@View({
+  template: `<div [innerHtml]='html'></div>`,
+})
+export class ColoredComp implements OnInit {
   @Input() str: string;
-  //str: string;
   html: string;
 
+  constructor(cdr: ChangeDetectorRef) {
+    //window.setInterval(() => cdr.detectChanges(), 500);
+  }
+
   ngOnInit() {
-  //constructor() {
-    this.html = this.prettyPrint(JSON.parse(this.str));
-    //this.html = this.str.map(x => this.prettyPrint(JSON.parse(x)));
+    this.html = this.prettyPrint(JSON.parse(this.str));   //this.str.map(x => x)
   }
 
   replacer = (match, r = '', pKey, pVal, pEnd = '') => r +

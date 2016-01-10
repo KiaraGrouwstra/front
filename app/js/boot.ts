@@ -1,6 +1,5 @@
-// import 'reflect-metadata';
+require("./styles");
 import 'angular2/bundles/angular2-polyfills.js';
-
 import { App } from './app';
 import { bootstrap } from 'angular2/platform/browser';
 // <script src="node_modules/angular2/bundles/router.dev.js"></script>

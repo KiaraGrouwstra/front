@@ -30,8 +30,10 @@ module.exports = {
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },
 			// style!css!cssnext!autoprefixer! over raw! for non-ng2 inclusion
-			{ test: /\.less$/, loader: 'raw!less' },
-			{ test: /\.css$/, loader: 'raw' },
+			// { test: /\.less$/, loader: 'raw!less' },	//raw is for ng2 `styles: [require('./style.less')]`
+			// ^ ng2 sucks for css though -- `css` loader pre-resolves urls, `style` injects into DOM.
+			{ test: /\.less$/, loader: 'style!css!less' },
+			{ test: /\.css$/, loader: 'style!css' },
 			{ test: /\.(jpe?g|png)$/, loader: 'url?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
 			{ test: /\.(gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: 'file' }
 		]
