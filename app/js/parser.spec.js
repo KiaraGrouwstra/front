@@ -15,7 +15,7 @@ describe('parser', () => {
   it('method_form gets the form template for a given API function', () => {
     let { html: html, obj: obj } = method_form(api_spec, fn_path);
     expect(html).toEqual(jasmine.stringMatching(/<input/))
-    expect(obj.val._value).toEqual('')  //Control
+    expect(obj.uri_scheme.val._value).toEqual('https')  //Control
   })
 
   it('get_submit returns the form submit function for an API function', () => {

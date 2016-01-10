@@ -15,10 +15,10 @@ it('can make classes', () => {
 //})
 
 it('can make form components', () => {
-  let cls = form_comp({ a: 1, params: { b: new Control('default', Validators.required) } });
+  let cls = form_comp({ params: { b: { val: new Control('default', Validators.required) } } });
   let comp = new cls(ChangeDetectorRef, new FormBuilder);
   //console.log(comp.form);
-  expect(comp.form.controls.b._value).toEqual('default');
+  expect(comp.form.controls.b.value).toEqual('default');
 })
 
 })
