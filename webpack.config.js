@@ -24,7 +24,7 @@ module.exports = {
 		loaders: [
 			{ test: /\.coffee$/, loader: 'coffee' },
 			{ test: /\.ls$/, loader: 'livescript' },
-			{ test: /\.tsx?$/, loader: 'ts' },	//babel!
+			{ test: /\.tsx?$/, loader: 'babel?presets[]=es2015,presets[]=stage-0!ts' },	//babel?presets[]=es2015,presets[]=stage-0!   // uh typescript already seems to add ES6 functions + ES7 async/await.
 			{ test: /\.js$/, loader: 'babel?presets[]=es2015,presets[]=stage-0', include: [ path.resolve(__dirname, "app"), ] },  // , exclude: [ path.resolve(__dirname, "node_modules"), ]
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },

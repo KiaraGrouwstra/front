@@ -29,13 +29,13 @@
       
 //- #authed([hidden]="!auths['instagram']?.token")
 .row
-  #functions(#functions).col.s4
+  #functions(#functions).col.s3
   #input(#input).col.s6
-  #resp(#resp).col.s8
+  #resp(#resp).col.s9
     .row
       .col.s12
         ul.tabs
-          - tabs = { colored: 'Colored', raw: 'Raw', rendered: 'Rendered' }
+          - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
           //- , expandable: 'Expandable'
           - each id in Object.keys(tabs)
             li.tab.col.s3

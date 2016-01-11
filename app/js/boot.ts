@@ -1,4 +1,7 @@
 require("./styles");
+import "babel-core/register";
+import "babel-polyfill";
+
 import 'angular2/bundles/angular2-polyfills.js';
 import { App } from './app';
 import { bootstrap } from 'angular2/platform/browser';

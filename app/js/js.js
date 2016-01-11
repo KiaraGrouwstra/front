@@ -195,4 +195,11 @@ let prettyPrint = (str) => {
   .replace(/^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg, replacer);
 }
 
+// let lol = function*() {
+//   yield 1;
+// }
+// let bar = async function() {
+//     await Promise.resolve(1);
+// }
+
 export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint };  //, Obs_do, Obs_then
