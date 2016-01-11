@@ -183,11 +183,11 @@ let String_stripOuter = function() {
 }
 String.prototype.stripOuter = String_stripOuter;
 
-let prettyPrint = (str) => {
+let prettyPrint = (o) => {
   let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
     ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
     ((pVal) ? `<span class=${pVal[0] == '"' ? 'json-string' : 'json-value'}>${pVal}</span>` : '') + pEnd;
-  return JSON.stringify(JSON.parse(str), null, 3)
+  return JSON.stringify(o, null, 3)
   .replace(/&/g, '&amp;')
   .replace(/\\"/g, '&quot;')
   .replace(/</g, '&lt;')

@@ -375,7 +375,8 @@ let param_field = (path, api_spec) => {
 
   // get the html template for the given settings
   attrs.type = input_type(type)
-  let opts = { attrs: attrs, type: type, opts: enum_options, id: id, ctrl: model, label: label, validators: val_msgs }
+  let hidden = type == 'hidden';
+  let opts = { attrs: attrs, type: type, opts: enum_options, id: id, ctrl: model, label: label, validators: val_msgs, hidden: hidden }
   let template = Templates[get_template(opts)]
   // console.log('template', template)
   let field = template(opts)
@@ -395,7 +396,7 @@ let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
-  let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'string', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes})
+  let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes})
   let fields = [scheme].concat(_.get(api_spec, hops, []).map((v, idx) => param_field(path.concat(idx), v)))
   // console.log('fields', fields)
   let desc = marked(_.get(api_spec, _.dropRight(hops, 1).concat('description'), ''))

@@ -16,9 +16,7 @@
           '(click)'=`load_ui(api)`
         ) {{api}}
 
-//- #unauthed([hidden]="auths['instagram']?.token")
 .row
-  //- #auth(#auth)
   ul.collapsible#scope-list(data-collapsible='expandable')
     li
       .collapsible-header.bold(
@@ -27,7 +25,6 @@
       .collapsible-body
         #auth(#auth)
       
-//- #authed([hidden]="!auths['instagram']?.token")
 .row
   #functions(#functions).col.s3
   #input(#input).col.s6
@@ -36,14 +33,13 @@
       .col.s12
         ul.tabs
           - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
-          //- , expandable: 'Expandable'
           - each id in Object.keys(tabs)
             li.tab.col.s3
               a(href=`#${id}`)= tabs[id]
       .col.s12
         .card
           .card-content
-            pre#raw {{ json | async }}
+            pre#raw {{ raw | async }}
             pre#colored('innerHtml'='{{ colored | async }}')
             //- #expandable
             #rendered('innerHtml'='{{ rendered | async }}')

@@ -9,6 +9,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 
 let load_ui = async function(name) {
+    this.api = name;
     //pars.subscribe(_ => this.loadHtml('swagger', _, require('../jade/ng-output/swagger.jade')));
     //notify(pars, "pars");
     //this.loadHtml('swagger', pars, require('../jade/ng-output/swagger.jade'));
@@ -72,6 +73,7 @@ let load_auth_ui = function(name, scopes, oauth_info) {
     this.loading = true;
     popup(url, redirect_uri)
         .then((loc) => this.parent.handle_implicit(loc))
+        .then(() => $('#scope-list .collapsible-header').click())
         .finally(v => this.loading = false);
     };
     let auth_pars = {
@@ -131,8 +133,7 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
           let { html: html, obj: params } = method_form(api, fn_path);
           // console.log('passing auth', this.auths[name]);
           let onSubmit = get_submit(api, fn_path, () => this.auths[name].token, x => {
-              //this.json = x;
-              this.json.emit(x);
+              this.json.emit(JSON.parse(x));
               this.refresh();
           });
           let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
@@ -140,8 +141,8 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
           //console.log('inp_pars', inp_pars)
           // console.log('loading input')
           this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
-          this.json.emit('[]');
-          this.rendered = this.json.map(x => JSON.parse(x)).map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
+          this.json.emit([]);
+          this.rendered = this.json.map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
           //ripple: .waves, sort: Rx map collection to _.sortByOrder(users, ['user'], ['asc']), arrow svg: http://iamisti.github.io/mdDataTable/ -> animated sort icon; rotating -> https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-style.css (transform: rotate)
         },
     });

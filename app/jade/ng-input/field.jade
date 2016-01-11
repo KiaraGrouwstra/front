@@ -1,5 +1,7 @@
-//- {html, id, key, model, ctrl, label, validators: {k -> msg}}
-.input-field
+//- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
+.input-field(
+   '[hidden]'=hidden
+)
   != html
   //- data-error='wrong'
   //- data-success='right'

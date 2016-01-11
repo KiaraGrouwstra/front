@@ -61,7 +61,8 @@ export class App {
   rows: any;
   cols: any;
   auths: {};
-  json: EventEmitter<string>;
+  json: EventEmitter<any>;
+  raw: Observable<string>;
   colored: Observable<string>;
   rendered: Observable<string>;
   auth: any;
@@ -69,6 +70,7 @@ export class App {
   inputs: any;
   apis: Array<string>;
   oauth_misc: {};
+  api: string;
 
   constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
@@ -79,15 +81,21 @@ export class App {
     this.auths = {};
     this.json = new EventEmitter();
     setTimeout(() =>
-        this.json.emit('{"test":"lol"}')
+        this.json.emit({test: "lol"})
     , 1000)
+    this.raw = this.json.map((o) => JSON.stringify(o));
     this.colored = this.json.map(x => prettyPrint(x));
-    // this.json.subscribe((str) => new window.PrettyJSON.view.Node({el: $('#expandable'), data: JSON.parse(str) }).expandAll());
+    this.rendered = this.json.map(o => parseVal([], o, {}))
+    // this.json.subscribe((o) => new window.PrettyJSON.view.Node({el: $('#expandable'), data: o }).expandAll());
     global.Control = Control;
     //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
     this.apis = ['instagram', 'github'];
-    this.apis.forEach(name => getKV(name).then((v) => this.auths[name] = v));
+    this.api = this.apis[0];
+    this.apis.forEach(name => getKV(name).then((v) => {
+        this.auths[name] = v;
+        if(name == this.api) $('#scope-list .collapsible-header').click();
+    }));
 
     // https://github.com/simov/grant/blob/master/config/oauth.json
     this.oauth_misc = require('../vendor/oauth.json');
@@ -118,7 +126,7 @@ export class App {
 
     //spawn_n(() => this.refresh(), 30);
 
-    this.load_ui(this.apis[0]);
+    this.load_ui(this.api);
 
   }
 
