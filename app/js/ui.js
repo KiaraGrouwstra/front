@@ -1,6 +1,7 @@
 let _ = require('lodash');
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint } from './js';
-import { parseVal, method_form, get_submit } from './parser';
+import { parseVal } from './output';
+import { method_form } from './input';
 let marked = require('marked');
 import { gen_comp, form_comp } from './dynamic_class';
 import { Observable } from 'rxjs/Observable';
@@ -158,4 +159,39 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
     );
   }
 
-export { load_ui, load_auth_ui, load_fn_ui };
+  // return the form submit function for an API function
+  let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
+    // console.log('form values', JSON.stringify(this.form.value));
+    let base = `{uri_scheme}://${api_spec.host}${api_spec.basePath}`;  //${api_spec.schemes}
+    let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
+      let filtered = Object_filter(this.params, v => v.type == x);
+      return _.mapValues(filtered, 'val._value');   //val._value    //val
+    });
+    let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
+    //let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}`) +
+    //    (p_query.length ? '?' : '') + global.$.param(p_query)
+    let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}?`)
+        + global.$.param(Object.assign({ access_token: get_token() }, p_query));
+    // console.log(url, p_header);
+    // return this.parent.addUrl(url);
+
+    toast.info(`GET ${url}`);
+    this.parent.addUrl(url).subscribe(x => {
+      toast.success(`got ${url}`);
+      cb(x);
+    });
+
+    //case 'form':
+      // post payload (mutex with form)
+      // application/x-www-form-urlencoded: foo=1&bar=swagger
+      // multipart/form-data: `Content-Disposition: form-data; name="submit-name"`
+    //case 'body':
+      // post payload (mutex with form)
+      // handle by schema instead of type
+  };
+
+  // mime types: http://camendesign.com/code/uth4_mime-type/mime-types.php
+  // http headers: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpheaders.js
+  // http status codes: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpstatuscodes.js
+
+export { load_ui, load_auth_ui, load_fn_ui, get_submit };

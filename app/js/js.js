@@ -3,6 +3,7 @@ global.$ = global.jQuery = require("jquery");
 require("materialize-css/dist/js/materialize.min");
 // require('rxjs/Observable');
 import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/combineLatest';
 // let YAML = require('yamljs');
 
 let Array_last = function() {
@@ -195,11 +196,15 @@ let prettyPrint = (o) => {
   .replace(/^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg, replacer);
 }
 
-// let lol = function*() {
-//   yield 1;
-// }
-// let bar = async function() {
-//     await Promise.resolve(1);
-// }
+let getPaths = (path) => {
+  let k = path.last();
+  let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
+  // let model = path.join('.');
+  let elvis = path.join('?.');  //ng2 elvis operator to prevent crashing if some element is missing
+  let variable = id.replace(/-/g, '_')
+  return {k: k, id: id, model: elvis, variable: variable}
+}
 
-export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint };  //, Obs_do, Obs_then
+let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '')
+
+export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse };  //, Obs_do, Obs_then

@@ -1,0 +1,20 @@
+//- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+.card
+  .card-content
+    span.card-title(*ngIf='named') {{k}}
+    table.bordered.highlight(id=`{{id}}`)
+      thead
+        th(
+          *ngFor=`#col of cols`
+          id=`{{col.id}}`
+        ) {{col.k}}
+      tbody
+        tr(
+          *ngFor=`#r of rows`
+          id=`{{r.id}}`
+        )
+          td(
+            *ngFor=`#c of r.cells`
+            id=`{{c.id}}`
+            innerHtml=`{{c.val}}`
+          )

@@ -18,4 +18,7 @@ let loggers = (kw) => [
 
 let notify = (obs, kw) => obs.subscribe(...loggers(kw));
 
-export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify };
+// generalizes combineLatest from 2 Observables to an array of n: Obs_combineLatest([a, b, c]).map([a, b, c] => ...)
+let Obs_combineLatest = (arr) => arr.reduce((a, b) => a.combineLatest(b, (a2, b2) => a2.concat(b2)), new Observable.startWith([]))
+
+export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combineLatest };

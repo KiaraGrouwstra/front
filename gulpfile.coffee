@@ -94,11 +94,11 @@ gulp.task 'tdd', (done) ->
 
 # using `extends` needs file-system knowledge, so pre-render using `gulp-jade`... when I can load that ES6 from Gulp without errors.
 gulp.task 'render', ->
-  parser = require('./app/js/parser');
+  output = require('./app/js/output');
   json = fs.readFileSync('./app/swagger/instagram.json', 'utf8')
   insta = JSON.parse(json)
   fn = '/geographies/{geo-id}/media/recent'
-  {html: html, obj: params} = parser.method_form(insta, fn)
+  {html: html, obj: params} = output.method_form(insta, fn)
   console.log('html', html)
 
 # for production add uglify, google closure compiler...

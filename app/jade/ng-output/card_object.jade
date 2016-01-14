@@ -1,0 +1,13 @@
+//- {k, id, named, scal: html, obj: [html], arr: [html]}
+.card
+  .card-content(id=`{{id}}`)
+    span.card-title(*ngIf='named') {{k}}
+    div(innerHtml=`{{scal}}`)
+    div(
+      *ngFor=`#o of obj`
+      innerHtml=`{{o}}`
+    )
+    div(
+      *ngFor=`#r of arr`
+      innerHtml=`{{r}}`
+    )

@@ -1,0 +1,10 @@
+//- {k, id, named, rows: [{id, val}]}
+table.bordered.highlight(id=`{{id}}`)
+  thead(*ngIf='named')
+    th {{k}}
+  tbody
+    tr(*ngFor=`#r of rows`)
+      td(
+        id=`{{r.id}}`
+        innerHtml=`{{r.val}}`
+      )

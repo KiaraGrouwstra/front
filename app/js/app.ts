@@ -10,6 +10,7 @@ import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iter
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
@@ -20,15 +21,17 @@ let _ = require('lodash');
 // import Dummy from './dummy';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
 import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter, prettyPrint } from './js.js';
-import { parseVal, method_form, get_submit } from './parser';
+import { parseVal } from './output';
+import { method_form } from './input';
 let marked = require('marked');
 import { gen_comp, form_comp } from './dynamic_class';
 let Immutable = require('immutable');
 String.prototype.stripOuter = String_stripOuter;
 // import { ColoredComp } from './colored';
-import { load_ui, load_auth_ui, load_fn_ui } from './ui';
+import { ScalarComp } from './scalar';
+import { load_ui, load_auth_ui, load_fn_ui, get_submit } from './ui';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES];  //, ColoredComp
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ScalarComp];  //, ColoredComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
@@ -70,7 +73,17 @@ export class App {
   inputs: any;
   apis: Array<string>;
   oauth_misc: {};
-  api: string;
+  //api: string;
+  swagger: {};
+  api_spec: {};
+//   swagger: EventEmitter<{}>;
+//   api_spec: EventEmitter<{}>;
+  a: any;
+  b: any;
+  c: any;
+  //self: any; //AppComponent;
+  val_path: any;
+  schema_path: any;
 
   constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
@@ -91,11 +104,27 @@ export class App {
     //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
     this.apis = ['instagram', 'github'];
-    this.api = this.apis[0];
+    let api = this.apis[0];
     this.apis.forEach(name => getKV(name).then((v) => {
         this.auths[name] = v;
-        if(name == this.api) $('#scope-list .collapsible-header').click();
+        if(name == api) $('#scope-list .collapsible-header').click();
     }));
+    this.a = [];
+    this.b = 'foo';
+    this.c = {};
+    this.val_path = 'b';
+    this.schema_path = 'c';
+    //this.val_path = new EventEmitter().startWith('b');
+    //notify(this.val_path, 'val_path');
+    //this.schema_path = new EventEmitter().startWith('c');
+    //notify(this.schema_path, 'schema_path');
+    //this.a = JSON.stringify([]);
+    //this.b = JSON.stringify('foo');
+    //this.c = JSON.stringify({});
+    //this.self = this;
+    //this.self = JSON.stringify(this);
+    //console.log('this', this);
+    //console.log('self', this.self);
 
     // https://github.com/simov/grant/blob/master/config/oauth.json
     this.oauth_misc = require('../vendor/oauth.json');
@@ -126,7 +155,7 @@ export class App {
 
     //spawn_n(() => this.refresh(), 30);
 
-    this.load_ui(this.api);
+    this.load_ui(api);
 
   }
 
@@ -213,7 +242,7 @@ export class App {
     //localStorage.setItem(name, JSON.stringify(auth));
     setKV(name, auth);
   })
-  
+
   load_ui = load_ui
   load_auth_ui = load_auth_ui
   load_fn_ui = load_fn_ui

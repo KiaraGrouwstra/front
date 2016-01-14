@@ -1,4 +1,4 @@
-import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
+import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combineLatest } from './rx_helpers';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/scan';
@@ -79,6 +79,24 @@ describe('Rx Helpers', () => {
       .last()
       .map(s => Array.from(s)),
     (v) => expect(v).toEqual(keys)
+  ))
+
+  it('Obs_combineLatest combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
+    Obs_combineLatest([
+      Observable.create((o) => {
+        o.next('a');
+        o.complete();
+      }),
+      Observable.create((o) => {
+        o.next('b');
+        o.complete();
+      }),
+      Observable.create((o) => {
+        o.next('c');
+        o.complete();
+      }),
+    ]),
+    (v) => expect(v).toEqual(['a','b','c'])
   ))
 
   // CAN'T STRINGIFY SETS

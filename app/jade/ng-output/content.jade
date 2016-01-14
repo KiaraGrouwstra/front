@@ -44,6 +44,12 @@
             //- #expandable
             #rendered('innerHtml'='{{ rendered | async }}')
 
+//- scalar(path=`[]`, value=`"foo"`, schema=`{}`)
+//- scalar(path=`{{a}}`, value=`{{b}}`, schema=`{{c}}`)
+//- scalar(val_path=`'b'`, schema_path=`'c'`)
+//- scalar(val_path=`{{ val_path | async }}`, schema_path=`{{ schema_path | async }}`)
+scalar(val_path=`{{val_path}}`, schema_path=`{{schema_path}}`)
+
 #output(#output)
 
 //- include ./test.jade

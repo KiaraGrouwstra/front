@@ -1,4 +1,4 @@
-import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter } from './js';
+import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse } from './js';
 import {Observable} from 'rxjs/Observable';
 Promise.prototype.do = Prom_do;
 Promise.prototype.finally = Prom_finally;
@@ -24,6 +24,7 @@ describe('js', () => {
 
   it('Array.last gets the last item of an array', () => {
     expect(['a','b'].last()).toEqual('b')
+    // expect([].last()).toEqual(undefined)
   })
 
   it('Array.has checks for containment', () => {
@@ -120,6 +121,14 @@ describe('js', () => {
   it('String.stripOuter strips outer html tags from a string', () => {
     expect('foo'.stripOuter()).toEqual('foo');
     expect('<p>foo</p>'.stripOuter()).toEqual('foo');
+  })
+
+  it('getPaths returns some info based on a json path (as an id-cleansed string array)', () => {
+    expect(getPaths(['paths','/heroes/{id}/'].map(x => id_cleanse(x)))).toEqual({k: 'heroes-id', id: 'paths-heroes-id', model: 'paths?.heroes-id', variable: 'paths_heroes_id'});
+  })
+
+  it('id_cleanse strips strings to to make valid HTML element IDs (i.e. just alphanumeric characters and dashes)', () => {
+    expect(id_cleanse('/heroes/{id}/')).toEqual('heroes-id');
   })
 
   // it('', () => {

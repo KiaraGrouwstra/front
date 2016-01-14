@@ -1,0 +1,8 @@
+//- {rows: [{k, id, val}]}
+dl
+  div(*ngFor=`#r of rows`)
+    dt {{r.k}}
+    dd(
+      id=`{{r.id}}`
+      innerHtml=`{{r.val}}`
+    )

@@ -1,0 +1,9 @@
+//- {rows: [{k, id, val}]}
+table.bordered.highlight
+  tbody
+    tr(
+      *ngFor=`#r of rows`
+      id=`{{r.id}}`
+    )
+      th {{r.k}}
+      td(innerHtml=`{{r.val}}`)
