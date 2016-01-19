@@ -122,7 +122,7 @@ function parseObject(path, api_spec, swagger, named, template = Templates.card_o
     let tp = _.get(swag, ['type']) || infer_type(api_spec[k])
     if(SCALARS.has(tp)) tp = "scalar"
     return {pars: pars, type: tp}  //swag: swag, kind: kind,
-  }).clean())
+  }).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
 
   let [scalars, arrays, objects] = ['scalar','array','object'].map(x => Object_filter(coll, v => v.type == x))
   let scal = makeDL(path, api_spec, swagger, scalars)
@@ -180,7 +180,9 @@ function makeTable(path, api_spec, swagger, k, id, model, named, template = Temp
 
 // meant to use without makeTemplate
 function parseScalar(path, api_spec, swagger) {
+  console.log('parseScalar', path, api_spec, swagger);
   let val = `${api_spec}`
+  console.log('val', val);
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...
   if(last == "description") {
@@ -191,6 +193,7 @@ function parseScalar(path, api_spec, swagger) {
     case "email": val = `<a href="mailto:${val}">${val}</a>`; break;
     // default:
   }
+  // console.log('final val', val);
   return val;
 }
 

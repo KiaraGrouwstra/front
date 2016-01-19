@@ -1,9 +1,10 @@
 let _ = require('lodash');
 global.$ = global.jQuery = require("jquery");
 require("materialize-css/dist/js/materialize.min");
+// import { EventEmitter } from 'angular2/core';
 // require('rxjs/Observable');
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/combineLatest';
+// import {Observable} from 'rxjs/Observable';
+// import 'rxjs/add/operator/combineLatest';
 // let YAML = require('yamljs');
 
 let Array_last = function() {
@@ -16,6 +17,7 @@ let Array_has = function(k) {
 }
 Array.prototype.has = Array_has;
 
+// ditch for _.compact()?
 let Array_clean = function() {
   return this.filter((el, idx, arr) => el);
 }

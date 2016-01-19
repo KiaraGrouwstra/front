@@ -26,4 +26,5 @@ webpack --watch
 # cd dist
 # live-server --port=8090
 node server.js
+# node-ts server.ts
 # apache: https://gist.github.com/leocaseiro/4305e06948aa97e77c93

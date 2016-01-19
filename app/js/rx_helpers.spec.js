@@ -1,12 +1,16 @@
-import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combineLatest } from './rx_helpers';
+import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast } from './rx_helpers';  //, emitter
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/last';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/observable/from';
 // // let test = (obs, val, txt) => obs.subscribe(e => console.log(JSON.stringify(e) == JSON.stringify(val), txt, JSON.stringify(e)));
 // let rxit = require('jasmine-rx').rxit;
+let fail = (e) => alert(e);
 
 describe('Rx Helpers', () => {
 
@@ -18,13 +22,7 @@ describe('Rx Helpers', () => {
 
   beforeEach(() => {
     // obs = http.get(`api/people.json`).map(res => res.json())
-    obs = Observable.create((o) => {
-      // o.next(42);
-      // o.next(50);
-      // o.next(75);
-      o.next(people);
-      o.complete();
-    });
+    obs = Observable.from([people])
     flat = obs.mergeMap((x,i) => x);
   })
 
@@ -81,23 +79,15 @@ describe('Rx Helpers', () => {
     (v) => expect(v).toEqual(keys)
   ))
 
-  it('Obs_combineLatest combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
-    Obs_combineLatest([
-      Observable.create((o) => {
-        o.next('a');
-        o.complete();
-      }),
-      Observable.create((o) => {
-        o.next('b');
-        o.complete();
-      }),
-      Observable.create((o) => {
-        o.next('c');
-        o.complete();
-      }),
-    ]),
-    (v) => expect(v).toEqual(['a','b','c'])
+  it('Obs_combLast combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
+    Obs_combLast([1,2,3], k => new BehaviorSubject(k * 2)),
+    (v) => expect(v).toEqual({1: 2, 2: 4, 3: 6})
   ))
+
+  // it('emitter makes an ng2 EventEmitter (wrapped Rx Subject) with an initial value', (d) => do_obs(d,
+  //   emitter('foo'),
+  //   (v) => expect(v).toEqual('foo')
+  // ))
 
   // CAN'T STRINGIFY SETS
 

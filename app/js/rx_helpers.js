@@ -1,3 +1,9 @@
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/startWith';
+import { EventEmitter } from 'angular2/core';
+
 // append to array:
 let elemToArr = (arr, x) => { arr.push(x); return arr; };   // tested harmful, use `.toArray()` instead.
 let arrToArr = (a, b) => a.concat(b);
@@ -18,7 +24,28 @@ let loggers = (kw) => [
 
 let notify = (obs, kw) => obs.subscribe(...loggers(kw));
 
-// generalizes combineLatest from 2 Observables to an array of n: Obs_combineLatest([a, b, c]).map([a, b, c] => ...)
-let Obs_combineLatest = (arr) => arr.reduce((a, b) => a.combineLatest(b, (a2, b2) => a2.concat(b2)), new Observable.startWith([]))
+// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a, b, c]).map([a, b, c] => ...)
+// let Obs_combLast = (arr) => arr.reduce((a, b) => a.combineLatest(b,
+//   (r, v) => { r.push(v); return r; }), new BehaviorSubject([]))  //_.concat(r, v)
+// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast(arr, lambda).map({a: foo, b: bar} => ...)
+// let Obs_combLast = (arr, fn) => arr.reduce((a, b) => a.combineLatest(b, (obj, k) => Object.assign(obj, _.object([[[k, fn(k)]]])) ), new BehaviorSubject({}))
+// let Obs_combLast = (arr, fn) => arr.reduce((obj_obs, k) => obj_obs.combineLatest(fn(k),
+//     (obj, v) => Object.assign(obj, _.object([[k, v]])) ), new BehaviorSubject({}))
+let Obs_combLast = (arr, fn) => arr.reduce((obj_obs, k) => {
+	  let v = fn(k);
+	  let combiner = (obj, val) => Object.assign(obj, _.object([[k, val]]));
+    //console.log('has subscribe', _.has(v, 'subscribe'));
+    return v['subscribe'] ? //_.has(v, 'subscribe')
+      obj_obs.combineLatest(v, combiner) :
+      obj_obs.map(obs => combiner(obs, v));
+	},
+  new BehaviorSubject({})
+)
 
-export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combineLatest };
+// let emitter = (val) => {
+//   let e = new EventEmitter();
+//   e.emit(val);
+//   return e;
+// }
+
+export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast };  //, emitter

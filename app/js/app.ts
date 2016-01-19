@@ -8,6 +8,7 @@ import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams }
 import { HTTP_BINDINGS, Http } from 'angular2/http'; //Http, Headers
 import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/startWith';
@@ -15,6 +16,8 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
 global.Observable = Observable;
+global.Rx = require('rxjs');
+global.ng = require('angular2/core');
 import { MarkedPipe } from './pipes';
 import WS from './ws';
 let _ = require('lodash');
@@ -64,7 +67,7 @@ export class App {
   rows: any;
   cols: any;
   auths: {};
-  json: EventEmitter<any>;
+  json: BehaviorSubject<any>;
   raw: Observable<string>;
   colored: Observable<string>;
   rendered: Observable<string>;
@@ -76,14 +79,14 @@ export class App {
   //api: string;
   swagger: {};
   api_spec: {};
-//   swagger: EventEmitter<{}>;
-//   api_spec: EventEmitter<{}>;
+//   swagger: BehaviorSubject<{}>;
+//   api_spec: BehaviorSubject<{}>;
   a: any;
   b: any;
   c: any;
-  //self: any; //AppComponent;
   val_path: any;
   schema_path: any;
+  obs: Observable<any>;
 
   constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
@@ -92,10 +95,10 @@ export class App {
     global.ws = this.ws;
     global.app = this;
     this.auths = {};
-    this.json = new EventEmitter();
-    setTimeout(() =>
-        this.json.emit({test: "lol"})
-    , 1000)
+    this.json = new BehaviorSubject({test: "lol"});
+    //setTimeout(() =>
+    //    this.json.emit({test: "lol"})
+    //, 1000)
     this.raw = this.json.map((o) => JSON.stringify(o));
     this.colored = this.json.map(x => prettyPrint(x));
     this.rendered = this.json.map(o => parseVal([], o, {}))
@@ -109,22 +112,13 @@ export class App {
         this.auths[name] = v;
         if(name == api) $('#scope-list .collapsible-header').click();
     }));
-    this.a = [];
-    this.b = 'foo';
-    this.c = {};
-    this.val_path = 'b';
-    this.schema_path = 'c';
-    //this.val_path = new EventEmitter().startWith('b');
-    //notify(this.val_path, 'val_path');
-    //this.schema_path = new EventEmitter().startWith('c');
-    //notify(this.schema_path, 'schema_path');
-    //this.a = JSON.stringify([]);
-    //this.b = JSON.stringify('foo');
-    //this.c = JSON.stringify({});
-    //this.self = this;
-    //this.self = JSON.stringify(this);
-    //console.log('this', this);
-    //console.log('self', this.self);
+    this.a = new BehaviorSubject([]);
+    this.b = new BehaviorSubject('<em>foo</em>');
+    this.c = new BehaviorSubject({});
+    // this.val_path = new BehaviorSubject('b');
+    // this.schema_path = new BehaviorSubject('c');
+    // this.obs = Observable.from(["hello"]);
+    //this.obs = Observable.from([1, 2, 3]);
 
     // https://github.com/simov/grant/blob/master/config/oauth.json
     this.oauth_misc = require('../vendor/oauth.json');

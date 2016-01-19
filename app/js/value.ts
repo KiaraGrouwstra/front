@@ -1,24 +1,21 @@
-import { Component, View, OnInit, Input, Host, Inject, forwardRef } from 'angular2/core';
-import { App } from './app';
+import { Component, View, OnInit, Input } from 'angular2/core';
+import { Obs_combLast, notify } from './rx_helpers';
 import { parseValue } from './output';
 
-let inputs = ['path', 'value', 'schema'];
+let inputs = ['path$', 'val$', 'schema$'];
 
 @Component({
   selector: 'value',
   inputs: inputs,
 })
 @View({
-  template: `<div [innerHtml]='html'></div>`,
+  template: `<div innerHtml='{{html | async}}'></div>`,
 })
 export class ValueComp implements OnInit {
-  html: string;
-
-  constructor(@Host @Inject(forwardRef(() => App)) app: App) {
-  }
+  html: Observable<string>;
 
   ngOnInit() {
-    this.html = parseValue(...inputs.map(x => JSON.parse(this[x])));
+    this.html = Obs_combLast(inputs, k => this[k]).map(o => parseValue(...inputs.map(k => o[k])));
   }
 
 }
