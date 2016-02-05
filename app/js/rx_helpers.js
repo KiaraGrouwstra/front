@@ -1,3 +1,4 @@
+let _ = require('lodash');
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/combineLatest';
@@ -24,23 +25,19 @@ let loggers = (kw) => [
 
 let notify = (obs, kw) => obs.subscribe(...loggers(kw));
 
-// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a, b, c]).map([a, b, c] => ...)
-// let Obs_combLast = (arr) => arr.reduce((a, b) => a.combineLatest(b,
-//   (r, v) => { r.push(v); return r; }), new BehaviorSubject([]))  //_.concat(r, v)
-// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast(arr, lambda).map({a: foo, b: bar} => ...)
-// let Obs_combLast = (arr, fn) => arr.reduce((a, b) => a.combineLatest(b, (obj, k) => Object.assign(obj, _.object([[[k, fn(k)]]])) ), new BehaviorSubject({}))
-// let Obs_combLast = (arr, fn) => arr.reduce((obj_obs, k) => obj_obs.combineLatest(fn(k),
-//     (obj, v) => Object.assign(obj, _.object([[k, v]])) ), new BehaviorSubject({}))
-let Obs_combLast = (arr, fn) => arr.reduce((obj_obs, k) => {
-	  let v = fn(k);
-	  let combiner = (obj, val) => Object.assign(obj, _.object([[k, val]]));
-    //console.log('has subscribe', _.has(v, 'subscribe'));
-    return v['subscribe'] ? //_.has(v, 'subscribe')
+// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a$, b$]).map([a, b] => ...)
+let Obs_combLast = (arr) => arr.reduce((obj_obs, v, idx) => {
+	  let combiner = (obj, val) => Object.assign(obj, _.zipObject([idx], [val]));
+    return _.get(v, ['subscribe']) ? //v.subscribe
       obj_obs.combineLatest(v, combiner) :
       obj_obs.map(obs => combiner(obs, v));
 	},
   new BehaviorSubject({})
-)
+// ).map(r => Object.values(r))
+).map(r => Object.keys(r).map(k => r[k]))
+
+// maps the latest values of a set of Observables to a lambda
+let mapComb = (arr, fn) => Obs_combLast(arr).map(r => fn(...r))
 
 // let emitter = (val) => {
 //   let e = new EventEmitter();
@@ -48,4 +45,4 @@ let Obs_combLast = (arr, fn) => arr.reduce((obj_obs, k) => {
 //   return e;
 // }
 
-export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast };  //, emitter
+export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb };  //, emitter

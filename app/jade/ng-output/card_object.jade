@@ -1,13 +1,24 @@
-//- {k, id, named, scal: html, obj: [html], arr: [html]}
+//- {k, id, named, scal: v, obj: [v], arr: [v]}
 .card
-  .card-content(id=`{{id}}`)
-    span.card-title(*ngIf='named') {{k}}
-    div(innerHtml=`{{scal}}`)
-    div(
-      *ngFor=`#o of obj`
-      innerHtml=`{{o}}`
+  .card-content(id=`{{id | async}}`)
+    span.card-title(*ngIf='named') {{k | async}}
+    mydl(
+      '[path$]'=`path$`
+      '[val$]'=`val$`
+      '[schema$]'=`schema$`
+      '[scalar_coll$]'=`scalar`
     )
-    div(
-      *ngFor=`#r of arr`
-      innerHtml=`{{r}}`
+    object(
+      *ngFor=`#x of object`
+      '[path$]'=`x.path`
+      '[val$]'=`x.val`
+      '[schema$]'=`x.schema`
+      '[named]'=`true`
+    )
+    array(
+      *ngFor=`#x of array`
+      '[path$]'=`x.path`
+      '[val$]'=`x.val`
+      '[schema$]'=`x.schema`
+      '[named]'=`true`
     )

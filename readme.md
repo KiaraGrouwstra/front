@@ -8,10 +8,15 @@ tsd update
 // patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
 patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
+patch karma-jasmine: make lib/adapter.js using /src/ version wrapped in wrapper: https://github.com/karma-runner/karma-jasmine/blob/master/tasks/build.js
 
 # ./node_modules/karma/bin/karma start
 # npm install -g karma-cli
-karma start &
+webpack --entry karma-test-shim.js --output-filename foo.js --verbose
+node dist/foo.js
+karma start
+# karma start --help
+# karma start my.conf.js --log-level debug --single-run
 # karma run -- --grep=<pattern>
 # file:///C:/Users/T/Desktop/ng2/app/unit-tests.html
 # C:\Users\T\Desktop\ng2

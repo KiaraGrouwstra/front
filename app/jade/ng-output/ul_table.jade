@@ -1,10 +1,16 @@
 //- {k, id, named, rows: [{id, val}]}
-table.bordered.highlight(id=`{{id}}`)
-  thead(*ngIf='named')
-    th {{k}}
+table.bordered.highlight(id=`{{id | async}}`)
+  thead(*ngIf=`named`)
+    th {{k | async}}
   tbody
+    //-  | async
     tr(*ngFor=`#r of rows`)
       td(
         id=`{{r.id}}`
-        innerHtml=`{{r.val}}`
       )
+        //- scalar(
+        value(
+          '[path$]'=`r.path`
+          '[val$]'=`r.val`
+          '[schema$]'=`r.schema`
+        )

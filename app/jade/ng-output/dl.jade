@@ -4,5 +4,9 @@ dl
     dt {{r.k}}
     dd(
       id=`{{r.id}}`
-      innerHtml=`{{r.val}}`
     )
+      value(
+        '[path$]'=`r.path`
+        '[val$]'=`r.val`
+        '[schema$]'=`r.schema`
+      )

@@ -26,7 +26,18 @@ let _ = require('lodash');
 //   })
 // } else {  //browser (webpack)
   let wrap = (wrapper, block) => (opts) => Templates[wrapper](Object.assign(opts, {html: Templates[block](opts)}))
-  var Templates = _.mapValues({
+  var Templates = Object.assign({}, {
+    // ng-output
+    ng_card_object: require('../jade/ng-output/card_object.jade'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
+    ng_card_table: require('../jade/ng-output/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+      ng_ul_table: require('../jade/ng-output/ul_table.jade'), //- {k, id, rows: [{id, val}]}
+      ng_dl_table: require('../jade/ng-output/dl_table.jade'), //- {rows: [{k, id, val}]}
+      ng_dl      : require('../jade/ng-output/dl.jade'),       //- {rows: [{k, id, val}]}
+      array: require('../jade/ng-output/array.jade'),
+      // object: require('../jade/ng-output/object.jade'),
+      value: require('../jade/ng-output/value.jade'),
+  },
+  _.mapValues({
     // output
     card_object: require('!raw!../jade/output/card_object.jade'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
     card_table: require('!raw!../jade/output/card_table.jade'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
@@ -45,8 +56,8 @@ let _ = require('lodash');
     date: require('!raw!../jade/ng-input/date.jade'),
     field: require('!raw!../jade/ng-input/field.jade'), //- {html, k, label}
     form: require('!raw!../jade/ng-input/form.jade'), //- {fields: [html]}
-  }, t => jade.compile(t, {}))    //filename:
-  Object.assign(Templates, {
+  }, t => jade.compile(t, {})),    //filename:
+  {
     input: wrap('field', 'input_s'),
   })
   // ^ using extends would require me to load the Jade from a web directory... now I was preloading by webpack to prevent duplicate work. guess caching helps though?

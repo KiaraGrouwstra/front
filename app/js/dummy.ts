@@ -1,3 +1,4 @@
+/*
 import {Component, View, ChangeDetectorRef} from 'angular2/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/common';
 //import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
@@ -31,13 +32,11 @@ export default class Dummy {
     ///*
     //this.rows = Observable.create((o) => {
     //o.next({a: 1, b: 2});
-    /*
-    this.items = Observable.create((o) => {
-      o.next("a");
-      o.next("b");
-      o.complete();
-    });
-    */
+    //this.items = Observable.create((o) => {
+    //  o.next("a");
+    //  o.next("b");
+    //  o.complete();
+    //});
     //this.rows = [{a: 1, b: 2}];
     this.cols = ['a','b'];
     //this.items = ['a','b'];
@@ -47,3 +46,4 @@ export default class Dummy {
     setTimeout(() => { cdr.detectChanges(); }, 5000);
   }
 }
+*/

@@ -1,4 +1,4 @@
-// /// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/tsd.d.ts" />
 
 import 'reflect-metadata';
 import { Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
@@ -30,16 +30,18 @@ let marked = require('marked');
 import { gen_comp, form_comp } from './dynamic_class';
 let Immutable = require('immutable');
 String.prototype.stripOuter = String_stripOuter;
-// import { ColoredComp } from './colored';
-import { ScalarComp } from './scalar';
+import { ColoredComp } from './colored';
+//import { ScalarComp } from './scalar';
+//import { ULComp } from './ul';
+import { ValueComp } from './value';
 import { load_ui, load_auth_ui, load_fn_ui, get_submit } from './ui';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ScalarComp];  //, ColoredComp
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp];  //, ScalarComp, ULComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
 Promise.prototype.do = Prom_do;
-Array.prototype.has = Array_has;
+//Array.prototype.has = Array_has;
 
 // let backbone = require('backbone');
 //require('pretty-json/pretty-json-debug');   //import { PrettyJSON } from
@@ -52,13 +54,16 @@ Array.prototype.has = Array_has;
 })
 @View({
   template: require('../jade/ng-output/materialize.jade'),
-  directives: directives, // one instance per component
+  directives: directives, // one instance per component   //viewDirectives: private from ng-content
   pipes: pipes,
 })
 @RouteConfig([
 //   {path:'/test',          name: 'CrisisCenter', component: genClass({}, html) },
 //   {path:'/hero/:id',      name: 'HeroDetail',   component: HeroDetailComponent},
+//   {path: '/home', loader: () => Promise.resolve(MyLoadedCmp), name: 'MyLoadedCmp'}
+          //(name, path) => System.import(path).then(c => c[name])      //<- given systemjs; does that do http? what of http.get(url)? then how to load the code?
 ])
+//DynamicRouteConfigurator: http://blog.mgechev.com/2015/12/30/angular2-router-dynamic-route-config-definition-creation/
 // <router-outlet></router-outlet>
 export class App {
   deps: any;
@@ -70,7 +75,7 @@ export class App {
   json: BehaviorSubject<any>;
   raw: Observable<string>;
   colored: Observable<string>;
-  rendered: Observable<string>;
+  //rendered: Observable<string>;
   auth: any;
   functions: any;
   inputs: any;
@@ -84,6 +89,7 @@ export class App {
   a: any;
   b: any;
   c: any;
+  d: any;
   val_path: any;
   schema_path: any;
   obs: Observable<any>;
@@ -91,6 +97,8 @@ export class App {
   constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
         el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
     this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
+    //this.ws = new WS(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
+    //this.ws = new WS({ onOpen: () => toast.success('websocket connected!'), onClose: () => toast.warn('websocket disconnected!') });
     this.ws = new WS("ws://127.0.0.1:8080/socket", "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
     global.ws = this.ws;
     global.app = this;
@@ -101,7 +109,7 @@ export class App {
     //, 1000)
     this.raw = this.json.map((o) => JSON.stringify(o));
     this.colored = this.json.map(x => prettyPrint(x));
-    this.rendered = this.json.map(o => parseVal([], o, {}))
+    //this.rendered = this.json.map(o => parseVal([], o, {}))
     // this.json.subscribe((o) => new window.PrettyJSON.view.Node({el: $('#expandable'), data: o }).expandAll());
     global.Control = Control;
     //let pollTimer = window.setInterval(this.refresh, 500);
@@ -112,13 +120,19 @@ export class App {
         this.auths[name] = v;
         if(name == api) $('#scope-list .collapsible-header').click();
     }));
-    this.a = new BehaviorSubject([]);
+    this.a = new BehaviorSubject(['test']);
     this.b = new BehaviorSubject('<em>foo</em>');
     this.c = new BehaviorSubject({});
+    this.d = new BehaviorSubject(['foo', 'bar', 'baz', 1, 2, 3]);
     // this.val_path = new BehaviorSubject('b');
     // this.schema_path = new BehaviorSubject('c');
     // this.obs = Observable.from(["hello"]);
     //this.obs = Observable.from([1, 2, 3]);
+
+    //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/
+    //@ContentChildren, @ContentChild
+    //@ViewChildren, @ViewChild
+    //TemplateRef
 
     // https://github.com/simov/grant/blob/master/config/oauth.json
     this.oauth_misc = require('../vendor/oauth.json');
@@ -172,9 +186,9 @@ export class App {
   toCurl = (str: string) => {
     let found = str.match(/-H '([^']+)'/g);
     let url = /'[^']+(?=')/.exec(str)[0].substr(1);
-    let headers = _.object(found.map(x =>
+    let headers = _.zipObject(_.zip(...found.map(x =>
       /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
-    ));
+    )));
     let n = Object.keys(headers).length + 2;  // based on the current server implementation of 'try without each + all/none'
     return this.ws.ask_n(n, "/check", {urls: url, headers: headers}, "curl");
   }
@@ -214,7 +228,6 @@ export class App {
     comp['parameters'] = [ChangeDetectorRef, FormBuilder];
     comp['annotations'] = [new ComponentMetadata({
       selector: 'comp',  // no name clash?
-      //providers: providers,
       directives: directives,
       pipes: pipes,
       template: template,

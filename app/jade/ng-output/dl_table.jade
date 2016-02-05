@@ -1,4 +1,5 @@
 //- {rows: [{k, id, val}]}
+//- p {{ rows | json }}
 table.bordered.highlight
   tbody
     tr(
@@ -6,4 +7,9 @@ table.bordered.highlight
       id=`{{r.id}}`
     )
       th {{r.k}}
-      td(innerHtml=`{{r.val}}`)
+      td
+        value(
+          '[path$]'=`r.path`
+          '[val$]'=`r.val`
+          '[schema$]'=`r.schema`
+        )

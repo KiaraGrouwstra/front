@@ -1,12 +1,12 @@
 //- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
 .card
   .card-content
-    span.card-title(*ngIf='named') {{k}}
-    table.bordered.highlight(id=`{{id}}`)
+    span.card-title(*ngIf='named') {{k | async}}
+    table.bordered.highlight(id=`{{id | async}}`)
       thead
         th(
           *ngFor=`#col of cols`
-          id=`{{col.id}}`
+          id=`{{col.id | async}}`
         ) {{col.k}}
       tbody
         tr(
@@ -16,5 +16,9 @@
           td(
             *ngFor=`#c of r.cells`
             id=`{{c.id}}`
-            innerHtml=`{{c.val}}`
           )
+            value(
+              '[path$]'=`c.path`
+              '[val$]'=`c.val`
+              '[schema$]'=`c.schema`
+            )

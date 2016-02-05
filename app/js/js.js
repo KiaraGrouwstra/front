@@ -7,15 +7,16 @@ require("materialize-css/dist/js/materialize.min");
 // import 'rxjs/add/operator/combineLatest';
 // let YAML = require('yamljs');
 
-let Array_last = function() {
-  return this[this.length-1];
-}
-Array.prototype.last = Array_last;
+// let Array_last = function() {
+//   return this[this.length-1];
+// }
+// Array.prototype.last = Array_last;
 
-let Array_has = function(k) {
-  return this.indexOf(k) >= 0;
-}
-Array.prototype.has = Array_has;
+// deprecated: use ES7 Array.prototype.includes()
+// let Array_has = function(k) {
+//   return this.indexOf(k) >= 0;
+// }
+// Array.prototype.has = Array_has;
 
 // ditch for _.compact()?
 let Array_clean = function() {
@@ -54,7 +55,7 @@ Array.prototype.flatten = Array_flatten;
 //let cloneOf = o => JSON.parse(JSON.stringify(o));
 // http://codereview.stackexchange.com/questions/84951/invert-a-javascript-object-hash-whose-values-are-arrays-to-produce-a-new-objec
 // function arrayAwareInvert(o) {
-//   let merge = (res, vals, k) => _.merge(res, _.mapValues(_.object(vals), (v) => k))
+//   let merge = (res, vals, k) => _.merge(res, _.mapValues(_.zipObject(vals), (v) => k))
 //   return _.reduce(o, merge, {});
 // }
 // Object.filter
@@ -70,7 +71,7 @@ let Object_filter = (obj, pred) => arr2obj(Object.keys(obj).filter(k => pred(obj
 // }
 let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
-let arr2obj = (arr, fn) => _.object(arr, arr.map(fn));
+let arr2obj = (arr, fn) => _.zipObject(arr, arr.map(fn));
 
 let do_return = (fn) => (v) => {
   fn(v);
@@ -175,7 +176,10 @@ let range = (n) => Array(n).fill().map((x,i)=>i);
 let spawn_n = (fn, n = 5, interval = 1000) => range(n).forEach((x) => setTimeout(fn, x * interval));
 // let yaml2json = _.flow(YAML.parse, JSON.stringify);
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
-let mapBoth = (obj, fn) => _.object(Object.keys(obj).map(k => [k, fn(obj[k], k)]));
+let mapBoth = (obj, fn) => {
+  let keys = Object.keys(obj)
+  return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
+}
 
 let String_stripOuter = function() {
   return this.replace(/^\s*<\w+>(.*)<\/\w+>\s*$/, '$1');
@@ -199,7 +203,8 @@ let prettyPrint = (o) => {
 }
 
 let getPaths = (path) => {
-  let k = path.last();
+  // console.log('getPaths', path);
+  let k = path.slice(-1)[0]; //.last()
   let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
   // let model = path.join('.');
   let elvis = path.join('?.');  //ng2 elvis operator to prevent crashing if some element is missing
@@ -209,4 +214,4 @@ let getPaths = (path) => {
 
 let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '')
 
-export { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse };  //, Obs_do, Obs_then
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse };  //, Obs_do, Obs_then

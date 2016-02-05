@@ -72,7 +72,7 @@ let param_field = (path, api_spec) => {
       pattern: pattern,
       title: 'title test', //still used in native browser 'required' popup?
       'data-tooltip': desc,
-      autocomplete: AUTO_COMP.has(name) ? name : 'on', //off
+      autocomplete: AUTO_COMP.includes(name) ? name : 'on', //off
     },
     number: {
       max: max,
@@ -98,7 +98,7 @@ let param_field = (path, api_spec) => {
       let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
               'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week']
       if(format == 'date-time') format = 'datetime'
-      if(INPUT_TYPES.has(format)) type = format
+      if(INPUT_TYPES.includes(format)) type = format
       if(enum_options && !pattern) pattern = enum_options.map(s => RegExp_escape(s)).join('|')
       break;
     // case 'array':
@@ -106,7 +106,7 @@ let param_field = (path, api_spec) => {
     //   break;
   }
 
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.object([[k, true]]) : null);
+  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.zipObject([k], [true]) : null);
   Object.assign(Validators, val_fns);
   // 'schema', 'format', 'items', 'collectionFormat', 'type'
   let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf']
@@ -127,7 +127,7 @@ let param_field = (path, api_spec) => {
   let val = (typeof def !== 'undefined') ? def : get_default(type)
   let ctrl = new Control(val, validator)
   //console.log('ctrl', ctrl);
-  let obj = _.object([[key, { type: kind, val: ctrl }]]) // ctrl  //val
+  let obj = _.zipObject([key], [{ type: kind, val: ctrl }]) // ctrl  //val
   return {html: field, obj: obj}
 }
 
@@ -168,7 +168,7 @@ let val_conds = {
   maxItems: (v, par) => (v.length > par),
   minItems: (v, par) => (v.length < par),
   uniqueItems: (v, par) => (par ? _.uniq(v).length < v.length : false),
-  enum: (v, par) => (! par.has(v)),
+  enum: (v, par) => (! par.includes(v)),
   multipleOf: (v, par) => (v % par != 0),
 }
 

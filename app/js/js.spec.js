@@ -1,9 +1,9 @@
-import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse } from './js';
+import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse } from './js';
 import {Observable} from 'rxjs/Observable';
 Promise.prototype.do = Prom_do;
 Promise.prototype.finally = Prom_finally;
-Array.prototype.last = Array_last;
-Array.prototype.has = Array_has;
+// Array.prototype.last = Array_last;
+// Array.prototype.has = Array_has;
 Array.prototype.clean = Array_clean;
 Array.prototype.flatten = Array_flatten;
 String.prototype.stripOuter = String_stripOuter;
@@ -19,18 +19,18 @@ describe('js', () => {
 
   beforeEach(() => {
     prom = new Promise((res, rej) => res('prince'));
-    console.log('initialized promise', prom)
+    // console.log('initialized promise', prom)
   })
 
-  it('Array.last gets the last item of an array', () => {
-    expect(['a','b'].last()).toEqual('b')
-    // expect([].last()).toEqual(undefined)
-  })
+  // it('Array.last gets the last item of an array', () => {
+  //   expect(['a','b'].last()).toEqual('b')
+  //   // expect([].last()).toEqual(undefined)
+  // })
 
-  it('Array.has checks for containment', () => {
-    expect([1,2,3].has(2)).toEqual(true)
-    expect([1,2,3].has(4)).toEqual(false)
-  })
+  // it('Array.has checks for containment', () => {
+  //   expect([1,2,3].has(2)).toEqual(true)
+  //   expect([1,2,3].has(4)).toEqual(false)
+  // })
 
   it('Array.clean removes any null values from an array', () => {
     expect([1,null,2].clean()).toEqual([1,2])

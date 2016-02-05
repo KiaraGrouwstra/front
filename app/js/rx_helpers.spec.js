@@ -1,4 +1,4 @@
-import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast } from './rx_helpers';  //, emitter
+import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb } from './rx_helpers';  //, emitter
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/map';
@@ -8,14 +8,15 @@ import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/from';
+let _ = require('lodash');
 // // let test = (obs, val, txt) => obs.subscribe(e => console.log(JSON.stringify(e) == JSON.stringify(val), txt, JSON.stringify(e)));
 // let rxit = require('jasmine-rx').rxit;
 let fail = (e) => alert(e);
 
 describe('Rx Helpers', () => {
 
-  let do_obs = (done, obs, test) => obs.subscribe(test, fail, done);
-  // let obs_it = (desc, obs, test) => it(desc, (done) => obs.subscribe(test, fail, done));
+  let do_obs = (done, obs, test, not_done = false) => obs.subscribe(not_done ? _.flow(test, done) : test, _.flow(fail, done), done);
+  // let obs_it = (desc, obs, test) => it(desc, (done) => obs.subscribe(test, fail(done), done));
   var people = [{"id":1,"name":"Brad"},{"id":2,"name":"Jules"},{"id":3,"name":"Jeff"}];
   let keys = ["id","name"]; //Object.keys(people);
   var obs, flat;
@@ -80,8 +81,18 @@ describe('Rx Helpers', () => {
   ))
 
   it('Obs_combLast combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
-    Obs_combLast([1,2,3], k => new BehaviorSubject(k * 2)),
-    (v) => expect(v).toEqual({1: 2, 2: 4, 3: 6})
+    Obs_combLast([1,2,3].map(v => new BehaviorSubject(v))),
+    (r) => expect(r).toEqual([1,2,3])
+    , true
+  ))
+
+  it('mapComb maps the latest values of a set of Observables to a lambda', (d) => do_obs(d,
+    mapComb(
+      ['foo','bar'].map(v => new BehaviorSubject(v)),
+      (foo, bar) => foo + bar
+    ),
+    (r) => expect(r).toEqual('foobar')
+    , true
   ))
 
   // it('emitter makes an ng2 EventEmitter (wrapped Rx Subject) with an initial value', (d) => do_obs(d,

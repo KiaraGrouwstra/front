@@ -12,6 +12,7 @@ export class WS {
 //   connected: boolean;
 
   constructor(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", onOpen = () => {}, onClose = () => {}) {
+  //constructor({ url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", onOpen = () => {}, onClose = () => {} }) {
     this.requests = {};
     this.id = 0;
     let logger = ((kind, msg, data) => {}); // console.log(`${kind}: ${msg}`, data)

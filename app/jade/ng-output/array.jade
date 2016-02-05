@@ -1,0 +1,5 @@
+div([ngSwitch]='type')
+  template([ngSwitchWhen]=`'object'`)
+    mytable('[path$]'=`path$`, '[val$]'=`val$`, '[schema$]'=`new_spec$`, '[named]'=`named`)
+  template(ngSwitchDefault)
+    myul('[path$]'=`path$`, '[val$]'=`val$`, '[schema$]'=`new_spec$`, '[named]'=`named`)

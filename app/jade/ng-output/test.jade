@@ -1,6 +1,10 @@
 #list(#list)
 include ./table.jade
 include ./ul.jade
+
+scalar('[path$]'=`a`, '[val$]'=`b`, '[schema$]'=`c`)
+myul('[path$]'=`a`, '[val$]'=`d`, '[schema$]'=`c`, '[named]'=`false`)
+
 #table(#table)
 #foo
   .row

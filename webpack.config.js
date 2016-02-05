@@ -19,14 +19,14 @@ module.exports = {
 		// chunkFilename: '[name].[id].js',
 		filename: '[name].js'
 	},
-  //devtool: 'source-map',
+  devtool: 'eval', //'source-map',
 	module: {
 		loaders: [
 			{ test: /\.coffee$/, loader: 'coffee' },
 			{ test: /\.ls$/, loader: 'livescript' },
 			{ test: /\.tsx?$/, loader: 'babel?presets[]=es2015,presets[]=stage-0!ts' },	//babel?presets[]=es2015,presets[]=stage-0!   // uh typescript already seems to add ES6 functions + ES7 async/await.
 			{ test: /\.js$/, loader: 'babel?presets[]=es2015,presets[]=stage-0', include: [ path.resolve(__dirname, "app"), ] },  // , exclude: [ path.resolve(__dirname, "node_modules"), ]
-			{ test: /\.json$/, loader: 'json' },
+			{ test: /\.json$/, loader: 'json' },	//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },
 			// style!css!cssnext!autoprefixer! over raw! for non-ng2 inclusion

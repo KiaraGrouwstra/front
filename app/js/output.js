@@ -12,8 +12,8 @@ import {Observable} from 'rxjs/Observable';
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, arr2obj, toast, mapBoth, String_stripOuter, getPaths, id_cleanse } from './js.js'; //, Obs_do, Obs_then
 // Observable.prototype.do = Obs_do;
 // Observable.prototype.then = Obs_then;
-Array.prototype.last = Array_last;
-Array.prototype.has = Array_has;
+// Array.prototype.last = Array_last;
+// Array.prototype.has = Array_has;
 Array.prototype.clean = Array_clean;
 Array.prototype.flatten = Array_flatten;
 String.prototype.stripOuter = String_stripOuter;
@@ -36,12 +36,12 @@ let try_schema = (val, swag) => {
   let options = _.get(swag, ['oneOf']) || _.get(swag, ['anyOf']) || _.get(swag, ['allOf']) || []
   let tp = _.find(options, (schema, idx, arr) => tv4.validate(val, schema, false, false, false))
   return _.get(tp,['type']) ? tp :
-    _.any(['oneOf','anyOf','allOf'], x => _.get(tp,[x])) ?
+    _.some(['oneOf','anyOf','allOf'], x => _.get(tp,[x])) ?
     try_schema(val, tp) : null //infer_type(val)
 }
 
 function getHandler(type, map) {
-  let key = (SCALARS.has(type)) ? "scalar" : type;
+  let key = (SCALARS.includes(type)) ? "scalar" : type;
   return map[key] || nuller;  // not actually nothing! just means I don't have sufficient info to infer the type...
 }
 
@@ -83,7 +83,7 @@ let key_spec = (
 ) => {
   // let kind = Kinds.ADDITIONAL
   let swag = _.get(swagger, ['additionalProperties'])
-  if(fixed.has(k)) {
+  if(fixed.includes(k)) {
     // kind = Kinds.FIXED
     swag = swagger.properties[k]
   } else {
@@ -101,7 +101,7 @@ let key_spec = (
 
 let get_fixed = (swag, api) => {
   let keys = Object.keys(api);
-  return Object.keys(_.get(swag, ['properties']) || {}).filter(k => keys.has(k));
+  return Object.keys(_.get(swag, ['properties']) || {}).filter(k => keys.includes(k));
 }
 
 let get_patts = (swag) => Object.keys(_.get(swag, ['patternProperties']) || {})
@@ -113,20 +113,21 @@ function parseObject(path, api_spec, swagger, named, template = Templates.card_o
   let keys = Object.keys(api_spec);
   let fixed = get_fixed(swagger, api_spec)
   let patts = get_patts(swagger)
-  let coll = _.object(keys, keys.map(k => {
+  let coll = _.zipObject(keys, keys.map(k => {
     // let v = {swag: swagger.additionalProperties, pars: null} //Types.ANY, type: "any", kind: Kinds.ADDITIONAL, patt: null
     let swag = key_spec(k, swagger, fixed, patts)
     // let {kind: kind, swag: swag} = key_spec(k, swagger, fixed, patts)
     let path_k = path.concat(id_cleanse(k));
     let pars = [path_k, api_spec[k], swag] //v.
     let tp = _.get(swag, ['type']) || infer_type(api_spec[k])
-    if(SCALARS.has(tp)) tp = "scalar"
+    if(SCALARS.includes(tp)) tp = 'scalar'
     return {pars: pars, type: tp}  //swag: swag, kind: kind,
   }).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
 
   let [scalars, arrays, objects] = ['scalar','array','object'].map(x => Object_filter(coll, v => v.type == x))
   let scal = makeDL(path, api_spec, swagger, scalars)
-  // ES7 Object.values...
+  // let obj = Object.values(objects).map(v => parseObject(...v.pars, true))
+  // let arr = Object.values(arrays).map(v => parseArray(...v.pars, true))
   let obj = Object.keys(objects).map(k => parseObject(...objects[k].pars, true))
   let arr = Object.keys(arrays).map(k => parseArray(...arrays[k].pars, true))
   return template({k: k, id: id, scal: scal, obj: obj, arr: arr, named: named })
@@ -180,9 +181,7 @@ function makeTable(path, api_spec, swagger, k, id, model, named, template = Temp
 
 // meant to use without makeTemplate
 function parseScalar(path, api_spec, swagger) {
-  console.log('parseScalar', path, api_spec, swagger);
   let val = `${api_spec}`
-  console.log('val', val);
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...
   if(last == "description") {
@@ -193,7 +192,6 @@ function parseScalar(path, api_spec, swagger) {
     case "email": val = `<a href="mailto:${val}">${val}</a>`; break;
     // default:
   }
-  // console.log('final val', val);
   return val;
 }
 
@@ -202,4 +200,4 @@ function parseScalar(path, api_spec, swagger) {
 // swagger editor ng1 html: https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html
 // json editor: functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js), [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
 
-export { parseVal, parseScalar, parseArray, parseObject, makeUL, makeDL, makeTable };
+export { parseVal, parseScalar, parseArray, parseObject, makeUL, makeDL, makeTable, key_spec, get_fixed, get_patts, try_schema, infer_type };

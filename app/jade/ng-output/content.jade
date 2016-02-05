@@ -3,8 +3,6 @@
   - bool = { val: 'ws.connected', ok: 'connected', ng: 'connecting...' }
   include ./bool.jade
 
-scalar([path$]=`a`, [val$]=`b`, [schema$]=`c`)
-
 .row
   .col.s12
     ul.tabs
@@ -42,9 +40,12 @@ scalar([path$]=`a`, [val$]=`b`, [schema$]=`c`)
         .card
           .card-content
             pre#raw {{ raw | async }}
+            //- colored#colored('[str]'='{{ json | async }}')
             pre#colored('innerHtml'='{{ colored | async }}')
             //- #expandable
-            #rendered('innerHtml'='{{ rendered | async }}')
+            //- #rendered('innerHtml'='{{ rendered | async }}')
+            //- value#rendered('[path$]'=`[]`, '[val$]'=`json`, '[schema$]'=`{}`)
+            value#rendered('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
 
 #output(#output)
 
