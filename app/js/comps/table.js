@@ -1,29 +1,28 @@
 let _ = require('lodash');
 import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
-import { mapComb, arrToSet } from './rx_helpers';
-import { getPaths } from './js';
-import { Templates } from './jade';
+import { mapComb, arrToSet } from '../rx_helpers';
+import { getPaths } from '../js';
+import { Templates } from '../jade';
 import { ValueComp } from './value';
-import { key_spec, get_fixed, get_patts } from './output';
+import { key_spec, get_fixed, get_patts } from '../output';
 
 let inputs = ['path$', 'val$', 'schema$', 'named'];
 
 @Component({
   selector: 'mytable',
   inputs: inputs,
-})
-@View({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_card_table,
   directives: [
     forwardRef(() => ValueComp),
   ]
 })
 export class TableComp implements OnInit {
-  @Input() named: boolean;
-  k: Observable<string>;
-  id: Observable<string>;
-  cols: Array<any>;
-  rows: Array<any>;
+  // @Input() named: boolean;
+  // k: Observable<string>;
+  // id: Observable<string>;
+  // cols: Array<any>;
+  // rows: Array<any>;
 
   ngOnInit() {
     let props = this.path$.map(p => getPaths(p));
@@ -39,7 +38,7 @@ export class TableComp implements OnInit {
     //inputs.slice(0,3).map(k => this[k])
     mapComb([this.path$, this.val$, this.schema$, fixed$, patts$], rowPars)
     .subscribe(x => this.rows = x)
-  }
+  };
 
 }
 

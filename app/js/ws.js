@@ -2,8 +2,9 @@ var Phoenix = require('phoenix-js-derp');
 import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 import { notify } from './rx_helpers';
 import { toast } from './js.js';
+import { autobind } from 'core-decorators';
 
-export class WS {
+@autobind export class WS {
 //   requests: {};
 //   id: number;
 //   ws: any;  //Phoenix.Socket
@@ -54,7 +55,7 @@ export class WS {
     this.chan.push(url, {body: pars, id: id});
     return this.out
       .filter(_ => _.id == id)
-      .map(e => e['body']);
+      .map(e => e.body);
   }
   // ^ the server doesn't currently send complete events. Rx operators definitely affected by this:
   // Last, SkipLast, TakeLast, To(Array/Map/Set), Sum, Reduce, Min, Max, Count, Concat, IgnoreElements
@@ -64,17 +65,18 @@ export class WS {
 
   // request that completes after one response
   //url: string, pars: {}, name = "dummy"
-  ask (url, pars, name = "dummy") {
+  ask(url, pars, name = "dummy") {
     return this.ask_n(1, url, pars, name);
   }
   // _.curry(ask_n, 1)?
 
   // request that completes after n responses
   //n, url: string, pars: {}, name = "dummy"
-  ask_n (n, url, pars, name = "dummy") {
-    let obs = this.ask_many(url, pars).take(n);
-    notify(obs, name);
-    return obs;
+  ask_n(n, url, pars, name = "dummy") {
+    return this.ask_many(url, pars).take(n);
+    // let obs = this.ask_many(url, pars).take(n);
+    // notify(obs, name);
+    // return obs;
   }
 
   // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security`?

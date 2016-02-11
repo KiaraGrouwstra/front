@@ -2,8 +2,8 @@ var express = require('express');
 // import * as express from 'express';
 var app = express();
 
-// import {ng2engine} from 'angular2-universal-preview';
-// import {App} from './app/js/app.ts';
+// import { ng2engine } from 'angular2-universal-preview';
+// import { App } from './app/js/app.js';
 // app.engine('.ng2.html', ng2engine);
 // app.set('views', __dirname);
 // app.set('view engine', 'ng2.html');

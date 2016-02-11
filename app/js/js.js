@@ -121,12 +121,12 @@ let handle_auth = (url, fn) => {
   let [get, hash] = url_get_hash(url)
   // console.log('get', get)
   // console.log('hash', hash)
-  if(get['callback']) {
+  if(get.callback) {
     // this.routeParams.get(foo): only available in router-instantiated components.
     fn(get, hash)
   } else {
     // ?: error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
-    if(get['error']) console.log(get)
+    if(get.error) console.log(get)
   }
 }
 
@@ -190,6 +190,7 @@ let String_stripOuter = function() {
 }
 String.prototype.stripOuter = String_stripOuter;
 
+// pretty print a json object
 let prettyPrint = (o) => {
   let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
     ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
@@ -202,8 +203,8 @@ let prettyPrint = (o) => {
   .replace(/^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg, replacer);
 }
 
+// return different path properties
 let getPaths = (path) => {
-  // console.log('getPaths', path);
   let k = path.slice(-1)[0]; //.last()
   let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
   // let model = path.join('.');
@@ -212,6 +213,45 @@ let getPaths = (path) => {
   return {k: k, id: id, model: elvis, variable: variable}
 }
 
-let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '')
+// cleanse a string to use as an ID
+let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse };  //, Obs_do, Obs_then
+// asynchronously create and test a component
+let comp_test = (test_class, actions, test_fn) => {
+  return (tcb) => new Promise((pass, fail) => {
+    // let tc = await tcb.createAsync(test_class);
+    return tcb.createAsync(test_class)
+    .then((tc) => {
+      try {
+        tc.detectChanges();
+        let test_comp = tc.componentInstance;
+        let target_comp = test_comp.comp;
+        actions(test_comp); //target_comp?
+        //test_comp.items.push(3);
+        // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
+        // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
+        tc.detectChanges();
+        test_fn(target_comp, pass);
+      }
+      catch(e) {
+        fail(e);
+      }
+    })
+  })
+}
+
+// test_fn for comp_test to check a property value
+let assert = (assertion) => (comp, pass) => {
+  assertion(comp);
+  pass();
+}
+
+// test_fn for comp_test to check an Observable property's first value
+let assert$ = (selector, matcher) => (comp, pass) => {
+  selector(comp).subscribe(prop => {
+    matcher(expect(prop));
+    pass();
+  })
+}
+
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$ };  //, Obs_do, Obs_then

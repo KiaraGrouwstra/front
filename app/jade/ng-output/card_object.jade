@@ -2,11 +2,12 @@
 .card
   .card-content(id=`{{id | async}}`)
     span.card-title(*ngIf='named') {{k | async}}
+    //- '[val$]'=`val$`
+    //- '[schema$]'=`schema$`
+    //- '[scalar_coll$]'=`scalar`
     mydl(
       '[path$]'=`path$`
-      '[val$]'=`val$`
-      '[schema$]'=`schema$`
-      '[scalar_coll$]'=`scalar`
+      '[val$]'=`scalar`
     )
     object(
       *ngFor=`#x of object`

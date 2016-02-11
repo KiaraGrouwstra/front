@@ -2,15 +2,13 @@ import { Component, View, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrat
 
 @Component({
   selector: 'colored',
-  //inputs: ['str'],
+  inputs: ['str'],
   //changeDetection: ChangeDetectionStrategy.OnPush,    //restrict to immutable inputs
-})
-@View({
   template: `<div [innerHtml]='html'></div>`,
 })
 export class ColoredComp implements OnInit {
-  @Input() str: string;
-  html: string;
+  // @Input() str: string;
+  // html: string;
 
   constructor(cdr: ChangeDetectorRef) {
     //window.setInterval(() => cdr.detectChanges(), 500);
@@ -20,7 +18,7 @@ export class ColoredComp implements OnInit {
     this.html = this.prettyPrint(this.str);   //this.str.map(x => x)
   }
 
-  prettyPrint = (str) => {
+  prettyPrint(str) {
     let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
       ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
       ((pVal) ? `<span class=${pVal[0] == '"' ? 'json-string' : 'json-value'}>${pVal}</span>` : '') + pEnd;

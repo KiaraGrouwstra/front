@@ -79,7 +79,7 @@ describe('js', () => {
 
   it('handle_auth extracts get/hash params and triggers a callback for ?callback=<name> urls', () => {
     let loc = { search: '?callback=test', hash: '#access_token=foo' }
-    handle_auth(loc, (get, hash) => expect(hash['access_token']).toEqual('foo'))
+    handle_auth(loc, (get, hash) => expect(hash.access_token).toEqual('foo'))
     handle_auth({ search: '', hash: '' }, () => {})
     handle_auth({ search: '?error=foo', hash: '' }, () => {})
   })

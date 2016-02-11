@@ -13,7 +13,11 @@ module.exports = function(config) {
     ],
     // preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      '../karma-test-shim.js': ['coverage', 'webpack', 'sourcemap'],
+      '../karma-test-shim.js': [
+        // 'coverage',
+        'webpack',
+        'sourcemap',
+      ],
     },
 
     coverageReporter: {
@@ -30,7 +34,7 @@ module.exports = function(config) {
       noInfo: true
     },
     // reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress', 'coverage' ],  //'dots',
+    reporters: [ 'progress' ],  //'coverage', 'dots',
     // proxied base paths: required for component assests fetched by Angular's compiler
     proxies: {
       '/app/': '/base/app/'
@@ -40,7 +44,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,    // LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
     autoWatch: true,
     // browsers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeCanary'], //, 'Chrome', 'ChromeCanary', 'PhantomJS', 'PhantomJS_custom'
+    browsers: ['Chrome'], //, 'Chrome', 'ChromeCanary', 'PhantomJS', 'PhantomJS_custom'
 
     // customLaunchers: {
     //   'PhantomJS_custom': {

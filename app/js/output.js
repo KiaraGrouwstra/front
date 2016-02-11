@@ -108,34 +108,34 @@ let get_patts = (swag) => Object.keys(_.get(swag, ['patternProperties']) || {})
 
 function parseObject(path, api_spec, swagger, named, template = Templates.card_object) {
   //not
-  let {id: id, k: k} = getPaths(path)
+  let {id: id, k: k} = getPaths(path);
   // let Types = { ANY: 0, SCALAR: 1, ARRAY: 2, OBJECT: 3 }
   let keys = Object.keys(api_spec);
-  let fixed = get_fixed(swagger, api_spec)
-  let patts = get_patts(swagger)
+  let fixed = get_fixed(swagger, api_spec);
+  let patts = get_patts(swagger);
   let coll = _.zipObject(keys, keys.map(k => {
     // let v = {swag: swagger.additionalProperties, pars: null} //Types.ANY, type: "any", kind: Kinds.ADDITIONAL, patt: null
-    let swag = key_spec(k, swagger, fixed, patts)
+    let swag = key_spec(k, swagger, fixed, patts);
     // let {kind: kind, swag: swag} = key_spec(k, swagger, fixed, patts)
     let path_k = path.concat(id_cleanse(k));
-    let pars = [path_k, api_spec[k], swag] //v.
-    let tp = _.get(swag, ['type']) || infer_type(api_spec[k])
-    if(SCALARS.includes(tp)) tp = 'scalar'
-    return {pars: pars, type: tp}  //swag: swag, kind: kind,
+    let pars = [path_k, api_spec[k], swag]; //v.
+    let tp = _.get(swag, ['type']) || infer_type(api_spec[k]);
+    if(SCALARS.includes(tp)) tp = 'scalar';
+    return {pars: pars, type: tp};  //swag: swag, kind: kind,
   }).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
 
-  let [scalars, arrays, objects] = ['scalar','array','object'].map(x => Object_filter(coll, v => v.type == x))
-  let scal = makeDL(path, api_spec, swagger, scalars)
-  // let obj = Object.values(objects).map(v => parseObject(...v.pars, true))
-  // let arr = Object.values(arrays).map(v => parseArray(...v.pars, true))
-  let obj = Object.keys(objects).map(k => parseObject(...objects[k].pars, true))
-  let arr = Object.keys(arrays).map(k => parseArray(...arrays[k].pars, true))
-  return template({k: k, id: id, scal: scal, obj: obj, arr: arr, named: named })
+  let [scalars, arrays, objects] = ['scalar','array','object'].map(x => Object_filter(coll, v => v.type == x));
+  let scal = makeDL(path, scalars);  //, api_spec, swagger
+  // let obj = Object.values(objects).map(v => parseObject(...v.pars, true));
+  // let arr = Object.values(arrays).map(v => parseArray(...v.pars, true));
+  let obj = Object.keys(objects).map(k => parseObject(...objects[k].pars, true));
+  let arr = Object.keys(arrays).map(k => parseArray(...arrays[k].pars, true));
+  return template({k: k, id: id, scal: scal, obj: obj, arr: arr, named: named });
 }
 
 
 function makeTemplate(fn, path, api_spec, swagger, named) {
-  let {k: k, id: id, model: model} = getPaths(path)
+  let {k: k, id: id, model: model} = getPaths(path);
   return fn(path, api_spec, swagger, k, id, model, named);
 }
 
@@ -150,7 +150,7 @@ function makeUL(path, api_spec, swagger, k, id, model, named, template = Templat
   return template({k: k, id: id, rows: rows, named: named})
 }
 
-function makeDL(path, api_spec, swagger, scalar_coll, template = Templates.dl_table) {
+function makeDL(path, scalar_coll, template = Templates.dl_table) { //, api_spec, swagger
   // return `<dl id="${id}"><div *ng-for="#item of ${model}"><dt>{{item}}</dt><dd>{{item}}</dd></div></dl>\r\n`;
   let rows = Object.keys(scalar_coll).map(k => {
     let val = parseVal(...scalar_coll[k].pars)

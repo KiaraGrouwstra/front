@@ -4,11 +4,29 @@
 var path = require('path');
 var webpack = require('webpack');
 // var JasmineWebpackPlugin = require('jasmine-webpack-plugin');
+var babelSettings = {
+	cacheDirectory: true,
+	"presets": [
+		"es2015",
+		"stage-1",
+		"stage-0"
+	],
+	"plugins": [
+		"syntax-async-functions",
+		"transform-regenerator",
+		"transform-runtime",
+		"add-module-exports",
+		"transform-decorators-legacy",
+		"angular2-annotations",
+		"transform-class-properties",
+		"transform-flow-strip-types"
+	],
+};
 
 module.exports = {
 	context: path.join(__dirname, 'app/js'),
 	entry: {
-		specs: './specs',
+		// specs: './specs',
 		boot: './boot',
 	},
 	output: {
@@ -24,8 +42,21 @@ module.exports = {
 		loaders: [
 			{ test: /\.coffee$/, loader: 'coffee' },
 			{ test: /\.ls$/, loader: 'livescript' },
-			{ test: /\.tsx?$/, loader: 'babel?presets[]=es2015,presets[]=stage-0!ts' },	//babel?presets[]=es2015,presets[]=stage-0!   // uh typescript already seems to add ES6 functions + ES7 async/await.
-			{ test: /\.js$/, loader: 'babel?presets[]=es2015,presets[]=stage-0', include: [ path.resolve(__dirname, "app"), ] },  // , exclude: [ path.resolve(__dirname, "node_modules"), ]
+			{
+				test: /\.tsx?$/,
+				//loader: 'babel?presets[]=es2015,presets[]=stage-0!ts',
+				//babel?presets[]=es2015,presets[]=stage-0!   // TS already adds ES6/7?
+				//loader: 'babel!ts',
+				loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
+				// query: babelSettings,
+			},
+			{
+				test: /\.js$/,
+				loader: 'babel',	//?presets[]=es2015,presets[]=stage-0
+				include: [ path.resolve(__dirname, "app"), ],
+				//exclude: [ path.resolve(__dirname, "node_modules"), ],
+				query: babelSettings,
+	 		},
 			{ test: /\.json$/, loader: 'json' },	//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },

@@ -1,3 +1,4 @@
+npm-windows-upgrade
 npm i <pkg> --save
 npm i angular2@latest --save
 npm i angular2@2.0.0-alpha.45 --save
@@ -7,6 +8,7 @@ tsd install angular2/
 tsd update
 // patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
+patch `babel-plugin-transform-runtime/lib/definitions.js`: comment `defineProperty: "object/define-property"`
 patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
 patch karma-jasmine: make lib/adapter.js using /src/ version wrapped in wrapper: https://github.com/karma-runner/karma-jasmine/blob/master/tasks/build.js
 
