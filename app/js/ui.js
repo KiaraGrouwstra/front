@@ -12,7 +12,7 @@ import 'rxjs/add/operator/toPromise';
 let load_ui = async function(name) {
   this.api = name;
   //pars.subscribe(_ => this.loadHtml('swagger', _, require('../jade/ng-output/swagger.jade')));
-  //notify(pars, "pars");
+  //notify('pars', pars);
   //this.loadHtml('swagger', pars, require('../jade/ng-output/swagger.jade'));
 
   let $RefParser = require('json-schema-ref-parser');

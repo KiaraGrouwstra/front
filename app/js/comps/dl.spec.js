@@ -1,7 +1,6 @@
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, expect, afterEach, beforeEach, fdescribe, } from "angular2/testing";
 import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
-let _ = require('lodash');
 
 import { DLComp } from './dl';
 let path = ['test'];

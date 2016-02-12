@@ -8,7 +8,13 @@ let pars = {
   val$: ['foo', 'bar', 'baz'],
   schema$: {},
 };
-let comp = test_comp('myul', ULComp, pars, {});
+let comp = test_comp('myul', ULComp, {
+  path$: ['test'],
+  val$: ['foo', 'bar', 'baz'],
+  schema$: {},
+}, {
+  named: true,
+});
 
 describe('ULComp', () => {
 

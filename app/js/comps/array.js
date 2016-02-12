@@ -24,8 +24,14 @@ export class ArrayComp implements OnInit {
   type: Observable<string>;
   new_spec$: Observable<any>;
 
+  constructor() {
+    console.log('array:constructor');
+  }
+
   ngOnInit() {
-    // console.log('array:path$', this.path$);
+    console.log('array:ngOnInit');
+    console.log('array:this', this);
+    console.log('array:path$', this.path$);
     let first$ = this.val$.map(v => _.get(v, [0]));
     this.new_spec$ = mapComb([first$, this.schema$], getSpec);
     let type$ = mapComb([first$, this.new_spec$], (first, spec) => _.get(spec, ['type']) || infer_type(first));

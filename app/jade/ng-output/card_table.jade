@@ -6,13 +6,14 @@
       thead
         th(
           *ngFor=`#col of cols`
-          id=`{{col.id | async}}`
+          id=`{{col.id}}`
         ) {{col.k}}
       tbody
         tr(
           *ngFor=`#r of rows`
           id=`{{r.id}}`
         )
+          //- rearrange as objects with *ngFor=`#col of cols` -> #cell=`r[col]`?
           td(
             *ngFor=`#c of r.cells`
             id=`{{c.id}}`

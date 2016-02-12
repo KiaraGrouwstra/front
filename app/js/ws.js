@@ -75,7 +75,7 @@ import { autobind } from 'core-decorators';
   ask_n(n, url, pars, name = "dummy") {
     return this.ask_many(url, pars).take(n);
     // let obs = this.ask_many(url, pars).take(n);
-    // notify(obs, name);
+    // notify(name, obs);
     // return obs;
   }
 

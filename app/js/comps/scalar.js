@@ -10,7 +10,7 @@ let inputs = ['path$', 'val$', 'schema$'];
   inputs: inputs,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div innerHtml='{{html | async}}'></div>`,
-  // div :(, replace scalar component with innerhtml directive with like scalar pipe?
+  // div :(, replace scalar component with innerhtml directive with like scalar pipe? ngContent if it'd work with piping/Rx?
 })
 export class ScalarComp implements OnInit {
   //@Input() val$: Observable<any>;

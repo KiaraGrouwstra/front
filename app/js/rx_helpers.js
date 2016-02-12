@@ -17,13 +17,15 @@ let arrToSet = (set, arr) => new Set([...Array.from(set), ...arr]);
 let setToSet = (a, b) => new Set([...Array.from(a), ...Array.from(b)]);
 //^ need Array.from(set) only cuz Plunker transpiles to array .concat()...
 
+// set of logging functions to use in Observable.subscribe (see `notify`)
 let loggers = (kw) => [
   e => console.log(kw + " next", e),
   e => console.log(kw + " error", e),
   () => console.log(kw + " done"),
 ];
 
-let notify = (obs, kw) => obs.subscribe(...loggers(kw));
+// log an Observable's values
+let notify = (kw, obs) => obs.subscribe(...loggers(kw));
 
 // generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a$, b$]).map([a, b] => ...)
 let Obs_combLast = (arr) => arr.reduce((obj_obs, v, idx) => {

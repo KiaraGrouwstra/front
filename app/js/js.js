@@ -205,12 +205,13 @@ let prettyPrint = (o) => {
 
 // return different path properties
 let getPaths = (path) => {
+  // console.log('getPaths', path);
   let k = path.slice(-1)[0]; //.last()
   let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
   // let model = path.join('.');
   let elvis = path.join('?.');  //ng2 elvis operator to prevent crashing if some element is missing
   let variable = id.replace(/-/g, '_')
-  return {k: k, id: id, model: elvis, variable: variable}
+  return { k: k, id: id, model: elvis, variable: variable }
 }
 
 // cleanse a string to use as an ID
@@ -220,9 +221,12 @@ let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 let comp_test = (test_class, actions, test_fn) => {
   return (tcb) => new Promise((pass, fail) => {
     // let tc = await tcb.createAsync(test_class);
-    return tcb.createAsync(test_class)
-    .then((tc) => {
+    // let created = tcb.createAsync(test_class)
+    // console.log('created', created);
+    // return created
+    return tcb.createAsync(test_class).then((tc) => {
       try {
+        // console.log('detecting');
         tc.detectChanges();
         let test_comp = tc.componentInstance;
         let target_comp = test_comp.comp;
@@ -231,27 +235,54 @@ let comp_test = (test_class, actions, test_fn) => {
         // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
         // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
         tc.detectChanges();
-        test_fn(target_comp, pass);
+        let native_el = tc.debugElement.childNodes[0].nativeElement;
+        test_fn(pass, target_comp, native_el);
       }
       catch(e) {
         fail(e);
       }
     })
+    // }, (e) => console.log('ERROR', e))
   })
 }
 
 // test_fn for comp_test to check a property value
-let assert = (assertion) => (comp, pass) => {
-  assertion(comp);
+let assert = (assertion) => (pass, comp, el) => {
+  assertion(comp, el);
   pass();
 }
 
 // test_fn for comp_test to check an Observable property's first value
-let assert$ = (selector, matcher) => (comp, pass) => {
+let assert$ = (selector, matcher) => (pass, comp) => {
   selector(comp).subscribe(prop => {
     matcher(expect(prop));
     pass();
   })
 }
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$ };  //, Obs_do, Obs_then
+// import {DOM} from 'angular2/src/platform/dom/dom_adapter';
+// // stolen from [here](https://github.com/angular/angular/blob/2a70f4e4c7f20cfeac7af236648f0d17b25e983d/modules/angular2/src/testing/matchers.ts) cuz it wasn't exported :(
+// function elementText(n) {
+//   var hasNodes = (n) => {
+//     var children = DOM.childNodes(n);
+//     return children && children.length > 0;
+//   };
+//   if (n instanceof Array) {
+//     return n.map(elementText).join("");
+//   }
+//   if (DOM.isCommentNode(n)) {
+//     return '';
+//   }
+//   if (DOM.isElementNode(n) && DOM.tagName(n) == 'CONTENT') {
+//     return elementText(Array.prototype.slice.apply(DOM.getDistributedNodes(n)));
+//   }
+//   if (DOM.hasShadowRoot(n)) {
+//     return elementText(DOM.childNodesAsList(DOM.getShadowRoot(n)));
+//   }
+//   if (hasNodes(n)) {
+//     return elementText(DOM.childNodesAsList(n));
+//   }
+//   return DOM.getText(n);
+// }
+
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$ };  //, Obs_do, Obs_then, elementText

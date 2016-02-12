@@ -35,9 +35,9 @@ let form_comp = (pars) => class {
 
 // a component template for testing other components
 let test_comp = (selector, cls, obs_pars = {}, static_pars = {}) => {
-  let obs_str = Object.keys(obs_pars).map(k => ` [${k}]='${k}'`).join('');
-  let static_str = Object.keys(static_pars).map(k => ` ${k}='${k}'`).join('');
-  let tmplt = `<${selector}${obs_str}${static_str}></${selector}>`;
+  let obj = Object.assign({}, obs_pars, static_pars)
+  let par_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
+  let tmplt = `<${selector}${par_str}></${selector}>`;
   return test_comp_html(tmplt, cls, obs_pars, static_pars);
 }
 

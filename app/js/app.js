@@ -156,9 +156,9 @@ Promise.prototype.do = Prom_do;
       .scan(arrToSet, new Set)
       .last();
 
-    notify(obs, "obs");
-    notify(this.rows, "rows");
-    notify(this.cols, "cols");
+    notify("obs", obs);
+    notify("rows", this.rows);
+    notify("cols", this.cols);
     */
 
     //spawn_n(() => this.refresh(), 30);
@@ -180,8 +180,8 @@ Promise.prototype.do = Prom_do;
       .map(x => Object.keys(x))
       .scan(arrToSet, new Set)
       .last();
-    //notify(rows, "rows");
-    //notify(cols, "cols");
+    //notify("rows", rows);
+    //notify("cols", cols);
     let pars = { rows: rows, cols: cols };
     this.loadHtml(to, pars, require('../jade/ng-output/table-a.jade'));
 

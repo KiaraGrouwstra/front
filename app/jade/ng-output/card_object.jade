@@ -10,16 +10,30 @@
       '[val$]'=`scalar`
     )
     object(
-      *ngFor=`#x of object`
+      *ngFor=`#x of (object | async)`
       '[path$]'=`x.path`
       '[val$]'=`x.val`
       '[schema$]'=`x.schema`
       '[named]'=`true`
     )
-    array(
-      *ngFor=`#x of array`
-      '[path$]'=`x.path`
-      '[val$]'=`x.val`
-      '[schema$]'=`x.schema`
-      '[named]'=`true`
-    )
+    //- array(
+    //-   *ngFor=`#x of (array | async)`
+    //-   '[path$]'=`x.path`
+    //-   '[val$]'=`x.val`
+    //-   '[schema$]'=`x.schema`
+    //-   '[named]'=`true`
+    //- )
+    //- array(
+    //-   '[path$]'=`['test']`
+    //-   '[val$]'=`[]`
+    //-   '[schema$]'=`null`
+    //-   '[named]'=`true`
+    //- )
+    //- array(
+    //-   '[path$]'=`path$`
+    //-   '[val$]'=`[]`
+    //-   '[schema$]'=`schema$`
+    //-   '[named]'=`false`
+    //- )
+    ul(*ngFor=`#x of (array | async)`)
+      li {{ x | json }}

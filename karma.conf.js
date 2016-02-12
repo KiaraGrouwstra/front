@@ -7,14 +7,14 @@ module.exports = function(config) {
     // frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['jasmine'],  //, 'requirejs', 'es6-shim', 'chai'
     files: [
-      '../karma-test-shim.js',
+      { pattern: '../karma-test-shim.js', watched: true, included: true, served: true },
     ],
     exclude: [
     ],
     // preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       '../karma-test-shim.js': [
-        // 'coverage',
+        'coverage',
         'webpack',
         'sourcemap',
       ],
@@ -34,7 +34,7 @@ module.exports = function(config) {
       noInfo: true
     },
     // reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'progress' ],  //'coverage', 'dots',
+    reporters: [ 'coverage', 'progress' ],  //, 'dots'
     // proxied base paths: required for component assests fetched by Angular's compiler
     proxies: {
       '/app/': '/base/app/'
