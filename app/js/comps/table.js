@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { mapComb, arrToSet } from '../rx_helpers';
 import { getPaths } from '../js';

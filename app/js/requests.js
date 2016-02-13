@@ -15,9 +15,12 @@ let parsley = (url, json) => {
 let toCurl = (str) => { //: string
   let found = str.match(/-H '([^']+)'/g);
   let url = /'[^']+(?=')/.exec(str)[0].substr(1);
-  let headers = _.zipObject(_.zip(...found.map(x =>
+  // let headers = _.zipObject(_.zip(...found.map(x =>
+  //   /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
+  // )));
+  let headers = _.fromPairs(found.map(x =>
     /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
-  )));
+  ));
   let n = Object.keys(headers).length + 2;  // based on the current server implementation of 'try without each + all/none'
   return this.ws.ask_n(n, "/check", {urls: url, headers: headers}, "curl");
 }

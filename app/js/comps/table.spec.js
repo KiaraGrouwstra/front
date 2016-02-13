@@ -2,7 +2,7 @@ import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync
 import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
 
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { TableComp } from './table';
 let path = ['test'];
 let val = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
@@ -20,10 +20,10 @@ describe('TableComp', () => {
     assert((comp, el) => expect(el).toHaveText(flat))
   )));
 
-  it('should work with header', injectAsync([TestComponentBuilder], comp_test(
-    test_comp('mytable', TableComp, obs_pars, { named: true }), x => {},
-    assert((comp, el) => expect(el).toHaveText('test' + flat))
-  )));
+  // it('should work with header', injectAsync([TestComponentBuilder], comp_test(
+  //   test_comp('mytable', TableComp, obs_pars, { named: true }), x => {},
+  //   assert((comp, el) => expect(el).toHaveText('test' + flat))
+  // )));
 
   // spec, nesting, holes
 

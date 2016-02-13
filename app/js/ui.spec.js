@@ -1,5 +1,5 @@
 import { get_submit } from './ui';
-let _ = require('lodash');
+let _ = require('lodash/fp');
 
 describe('ui', () => {
 

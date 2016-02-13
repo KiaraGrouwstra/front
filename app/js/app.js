@@ -20,7 +20,7 @@ global.Rx = require('rxjs');
 global.ng = require('angular2/core');
 import { MarkedPipe } from './pipes';
 import WS from './ws';
-let _ = require('lodash');
+let _ = require('lodash/fp');
 // import Dummy from './dummy';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
 import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter, prettyPrint } from './js.js';
@@ -219,7 +219,7 @@ Promise.prototype.do = Prom_do;
   // sets and saves the auth token + scopes from the given get/hash
   handle_implicit = (url) => handle_auth(url, (get, hash) => {
     let name = get.callback;
-    let delim = _.get(this.oauth_misc, [name, 'scope_delimiter'], ' ');
+    let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
     let auth = {
       name: name,
       token: hash.access_token,

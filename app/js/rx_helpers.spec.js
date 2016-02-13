@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toArray';
 import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/from';
-let _ = require('lodash');
+let _ = require('lodash/fp');
 // // let test = (obs, val, txt) => obs.subscribe(e => console.log(JSON.stringify(e) == JSON.stringify(val), txt, JSON.stringify(e)));
 // let rxit = require('jasmine-rx').rxit;
 let fail = (e) => alert(e);

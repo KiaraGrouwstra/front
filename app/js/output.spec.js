@@ -1,5 +1,5 @@
 import { parseVal } from './output';
-// let _ = require('lodash');
+// let _ = require('lodash/fp');
 
 describe('output', () => {
 

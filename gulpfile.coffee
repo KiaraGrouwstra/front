@@ -16,7 +16,7 @@ jade = require('jade')
 gulpJade = require('gulp-jade')
 Server = require('karma').Server
 fs = require('fs');
-_ = require('lodash');
+_ = require('lodash/fp');
 
 paths =
   src: './app/'

@@ -15,7 +15,7 @@ let obs_pars = {
 };
 
 // it seems recursive structures are still failing...?
-xdescribe('ValueComp', () => {
+describe('ValueComp', () => {
 
   it('should handle scalars', injectAsync([TestComponentBuilder], comp_test(
     test_comp('value', ValueComp, Object.assign({}, obs_pars, { val$: scalar }), {}), x => {},

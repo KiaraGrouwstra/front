@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 global.$ = global.jQuery = require("jquery");
 require("materialize-css/dist/js/materialize.min");
 // import { EventEmitter } from 'angular2/core';
@@ -55,8 +55,8 @@ Array.prototype.flatten = Array_flatten;
 //let cloneOf = o => JSON.parse(JSON.stringify(o));
 // http://codereview.stackexchange.com/questions/84951/invert-a-javascript-object-hash-whose-values-are-arrays-to-produce-a-new-objec
 // function arrayAwareInvert(o) {
-//   let merge = (res, vals, k) => _.merge(res, _.mapValues(_.zipObject(vals), (v) => k))
-//   return _.reduce(o, merge, {});
+//   let merge = (res, vals, k) => _.merge(_.mapValues((v) => k, _.zipObject(vals)), res)
+//   return _.reduce(merge, o, {});
 // }
 // Object.filter
 let Object_filter = (obj, pred) => arr2obj(Object.keys(obj).filter(k => pred(obj[k])), k => obj[k])

@@ -1,5 +1,5 @@
 import { method_form } from './input';
-// let _ = require('lodash');
+// let _ = require('lodash/fp');
 
 describe('output', () => {
 

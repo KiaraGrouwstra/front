@@ -25,7 +25,7 @@ describe('ArrayComp', () => {
   )));
 
   // viewFactory_ArrayComp0 is not a function in ['array' in ValueComp@0:165]
-  fit('should work with nested arrays', injectAsync([TestComponentBuilder], comp_test(
+  it('should work with nested arrays', injectAsync([TestComponentBuilder], comp_test(
     test_comp('array', ArrayComp, nest_pars, { named: false }), x => {},
     assert((comp, el) => expect(el).toHaveText('lol'))
   )));

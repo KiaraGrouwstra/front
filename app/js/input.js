@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 let marked = require('marked');
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, arr2obj, toast, mapBoth, String_stripOuter, getPaths, id_cleanse } from './js.js'; //, Obs_do, Obs_then
 import { Validators, Control } from 'angular2/common';
@@ -15,20 +15,20 @@ let get_default = (type) => {
     object:  {},
     // file: 'file', //[],
   }
-  return _.get(def_vals, [type], null)
+  return _.get([type], def_vals)
 }
 
 // get the input type for a value type
-let input_type = (type) => _.get({
+let input_type = (type) => _.get([type], {
     string: 'text',
     number: 'number',
     integer: 'number',
     boolean: 'checkbox',
     file: 'file',
-  }, [type], type)
+  }) || type;
 
 // pick a Jade template
-let get_template = (opts) => _.get({
+let get_template = (opts) => _.get([opts.type], {
   //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
   string: opts.enum_options ? 'datalist' : null, //select, radio
   integer: (opts.attrs.max > opts.attrs.min) ? 'range' : null,
@@ -37,7 +37,7 @@ let get_template = (opts) => _.get({
   // number: null,
   // array: [checkboxes, array],
   // object: [fieldset],
-}, [opts.type], 'input') || 'input'
+}) || 'input'
 
 // get the input template for a given parameter
 // http://swagger.io/specification/#parameterObject
@@ -85,8 +85,8 @@ let param_field = (path, api_spec) => {
       step: multipleOf || 1,
     },
   }
-  let extra = _.get(type_params, [type], {})
-  Object.assign(attrs, extra)
+  let extra = _.get([type], type_params) || {};
+  Object.assign(attrs, extra);
 
   // type-specific parameter edits
   switch(type) {
@@ -139,9 +139,9 @@ let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
   let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes})
-  let fields = [scheme].concat(_.get(api_spec, hops, []).map((v, idx) => param_field(path.concat(idx), v)))
+  let fields = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => param_field(path.concat(idx), v)))
   // console.log('fields', fields)
-  let desc = marked(_.get(api_spec, _.dropRight(hops, 1).concat('description'), ''))
+  let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '')
   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) })
   // console.log('html', html)
   //console.log('fields', fields)

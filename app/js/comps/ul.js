@@ -1,10 +1,11 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { mapComb, notify } from '../rx_helpers';
 import { getPaths, arr2obj } from '../js';
 import { Templates } from '../jade';
 import { ValueComp } from './value';
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
 let inputs = ['path$', 'val$', 'schema$', 'named'];
 
@@ -30,7 +31,9 @@ export class ULComp implements OnInit {
     mapComb(inputs.slice(0,3).map(k => this[k]),        //[this.path$, this.val$, this.schema$]
       (path, val, spec) => (_.isArray(val) ? val : []).map((v, idx) => {
         let path_k = path.concat(idx)
-        return Object.assign(getPaths(path_k), { path: path_k, val: v, schema: _.get(spec, ['items']) })
+        let obj = { path: path_k, val: v, schema: _.get(['items'], spec) };
+        // return obj;
+        return _.mapValues(x => new BehaviorSubject(x), obj);
       })
     )
     .subscribe(x => this.rows = x)

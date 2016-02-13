@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
 import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { getPaths, id_cleanse, arr2obj, Object_filter } from '../js';
@@ -73,7 +73,7 @@ let getColl = (path, val, spec) => {
       let new_spec = key_spec(k, spec, fixed, patts);
       let path_k = path.concat(id_cleanse(k));
       //let pars = [path_k, val[k], new_spec] //v.
-      let tp = _.get(new_spec, ['type']) || infer_type(val[k]);
+      let tp = _.get(['type'], new_spec) || infer_type(val[k]);
       if(SCALARS.includes(tp)) tp = 'scalar';
       //return {pars: pars, type: tp}  //spec: new_spec, kind: kind,
       let obj = {
@@ -81,7 +81,7 @@ let getColl = (path, val, spec) => {
         val: val[k],
         schema: new_spec,
       };
-      return Object.assign({ type: tp }, (tp == 'scalar') ? obj : _.mapValues(obj, x => new BehaviorSubject(x)));
+      return Object.assign({ type: tp }, (tp == 'scalar') ? obj : _.mapValues(x => new BehaviorSubject(x), obj));
     //}).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
     })
 };

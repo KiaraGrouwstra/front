@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/combineLatest';
@@ -30,7 +30,7 @@ let notify = (kw, obs) => obs.subscribe(...loggers(kw));
 // generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a$, b$]).map([a, b] => ...)
 let Obs_combLast = (arr) => arr.reduce((obj_obs, v, idx) => {
 	  let combiner = (obj, val) => Object.assign(obj, _.zipObject([idx], [val]));
-    return _.get(v, ['subscribe']) ? //v.subscribe
+    return _.get(['subscribe'], v) ? //v.subscribe
       obj_obs.combineLatest(v, combiner) :
       obj_obs.map(obs => combiner(obs, v));
 	},

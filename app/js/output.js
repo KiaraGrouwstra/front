@@ -1,5 +1,5 @@
 // let jsonPath = require('JSONPath');
-let _ = require('lodash');
+let _ = require('lodash/fp');
 // let probe = require('titon-probe')
 // let _ = probe._
 // let _s = probe._s
@@ -33,10 +33,10 @@ let SCALARS = ["boolean", "integer", "number", "string", "null", "scalar"];
 let infer_type = (v) => Array.isArray(v) ? "array" : _.isObject(v) ? "object" : "scalar"
 
 let try_schema = (val, swag) => {
-  let options = _.get(swag, ['oneOf']) || _.get(swag, ['anyOf']) || _.get(swag, ['allOf']) || []
-  let tp = _.find(options, (schema, idx, arr) => tv4.validate(val, schema, false, false, false))
-  return _.get(tp,['type']) ? tp :
-    _.some(['oneOf','anyOf','allOf'], x => _.get(tp,[x])) ?
+  let options = _.get(['oneOf'], swag) || _.get(['anyOf'], swag) || _.get(['allOf'], swag) || []
+  let tp = _.find((schema, idx, arr) => tv4.validate(val, schema, false, false, false), options)
+  return _.get(['type'], tp) ? tp :
+    _.some(x => _.get([x], tp), ['oneOf','anyOf','allOf']) ?
     try_schema(val, tp) : null //infer_type(val)
 }
 
@@ -53,8 +53,8 @@ function parseVal(path, api_spec, swagger) {
     "object": parseObject,
     "scalar": parseScalar, //for string input consider pattern (regex), format: uri, email, regex
   };
-  swagger = _.get(swagger,['type']) ? swagger : try_schema(api_spec, swagger)
-  let tp = _.get(swagger, ['type']) || infer_type(api_spec)
+  swagger = _.get(['type'], swagger) ? swagger : try_schema(api_spec, swagger)
+  let tp = _.get(['type'], swagger) || infer_type(api_spec)
   let fn = getHandler(tp, type_map);
   return fn(path, api_spec, swagger, false);
 }
@@ -67,9 +67,9 @@ function parseArray(path, api_spec, swagger, named) {
     "object": makeTable,
     "scalar": makeUL, //parseList,
   };
-  let first = _.get(api_spec, [0])
-  swagger = _.get(swagger, ['items', 'type']) ? swagger.items : try_schema(first, _.get(swagger, ['items']))
-  let tp = _.get(swagger, ['type']) || infer_type(first)
+  let first = _.get([0], api_spec);
+  swagger = _.get(['items', 'type'], swagger) ? swagger.items : try_schema(first, _.get(swagger, ['items']));
+  let tp = _.get(['type'], swagger) || infer_type(first);
   let fn = getHandler(tp, type_map);
   return makeTemplate(fn, path, api_spec, swagger, named);
 }
@@ -82,7 +82,7 @@ let key_spec = (
   patts = get_patts(swagger)
 ) => {
   // let kind = Kinds.ADDITIONAL
-  let swag = _.get(swagger, ['additionalProperties'])
+  let swag = _.get(['additionalProperties'], swagger);
   if(fixed.includes(k)) {
     // kind = Kinds.FIXED
     swag = swagger.properties[k]
@@ -101,10 +101,10 @@ let key_spec = (
 
 let get_fixed = (swag, api) => {
   let keys = Object.keys(api);
-  return Object.keys(_.get(swag, ['properties']) || {}).filter(k => keys.includes(k));
+  return Object.keys(_.get(['properties'], swag) || {}).filter(k => keys.includes(k));
 }
 
-let get_patts = (swag) => Object.keys(_.get(swag, ['patternProperties']) || {})
+let get_patts = (swag) => Object.keys(_.get(['patternProperties'], swag) || {})
 
 function parseObject(path, api_spec, swagger, named, template = Templates.card_object) {
   //not
@@ -119,7 +119,7 @@ function parseObject(path, api_spec, swagger, named, template = Templates.card_o
     // let {kind: kind, swag: swag} = key_spec(k, swagger, fixed, patts)
     let path_k = path.concat(id_cleanse(k));
     let pars = [path_k, api_spec[k], swag]; //v.
-    let tp = _.get(swag, ['type']) || infer_type(api_spec[k]);
+    let tp = _.get(['type'], swag) || infer_type(api_spec[k]);
     if(SCALARS.includes(tp)) tp = 'scalar';
     return {pars: pars, type: tp};  //swag: swag, kind: kind,
   }).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
@@ -144,7 +144,7 @@ function makeTemplate(fn, path, api_spec, swagger, named) {
 function makeUL(path, api_spec, swagger, k, id, model, named, template = Templates.ul_table) {
   let rows = (api_spec || []).map((v, idx) => {
     let path_k = path.concat(idx)
-    let val = parseVal(path_k, v, _.get(swagger, ['items']))
+    let val = parseVal(path_k, v, _.get(['items'], swagger))
     return Object.assign(getPaths(path_k), {val: val})
   });
   return template({k: k, id: id, rows: rows, named: named})
@@ -187,7 +187,7 @@ function parseScalar(path, api_spec, swagger) {
   if(last == "description") {
     val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
   }
-  switch (_.get(swagger, ['format'])) {
+  switch (_.get(['format'], swagger)) {
     case "uri": val = `<a href="${val}">${val}</a>`; break;
     case "email": val = `<a href="mailto:${val}">${val}</a>`; break;
     // default:

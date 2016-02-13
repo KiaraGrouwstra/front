@@ -3,25 +3,31 @@ import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
 
 import { ULComp } from './ul';
+let path = ['test'];
+let val = ['foo', 'bar', 'baz'];
 let pars = {
-  path$: ['test'],
-  val$: ['foo', 'bar', 'baz'],
+  path$: path,
+  val$: val,
   schema$: {},
 };
-let comp = test_comp('myul', ULComp, {
-  path$: ['test'],
-  val$: ['foo', 'bar', 'baz'],
-  schema$: {},
-}, {
-  named: true,
-});
+let comp = test_comp('myul', ULComp, pars, { named: true });
 
 describe('ULComp', () => {
 
-  it('should work', injectAsync([TestComponentBuilder],
-    comp_test(comp, x => {}, assert(
-      c => expect(c.rows.map(x => x.val)).toEqual(['foo','bar','baz'])
-    ))
-  ));
+  // it('should work', injectAsync([TestComponentBuilder],
+  //   comp_test(comp, x => {}, assert(
+  //     c => expect(c.rows.map(x => x.val)).toEqual(['foo','bar','baz'])
+  //   ))
+  // ));
+
+  it('should display scalars', injectAsync([TestComponentBuilder], comp_test(
+    test_comp('myul', ULComp, pars, {}), x => {},
+    assert((comp, el) => expect(el).toHaveText(val.join('')))
+  )));
+
+  it('should allow named', injectAsync([TestComponentBuilder], comp_test(
+    test_comp('myul', ULComp, pars, { named: true }), x => {},
+    assert((comp, el) => expect(el).toHaveText(path.concat(val).join('')))
+  )));
 
 });

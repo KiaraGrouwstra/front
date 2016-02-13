@@ -2,7 +2,7 @@ import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync
 import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
 
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { ObjectComp } from './object';
 let path = ['test'];
 let obj = { one: 1, two: 2 };
@@ -36,7 +36,7 @@ describe('ObjectComp', () => {
     assert((comp, el) => expect(el).toHaveText(mashed))
   )));
 
-  fit('should work with nested arrays', injectAsync([TestComponentBuilder], comp_test(
+  it('should work with nested arrays', injectAsync([TestComponentBuilder], comp_test(
     test_comp('object', ObjectComp, nestr_pars, {}), x => {},
     assert((comp, el) => expect(el).toHaveText(mashed))
   )));

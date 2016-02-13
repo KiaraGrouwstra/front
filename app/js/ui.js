@@ -1,4 +1,4 @@
-let _ = require('lodash');
+let _ = require('lodash/fp');
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint } from './js';
 import { parseVal } from './output';
 import { method_form } from './input';
@@ -26,7 +26,7 @@ let load_ui = async function(name) {
   )
 
   let sec_defs = api_full.securityDefinitions;
-  let oauth_sec = _.find(Object.keys(sec_defs), (k) => sec_defs[k].type == 'oauth2');
+  let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', Object.keys(sec_defs));
   let oauth_info = sec_defs[oauth_sec];
   let scopes = Object.keys(oauth_info.scopes);
 
@@ -61,7 +61,8 @@ let load_ui = async function(name) {
 let load_auth_ui = function(name, scopes, oauth_info) {
   let auth = require('../jade/ng-input/auth.jade');
   let onSubmit = function() {
-  let scope = this.scopes_arr.filter(s => this.want_scope[s]).join(_.get(this.oauth_misc[name], ['scope_delimiter'], ' '));
+  let delim = _.get(['scope_delimiter'], this.oauth_misc[name]) || ' ';
+  let scope = this.scopes_arr.filter(s => this.want_scope[s]).join(delim);
   //let redirect_uri = `http://127.0.0.1:8090/callback/${name}/?` + global.$.param({scope: scope});
   let redirect_uri = `http://127.0.0.1:8090/?` + global.$.param({scope: scope, callback: name});
   let url = oauth_info.authorizationUrl + '?' + global.$.param({
@@ -81,7 +82,7 @@ let load_auth_ui = function(name, scopes, oauth_info) {
       parent: this,
       scopes_arr: scopes,
       want_scope: arr2obj(scopes, s => true),  //uncheck: follower_list, public_content
-      have_scope: arr2obj(scopes, s => _.get(this, ['auths',name,'scopes_have'], []).includes(s)),
+      have_scope: arr2obj(scopes, s => (_.get(['auths',name,'scopes_have'], this) || []).includes(s)),
       scope_descs: oauth_info.scopes,
       onSubmit: onSubmit,
       loading: false,
@@ -96,8 +97,8 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
   if(tags) {
       misc_key = 'misc';
       tag_paths = Object.assign(arr2obj(tags.map(x => x.name), tag =>
-          Object.keys(api.paths).filter(path => _.get(api.paths[path], ['get', 'tags'], []).includes(tag))
-        ), _.zipObject([misc_key], [Object.keys(api.paths).filter(path => ! _.get(api.paths[path], ['get', 'tags'], []).length )])
+          Object.keys(api.paths).filter(path => (_.get(['get', 'tags'], api.paths[path]) || []).includes(tag))
+        ), _.zipObject([misc_key], [Object.keys(api.paths).filter(path => ! (_.get(['get', 'tags'], api.paths[path]) || []).length )])
       );
   } else {
       api.tags = [];
@@ -106,17 +107,18 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
   }
   api.tags.push({ name: misc_key });
   // todo: add untagged functions
-  let path_scopes = _.mapValues(api.paths, path => {
-      let secs = _.get(path, ['get', 'security'], []);
-      let scopes = _.find(secs, sec => _.has(sec, oauth_sec));
+  let path_scopes = _.mapValues(path => {
+      let secs = (_.get(['get', 'security'], path) || []);
+      // let scopes = _.find(sec => _.has(oauth_sec)(sec), secs);
+      let scopes = _.find(_.has(oauth_sec))(secs);
       return scopes ? scopes[oauth_sec] : [];
-  });
-  let descs = _.mapValues(api.paths, path =>
-      marked(_.get(path, ['get', 'description'], '')) //.stripOuter()
-  );
-  let have_scopes = _.mapValues(path_scopes, (scopes) => _.every(scopes, s => this.auth.have_scope[s]));
-  let path_tooltips = _.mapValues(path_scopes, (scopes) => `required scopes: ${scopes.join(', ')}`);
-  let has_usable = _.mapValues(tag_paths, (paths) => _.some(paths, p => have_scopes[p]));
+  }, api.paths);
+  let descs = _.mapValues(path =>
+      marked((_.get(['get', 'description'], path) || '')) //.stripOuter()
+  )(api.paths);
+  let have_scopes = _.mapValues((scopes) => _.every(s => this.auth.have_scope[s], scopes))(path_scopes);
+  let path_tooltips = _.mapValues((scopes) => `required scopes: ${scopes.join(', ')}`)(path_scopes);
+  let has_usable = _.mapValues((paths) => _.some(p => have_scopes[p], paths))(tag_paths);
   let fn_pars = Object.assign({}, api, {
       parent: this,
       paths: api.paths,
@@ -137,7 +139,7 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
         this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
         this.json.next([]);
         this.rendered = this.json.map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
-        //ripple: .waves, sort: Rx map collection to _.sortByOrder(users, ['user'], ['asc']), arrow svg: http://iamisti.github.io/mdDataTable/ -> animated sort icon; rotating -> https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-style.css (transform: rotate)
+        //ripple: .waves, sort: Rx map collection to _.orderBy(users, ['user'], ['asc']), arrow svg: http://iamisti.github.io/mdDataTable/ -> animated sort icon; rotating -> https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-style.css (transform: rotate)
       },
   });
   // init: $('.collapsible')['collapsible']()
@@ -155,7 +157,7 @@ let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
   let base = `{uri_scheme}://${api_spec.host}${api_spec.basePath}`;  //${api_spec.schemes}
   let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
     let filtered = Object_filter(this.params, v => v.type == x);
-    return _.mapValues(filtered, 'val._value');   //val._value    //val
+    return _.mapValues('val._value', filtered);   //val._value    //val
   });
   let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
   //let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}`) +
