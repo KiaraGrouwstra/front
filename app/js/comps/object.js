@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
-import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { getPaths, id_cleanse, arr2obj, Object_filter } from '../js';
 import { mapComb, notify } from '../rx_helpers';
 import { Templates } from '../jade';

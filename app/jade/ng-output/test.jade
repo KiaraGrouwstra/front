@@ -18,19 +18,19 @@ myul('[path$]'=`a`, '[val$]'=`d`, '[schema$]'=`c`, '[named]'=`false`)
       label(for='url') CURL (bash) command as copied from Chrome's network tab
     .col.s2
       //- button.btn.waves-effect.waves-light((click)='toCurl(curl.value)') curl
-      button.btn.waves-effect.waves-light((click)='makeTable(toCurl(curl.value))') curl
+      button.btn.waves-effect.waves-light((click)='makeTable(ws.toCurl(curl.value))') curl
   .row
     .input-field.col.s4
       input(#url, type='text', value="https://www.taobao.com/", placeholder="http://example.com")
       label(for='url') URL to fetch (+ callback)
     .col.s2
-      button.btn.waves-effect.waves-light((click)='addUrl(url.value)') fetch
+      button.btn.waves-effect.waves-light((click)='ws.addUrl(url.value)') fetch
   .row
     .input-field.col.s4
       input(#parselet, type='text', value='{\"name\":\"title\"}')
       label(for='url') parselet to use with the above URL to extract info (+ callback)
     .col.s2
-      button.btn.waves-effect.waves-light((click)='parsley(url.value, parselet.value)') parse
+      button.btn.waves-effect.waves-light((click)='ws.parsley(url.value, parselet.value)') parse
 
 //- dl
 //-   div(*ngFor="#item of items")

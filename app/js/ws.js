@@ -1,8 +1,7 @@
 var Phoenix = require('phoenix-js-derp');
-import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
-import { notify } from './rx_helpers';
-import { toast } from './js.js';
+import { Observable } from '@reactivex/rxjs';
 import { autobind } from 'core-decorators';
+import { addUrl, parsley, toCurl } from './requests';
 
 @autobind export class WS {
 //   requests: {};
@@ -50,7 +49,7 @@ import { autobind } from 'core-decorators';
   }
 
   //url: string, pars: {}
-  ask_many(url, pars) {
+  ask_many(url, pars = {}) {
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
     return this.out
@@ -63,23 +62,16 @@ import { autobind } from 'core-decorators';
   // solution: use one of the below overrides which use pre-existing question-answer knowledge to complete.
   // (trying this server-sided would suck too due to having to guarantee order of client reception.)
 
-  // request that completes after one response
-  //url: string, pars: {}, name = "dummy"
-  ask(url, pars, name = "dummy") {
-    return this.ask_n(1, url, pars, name);
-  }
-  // _.curry(ask_n, 1)?
-
   // request that completes after n responses
-  //n, url: string, pars: {}, name = "dummy"
-  ask_n(n, url, pars, name = "dummy") {
+  ask(url, pars = {}, n = 1) {
     return this.ask_many(url, pars).take(n);
-    // let obs = this.ask_many(url, pars).take(n);
-    // notify(name, obs);
-    // return obs;
   }
 
   // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security`?
+
+  addUrl = addUrl;
+  parsley = parsley;
+  toCurl = toCurl;
 
 }
 

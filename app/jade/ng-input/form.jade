@@ -5,6 +5,7 @@ form(
   '(ngSubmit)'='onSubmit()'
 )
   .fn_desc!= desc
+  //- delegate loop to ng-output/object.jade?
   - each fld in fields
     != fld
   button.btn.waves-effect.waves-light(

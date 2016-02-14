@@ -1,18 +1,19 @@
-// call from ws rather than app? so here .ws would be ditched, though it'd be required upon call?
+// make this a RequestService between App and Socket with `this` Socket injected?
+let _ = require('lodash/fp');
 
 // fetch a URL
-let addUrl = (url) => {
-  return this.ws.ask("/urls", {urls: url}, "url"); //, headers: []
+function addUrl(url) {
+  return this.ask("/urls", {urls: url}); //, headers: []
 }
 
 // fetch a URL and extract its contents based on a json parselet, with a callback to insert it into the view.
-let parsley = (url, json) => {
+function parsley(url, json) {
   let pars = {url: url, parselet: json};
-  return this.ws.ask("/parse", pars, "parsley");
+  return this.ask("/parse", pars);
 }
 
 // given a curl command, try out different combinations of headers to see which work, putting results in a table.
-let toCurl = (str) => { //: string
+function toCurl(str) { //: string
   let found = str.match(/-H '([^']+)'/g);
   let url = /'[^']+(?=')/.exec(str)[0].substr(1);
   // let headers = _.zipObject(_.zip(...found.map(x =>
@@ -21,8 +22,8 @@ let toCurl = (str) => { //: string
   let headers = _.fromPairs(found.map(x =>
     /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
   ));
-  let n = Object.keys(headers).length + 2;  // based on the current server implementation of 'try without each + all/none'
-  return this.ws.ask_n(n, "/check", {urls: url, headers: headers}, "curl");
+  let n = Object.keys(headers).length + 2;  // current server implementation 'try without each + all/none'
+  return this.ask("/check", {urls: url, headers: headers}, n);
 }
 
 export { addUrl, parsley, toCurl };

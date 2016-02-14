@@ -1,4 +1,4 @@
-import { Component, View, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from 'angular2/core';
 
 @Component({
   selector: 'colored',

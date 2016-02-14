@@ -1,7 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
 
 import 'reflect-metadata';
-import { Component, View, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
+import { Component, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
     DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy } from 'angular2/core';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, FormBuilder, Control, Validators } from 'angular2/common';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
@@ -35,7 +35,6 @@ import { ColoredComp } from './colored';
 //import { ULComp } from './ul';
 import { ValueComp } from './comps/value';
 import { load_ui, load_auth_ui, load_fn_ui, get_submit } from './ui';
-import { addUrl, parsley, toCurl } from './requests';
 import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp];  //, ScalarComp, ULComp
@@ -233,9 +232,5 @@ Promise.prototype.do = Prom_do;
   load_ui = load_ui;
   load_auth_ui = load_auth_ui;
   load_fn_ui = load_fn_ui;
-
-  addUrl = addUrl;
-  parsley = parsley;
-  toCurl = toCurl;
 
 }

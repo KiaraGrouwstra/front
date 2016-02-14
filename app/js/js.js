@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 global.$ = global.jQuery = require("jquery");
 require("materialize-css/dist/js/materialize.min");
+import { test_comp } from './dynamic_class';
 // import { EventEmitter } from 'angular2/core';
 // require('rxjs/Observable');
 // import {Observable} from 'rxjs/Observable';
@@ -218,31 +219,25 @@ let getPaths = (path) => {
 let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 
 // asynchronously create and test a component
-let comp_test = (test_class, actions, test_fn) => {
-  return (tcb) => new Promise((pass, fail) => {
-    // let tc = await tcb.createAsync(test_class);
-    // let created = tcb.createAsync(test_class)
-    // console.log('created', created);
-    // return created
-    return tcb.createAsync(test_class).then((tc) => {
-      try {
-        // console.log('detecting');
-        tc.detectChanges();
-        let test_comp = tc.componentInstance;
-        let target_comp = test_comp.comp;
-        actions(test_comp); //target_comp?
-        //test_comp.items.push(3);
-        // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
-        // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
-        tc.detectChanges();
-        let native_el = tc.debugElement.childNodes[0].nativeElement;
-        test_fn(pass, target_comp, native_el);
-      }
-      catch(e) {
-        fail(e);
-      }
-    })
-    // }, (e) => console.log('ERROR', e))
+// let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
+let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
+  // let fixture = await tcb.createAsync(test_class);
+  return tcb.createAsync(test_class).then((fixture) => {
+    try {
+      fixture.detectChanges();
+      let test_cmp = fixture.componentInstance;
+      let target_comp = test_cmp.comp;
+      actions(test_cmp); //target_comp?
+      //test_cmp.items.push(3);
+      // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
+      // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
+      fixture.detectChanges();
+      let native_el = fixture.debugElement.childNodes[0].nativeElement;
+      test_fn(done, target_comp, native_el);
+    }
+    catch (e) {
+      done.fail(e);
+    }
   })
 }
 
@@ -259,30 +254,5 @@ let assert$ = (selector, matcher) => (pass, comp) => {
     pass();
   })
 }
-
-// import {DOM} from 'angular2/src/platform/dom/dom_adapter';
-// // stolen from [here](https://github.com/angular/angular/blob/2a70f4e4c7f20cfeac7af236648f0d17b25e983d/modules/angular2/src/testing/matchers.ts) cuz it wasn't exported :(
-// function elementText(n) {
-//   var hasNodes = (n) => {
-//     var children = DOM.childNodes(n);
-//     return children && children.length > 0;
-//   };
-//   if (n instanceof Array) {
-//     return n.map(elementText).join("");
-//   }
-//   if (DOM.isCommentNode(n)) {
-//     return '';
-//   }
-//   if (DOM.isElementNode(n) && DOM.tagName(n) == 'CONTENT') {
-//     return elementText(Array.prototype.slice.apply(DOM.getDistributedNodes(n)));
-//   }
-//   if (DOM.hasShadowRoot(n)) {
-//     return elementText(DOM.childNodesAsList(DOM.getShadowRoot(n)));
-//   }
-//   if (hasNodes(n)) {
-//     return elementText(DOM.childNodesAsList(n));
-//   }
-//   return DOM.getText(n);
-// }
 
 export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$ };  //, Obs_do, Obs_then, elementText

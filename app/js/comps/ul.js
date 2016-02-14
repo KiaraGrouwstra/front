@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, View, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { mapComb, notify } from '../rx_helpers';
 import { getPaths, arr2obj } from '../js';
 import { Templates } from '../jade';

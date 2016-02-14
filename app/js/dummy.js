@@ -1,5 +1,5 @@
 /*
-import {Component, View, ChangeDetectorRef} from 'angular2/core';
+import {Component, ChangeDetectorRef} from 'angular2/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/common';
 //import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 //import {Subject, Observable, Subscriber, Subscription} from '@reactivex/rxjs/dist/cjs/Rx';
@@ -13,8 +13,6 @@ import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'dummy'
-})
-@View({
   directives: [CORE_DIRECTIVES, FORM_DIRECTIVES],
   //template: '<p>foo</p>'
   //template: require('./table.jade')

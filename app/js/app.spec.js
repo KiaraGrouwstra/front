@@ -24,16 +24,6 @@ describe('App', () => {
 //   expect().toEqual()
 // })
 
-// integration:
-
-// it('parsley', () => {
-//   expect().toEqual()
-// })
-
-// it('toCurl', () => {
-//   expect().toEqual()
-// })
-
 // it('', () => {
 //   expect().toEqual()
 // })

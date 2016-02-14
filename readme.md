@@ -35,3 +35,5 @@ webpack --watch
 node server.js
 # node-ts server.ts
 # apache: https://gist.github.com/leocaseiro/4305e06948aa97e77c93
+
+file:///C:/Users/T/Desktop/ng2/coverage/

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, OnInit } from 'angular2/core';
 import { FormBuilder, Control } from 'angular2/common';
 import { arr2obj, spawn_n, mapBoth } from './js.js';
-import { Component, View, ViewChild } from 'angular2/core';
+import { Component, ViewChild } from 'angular2/core';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
 // a generic component class
@@ -34,10 +34,10 @@ let form_comp = (pars) => class {
 }
 
 // a component template for testing other components
-let test_comp = (selector, cls, obs_pars = {}, static_pars = {}) => {
-  let obj = Object.assign({}, obs_pars, static_pars)
+let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, content = '') => {
+  let obj = Object.assign({}, obs_pars, static_pars);
   let par_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
-  let tmplt = `<${selector}${par_str}></${selector}>`;
+  let tmplt = `<${selector}${par_str}>${content}</${selector}>`;
   return test_comp_html(tmplt, cls, obs_pars, static_pars);
 }
 

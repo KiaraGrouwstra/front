@@ -37,6 +37,7 @@ module.exports = {
 		// chunkFilename: '[name].[id].js',
 		filename: '[name].js'
 	},
+	// https://webpack.github.io/docs/configuration.html#devtool
   devtool: 'eval', //'source-map',
 	module: {
 		loaders: [
@@ -44,20 +45,16 @@ module.exports = {
 			{ test: /\.ls$/, loader: 'livescript' },
 			{
 				test: /\.tsx?$/,
-				//loader: 'babel?presets[]=es2015,presets[]=stage-0!ts',
-				//babel?presets[]=es2015,presets[]=stage-0!   // TS already adds ES6/7?
-				//loader: 'babel!ts',
 				loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
-				// query: babelSettings,
 			},
 			{
-				test: /\.js$/,
-				loader: 'babel',	//?presets[]=es2015,presets[]=stage-0
+				test: /\.jsx?$/,
 				include: [ path.resolve(__dirname, "app"), ],
 				//exclude: [ path.resolve(__dirname, "node_modules"), ],
-				query: babelSettings,
+				loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
+				//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
 	 		},
-			{ test: /\.json$/, loader: 'json' },	//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
+			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },
 			// style!css!cssnext!autoprefixer! over raw! for non-ng2 inclusion
@@ -67,7 +64,19 @@ module.exports = {
 			{ test: /\.css$/, loader: 'style!css' },
 			{ test: /\.(jpe?g|png)$/, loader: 'url?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
 			{ test: /\.(gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: 'file' }
-		]
+		],
+		postLoaders: [
+      // instrument only testing sources with Istanbul
+      {
+        test: /\.[tj]s$/,
+        include: path.join(__dirname, 'app'),
+        loader: 'babel-istanbul-loader',	//istanbul-instrumenter-loader
+        exclude: [
+          /\.(e2e|spec)\.[tj]s$/,
+          /node_modules/
+        ]
+      },
+    ],
 	},
 	resolve: {
 		extensions: [

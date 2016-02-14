@@ -21,7 +21,7 @@ module.exports = function(config) {
     },
 
     coverageReporter: {
-      dir : 'coverage/',
+      dir : '../coverage/',
       reporters: [
         { type: 'text' },
         { type: 'json' },
@@ -34,7 +34,7 @@ module.exports = function(config) {
       noInfo: true
     },
     // reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'coverage', 'progress' ],  //, 'dots'
+    reporters: [ 'coverage', 'progress' ],  //, 'dots'  //dots leads to double printing
     // proxied base paths: required for component assests fetched by Angular's compiler
     proxies: {
       '/app/': '/base/app/'

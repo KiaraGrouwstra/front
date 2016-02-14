@@ -1,11 +1,11 @@
 require('babel-polyfill');
-require('phantomjs-polyfill');
+// require('phantomjs-polyfill');
 require('es6-promise');
 require('es6-shim');
 require('reflect-metadata');
 require('zone.js/dist/zone-microtask.js');
-require('zone.js/dist/long-stack-trace-zone.js');
-require('zone.js/dist/jasmine-patch.js');
+// require('zone.js/dist/long-stack-trace-zone.js');
+// require('zone.js/dist/jasmine-patch.js');
 
 // source: http://twofuckingdevelopers.com/2016/01/testing-angular-2-with-karma-and-jasmine/
 // original: https://github.com/juliemr/ng2-test-seed/blob/master/karma-test-shim.js
