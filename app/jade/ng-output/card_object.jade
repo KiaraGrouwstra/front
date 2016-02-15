@@ -37,3 +37,9 @@
     //- )
     ul(*ngFor=`#x of (array | async)`)
       li {{ x | json }}
+      array(
+        '[path$]'=`x.path`
+        '[val$]'=`x.val`
+        '[schema$]'=`x.schema`
+        '[named]'=`true`
+      )

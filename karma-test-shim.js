@@ -10,7 +10,7 @@ require('zone.js/dist/zone-microtask.js');
 // source: http://twofuckingdevelopers.com/2016/01/testing-angular-2-with-karma-and-jasmine/
 // original: https://github.com/juliemr/ng2-test-seed/blob/master/karma-test-shim.js
 
-Error.stackTraceLimit = 5; //8; //Infinity;
+Error.stackTraceLimit = 5; //5 8 Infinity
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
 require('angular2/src/platform/browser/browser_adapter').BrowserDomAdapter.makeCurrent();

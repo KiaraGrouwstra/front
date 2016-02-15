@@ -43,7 +43,7 @@ describe('ObjectComp', () => {
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));
 
-  it('should work with nested arrays', test(
+  fit('should work with nested arrays', test(
     cls(nestr_pars, {}),
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));

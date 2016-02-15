@@ -223,22 +223,17 @@ let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
   // let fixture = await tcb.createAsync(test_class);
   return tcb.createAsync(test_class).then((fixture) => {
-    try {
-      fixture.detectChanges();
-      let test_cmp = fixture.componentInstance;
-      let target_comp = test_cmp.comp;
-      actions(test_cmp); //target_comp?
-      //test_cmp.items.push(3);
-      // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
-      // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
-      fixture.detectChanges();
-      let native_el = fixture.debugElement.childNodes[0].nativeElement;
-      test_fn(done, target_comp, native_el);
-    }
-    catch (e) {
-      done.fail(e);
-    }
-  })
+    fixture.detectChanges();
+    let test_cmp = fixture.componentInstance;
+    let target_comp = test_cmp.comp;
+    actions(test_cmp); //target_comp?
+    //test_cmp.items.push(3);
+    // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
+    // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
+    fixture.detectChanges();
+    let native_el = fixture.debugElement.childNodes[0].nativeElement;
+    test_fn(done, target_comp, native_el);
+  }).catch(done.fail)
 }
 
 // test_fn for comp_test to check a property value
