@@ -1,10 +1,7 @@
-//- {k, id, named, scal: v, obj: [v], arr: [v]}
+//- {k, id, named, scalar: [], object: [], array: []}
 .card
   .card-content(id=`{{id | async}}`)
     span.card-title(*ngIf='named') {{k | async}}
-    //- '[val$]'=`val$`
-    //- '[schema$]'=`schema$`
-    //- '[scalar_coll$]'=`scalar`
     mydl(
       '[path$]'=`path$`
       '[val$]'=`scalar`
@@ -16,30 +13,11 @@
       '[schema$]'=`x.schema`
       '[named]'=`true`
     )
-    //- array(
-    //-   *ngFor=`#x of (array | async)`
-    //-   '[path$]'=`x.path`
-    //-   '[val$]'=`x.val`
-    //-   '[schema$]'=`x.schema`
-    //-   '[named]'=`true`
-    //- )
-    //- array(
-    //-   '[path$]'=`['test']`
-    //-   '[val$]'=`[]`
-    //-   '[schema$]'=`null`
-    //-   '[named]'=`true`
-    //- )
-    //- array(
-    //-   '[path$]'=`path$`
-    //-   '[val$]'=`[]`
-    //-   '[schema$]'=`schema$`
-    //-   '[named]'=`false`
-    //- )
-    ul(*ngFor=`#x of (array | async)`)
-      li {{ x | json }}
-      array(
-        '[path$]'=`x.path`
-        '[val$]'=`x.val`
-        '[schema$]'=`x.schema`
-        '[named]'=`true`
-      )
+    //- array
+    //- '[named]'=`true`
+    value(
+      *ngFor=`#x of (array | async)`
+      '[path$]'=`x.path`
+      '[val$]'=`x.val`
+      '[schema$]'=`x.schema`
+    )

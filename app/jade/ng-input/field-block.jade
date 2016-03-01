@@ -1,9 +1,28 @@
-//- {k, label}, block input
-.input-field
+//- using `extends` needs file-system knowledge, so pre-render using `gulp-jade`... when I can load that ES6 from Gulp without errors.
+//- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
+.input-field(
+  '[hidden]'=`hidden`
+)
   block input
-  label(
-    for=k
-    data-error='wrong'
-  )!= label
+  //- div([ngSwitch]='type')
+    //- template([ngSwitchWhen]=`'input'`)
+    //-   my-input()
+    //- template(ngSwitchDefault)
+    //-   p UNIMPLEMENTED VALUE TYPE {{ type }}!
+      
+  //- data-error='wrong'
   //- data-success='right'
-  //- .alert.alert-danger([hidden]=`${k}.valid`)= `${label} is required`
+  label(
+    *ngIf=`named`
+    for=`{{id}}`
+  ) {{label}}
+  //- ^ does {{label}} need to be raw HTML?
+  //- p= `val: {{ ${ctrl}.value }}`
+  //- p= `errors: {{ ${ctrl}.errors | json }}`
+  //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
+  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
+    .error(
+      *ngFor=`#vldtr of validator_keys`
+      *ngIf=`ctrl.errors?.vldtr`
+      '[innerHtml]'=`validators[vldtr]`
+    )

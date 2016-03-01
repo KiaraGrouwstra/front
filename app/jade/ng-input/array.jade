@@ -1,18 +1,20 @@
-//- {k, id, named, html}
 .card
-  //- `{{id | async}}`
-  .card-content(id=id)
-    //- (*ngIf='named')
-    - if(named)
-      //- {{k | async}}
-      span.card-title= k
-    ul
-      li(*ngFor="#item of items | async")
+  .card-content('[id]'=`id`)
+    span.card-title(*ngIf='named') {{k}}
+    //- this should probably be ngControlArray, but that directive [doesn't actually exist yet](https://github.com/angular/angular/issues/5185)
+    //- `spec.name`
+    ul(
+      '[ngControlGroup]'=`ctrl`
+    )
+      //- presumes lengths of items and the ControlArray will stay in sync
+      li(*ngFor="#item of items; #i = index")
         button('(click)'=`remove(item)`)
         | x
-        //- <field> (unnamed)
-        //- wait, jade? ng2? I'm confused... also, the ng2 inputs should probably use [(double)] binding?
-          //- {{item}}
-          //- != html
+        input-field(
+          '[named]'=`false`
+          '[path]'=`path.concat(item)`
+          '[spec]'=`spec.items`
+          '[ctrl]'=`ctrl.at(i)`
+        )
     button('(click)'=`add()`)
     | +

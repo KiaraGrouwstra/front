@@ -15,8 +15,8 @@ import {Observable} from 'rxjs/Observable';
   selector: 'dummy'
   directives: [CORE_DIRECTIVES, FORM_DIRECTIVES],
   //template: '<p>foo</p>'
-  //template: require('./table.jade')
-  template: require('../ng-output/ul.jade')
+  //template: require('./table')
+  template: require('../ng-output/ul')
 })
 export default class Dummy {
   rows: any;

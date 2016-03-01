@@ -1,9 +1,9 @@
-//- {attrs: {}, opts: []}
+//- {attrs: {}, enum_opts: []}
 select()&attributes(attrs)
-  - each opt in opts
-    option= opt
-  //-   *ngFor='#p of ' + powers
-  //-   [value]='p'
-  //- ) {{p}}
+  //- | {{opt}}
+  option(
+    *ngFor='#opt of enum_opts'
+    [value]='opt'
+  )
 script.
   $('select').material_select();

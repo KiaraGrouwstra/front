@@ -1,14 +1,25 @@
 //- {fields: [html], desc: html}
 //- '#my_form'='ngForm'
+//- '(ngSubmit)'='onSubmit()'
 form(
   '[ngFormModel]'='form'
-  '(ngSubmit)'='onSubmit()'
+  '#frm'='ngForm'
+  '(ngSubmit)'=`submit.emit(form.value)`
 )
-  .fn_desc!= desc
+  .fn_desc {{ desc }}
   //- delegate loop to ng-output/object.jade?
-  - each fld in fields
-    != fld
+  //-  | async
+  input-value(
+    *ngFor=`#v of items`
+    '[path]'=`v.path`
+    '[spec]'=`v.spec`
+    '[named]'=`v.named`
+    '[ctrl]'=`v.ctrl`
+  )
   button.btn.waves-effect.waves-light(
     type='submit'
-    [disabled]='!form.valid'
+    '[disabled]'=`!form.valid`
   ) Submit
+
+//- h3 Form value:
+//- pre {{value}}

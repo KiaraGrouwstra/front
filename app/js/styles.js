@@ -1,3 +1,3 @@
-require("normalize.css/normalize.css");
-require("materialize-css/dist/css/materialize.css");
-require("../style.less");
+require("normalize.css/normalize");
+require("materialize-css/dist/css/materialize");
+require("../style");

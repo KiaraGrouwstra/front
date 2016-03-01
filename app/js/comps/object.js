@@ -6,6 +6,7 @@ import { mapComb, notify } from '../rx_helpers';
 import { Templates } from '../jade';
 import { DLComp } from './dl';
 import { ArrayComp } from './array';
+import { ValueComp } from './value';
 import { key_spec, get_fixed, get_patts, infer_type } from '../output';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
@@ -20,6 +21,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
     forwardRef(() => DLComp),
     forwardRef(() => ArrayComp),
     forwardRef(() => ObjectComp),
+    forwardRef(() => ValueComp),
   ],
 })
 export class ObjectComp implements OnInit {

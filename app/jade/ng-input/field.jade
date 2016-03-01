@@ -1,16 +1,33 @@
 //- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
 .input-field(
-   '[hidden]'=hidden
+  '[hidden]'=`hidden`
 )
-  != html
+  div('[ngSwitch]'='type')
+    template('[ngSwitchWhen]'=`'input'`)
+    //- '[path]'=`path`
+    //- '[spec]'=`spec`
+      my-input(
+        '[ctrl]'=`ctrl`
+        '[attrs]'=`attrs`
+      )
+    template(ngSwitchDefault)
+      p UNIMPLEMENTED VALUE TYPE {{ type }}!
+      
   //- data-error='wrong'
   //- data-success='right'
   label(
-    for=id
-  )!= label
+    *ngIf=`named`
+    '[attr.for]'=`id`
+    '[innerHtml]'=`label`
+  )
+  //- | {{label}}
+  //- ^ does {{label}} need to be raw HTML?
   //- p= `val: {{ ${ctrl}.value }}`
   //- p= `errors: {{ ${ctrl}.errors | json }}`
-  //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !${ctrl}.valid`)
-  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`${ctrl}.valid`)
-    - each vldtr in Object.keys(validators)
-      .error(*ngIf=`${ctrl}.errors?.${vldtr}`)!= validators[vldtr]
+  //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
+  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
+    .error(
+      '*ngFor'=`#vldtr of validator_keys`
+      '*ngIf'=`ctrl.errors?.vldtr`
+      '[innerHtml]'=`validator_msgs[vldtr]`
+    )

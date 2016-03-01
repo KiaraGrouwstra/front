@@ -28,10 +28,10 @@ export class DLComp implements OnInit {
     //['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
     this.val$
     .filter(v => v[0] !== undefined)
-    // .map(coll => coll.map(obj =>
-    //   // Object.assign({}, obj, getPaths(obj.path))
-    //   _.mapValues(x => new BehaviorSubject(x), obj)
-    // ))
+    .map(coll => coll.map(obj =>
+      _.assign(obj, getPaths(obj.path))
+      // _.mapValues(x => new BehaviorSubject(x), obj)
+    ))
     .subscribe(x => this.rows = x)
   }
 

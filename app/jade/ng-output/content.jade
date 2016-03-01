@@ -4,6 +4,9 @@
   include ./bool.jade
 
 .row
+  #scraper(#scraper).col.s12
+
+.row
   .col.s12
     ul.tabs
       //- '[attr.data-tooltip]'='auths[api]?.token ? "auth token: {{auths[api]?.token}}" : "connect to {{api}}"'
@@ -24,6 +27,14 @@
       ) Scopes
       .collapsible-body
         #auth(#auth)
+        //- auth-ui(
+        //-   '(handler)'=`handle_implicit($event)`
+        //- )
+        //- '[name]'=``
+        //- '[scopes]'=``
+        //- '[oauth_info]'=``
+        //- '[delim]'=``
+        //- '[have]'=``
       
 .row
   #functions(#functions).col.s3
@@ -44,9 +55,8 @@
             pre#colored('innerHtml'='{{ colored | async }}')
             //- #expandable
             //- #rendered('innerHtml'='{{ rendered | async }}')
-            //- value#rendered('[path$]'=`[]`, '[val$]'=`json`, '[schema$]'=`{}`)
             value#rendered('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
 
-#output(#output)
+//- #output(#output)
 
 //- include ./test.jade

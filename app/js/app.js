@@ -2,11 +2,11 @@
 
 import 'reflect-metadata';
 import { Component, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
-    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy } from 'angular2/core';
+    DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy, Inject } from 'angular2/core';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, FormBuilder, Control, Validators } from 'angular2/common';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
 import { HTTP_BINDINGS, Http } from 'angular2/http'; //Http, Headers
-import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
+// import { IterableDiffers } from 'angular2/src/core/change_detection/differs/iterable_differs';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import 'rxjs/add/operator/map';
@@ -15,29 +15,30 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
-global.Observable = Observable;
-global.Rx = require('rxjs');
-global.ng = require('angular2/core');
+// global.Observable = Observable;
+// global.Rx = require('rxjs');
+// global.ng = require('angular2/core');
 import { MarkedPipe } from './pipes';
 import WS from './ws';
 let _ = require('lodash/fp');
 // import Dummy from './dummy';
-import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify } from './rx_helpers';
+import { arrToSet, notify } from './rx_helpers';  //elemToArr, arrToArr, elemToSet, setToSet, loggers,
 import { Object_filter, Array_has, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, do_return, RegExp_escape, String_stripOuter, prettyPrint } from './js.js';
 import { parseVal } from './output';
-import { method_form } from './input';
-let marked = require('marked');
-import { gen_comp, form_comp } from './dynamic_class';
+// import { method_form } from './input';
+// let marked = require('marked');
+import { gen_comp } from './dynamic_class'; //, form_comp
 let Immutable = require('immutable');
-String.prototype.stripOuter = String_stripOuter;
-import { ColoredComp } from './colored';
+// String.prototype.stripOuter = String_stripOuter;
+// import { ColoredComp } from './colored';
 //import { ScalarComp } from './scalar';
 //import { ULComp } from './ul';
 import { ValueComp } from './comps/value';
-import { load_ui, load_auth_ui, load_fn_ui, get_submit } from './ui';
+import { load_ui, load_auth_ui, load_fn_ui, load_scrape_ui, get_submit } from './ui';
 import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
+import { AuthUiComp } from './auth_ui';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp];  //, ScalarComp, ULComp
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp, AuthUiComp];  //, ScalarComp, ULComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
@@ -52,7 +53,7 @@ Promise.prototype.do = Prom_do;
 @Component({
   selector: 'app',
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
-  template: require('../jade/ng-output/materialize.jade'),
+  template: require('../jade/ng-output/materialize'),
   directives: directives, // one instance per component   //viewDirectives: private from ng-content
   pipes: pipes,
 })
@@ -64,6 +65,12 @@ Promise.prototype.do = Prom_do;
 ])
 //DynamicRouteConfigurator: http://blog.mgechev.com/2015/12/30/angular2-router-dynamic-route-config-definition-creation/
 // <router-outlet></router-outlet>
+// [child routes](https://angular.io/docs/ts/latest/guide/router.html#!#child-router), e.g. within non-root:
+// <a [routerLink]="['./Product-one']">, <a [routerLink]="['/Home']">
+// [aux routing](http://plnkr.co/edit/n0IZWh?p=preview): multiple router-outlets in one view, but still ["more trouble than it's worth"](https://github.com/angular/angular/issues/5027#issuecomment-169464546)
+// programmatic navigation in two router-outlets with param passing: this._router.navigate(['/', ['EditEntity'], { id: id }]);
+// ... note that I'm fuzzy on the details of how that works, i.e. which routes and params would go to which router-outlets.
+
 @autobind export class App {
 //   deps: any;
 //   ws: WS;
@@ -93,9 +100,34 @@ Promise.prototype.do = Prom_do;
 //   schema_path: any;
 //   obs: Observable<any>;
 
-  constructor(dcl: DynamicComponentLoader, router:Router, //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
-        el_ref: ElementRef, inj: Injector, cdr: ChangeDetectorRef, http: Http) {
-    this.deps = { dcl: dcl, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
+  constructor(
+    // @Inject(DynamicComponentLoader) dcl: DynamicComponentLoader,
+    // @Inject(Router) router: Router,
+    // @Inject(ElementRef) el_ref: ElementRef,
+    // @Inject(Injector) inj: Injector,
+    // @Inject(ChangeDetectorRef) cdr: ChangeDetectorRef,
+    // @Inject(Http) http: Http
+    // @Inject(DynamicComponentLoader) dcl,
+    // @Inject(Router) router,
+    // @Inject(ElementRef) el_ref,
+    // @Inject(Injector) inj,
+    // @Inject(ChangeDetectorRef) cdr,
+    // @Inject(Http) http
+    dcl: DynamicComponentLoader,
+    router: Router,
+    el_ref: ElementRef,
+    inj: Injector,
+    cdr: ChangeDetectorRef,
+    http: Http
+    // dcl,
+    // router,
+    // el_ref,
+    // inj,
+    // cdr,
+    // http
+    //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
+      ) {
+    this.deps = { dcl: dcl, router: router, el_ref: el_ref, inj: inj, cdr: cdr, http: http };
     //this.ws = new WS(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
     //this.ws = new WS({ onOpen: () => toast.success('websocket connected!'), onClose: () => toast.warn('websocket disconnected!') });
     this.ws = new WS("ws://127.0.0.1:8080/socket", "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
@@ -113,7 +145,7 @@ Promise.prototype.do = Prom_do;
     global.Control = Control;
     //let pollTimer = window.setInterval(this.refresh, 500);
     //dcl.loadAsRoot(Dummy, "#foo", inj);
-    this.apis = ['instagram', 'github'];
+    this.apis = ['instagram', 'github', 'ganalytics'];
     let api = this.apis[0];
     this.apis.forEach(name => getKV(name).then((v) => {
         this.auths[name] = v;
@@ -182,7 +214,7 @@ Promise.prototype.do = Prom_do;
     //notify("rows", rows);
     //notify("cols", cols);
     let pars = { rows: rows, cols: cols };
-    this.loadHtml(to, pars, require('../jade/ng-output/table-a.jade'));
+    this.loadHtml(to, pars, require('../jade/ng-output/table-a'));
 
     //spawn_n(() => this.refresh(), 30);
   };
@@ -232,5 +264,15 @@ Promise.prototype.do = Prom_do;
   load_ui = load_ui;
   load_auth_ui = load_auth_ui;
   load_fn_ui = load_fn_ui;
+  load_scrape_ui = load_scrape_ui;
 
 }
+App.parameters = [
+  [DynamicComponentLoader],
+  [Router],
+  [ElementRef],
+  [Injector],
+  [ChangeDetectorRef],
+  [Http]
+]
+// Reflect.decorate([ViewChild(AuthUiComp)], App.prototype, 'auth_ui');

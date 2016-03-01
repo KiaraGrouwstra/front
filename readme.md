@@ -11,6 +11,7 @@ tsd update
 patch `babel-plugin-transform-runtime/lib/definitions.js`: comment `defineProperty: "object/define-property"`
 patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
 patch karma-jasmine: make lib/adapter.js using /src/ version wrapped in wrapper: https://github.com/karma-runner/karma-jasmine/blob/master/tasks/build.js
+patch [angular2/src/core/change_detection/pipe_lifecycle_reflector.ts](https://github.com/angular/angular/issues/5169)
 
 # ./node_modules/karma/bin/karma start
 # npm install -g karma-cli

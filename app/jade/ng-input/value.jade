@@ -1,0 +1,31 @@
+div([ngSwitch]='type')
+  template([ngSwitchWhen]=`'scalar'`)
+    input-field(
+      '[named]'=`named`
+      '[path]'=`path`
+      '[spec]'=`spec`
+      '[ctrl]'=`ctrl`
+    )
+  template([ngSwitchWhen]=`'array'`)
+    input-array(
+      '[named]'=`named`
+      '[path]'=`path`
+      '[spec]'=`spec`
+      '[ctrl]'=`ctrl`
+    )
+  template([ngSwitchWhen]=`'object'`)
+    input-object(
+      '[named]'=`named`
+      '[path]'=`path`
+      '[spec]'=`spec`
+      '[ctrl]'=`ctrl`
+    )
+  template([ngSwitchWhen]=`'table'`)
+    input-table(
+      '[named]'=`named`
+      '[path]'=`path`
+      '[spec]'=`spec`
+      '[ctrl]'=`ctrl`
+    )
+  template(ngSwitchDefault)
+    p UNIMPLEMENTED VALUE TYPE {{ type }}!

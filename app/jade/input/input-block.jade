@@ -1,0 +1,6 @@
+//- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+extends field-block
+block input
+  input.tooltipped.validate(
+    '[ngClass]'=`{valid: ${ctrl}.valid, invalid: ${ctrl}.invalid}`
+  )&attributes(attrs)

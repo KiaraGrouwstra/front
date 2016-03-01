@@ -72,6 +72,8 @@ let Object_filter = (obj, pred) => arr2obj(Object.keys(obj).filter(k => pred(obj
 // }
 let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
+// wrap into lodash like here?
+// https://github.com/jonahkagan/schematic-ipsum/blob/master/src/underscoreExt.coffee
 let arr2obj = (arr, fn) => _.zipObject(arr, arr.map(fn));
 
 let do_return = (fn) => (v) => {
@@ -211,8 +213,8 @@ let getPaths = (path) => {
   let id = path.join('-');  // /^[a-zA-Z][\w:.-]*$/
   // let model = path.join('.');
   let elvis = path.join('?.');  //ng2 elvis operator to prevent crashing if some element is missing
-  let variable = id.replace(/-/g, '_')
-  return { k: k, id: id, model: elvis, variable: variable }
+  let variable = id.replace(/-/g, '_');
+  return { k: k, id: id, model: elvis, variable: variable };
 }
 
 // cleanse a string to use as an ID

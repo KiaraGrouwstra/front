@@ -1,8 +1,9 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, arr2obj, toast, mapBoth, String_stripOuter, getPaths, id_cleanse } from './js.js'; //, Obs_do, Obs_then
-import { Validators, Control } from 'angular2/common';
+import { Validators, Control, ControlGroup, ControlArray } from 'angular2/common';
 import { Templates } from './jade';
+import { ControlList } from './control_list';
 
 // get the default value for a value type
 let get_default = (type) => {
@@ -11,8 +12,8 @@ let get_default = (type) => {
     number: 0,
     integer: 0,
     boolean: false,
-    array:   [],
-    object:  {},
+    array: [],
+    object: {},
     // file: 'file', //[],
   }
   return _.get([type], def_vals)
@@ -20,17 +21,17 @@ let get_default = (type) => {
 
 // get the input type for a value type
 let input_type = (type) => _.get([type], {
-    string: 'text',
-    number: 'number',
-    integer: 'number',
-    boolean: 'checkbox',
-    file: 'file',
-  }) || type;
+  string: 'text',
+  number: 'number',
+  integer: 'number',
+  boolean: 'checkbox',
+  file: 'file',
+}) || type;
 
 // pick a Jade template
 let get_template = (opts) => _.get([opts.type], {
   //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
-  string: opts.enum_options ? 'datalist' : null, //select, radio
+  string: opts.enum_opts ? 'datalist' : null, //select, radio
   integer: (opts.attrs.max > opts.attrs.min) ? 'range' : null,
   boolean: 'switch',
   date: 'date',
@@ -39,30 +40,47 @@ let get_template = (opts) => _.get([opts.type], {
   // object: [fieldset],
 }) || 'input'
 
-// get the input template for a given parameter
+// get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
-let param_field = (path, api_spec) => {
+let input_attrs = (path, spec) => {
   // general parameters
-  let { name: name, in: kind, description: desc, required: req, schema: schema, type: type, format: format, allowEmptyValue: allow_empty, items: items, collectionFormat: collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, maxLength: maxLength, minLength: minLength, pattern: pattern, maxItems: maxItems, minItems: minItems, uniqueItems: uniqueItems, enum: enum_options, multipleOf: multipleOf } = api_spec
-  let label = marked(`**${name}:** ${desc}`);
+  let { name: name, in: kind, description: desc, required: req, schema: schema, type: type, format: format, allowEmptyValue: allow_empty, items: items, collectionFormat: collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, maxLength: maxLength, minLength: minLength, pattern: pattern, maxItems: maxItems, minItems: minItems, uniqueItems: uniqueItems, enum: enum_options, multipleOf: multipleOf } = spec;
   desc = marked(desc || '') //.stripOuter();
-  let { id: id, k: k, model: elvis, variable: variable } = getPaths(path)
-  let key = name  // variable
-  let model = `form.controls.${key}`
+  let { id: id, variable: variable } = getPaths(path);  //, k: k, model: elvis
+  let key = name;  // variable
+  let model = `form.controls.${key}`;
   let attrs = {
     '[(ngModel)]': `${model}.value`,
     ngControl: key,
     id: id,
     required: req,
-  }
+  };
   // if(desc) marked)(attrs.placeholder = description;;
   attrs[`#${variable}`] = 'ngForm';
 
   // numbers:
-  let max = inc_max || ex_max ? ex_max + 1 : null
-  let min = inc_min || ex_min ? ex_min - 1 : null
+  let max = inc_max || ex_max ? ex_max + 1 : null;
+  let min = inc_min || ex_min ? ex_min - 1 : null;
 
-  let AUTO_COMP = ['name', 'honorific-prefix', 'given-name', 'additional-name', 'family-name', 'honorific-suffix', 'nickname', 'email', 'username', 'new-password', 'current-password', 'organization-title', 'organization', 'street-address', 'address-line1', 'address-line2', 'address-line3', 'address-level4', 'address-level3', 'address-level2', 'address-level1', 'country', 'country-name', 'postal-code', 'cc-name', 'cc-given-name', 'cc-additional-name', 'cc-family-name', 'cc-number', 'cc-exp', 'cc-exp-month', 'cc-exp-year', 'cc-csc', 'cc-type', 'transaction-currency', 'transaction-amount', 'language', 'bday', 'bday-day', 'bday-month', 'bday-year', 'sex', 'tel', 'url', 'photo']
+  // type-specific parameter edits
+  switch(type) {
+    case 'string':
+      // parameters: allowEmptyValue:false, maxLength, minLength, pattern, format
+      if(allow_empty) minLength = 0;
+      // format: http://swagger.io/specification/#dataTypeFormat
+      // int32, int64, float, double, byte, binary, date, date-time, password; any other like email, uuid, ...
+      let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
+              'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'];
+      if(format == 'date-time') format = 'datetime';
+      if(INPUT_TYPES.includes(format)) type = format;
+      if(enum_options && !pattern) pattern = enum_options.map(s => RegExp_escape(s)).join('|');
+      break;
+    // case 'array':
+    // parameters: items, collectionFormat:csv(/ssv/tsv/pipes/multi), maxItems, minItems, uniqueItems
+    //   break;
+  }
+
+  let AUTO_COMP = ['name', 'honorific-prefix', 'given-name', 'additional-name', 'family-name', 'honorific-suffix', 'nickname', 'email', 'username', 'new-password', 'current-password', 'organization-title', 'organization', 'street-address', 'address-line1', 'address-line2', 'address-line3', 'address-level4', 'address-level3', 'address-level2', 'address-level1', 'country', 'country-name', 'postal-code', 'cc-name', 'cc-given-name', 'cc-additional-name', 'cc-family-name', 'cc-number', 'cc-exp', 'cc-exp-month', 'cc-exp-year', 'cc-csc', 'cc-type', 'transaction-currency', 'transaction-amount', 'language', 'bday', 'bday-day', 'bday-month', 'bday-year', 'sex', 'tel', 'url', 'photo'];
 
   // type-specific parameters
   let type_params = {
@@ -87,70 +105,102 @@ let param_field = (path, api_spec) => {
   }
   let extra = _.get([type], type_params) || {};
   Object.assign(attrs, extra);
-
-  // type-specific parameter edits
-  switch(type) {
-    case 'string':
-      // parameters: allowEmptyValue:false, maxLength, minLength, pattern, format
-      if(allow_empty) minLength = 0
-      // format: http://swagger.io/specification/#dataTypeFormat
-      // int32, int64, float, double, byte, binary, date, date-time, password; any other like email, uuid, ...
-      let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
-              'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week']
-      if(format == 'date-time') format = 'datetime'
-      if(INPUT_TYPES.includes(format)) type = format
-      if(enum_options && !pattern) pattern = enum_options.map(s => RegExp_escape(s)).join('|')
-      break;
-    // case 'array':
-    // parameters: items, collectionFormat:csv(/ssv/tsv/pipes/multi), maxItems, minItems, uniqueItems
-    //   break;
-  }
-
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.zipObject([k], [true]) : null);
-  Object.assign(Validators, val_fns);
-  // 'schema', 'format', 'items', 'collectionFormat', 'type'
-  let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf']
-  let used_vals = val_keys.filter(k => api_spec[k] != null)
-  let validators = used_vals.map(k => Validators[k](api_spec[k]));
-  let validator = Validators.compose(validators);
-  let val_msgs = arr2obj(used_vals, k => val_errors[k](api_spec[k]));
-
-  // get the html template for the given settings
-  attrs.type = input_type(type)
-  let hidden = type == 'hidden';
-  let opts = { attrs: attrs, type: type, opts: enum_options, id: id, ctrl: model, label: label, validators: val_msgs, hidden: hidden }
-  let template = Templates[get_template(opts)]
-  // console.log('template', template)
-  let field = template(opts)
-
-  // return the html along with its initial key/value pair for the model
-  let val = (typeof def !== 'undefined') ? def : get_default(type)
-  let ctrl = new Control(val, validator)
-  //console.log('ctrl', ctrl);
-  let obj = _.zipObject([key], [{ type: kind, val: ctrl }]) // ctrl  //val
-  return {html: field, obj: obj}
+  attrs.type = input_type(type);
+  return attrs;
 }
 
-// get the form template for a given API function
-let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
-  let hops = ['paths', fn_path, 'get', 'parameters']
-  let path = hops.map(x => id_cleanse(x))
+let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path, spec), val_msgs = get_validators(spec).val_msgs
+  attrs: attrs,
+  type: spec.type,
+  enum_opts: spec.enum,
+  id: attrs.id,
+  ctrl: `form.controls.${spec.name}`,
+  label: marked(`**${spec.name}:** ${spec.description}`),
+  validators: val_msgs,
+  hidden: spec.type == 'hidden',
+})
+
+// get the input template for a given parameter
+// http://swagger.io/specification/#parameterObject
+let param_field = (path, spec) => {
+  let { validator: validator, val_msgs: val_msgs } = get_validators(spec);
+  let attrs = input_attrs(path, spec);
+  let opts = input_opts(spec, attrs, val_msgs); //path,
+  // get the html template for the given settings
+  let template = Templates[get_template(opts)];
+  let field = template(opts);
+
+  // return the html along with its initial key/value pair for the model
+  let ctrl = input_control(spec, validator);
+  let obj = { [spec.name]: { type: spec.in, val: ctrl } };
+  return { html: field, obj: obj };
+}
+
+// return initial key/value pair for the model
+function input_control(spec = {}, validator = get_validators(spec).validator) {
+  if(spec.type == 'array')
+      // return new ControlArray([]); //with control template input_control(spec.items)
+      return new ControlList(input_control(spec.items));
+  let def = spec.default;
+  let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
+  return new Control(val, validator); //, async_validator
+  // return [val, validator];
+}
+
+// get a form template
+let make_form = (path_spec_pairs, desc = '', tmplt = Templates.form) => {
   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
-  let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes})
-  let fields = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => param_field(path.concat(idx), v)))
-  // console.log('fields', fields)
-  let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '')
-  let html = tmplt({ desc: desc, fields: fields.map(x => x.html) })
-  // console.log('html', html)
-  //console.log('fields', fields)
-  let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {}
-  //console.log('obj', obj)
-  return {html: html, obj: obj}
+  let fields = path_spec_pairs.map(([path, spec]) => param_field(path, spec));
+  let html = tmplt({ desc: desc, fields: fields.map(x => x.html) });
+  let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {};
+  return { html: html, obj: obj };
 }
 
+// form for a given API function
+let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
+  let hops = ['paths', fn_path, 'get', 'parameters'];
+  let path = hops.map(x => id_cleanse(x));
+  let scheme = [['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes}];
+  let path_spec_pairs = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => [path.concat(idx), v]));
+  let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '');
+  return make_form(path_spec_pairs, desc, tmplt);
+}
+
+// get the form template for a given API function
+// let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
+//   let hops = ['paths', fn_path, 'get', 'parameters'];
+//   let path = hops.map(x => id_cleanse(x));
+//   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
+//   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
+//   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
+//   let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes});
+//   let fields = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => param_field(path.concat(idx), v)));
+//   // console.log('fields', fields);
+//   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '');
+//   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) });
+//   // console.log('html', html);
+//   //console.log('fields', fields);
+//   let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {};
+//   //console.log('obj', obj);
+//   return { html: html, obj: obj };
+// }
+
 // validators
+
+// prepare the form control validators
+let get_validators = (spec) => {
+  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? { [k]: true } : null);
+  Object.assign(Validators, val_fns);
+  // 'schema', 'format', 'items', 'collectionFormat', 'type'
+  let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf'];
+  let used_vals = val_keys.filter(k => spec[k] != null);
+  let validators = used_vals.map(k => Validators[k](spec[k]));
+  let validator = Validators.compose(validators);
+  let val_msgs = arr2obj(used_vals, k => val_errors[k](spec[k]));
+  return { validator: validator, val_msgs: val_msgs };
+}
 
 let val_conds = {
   required: (v, par) => (v == null || v.length == 0),
@@ -190,4 +240,4 @@ let val_errors = {
 
 // async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81
 
-export { method_form };
+export { method_form, make_form, input_attrs, input_control, get_validators, input_opts, get_template };

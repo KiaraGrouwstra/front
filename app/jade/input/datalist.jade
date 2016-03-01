@@ -1,0 +1,6 @@
+//- {attrs: {}, enum_opts: []}
+- var id = 'datalist' + Math.floor(999999 * Math.random())
+input(list=id)&attributes(attrs)
+datalist(id=id)
+  - each opt in enum_opts
+    option= opt

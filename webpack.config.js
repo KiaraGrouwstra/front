@@ -41,8 +41,8 @@ module.exports = {
   devtool: 'eval', //'source-map',
 	module: {
 		loaders: [
-			{ test: /\.coffee$/, loader: 'coffee' },
-			{ test: /\.ls$/, loader: 'livescript' },
+			// { test: /\.coffee$/, loader: 'coffee' },
+			// { test: /\.ls$/, loader: 'livescript' },
 			{
 				test: /\.tsx?$/,
 				loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
@@ -81,7 +81,7 @@ module.exports = {
 	resolve: {
 		extensions: [
 			// you can now require('file') instead of require('file.coffee')
-			'', '.js', '.coffee', 'ls', '.ts', '.tsx', 'json', 'html', 'jade', 'css', 'less', 'sass', 'scss'
+			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss'	//'', '.coffee', '.ls', '.tsx', '.html'
 		],
 		// root: ['node_modules', 'bower_components', 'app'].map((folder) => path.join(__dirname, folder))
 		modulesDirectories: ['node_modules', 'bower_components', 'app'],

@@ -2,6 +2,9 @@ import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync
 import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
 
+import { provide } from 'angular2/core';
+import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+
 import { ValueComp } from './value';
 let cls = test_comp('value', ValueComp);
 let path = ['test'];
@@ -19,6 +22,11 @@ describe('ValueComp', () => {
   let builder: TestComponentBuilder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
+  // how could I override a provider for one specific test instead?
+  beforeEachProviders(() => [
+    provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
+  ]);
+
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
@@ -35,12 +43,12 @@ describe('ValueComp', () => {
 
   it('should handle objects', test(
     cls(Object.assign({}, obs_pars, { val$: obj }), {}),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+    assert((comp, el) => expect(el).toHaveText('a1b2'))
   ));
 
   it('should handle tables', test(
     cls(Object.assign({}, obs_pars, { val$: table }), {}),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+    assert((comp, el) => expect(el).toHaveText('ab12AB'))
   ));
 
 });

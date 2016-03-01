@@ -1,6 +1,29 @@
-//- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+//- using `extends` needs file-system knowledge, so pre-render using `gulp-jade`... when I can load that ES6 from Gulp without errors.
+//- {ctrl, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+//- which of these are like [attr.aria-label], [class.special] and [style.color]?
+//- string
+//- number/integer
 extends field-block
 block input
-  input.validate(
-    [ngClass]=`{valid: ${attrs.ngControl}.valid, invalid: ${attrs.ngControl}.invalid}`
-  )&attributes(attrs)
+  input.tooltipped.validate(
+    '#frm'='ngForm'
+    '[ngClass]'=`{valid: ctrl.valid, invalid: ctrl.invalid}`
+    '[(ngModel)]'=`model.value`
+    '[ngControl]'=`key`
+    '[id]'=`attrs.id`
+    '[required]'=`attrs.required`
+    '[placeholder]'=`attrs.placeholder`
+    '[type]'=`attrs.type`
+    
+    '[maxlength]'=`attrs.maxlength`
+    '[minlength]'=`attrs.minlength`
+    '[pattern]'=`attrs.pattern`
+    '[title]'=`attrs.title`
+    '[autocomplete]'=`attrs.autocomplete`
+    '[attr.data-tooltip]'=`attrs.tooltip`
+
+    '[max]'=`attrs.max`
+    '[min]'=`attrs.min`
+    '[step]'=`attrs.step`
+
+  )
