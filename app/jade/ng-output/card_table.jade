@@ -5,12 +5,12 @@
     table.bordered.highlight(id=`{{id | async}}`)
       thead
         th(
-          *ngFor=`#col of cols`
+          *ngFor=`#col of cols | async`
           id=`{{col.id}}`
         ) {{col.k}}
       tbody
         tr(
-          *ngFor=`#r of rows`
+          *ngFor=`#r of rows | async`
           id=`{{r.id}}`
         )
           //- rearrange as objects with *ngFor=`#col of cols` -> #cell=`r[col]`?

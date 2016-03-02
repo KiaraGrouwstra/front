@@ -41,7 +41,7 @@ export default class Dummy {
     //this.items = Observable.from(['a','b']);
     this.items = Observable.fromArray(['a','b']);
     //obs.scan((acc, x) => set_add_many(acc, Object.keys(x)), new Set([]));
-    setTimeout(() => { cdr.detectChanges(); }, 5000);
+    setTimeout(() => { cdr.markForCheck(); }, 5000);
   }
 }
 */

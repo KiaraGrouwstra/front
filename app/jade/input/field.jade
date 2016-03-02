@@ -1,6 +1,8 @@
 //- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
+//- '[hidden]'=hidden
+//- ^ I don't know why, but it seemed to dislike this version for some reason...
 .input-field(
-  '[hidden]'=hidden
+  '[ngClass]'=`{hidden: ${hidden}}`
 )
   != html
   //- data-error='wrong'

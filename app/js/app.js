@@ -1,7 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
 
 import 'reflect-metadata';
-import { Component, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter,
+import { Component, ElementRef, Directive, Attribute, Injectable, Injector, Pipe, OnInit, EventEmitter, ViewChild,
     DynamicComponentLoader, ChangeDetectorRef, ComponentMetadata, ChangeDetectionStrategy, Inject } from 'angular2/core';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, FormBuilder, Control, Validators } from 'angular2/common';
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
@@ -34,11 +34,13 @@ let Immutable = require('immutable');
 //import { ScalarComp } from './scalar';
 //import { ULComp } from './ul';
 import { ValueComp } from './comps/value';
+import { ObjectComp } from './comps/object';
+import { DLComp } from './comps/dl';
 import { load_ui, load_auth_ui, load_fn_ui, load_scrape_ui, get_submit } from './ui';
 import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { AuthUiComp } from './auth_ui';
 
-let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp, AuthUiComp];  //, ScalarComp, ULComp
+let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp, AuthUiComp, ObjectComp, DLComp];  //, ScalarComp, ULComp
 let pipes = [MarkedPipe];
 
 Promise.prototype.finally = Prom_finally;
@@ -275,4 +277,5 @@ App.parameters = [
   [ChangeDetectorRef],
   [Http]
 ]
+Reflect.decorate([ViewChild(ValueComp)], App.prototype, 'v');
 // Reflect.decorate([ViewChild(AuthUiComp)], App.prototype, 'auth_ui');

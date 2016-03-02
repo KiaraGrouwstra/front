@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, OnInit, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, Input, forwardRef, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { mapComb } from '../rx_helpers';
 import { parseScalar } from '../output';
 import { Observable } from 'rxjs/Observable';
@@ -17,8 +17,25 @@ export class ScalarComp implements OnInit {
   //@Input() val$: Observable<any>;
   // html: Observable<string>;
 
+  constructor(cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
+  ngOnDestroy() {
+    this.disp.unsubscribe();
+    this.cdr.detach();
+  }
+
   ngOnInit() {
+    // this.html = mapComb(inputs.map(k => this[k]), parseScalar);
     this.html = mapComb(inputs.map(k => this[k]), parseScalar);
+    this.disp = this.html.subscribe(x => {
+      this.cdr.markForCheck();
+    });
   }
 
 }
+
+ScalarComp.parameters = [
+  [ChangeDetectorRef],
+]

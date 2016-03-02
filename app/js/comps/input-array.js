@@ -39,14 +39,14 @@ export class InputArrayComp implements OnInit {
   add() {
     this.items.add(this.counter++);
     this.ctrl.add();
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
   remove(item) {
     let idx = _.findIndex(x => x == item, this.items);  //does this work on Sets?
     ctrl.removeAt(idx);
     this.items.delete(item);
-    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
 }

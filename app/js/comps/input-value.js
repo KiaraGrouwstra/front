@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
 import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
 import { FieldComp } from './input-field';
@@ -26,6 +26,10 @@ import { InputTableComp } from './input-table';
 export class InputValueComp implements OnInit {
   // type: Observable<string>;
 
+  constructor(cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
   ngOnInit() {
     // this calculates only once -- move out like HostBinding? convert to Rx?
     let SCALARS = ['string', 'number', 'integer', 'boolean', 'file'];
@@ -36,3 +40,7 @@ export class InputValueComp implements OnInit {
   }
 
 }
+
+InputValueComp.parameters = [
+  [ChangeDetectorRef],
+]

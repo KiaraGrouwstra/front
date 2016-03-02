@@ -55,7 +55,9 @@
             pre#colored('innerHtml'='{{ colored | async }}')
             //- #expandable
             //- #rendered('innerHtml'='{{ rendered | async }}')
-            value#rendered('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
+            //- value#rendered('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
+            #rendered
+              value('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
 
 //- #output(#output)
 

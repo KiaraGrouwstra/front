@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
 // import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
 import { FieldComp } from './input-field';
@@ -16,8 +16,16 @@ import { FieldComp } from './input-field';
 export class InputTableComp implements OnInit {
   // type: Observable<string>;
 
+  constructor(cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
   ngOnInit() {
     //
   }
 
 }
+
+InputTableComp.parameters = [
+  [ChangeDetectorRef],
+]

@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChildren } from 'angular2/core';
 import { mapComb, notify } from '../rx_helpers';
 import { getPaths } from '../js';
 import { Templates } from '../jade';
@@ -23,16 +23,36 @@ export class DLComp implements OnInit {
   //id: Observable<string>;
   rows: Array<any>; //[{id, path, val, schema}]
 
+  constructor(cdr: ChangeDetectorRef) {
+    // cdr.detach();
+    this.cdr = cdr;
+  }
+
+  ngOnDestroy() {
+    this.cdr.detach();
+  }
+
   ngOnInit() {
     //let props = this.path$.map(p => getPaths(p));
     //['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
+    // this.rows =
     this.val$
     .filter(v => v[0] !== undefined)
     .map(coll => coll.map(obj =>
       _.assign(obj, getPaths(obj.path))
       // _.mapValues(x => new BehaviorSubject(x), obj)
     ))
-    .subscribe(x => this.rows = x)
+    // this.rows
+    .subscribe(x => {
+      this.rows = x;
+      // this.rows = x.map(obj => _.mapValues(v => new BehaviorSubject(v), obj));
+      this.cdr.markForCheck();
+    });
   }
 
 }
+
+DLComp.parameters = [
+  [ChangeDetectorRef],
+]
+Reflect.decorate([ViewChildren(ValueComp)], DLComp.prototype, 'v');

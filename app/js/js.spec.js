@@ -1,4 +1,4 @@
-import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse } from './js';
+import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse, typed, fallback } from './js';
 import {Observable} from 'rxjs/Observable';
 Promise.prototype.do = Prom_do;
 Promise.prototype.finally = Prom_finally;
@@ -129,6 +129,35 @@ describe('js', () => {
 
   it('id_cleanse strips strings to to make valid HTML element IDs (i.e. just alphanumeric characters and dashes)', () => {
     expect(id_cleanse('/heroes/{id}/')).toEqual('heroes-id');
+  })
+
+  describe('typed', () => {
+
+    it('strLen', () => {
+      let strLen = s => s.length;
+      expect(strLen ('lol')).toEqual(3);
+      expect(strLen (123)).toEqual(undefined);
+      let strLen_ = typed([String], Number, strLen);
+      expect(strLen_('lol')).toEqual(3);
+      expect(strLen_(123)).toEqual(0);
+    })
+
+    it('arrObjNoop', () => {
+      let arrObjNoop = (arr, obj) => {};
+      expect(arrObjNoop ([], {})).toEqual(undefined);
+      expect(arrObjNoop ('lol', 123)).toEqual(undefined);
+      let arrObjNoop_ = typed([Array, Object], Array, arrObjNoop);
+      expect(arrObjNoop_([], {})).toEqual(undefined);
+      expect(arrObjNoop_('lol', 123)).toEqual([]);
+    })
+
+  })
+
+  it('fallback', () => {
+    let thrower = (v) => { throw new Error('boom'); };  //throw 'boom';
+    // expect(thrower('hi')).toThrowError('boom');  // dunno why this fails :(
+    let safe = fallback(123, thrower);
+    expect(safe('hi')).toEqual(123);
   })
 
   // it('', () => {

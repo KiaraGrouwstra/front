@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { mapComb, notify } from '../rx_helpers';
 import { getPaths, arr2obj } from '../js';
 import { Templates } from '../jade';
@@ -24,6 +24,14 @@ export class ULComp implements OnInit {
   // id: Observable<string>;
   // rows: Array<any>; //[{id, path, val, schema}]
 
+  constructor(cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
+  ngOnDestroy() {
+    this.cdr.detach();
+  }
+
   ngOnInit() {
     let props = this.path$.map(p => getPaths(p));
     ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
@@ -36,7 +44,14 @@ export class ULComp implements OnInit {
         return _.mapValues(x => new BehaviorSubject(x), obj);
       })
     )
-    .subscribe(x => this.rows = x)
+    .subscribe(x => {
+      this.rows = x;
+      this.cdr.markForCheck();
+    });
   };
 
 }
+
+ULComp.parameters = [
+  [ChangeDetectorRef],
+]

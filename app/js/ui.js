@@ -148,7 +148,6 @@ let load_fn_ui = function(name, scopes, api, oauth_sec) {
         this.refresh();
       });
       let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
-      console.log('loading input');
       this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
       this.json.next([]);
       // this.rendered = this.json.map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
@@ -177,10 +176,10 @@ let get_submit = (api_spec, fn_path, get_token, cb = (x) => {}) => function() {
   //    (p_query.length ? '?' : '') + global.$.param(p_query)
   let url = Object.keys(p_path).reduce(fold_fn, `${base}${fn_path}?`)
       + global.$.param(Object.assign({ access_token: get_token() }, p_query));
-  // return this.parent.addUrl(url);
+  // return this.parent.ws.addUrl(url);
 
   toast.info(`GET ${url}`);
-  this.parent.addUrl(url).subscribe(x => {
+  this.parent.ws.addUrl(url).subscribe(x => {
     toast.success(`got ${url}`);
     cb(x);
   });

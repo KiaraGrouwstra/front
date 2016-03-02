@@ -37,7 +37,7 @@ Array.prototype.flatten = Array_flatten;
 //   try {
 //     return jQuery(html).toArray()[0] || elFromText(html)
 //   }
-//   catch (e) {
+//   catch(e) {
 //     return elFromText(html)
 //   }
 // }
@@ -252,4 +252,29 @@ let assert$ = (selector, matcher) => (pass, comp) => {
   })
 }
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$ };  //, Obs_do, Obs_then, elementText
+// 'cast' a function such that in case it receives a bad (non-conformant)
+// value for input, it will return a default value of its output type
+// intercepts bad input values for a function so as to return a default output value
+// ... this might hurt when switching to like Immutable.js though.
+let typed = (from, to, fn) => function() {
+  for (var i = 0; i < from.length; i++) {
+    let frm = from[i];
+    let v = arguments[i];
+    // console.log(i, frm, v, (frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)));
+    if(frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)) return (new to).valueOf();
+  }
+  return fn(...arguments);
+}
+
+// simpler guard, just a try-catch wrapper with default value
+let fallback = (def, fn) => function() {
+  try {
+    return fn(...arguments);
+  }
+  catch(e) {
+    console.log('an error occurred, falling back to default value:', e);
+    return def;
+  }
+}
+
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback };  //, Obs_do, Obs_then, elementText

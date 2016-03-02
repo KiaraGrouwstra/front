@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
 // import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
 // import { ArrayComp } from './array';
@@ -18,9 +18,17 @@ import { Templates } from '../jade';
 export class InputComp implements OnInit {
   // type: Observable<string>;
 
+  constructor(cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
   // ngOnInit() {
   //   this.attrs = input_attrs(this.path, this.spec);
   //   // from field if block: hidden, type:input|?, id, label, ctrl, validator_keys, validators
   // }
 
 }
+
+InputComp.parameters = [
+  [ChangeDetectorRef],
+]

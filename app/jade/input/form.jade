@@ -1,7 +1,7 @@
 //- {fields: [html], desc: html}
-//- '#my_form'='ngForm'
 form(
   '[ngFormModel]'='form'
+  '#frm'='ngForm'
   '(ngSubmit)'='onSubmit()'
 )
   .fn_desc!= desc
@@ -10,5 +10,5 @@ form(
     != fld
   button.btn.waves-effect.waves-light(
     type='submit'
-    [disabled]='!form.valid'
+    '[disabled]'='!form.valid'
   ) Submit

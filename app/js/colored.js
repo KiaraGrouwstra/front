@@ -11,7 +11,7 @@ export class ColoredComp implements OnInit {
   // html: string;
 
   constructor(cdr: ChangeDetectorRef) {
-    //window.setInterval(() => cdr.detectChanges(), 500);
+    //window.setInterval(() => cdr.markForCheck(), 500);
   }
 
   ngOnInit() {

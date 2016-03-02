@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ViewChildren } from 'angular2/core';
 import { getPaths, id_cleanse, arr2obj, Object_filter } from '../js';
 import { mapComb, notify } from '../rx_helpers';
 import { Templates } from '../jade';
@@ -32,35 +32,35 @@ export class ObjectComp implements OnInit {
   // object: Observable<Array<any>>;
   // array: Observable<Array<any>>;
 
-  // constructor() {
-  //   console.log('constructor');
-  // }
+  constructor(cdr: ChangeDetectorRef) {
+    // cdr.detach();
+    this.cdr = cdr;
+  }
+
+  ngOnDestroy() {
+    this.cdr.detach();
+  }
 
   ngOnInit() {
-    // console.log('ngOnInit');
-    // console.log('object:this', this);
-    // notify('object:this.path$', this.path$);
     let props = this.path$.map(p => getPaths(p));
-    // let props = this.path$.map(p => {
-    //   console.log('object:path', p, this);
-    //   return getPaths(p);
-    // });
     ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
 
     let coll = mapComb(inputs.slice(0,3).map(k => this[k]), getColl)
       .filter(v => v !== undefined);
-    ['array','object','scalar'].forEach(x =>
-      this[x] =
-      coll.map(c => c.filter(v => v.type == x))
-      // .subscribe(v => this[x] = v)
-    );
+    let TYPES = ['array','object','scalar'];
+    TYPES.forEach(x => {
+      this[x] = coll
+      .map(c => c.filter(v => v.type == x))
+    });
+    TYPES.forEach(x => {
+      this[x].subscribe(v => {
+        // console.log("object cdr");
+        this.cdr.markForCheck();
+        // console.log("object cdr end");
+      })
+    });
     //['scalar'].forEach(x => this[x] = coll.map(c => Object_filter(c, v => v.type == x))
     // this.scalar = coll.map(c => c.filter(v => v.type == 'scalar'));
-    // notify('object:this.scalar', this.scalar);
-    // notify('object:this.object', this.object);
-    // notify('object:this.array', this.array);
-    // console.log('object:this.object', this.object);
-    // console.log('object:this.array', this.array);
   };
 
 }
@@ -87,3 +87,12 @@ let getColl = (path, val, spec) => {
     //}).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
     })
 };
+
+ObjectComp.parameters = [
+  [ChangeDetectorRef],
+]
+Reflect.decorate([ViewChild(DLComp)], ObjectComp.prototype, 'dl');
+// Reflect.decorate([ViewChildren(ObjectComp)], ObjectComp.prototype, 'object');
+// // Reflect.decorate([ViewChildren(ArrayComp)], ObjectComp.prototype, 'array');
+// Reflect.decorate([ViewChildren(ValueComp)], ObjectComp.prototype, 'array');
+// ^ ouch, name clash, I'm dumb

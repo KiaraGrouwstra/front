@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter } from 'angular2/core';
 import { Templates } from '../jade';
 // import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
 import { FormBuilder } from 'angular2/common';  //, Control
@@ -22,7 +22,8 @@ export class FormComp implements OnInit {
   @Output() submit = new EventEmitter(false);
   // ^ handle with `<input-form (submit)="callback()">`
 
-  constructor(builder: FormBuilder) { //cdr: ChangeDetectorRef,
+  constructor(cdr: ChangeDetectorRef, builder: FormBuilder) { //cdr: ChangeDetectorRef,
+    this.cdr = cdr;
     this.builder = builder;
   }
 
@@ -52,4 +53,5 @@ export class FormComp implements OnInit {
 
 FormComp.parameters = [
   [FormBuilder],
+  [ChangeDetectorRef],
 ]
