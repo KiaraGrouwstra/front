@@ -14,6 +14,7 @@ let spec = {
   "required": true,
   "type": "string"
 };
+// let name = 'foo';
 let ctrl = input_control(spec);
 let attrs = input_attrs(path, spec);
 let pars = {
@@ -21,6 +22,7 @@ let pars = {
   // spec: spec,
   ctrl: ctrl,
   attrs: attrs,
+  // name: name,
 };
 
 describe('InputComp', () => {
@@ -31,11 +33,9 @@ describe('InputComp', () => {
     builder = tcb;
   }));
 
-  // No provider for ControlContainer! (NgControlName -> ControlContainer)
-  // when you use a form control like NgControlName without specifying a parent NgForm or NgFormModel, see https://github.com/angular/angular/issues/3919
-  xit('should work', test(
+  it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+    assert((comp, el) => expect(el).toHaveText(''))
   ));
 
 });

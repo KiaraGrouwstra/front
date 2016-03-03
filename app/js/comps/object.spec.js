@@ -34,8 +34,6 @@ describe('ObjectComp', () => {
     builder = tcb;
   }));
 
-  // Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.
-  // comp_test createAsync yields the Promise, but won't resolve/reject...
   it('should work without header', test(
     cls(obs_pars, {}),
     assert((comp, el) => expect(el).toHaveText(flat))
@@ -51,8 +49,9 @@ describe('ObjectComp', () => {
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));
 
-  // My workaround for [this issue](https://github.com/angular/angular/issues/7084), which involved converting array to value, screws up this test since value passes named=false...
-  xit('should work with nested arrays', test(
+  // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
+  // screwed up this test since value passes named=false, which forced me to work around it by adding 'named' to value...
+  it('should work with nested arrays', test(
     cls(nestr_pars, {}),
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));

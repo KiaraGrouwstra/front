@@ -35,24 +35,12 @@ describe('Scalar', () => {
 
   it('should work', test(
     cls(pars, {}),
-    assert$(x => x.html, x => x.toEqual('<em>foo</em>'))
+    assert$(x => x.html$, x => x.toEqual('<em>foo</em>'))
   ));
 
-  xit('should fail', test(
-    cls(pars, {}),
-    assert$(x => x.html, x => x.toEqual('<em>bar</em>'))
-  ));
-
-  // it('should work with 2 if correct',
-  //   _.partial(test, _, cls(pars, {}), assert$(
-  //     x => x.html,
-  //     x => x.toEqual('<em>foo</em>')
-  // )));
-  //
-  // it('should fail with 2 if wrong',
-  //   _.partial(test, _, cls(pars, {}), assert$(
-  //     x => x.html,
-  //     x => x.toEqual('<em>bar</em>')
-  // )));
+  // it('should fail', test(
+  //   cls(pars, {}),
+  //   assert$(x => x.html, x => x.toEqual('<em>bar</em>'))
+  // ));
 
 });

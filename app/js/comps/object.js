@@ -92,7 +92,6 @@ ObjectComp.parameters = [
   [ChangeDetectorRef],
 ]
 Reflect.decorate([ViewChild(DLComp)], ObjectComp.prototype, 'dl');
-// Reflect.decorate([ViewChildren(ObjectComp)], ObjectComp.prototype, 'object');
-// // Reflect.decorate([ViewChildren(ArrayComp)], ObjectComp.prototype, 'array');
-// Reflect.decorate([ViewChildren(ValueComp)], ObjectComp.prototype, 'array');
-// ^ ouch, name clash, I'm dumb
+Reflect.decorate([ViewChildren(ObjectComp)], ObjectComp.prototype, 'objects');
+// // Reflect.decorate([ViewChildren(ArrayComp)], ObjectComp.prototype, 'arrays');
+Reflect.decorate([ViewChildren(ValueComp)], ObjectComp.prototype, 'arrays');

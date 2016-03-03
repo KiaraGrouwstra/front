@@ -14,10 +14,11 @@
       '[named]'=`true`
     )
     //- array
-    //- '[named]'=`true`
     value(
       *ngFor=`#x of (array | async)`
       '[path$]'=`x.path`
       '[val$]'=`x.val`
       '[schema$]'=`x.schema`
+      '[named]'=`true`
     )
+    //- ^ named due to #7084 workaround (switch from array to value)

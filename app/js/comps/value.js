@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from 'angular2/core';
-import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';    //COMMON_DIRECTIVES also has model/form
+import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
 import { mapComb } from '../rx_helpers';
 import { Templates } from '../jade';
 import { ArrayComp } from './array';
@@ -10,7 +10,8 @@ import { ScalarComp } from './scalar';
 import { infer_type, try_schema } from '../output'
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
 
-let inputs = ['path$', 'val$', 'schema$'];
+let inputs = ['path$', 'val$', 'schema$', 'named'];
+// 'named' provided solely because of work-around to [#7084](https://github.com/angular/angular/issues/7084) in Object
 
 @Component({
   selector: 'value',

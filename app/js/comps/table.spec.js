@@ -27,7 +27,7 @@ describe('TableComp', () => {
     assert((comp, el) => expect(el).toHaveText(flat))
   ));
 
-  xit('should work with header', test(
+  it('should work with header', test(
     cls(obs_pars, { named: true }),
     assert((comp, el) => expect(el).toHaveText('test' + flat))
   ));

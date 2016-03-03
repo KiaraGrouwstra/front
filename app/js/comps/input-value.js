@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
-import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
+import { COMMON_DIRECTIVES } from 'angular2/common';
 import { FieldComp } from './input-field';
 import { InputArrayComp } from './input-array';
 import { InputObjectComp } from './input-object';
@@ -8,11 +8,11 @@ import { InputTableComp } from './input-table';
 
 @Component({
   selector: 'input-value',
-  inputs: ['path', 'spec', 'named', 'ctrl'],
+  inputs: ['path', 'spec', 'named', 'ctrl'],  //, 'name'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_input_value,
   directives: [
-    NgSwitch, NgSwitchWhen, NgSwitchDefault,  // COMMON_DIRECTIVES,
+    COMMON_DIRECTIVES,
     // forwardRef(() => FieldComp),
     // forwardRef(() => InputArrayComp),
     // forwardRef(() => InputObjectComp),

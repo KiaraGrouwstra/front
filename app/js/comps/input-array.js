@@ -1,19 +1,17 @@
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
-import { COMMON_DIRECTIVES } from 'angular2/common';  //, NgSwitch, NgSwitchWhen, NgSwitchDefault
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
 import { FieldComp } from './input-field';
 import { getPaths } from '../js';
 let _ = require('lodash/fp');
 
 @Component({
   selector: 'input-array',
-  inputs: ['named', 'path', 'spec', 'ctrl'],
+  inputs: ['named', 'path', 'spec', 'ctrl'],  //ctrl is expected to be a ControlList seeded with a Control
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_input_array,
   directives: [
-    COMMON_DIRECTIVES,
-    // COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,
-    // forwardRef(() => FieldComp),
+    COMMON_DIRECTIVES, FORM_DIRECTIVES,
     FieldComp,
   ]
 })

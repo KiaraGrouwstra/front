@@ -1,1 +1,32 @@
 //- like input array of structured (ngFor) named input fields
+.card
+  .card-content('[id]'=`id`)
+    span.card-title(*ngIf='named') {{k}}
+    //- '[ngControlGroup]'=`ctrl`
+    form
+      ul(
+        '[ngControlGroup]'=`spec.name`
+      )
+        //- presumes lengths of items and the ControlArray will stay in sync
+        li(*ngFor="#item of items; #i = index")
+          button('(click)'=`remove(item)`)
+          | x
+          //- based on ng-outputs/dl_table.jade
+          //- ('#path_i = path.concat(item); ctrl_i = ctrl.at(i);')
+          table.bordered.highlight
+            tbody
+              //- id=`{{?.id}}`
+              tr(*ngFor=`#key of keys`)
+                //- spec.items.properties[key].name
+                th {{key}}
+                td
+                  //- '[name]'=`i`
+                  input-field(
+                    '[named]'=`false`
+                    '[path]'=`path.concat(item).concat(key)`
+                    '[spec]'=`spec.items.properties[key]`
+                    '[ctrl]'=`ctrl.at(i).controls[key]`
+                  )
+
+    button('(click)'=`add()`)
+    | +

@@ -1,28 +1,30 @@
-//- {ctrl, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-//- which of these are like [attr.aria-label], [class.special] and [style.color]? phew, without adding attr where needed it'll just error, so fortunately it'll just tell me.
-//- string
-//- number/integer
-//- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-//- '[ngControl]'=`spec.name`
-//- '#frm'='ngForm'
-input.tooltipped.validate(
-  '[ngClass]'=`{valid: ctrl.valid, invalid: ctrl.invalid}`
-  '[ngControl]'=`ctrl`
-  '[(ngModel)]'=`ctrl.value`
-  '[id]'=`attrs.id`
-  '[required]'=`attrs.required`
-  '[placeholder]'=`attrs.placeholder`
-  '[type]'=`attrs.type`
-  
-  '[attr.maxlength]'=`attrs.maxlength`
-  '[attr.minlength]'=`attrs.minlength`
-  '[pattern]'=`attrs.pattern`
-  '[title]'=`attrs.title`
-  '[autocomplete]'=`attrs.autocomplete`
-  '[attr.data-tooltip]'=`attrs.tooltip`
+form
+  //- {ctrl, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+  //- which of these are like [attr.aria-label], [class.special] and [style.color]? phew, without adding attr where needed it'll just error, so fortunately it'll just tell me.
+  //- string
+  //- number/integer
+  //- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+  //- '[ngControl]'=`name`
+  //- '[ngControl]'=`spec.name`
+  //- '#frm'='ngForm'
+  input.tooltipped.validate(
+    '[ngClass]'=`{valid: ctrl.valid, invalid: ctrl.invalid}`
+    '[ngControl]'=`ctrl`
+    '[(ngModel)]'=`ctrl.value`
+    '[id]'=`attrs.id`
+    '[required]'=`attrs.required`
+    '[placeholder]'=`attrs.placeholder`
+    '[type]'=`attrs.type`
+    
+    '[attr.maxlength]'=`attrs.maxlength`
+    '[attr.minlength]'=`attrs.minlength`
+    '[pattern]'=`attrs.pattern`
+    '[title]'=`attrs.title`
+    '[autocomplete]'=`attrs.autocomplete`
+    '[attr.data-tooltip]'=`attrs.tooltip`
 
-  '[max]'=`attrs.max`
-  '[min]'=`attrs.min`
-  '[step]'=`attrs.step`
+    '[max]'=`attrs.max`
+    '[min]'=`attrs.min`
+    '[step]'=`attrs.step`
 
-)
+  )

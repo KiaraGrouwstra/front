@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, ChangeDetectionStrategy } from 'angular2/core'; //, forwardRef
 import { Templates } from './jade';
-import { COMMON_DIRECTIVES } from 'angular2/common'; //, NgSwitch, NgSwitchWhen, NgSwitchDefault
+import { COMMON_DIRECTIVES } from 'angular2/common';
 let _ = require('lodash/fp');
 import { arr2obj, popup } from './js';  //, Prom_finally
 
@@ -10,7 +10,7 @@ import { arr2obj, popup } from './js';  //, Prom_finally
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_auth,
   directives: [
-    COMMON_DIRECTIVES, // NgSwitch, NgSwitchWhen, NgSwitchDefault,
+    COMMON_DIRECTIVES,
     // forwardRef(() => FieldComp),
   ]
 })

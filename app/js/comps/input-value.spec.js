@@ -9,6 +9,7 @@ import { InputValueComp } from './input-value';
 let cls = test_comp('input-value', InputValueComp);
 let path = ['test'];
 let named = true;
+// let name = 'foo';
 let scalar = {
   "description": "The geography ID.",
   "in": "path",
@@ -22,6 +23,7 @@ let pars = (spec) => ({
   spec: spec,
   named: named,
   ctrl: input_control(spec),
+  // name: name,
 });
 
 describe('InputValueComp', () => {
@@ -32,16 +34,14 @@ describe('InputValueComp', () => {
     builder = tcb;
   }));
 
-  // this seems to work fine yet the text comparison fails. why?
-  xit('should work with scalars', test(
+  it('should work with scalars', test(
     cls({}, pars(scalar)),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.'))
+    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n'))
   ));
 
-  // same error as InputArrayComp separately
-  xit('should work with arrays', test(
+  it('should work with arrays', test(
     cls({}, pars(array)),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+    assert((comp, el) => expect(el).toHaveText('test+'))
   ));
 
 });

@@ -1,2 +1,47 @@
 //- Like `array.jade`, but with key string input added before (left of) the actual value input field.
 //- I might be able to just pass that part in so I could just reuse the existing `array.jade`.
+.card
+  .card-content('[id]'=`id`)
+    span.card-title(*ngIf='named') {{k}}
+    //- '[ngControlGroup]'=`ctrl`
+    form
+      ul(
+        '[ngControlGroup]'=`spec.name`
+      )
+        table.bordered.highlight
+        thead
+          //- spec.items.properties[key].name
+          th Name
+          th Value
+          th
+        tbody
+          //- id=`{{?.id}}`
+          //- presumes lengths of items and the ControlArray will stay in sync
+          //- ; #path_i = path.concat(item); ctrl_i = ctrl.at(i);
+          tr(*ngFor="#item of items; #i = index")
+            //- td(*ngFor=`#key of keys`)
+            //- ("#key = 'name'")
+            td
+              //- '[path]'=`path_i.concat(key)`
+              //- '[ctrl]'=`ctrl_i.controls[key]`
+              input-field(
+                '[named]'=`false`
+                '[path]'=`path.concat(item).concat('name')`
+                '[spec]'=`{name: 'name', type: 'string', required: true, pattern: '[\w_][\w_\d]*'}`
+                '[ctrl]'=`ctrl.at(i).controls.name`
+              )
+            //- ("#key = 'val'")
+            td
+              //- '[name]'=`i`
+              input-field(
+                '[named]'=`false`
+                '[path]'=`path.concat(item).concat('val')`
+                '[spec]'=`spec.additionalProperties`
+                '[ctrl]'=`ctrl.at(i).controls.val`
+              )
+            td
+              button('(click)'=`remove(item)`)
+              | x
+
+    button('(click)'=`add()`)
+    | +

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { Templates } from '../jade';
-import { COMMON_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
+import { COMMON_DIRECTIVES } from 'angular2/common';
 import { InputComp } from './input-input';
 import { get_validators } from '../input';
 import { getPaths } from '../js';
@@ -9,11 +9,11 @@ import { input_attrs, input_opts, get_template } from '../input';
 
 @Component({
   selector: 'input-field',
-  inputs: ['named', 'path', 'spec', 'ctrl'],
+  inputs: ['named', 'path', 'spec', 'ctrl'],  //, 'name'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_field,
   directives: [
-    NgSwitch, NgSwitchWhen, NgSwitchDefault,  // COMMON_DIRECTIVES,
+    COMMON_DIRECTIVES,
     // forwardRef(() => InputComp),
     InputComp,
   ]

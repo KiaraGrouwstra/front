@@ -138,13 +138,20 @@ let param_field = (path, spec) => {
 
 // return initial key/value pair for the model
 function input_control(spec = {}, validator = get_validators(spec).validator) {
-  if(spec.type == 'array')
-      // return new ControlArray([]); //with control template input_control(spec.items)
-      return new ControlList(input_control(spec.items));
-  let def = spec.default;
-  let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
-  return new Control(val, validator); //, async_validator
-  // return [val, validator];
+  switch(spec.type) {
+    case 'array':
+      return _.get(['items','properties'], spec) ?
+      new ControlList(new ControlGroup(_.mapValues(prop => input_control(prop), spec.items.properties))) :  // table, not native Swagger
+      new ControlList(input_control(spec.items));
+    case 'object':  // not native Swagger
+      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern: '[\w_][\w_\d]*'});
+      return new ControlGroup({name: ctrl, val: input_control(spec.additionalProperties)});
+    default:
+      let def = spec.default;
+      let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
+      return new Control(val, validator); //, async_validator
+      // return [val, validator];
+  }
 }
 
 // get a form template
@@ -214,7 +221,7 @@ let val_conds = {
   exclusiveMinimum: (v, par) => (v <= par),
   // maxLength: (v, par) => (v.length > par), //predefined
   // minLength: (v, par) => (v.length < par), //predefined
-  pattern: (v, par) => (! new RegExp(`^${par}$`).test(v)),  //escape pattern backslashes?
+  pattern: (v, par) => (! new RegExp(`^${par}$`).test(v)),  //escape pattern backslashes? // alt: [Validators.pattern](https://github.com/angular/angular/commit/38cb526)
   maxItems: (v, par) => (v.length > par),
   minItems: (v, par) => (v.length < par),
   uniqueItems: (v, par) => (par ? _.uniq(v).length < v.length : false),

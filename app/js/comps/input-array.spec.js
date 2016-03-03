@@ -4,6 +4,7 @@ import { comp_test, assert, assert$ } from '../js'
 import { Control, ControlGroup, ControlArray } from 'angular2/common';
 import { ControlList } from '../control_list';
 import { input_control } from '../input'
+let _ = require('lodash/fp');
 
 import { InputArrayComp } from './input-array';
 let cls = test_comp('input-array', InputArrayComp);
@@ -15,9 +16,9 @@ let scalar = {
   "required": true,
   "type": "string"
 };
-let spec = { "type": "array", "items": scalar };
+let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar };
 let ctrl = input_control(spec);
-let named = true;
+let named = false;
 let pars = {
   path: path,
   spec: spec,
@@ -33,11 +34,14 @@ describe('InputArrayComp', () => {
     builder = tcb;
   }));
 
-  // No provider for ControlContainer! (NgControlName -> ControlContainer)
-  // when you use a form control like NgControlName without specifying a parent NgForm or NgFormModel, see https://github.com/angular/angular/issues/3919
   it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+    assert((comp, el) => expect(el).toHaveText('+'))
+  ));
+
+  it('should work named', test(
+    cls({}, _.assign(pars, {named: true})),
+    assert((comp, el) => expect(el).toHaveText('test+'))
   ));
 
 });

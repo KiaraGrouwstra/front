@@ -36,7 +36,7 @@ describe('DLComp', () => {
   //   assert(c => expect(c.rows.map(x => x.val)).toEqual([1,2]))
   // ));
 
-  xit('should display scalars', test(
+  it('should display scalars', test(
     cls(pars, {}),
     assert((comp, el) => expect(el).toHaveText(flat))
   ));

@@ -34,7 +34,7 @@ module.exports = function(config) {
       noInfo: true
     },
     // reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'coverage', 'progress' ],  //, 'dots'  //dots leads to double printing
+    reporters: [ 'progress' ],  //'coverage', , 'dots'  //dots leads to double printing
     // proxied base paths: required for component assests fetched by Angular's compiler
     proxies: {
       '/app/': '/base/app/'
@@ -44,7 +44,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,    // LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
     autoWatch: true,
     // browsers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'], //, 'Chrome', 'ChromeCanary', 'PhantomJS', 'PhantomJS_custom'
+    browsers: ['ChromeCanary'], //, 'Chrome', 'ChromeCanary', 'PhantomJS', 'PhantomJS_custom'
 
     // customLaunchers: {
     //   'PhantomJS_custom': {

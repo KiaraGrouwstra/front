@@ -1,20 +1,21 @@
 .card
   .card-content('[id]'=`id`)
     span.card-title(*ngIf='named') {{k}}
-    //- this should probably be ngControlArray, but that directive [doesn't actually exist yet](https://github.com/angular/angular/issues/5185)
-    //- `spec.name`
-    ul(
-      '[ngControlGroup]'=`ctrl`
-    )
-      //- presumes lengths of items and the ControlArray will stay in sync
-      li(*ngFor="#item of items; #i = index")
-        button('(click)'=`remove(item)`)
-        | x
-        input-field(
-          '[named]'=`false`
-          '[path]'=`path.concat(item)`
-          '[spec]'=`spec.items`
-          '[ctrl]'=`ctrl.at(i)`
-        )
+    //- '[ngControlGroup]'=`ctrl`
+    form
+      ul(
+        '[ngControlGroup]'=`spec.name`
+      )
+        //- presumes lengths of items and the ControlArray will stay in sync
+        li(*ngFor="#item of items; #i = index")
+          button('(click)'=`remove(item)`)
+          | x
+          //- '[name]'=`i`
+          input-field(
+            '[named]'=`false`
+            '[path]'=`path.concat(item)`
+            '[spec]'=`spec.items`
+            '[ctrl]'=`ctrl.at(i)`
+          )
     button('(click)'=`add()`)
     | +

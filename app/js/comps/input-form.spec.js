@@ -8,7 +8,7 @@ import { input_control } from '../input'
 import { FormComp } from './input-form';
 let cls = test_comp('input-form', FormComp);
 let desc = 'hi';
-let spec = {
+let scalar_spec = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
@@ -17,14 +17,26 @@ let spec = {
 };
 // let inputs$ = ;
 let inputs = [
-  { path: ['foo'], spec: spec },
-  { path: ['bar'], spec: spec },
+  { path: ['foo'], spec: scalar_spec },
+  { path: ['bar'], spec: scalar_spec },
 ];
+let obs_pars = {
+  inputs$: inputs,
+};
 let pars = {
   // inputs$: inputs$,
-  inputs: inputs,
+  // inputs: inputs,
   desc: desc,
 };
+let arr_spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
+let arr_inputs = [
+  { path: ['foo'], spec: arr_spec },
+  { path: ['bar'], spec: arr_spec },
+];
+let arr_pars = {
+  inputs$: arr_inputs,
+};
+let text = 'geo-id: The geography ID.\n';
 
 describe('FormComp', () => {
   let builder: TestComponentBuilder;
@@ -34,10 +46,14 @@ describe('FormComp', () => {
     builder = tcb;
   }));
 
-  // displays the input twice; why?
-  it('should work', test(
-    cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('lol'))
+  it('should do scalar inputs', test(
+    cls(obs_pars, pars),
+    assert((comp, el) => expect(el).toHaveText(desc + text + text + 'Submit'))
+  ));
+
+  it('should do array inputs', test(
+    cls(arr_pars, pars),
+    assert((comp, el) => expect(el).toHaveText('hifoo+bar+Submit'))
   ));
 
 });

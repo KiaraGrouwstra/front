@@ -9,8 +9,9 @@ form(
   .fn_desc {{ desc }}
   //- delegate loop to ng-output/object.jade?
   //-  | async
+  //- '[name]'=`v.spec.name`
   input-value(
-    *ngFor=`#v of items`
+    *ngFor=`#v of items$ | async`
     '[path]'=`v.path`
     '[spec]'=`v.spec`
     '[named]'=`v.named`

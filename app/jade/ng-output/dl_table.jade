@@ -3,7 +3,7 @@
 table.bordered.highlight
   tbody
     tr(
-      *ngFor=`#r of rows`
+      *ngFor=`#r of rows$ | async`
       id=`{{r.id}}`
     )
       th {{r.k}}

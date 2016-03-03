@@ -11,7 +11,7 @@ let pars = {
   val$: val,
   schema$: {},
 };
-let comp = test_comp('myul', ULComp, pars, { named: true });
+// let comp = test_comp('myul', ULComp, pars, { named: true });
 
 describe('ULComp', () => {
   let builder: TestComponentBuilder;

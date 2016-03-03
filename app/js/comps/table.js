@@ -18,11 +18,11 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
   ]
 })
 export class TableComp implements OnInit {
-  @Input() named: boolean;
+  // @Input() named: boolean; //somehow uncommenting it without TS actually breaks it...
   k: Observable<string>;
   id: Observable<string>;
-  cols: Array<any>;
-  rows: Array<any>;
+  cols$: Observable<Array<any>>;
+  rows$: Observable<Array<any>>;
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;
@@ -43,13 +43,13 @@ export class TableComp implements OnInit {
       .reduce(arrToSet, new Set)
     )));
     // col_keys$.map(col_keys => col_keys.map(k => getPaths(path.concat(k))))
-    this.cols = mapComb([col_keys$, this.path$], (col_keys, path) => col_keys.map(k => getPaths(path.concat(k))))
-    this.cols_disp = this.cols.subscribe(x => { this.cdr.markForCheck(); });
+    this.cols$ = mapComb([col_keys$, this.path$], (col_keys, path) => col_keys.map(k => getPaths(path.concat(k))))
+    this.cols_disp = this.cols$.subscribe(x => { this.cdr.markForCheck(); });
     let fixed$ = mapComb([this.schema$, this.val$], (spec, val) => get_fixed(spec, val));
     let patts$ = this.schema$.map(spec => get_patts(spec));
     //inputs.slice(0,3).map(k => this[k])
-    this.rows = mapComb([col_keys$, this.path$, this.val$, this.schema$, fixed$, patts$], rowPars)
-    this.rows_disp = this.rows.subscribe(x => { this.cdr.markForCheck(); });
+    this.rows$ = mapComb([col_keys$, this.path$, this.val$, this.schema$, fixed$, patts$], rowPars)
+    this.rows_disp = this.rows$.subscribe(x => { this.cdr.markForCheck(); });
   };
 
 }

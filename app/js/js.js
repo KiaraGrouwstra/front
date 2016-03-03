@@ -235,7 +235,7 @@ let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => 
     fixture.detectChanges();
     let native_el = fixture.debugElement.childNodes[0].nativeElement;
     test_fn(done, target_comp, native_el);
-  }).catch(done.fail)
+  }).catch(done.fail);
 }
 
 // test_fn for comp_test to check a property value

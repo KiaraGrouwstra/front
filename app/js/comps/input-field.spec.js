@@ -16,11 +16,13 @@ let spec = {
 };
 let ctrl = input_control(spec);
 let named = true;
+// let name = 'foo';
 let pars = {
   path: path,
   spec: spec,
   ctrl: ctrl,
   named: named,
+  // name: name,
 };
 
 describe('FieldComp', () => {
@@ -31,10 +33,9 @@ describe('FieldComp', () => {
     builder = tcb;
   }));
 
-  // this seems to work fine yet the text comparison fails. why?
-  xit('should work', test(
+  it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.'))
+    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n'))
   ));
 
 });
