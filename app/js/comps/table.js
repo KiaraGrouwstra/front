@@ -17,7 +17,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
     forwardRef(() => ValueComp),
   ]
 })
-export class TableComp implements OnInit {
+export class TableComp {
   // @Input() named: boolean; //somehow uncommenting it without TS actually breaks it...
   k: Observable<string>;
   id: Observable<string>;

@@ -36,7 +36,7 @@ let arr_inputs = [
 let arr_pars = {
   inputs$: arr_inputs,
 };
-let text = 'geo-id: The geography ID.\n';
+let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
 describe('FormComp', () => {
   let builder: TestComponentBuilder;

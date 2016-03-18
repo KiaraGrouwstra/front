@@ -1,0 +1,15 @@
+.row
+  .col.s12#scrape-ui
+    .card
+      .card-content
+        //- scrape-ui(
+        //-   '(handler)'=`extract_url($event)`
+        //- )
+        input-form(
+          '[inputs$]'=`scrape_spec$`
+          '[desc]'=`'scraper desc'`
+          '(submit)'=`extract_url($event)`
+        )
+  .resp.col.s12
+    - prefix = 'web_'
+    include ./resp.jade

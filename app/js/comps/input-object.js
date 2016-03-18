@@ -5,11 +5,9 @@ import { FieldComp } from './input-field';
 import { getPaths } from '../js';
 let _ = require('lodash/fp');
 
-// ctrl is expected to be a ControlList seeded with a ControlGroup consisting
+// ctrl is expected to be a ControlObject seeded with a ControlGroup consisting
 // of a wrapped seed Control: {name: {name: 'name', type: 'string'}, val: Control}.
 // note that input type object falls outside of the scope of the Swagger spec though.
-// also, the point of this control is to create user-generated objects (if with values
-// limited to a given input type), so I'll still need to do that to make this useful.
 
 @Component({
   selector: 'input-object',
@@ -21,7 +19,7 @@ let _ = require('lodash/fp');
     FieldComp,
   ]
 })
-export class InputObjectComp implements OnInit {
+export class InputObjectComp {
   // type: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
@@ -43,8 +41,8 @@ export class InputObjectComp implements OnInit {
   }
 
   remove(item) {
-    let idx = _.findIndex(x => x == item, this.items);  //does this work on Sets?
-    ctrl.removeAt(idx);
+    let idx = _.findIndex(x => x == item)(Array.from(this.items));
+    this.ctrl.removeAt(idx);
     this.items.delete(item);
     this.cdr.markForCheck();
   }

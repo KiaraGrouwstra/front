@@ -24,7 +24,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
     forwardRef(() => ValueComp),
   ],
 })
-export class ObjectComp implements OnInit {
+export class ObjectComp {
   // @Input() named: boolean;
   // k: Observable<string>;
   // id: Observable<string>;

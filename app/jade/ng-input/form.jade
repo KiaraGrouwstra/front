@@ -1,25 +1,29 @@
 //- {fields: [html], desc: html}
 //- '#my_form'='ngForm'
-//- '(ngSubmit)'='onSubmit()'
+//- '(ngSubmit)'=`onSubmit(form.value)`
+//- '(ngSubmit)'=`submit.emit(form.value)`
 form(
   '[ngFormModel]'='form'
   '#frm'='ngForm'
-  '(ngSubmit)'=`submit.emit(form.value)`
 )
   .fn_desc {{ desc }}
   //- delegate loop to ng-output/object.jade?
   //-  | async
   //- '[name]'=`v.spec.name`
+  //- *ngFor=`#v of items$ | async`
   input-value(
-    *ngFor=`#v of items$ | async`
+    *ngFor=`#v of items`
     '[path]'=`v.path`
     '[spec]'=`v.spec`
     '[named]'=`v.named`
     '[ctrl]'=`v.ctrl`
   )
-  button.btn.waves-effect.waves-light(
-    type='submit'
-    '[disabled]'=`!form.valid`
+  //- type='submit'
+  //- '[disabled]'=`!form.valid`
+  //- `button` emits an extra submit Event but `a` doesn't natively support `[disabled]`...
+  a.btn.waves-effect.waves-light(
+    '[ngClass]'=`{ 'disabled': !form.valid }`
+    '(click)'=`submit.emit(form.value)`
   ) Submit
 
 //- h3 Form value:

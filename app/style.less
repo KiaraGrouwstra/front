@@ -9,7 +9,8 @@
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: local('Material Icons'), local('MaterialIcons-Regular'), url(http://fonts.gstatic.com/s/materialicons/v10/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url('http://fonts.gstatic.com/s/materialicons/v10/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2') format('woff2');
+  // src: local('Material Icons'), local('MaterialIcons-Regular'), url(http://fonts.gstatic.com/s/materialicons/v10/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
 }
 
 .material-icons {
@@ -148,3 +149,39 @@ pre {
     // transition: all .3s ease-out;
     // -webkit-tap-highlight-color: transparent;
 }
+
+.error-item {
+  list-style-type: disc;
+}
+
+// // @import (reference) '../node_modules/materialize-css/dist/css/materialize.css';
+// @import (reference) './vendor/materialize.less';
+// // @import './vendor/materialize.less';
+//
+// // these failed to achieve the desired effect! derivate styles such as `.btn i` failed to trigger with this abstraction. rethink.
+//
+// .wavy-btn {
+//   .btn;
+//   .waves-effect;
+//   // will this also allow me to use `.waves-effect .waves-ripple`? or should I import it as that? as both?
+//   // .waves-light;
+//   // not recognized separately, only used in combination `.waves-effect.waves-light .waves-ripple`
+// }
+//
+// // .btn.waves-effect.waves-light.green
+// .add-btn {
+//   .wavy-btn;
+//   .green;
+// }
+//
+// // .btn.waves-effect.waves-light.btn-floating.red
+// .remove-btn {
+//   .wavy-btn;
+//   .btn-floating;
+//   .red;
+// }
+//
+// // .btn.waves-effect.waves-light
+// .submit-btn {
+//   .wavy-btn;
+// }

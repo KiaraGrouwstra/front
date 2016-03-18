@@ -15,7 +15,7 @@ let _ = require('lodash/fp');
     FieldComp,
   ]
 })
-export class InputTableComp implements OnInit {
+export class InputTableComp {
   // type: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
@@ -38,8 +38,8 @@ export class InputTableComp implements OnInit {
   }
 
   remove(item) {
-    let idx = _.findIndex(x => x == item, this.items);  //does this work on Sets?
-    ctrl.removeAt(idx);
+    let idx = _.findIndex(x => x == item)(Array.from(this.items));
+    this.ctrl.removeAt(idx);
     this.items.delete(item);
     this.cdr.markForCheck();
   }

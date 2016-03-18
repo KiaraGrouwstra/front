@@ -6,7 +6,7 @@ import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } 
   //changeDetection: ChangeDetectionStrategy.OnPush,    //restrict to immutable inputs
   template: `<div [innerHtml]='html'></div>`,
 })
-export class ColoredComp implements OnInit {
+export class ColoredComp {
   // @Input() str: string;
   // html: string;
 

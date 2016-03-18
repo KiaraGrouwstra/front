@@ -17,7 +17,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
   selector: 'value',
   inputs: inputs,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: Templates.value,
+  template: Templates.ng_value,
   // template: `<router-outlet></router-outlet>`,
   directives: [
     CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,
@@ -33,7 +33,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
 //   {path:'/',    name: 'Loading', component: LoadingComp, useAsDefault: true},
 //   {path:'/:id', name: 'CrisisDetail', component: CrisisDetailComponent}
 // ])
-export class ValueComp implements OnInit {
+export class ValueComp {
   type: Observable<string>;
   new_spec$: Observable<any>;
 

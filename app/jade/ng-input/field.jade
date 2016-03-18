@@ -6,9 +6,9 @@
 )
   div('[ngSwitch]'='type')
     template('[ngSwitchWhen]'=`'input'`)
-    //- '[path]'=`path`
-    //- '[spec]'=`spec`
-    //- '[name]'=`name`
+      //- '[path]'=`path`
+      //- '[spec]'=`spec`
+      //- '[name]'=`name`
       my-input(
         '[ctrl]'=`ctrl`
         '[attrs]'=`attrs`
@@ -18,19 +18,22 @@
       
   //- data-error='wrong'
   //- data-success='right'
-  label(
+  label.active(
     *ngIf=`named`
     '[attr.for]'=`id`
     '[innerHtml]'=`label`
   )
+  //- ^ .active normally added dynamically by materialize.js when selecting the input.
+  //- when the inputs have initial values the label/input text would initially clash though.
   //- | {{label}}
   //- ^ does {{label}} need to be raw HTML?
   //- p= `val: {{ ${ctrl}.value }}`
   //- p= `errors: {{ ${ctrl}.errors | json }}`
   //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
-  .errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
-    .error(
+  ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
+    //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
+    li.error-item(
       '*ngFor'=`#vldtr of validator_keys`
-      '*ngIf'=`ctrl.errors?.vldtr`
       '[innerHtml]'=`validator_msgs[vldtr]`
+      '[hidden]'=`!showError(vldtr)`
     )

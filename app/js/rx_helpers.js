@@ -6,7 +6,9 @@ import 'rxjs/add/operator/startWith';
 import { EventEmitter } from 'angular2/core';
 
 // append to array:
-let elemToArr = (arr, x) => { arr.push(x); return arr; };   // tested harmful, use `.toArray()` instead.
+let elemToArr = (arr, x) => arr.concat(x); // concatenates arrays rather than pushing them as a single item
+// let elemToArr = (arr, x) => { arr.push(x); return arr; }; // overwrites the old value
+// let elemToArr = (arr, x) => { let c = _.cloneDeep(arr); c.push(x); return c; } // slower, but no overriding and arrays become one item
 let arrToArr = (a, b) => a.concat(b);
 // append to Set:
 //let elemToSet = (set, x) => set.add(x);
@@ -39,7 +41,10 @@ let Obs_combLast = (arr) => arr.reduce((obj_obs, v, idx) => {
 ).map(r => Object.keys(r).map(k => r[k]))
 
 // maps the latest values of a set of Observables to a lambda
-let mapComb = (arr, fn) => Obs_combLast(arr).map(r => fn(...r))
+let mapComb = (arr, fn) => Obs_combLast(arr).map(r => fn(...r));
+
+// use the latest values of a set of Observables to subscribe to a lambda
+let subComb = (arr, fn) => Obs_combLast(arr).subscribe(r => fn(...r));
 
 // let emitter = (val) => {
 //   let e = new EventEmitter();
@@ -47,4 +52,4 @@ let mapComb = (arr, fn) => Obs_combLast(arr).map(r => fn(...r))
 //   return e;
 // }
 
-export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb };  //, emitter
+export { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb, subComb };  //, emitter

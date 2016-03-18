@@ -1,64 +1,21 @@
-//- include ./swagger.jade
 #floating-buttons
   - bool = { val: 'ws.connected', ok: 'connected', ng: 'connecting...' }
   include ./bool.jade
 
 .row
-  #scraper(#scraper).col.s12
-
-.row
+  paper-button ng2
   .col.s12
     ul.tabs
-      //- '[attr.data-tooltip]'='auths[api]?.token ? "auth token: {{auths[api]?.token}}" : "connect to {{api}}"'
-      li.tab.tooltipped(
-        *ngFor=`#api of apis`
-        '[attr.data-tooltip]'='auths[api]?.token ? "auth token: " + auths[api]?.token : "connect to " + api'
-      )
-        a(
-          '[ngClass]'=`{ 'green-text': auths[api]?.token }`
-          '(click)'=`load_ui(api)`
-        ) {{api}}
-
-.row
-  ul.collapsible#scope-list(data-collapsible='expandable')
-    li
-      .collapsible-header.bold(
-        '[ngClass]'=`{ 'active': !auths[api]?.token }`
-      ) Scopes
-      .collapsible-body
-        #auth(#auth)
-        //- auth-ui(
-        //-   '(handler)'=`handle_implicit($event)`
-        //- )
-        //- '[name]'=``
-        //- '[scopes]'=``
-        //- '[oauth_info]'=``
-        //- '[delim]'=``
-        //- '[have]'=``
-      
-.row
-  #functions(#functions).col.s3
-  #input(#input).col.s6
-  #resp(#resp).col.s9
-    .row
-      .col.s12
-        ul.tabs
-          - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
-          - each id in Object.keys(tabs)
-            li.tab.col.s3
-              a(href=`#${id}`)= tabs[id]
-      .col.s12
-        .card
-          .card-content
-            pre#raw {{ raw | async }}
-            //- colored#colored('[str]'='{{ json | async }}')
-            pre#colored('innerHtml'='{{ colored | async }}')
-            //- #expandable
-            //- #rendered('innerHtml'='{{ rendered | async }}')
-            //- value#rendered('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
-            #rendered
-              value('[path$]'=`a`, '[val$]'=`json`, '[schema$]'=`c`)
-
-//- #output(#output)
-
-//- include ./test.jade
+      - tabs = { curl: 'Curl', web: 'web', api: 'API' }
+      - each id in Object.keys(tabs)
+        li.tab.col.s4
+          a(href=`#${id}`)= tabs[id]
+  .col.s12
+    .card
+      .card-content
+        #curl
+          include ./curl.jade
+        #web
+          include ./web.jade
+        #api
+          include ./api.jade

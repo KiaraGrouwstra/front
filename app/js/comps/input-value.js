@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from 'angular2/core';
 import { Templates } from '../jade';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 import { FieldComp } from './input-field';
@@ -23,7 +23,7 @@ import { InputTableComp } from './input-table';
     InputTableComp,
   ]
 })
-export class InputValueComp implements OnInit {
+export class InputValueComp {
   // type: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
@@ -32,7 +32,7 @@ export class InputValueComp implements OnInit {
 
   ngOnInit() {
     // this calculates only once -- move out like HostBinding? convert to Rx?
-    let SCALARS = ['string', 'number', 'integer', 'boolean', 'file'];
+    let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
     this.type = this.spec.type;
     if(SCALARS.includes(this.type)) this.type = 'scalar';
 
@@ -44,3 +44,8 @@ export class InputValueComp implements OnInit {
 InputValueComp.parameters = [
   [ChangeDetectorRef],
 ]
+
+Reflect.decorate([ViewChild(FieldComp)], InputValueComp.prototype, 'f');
+Reflect.decorate([ViewChild(InputArrayComp)], InputValueComp.prototype, 'a');
+Reflect.decorate([ViewChild(InputObjectComp)], InputValueComp.prototype, 'o');
+Reflect.decorate([ViewChild(InputTableComp)], InputValueComp.prototype, 't');

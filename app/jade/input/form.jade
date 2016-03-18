@@ -1,14 +1,16 @@
 //- {fields: [html], desc: html}
+//- '(ngSubmit)'='onSubmit()'
 form(
   '[ngFormModel]'='form'
   '#frm'='ngForm'
-  '(ngSubmit)'='onSubmit()'
 )
   .fn_desc!= desc
   //- delegate loop to ng-output/object.jade?
   - each fld in fields
     != fld
-  button.btn.waves-effect.waves-light(
-    type='submit'
-    '[disabled]'='!form.valid'
+  //- type='submit'
+  //- '[disabled]'='!form.valid'
+  a.btn.waves-effect.waves-light(
+    '[ngClass]'=`{ 'disabled': !form.valid }`
+    'click'='onSubmit()'
   ) Submit

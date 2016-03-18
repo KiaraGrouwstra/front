@@ -1,8 +1,8 @@
 // "use strict";
 // let is_node = typeof window === 'undefined'
 
-let jade = require('jade');
-let _ = require('lodash/fp');
+// let _ = require('lodash/fp');
+// let jade = require('jade');
 
 // if(is_node) {  //node (gulp, fs)
 //   let fs = require('fs');
@@ -25,70 +25,73 @@ let _ = require('lodash/fp');
 //       form: 'ng-input/form', //- {fields: [html]}
 //   })
 // } else {  //browser (webpack)
-  let wrap = (wrapper, block) => (opts) => Templates[wrapper](Object.assign(opts, {html: Templates[block](opts)}));
-  var Templates = Object.assign({}, {
+  // let wrap = (wrapper, block) => (opts) => Templates[wrapper](Object.assign(opts, {html: Templates[block](opts)}));
+  var Templates = {
+  // var Templates = _.assign({
     // ng-output
     ng_card_object: require('../jade/ng-output/card_object'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
     ng_card_table: require('../jade/ng-output/card_table'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
       ng_ul_table: require('../jade/ng-output/ul_table'), //- {k, id, rows: [{id, val}]}
       ng_dl_table: require('../jade/ng-output/dl_table'), //- {rows: [{k, id, val}]}
       ng_dl      : require('../jade/ng-output/dl'),       //- {rows: [{k, id, val}]}
-      array: require('../jade/ng-output/array'),
-      // object: require('../jade/ng-output/object'),
-      value: require('../jade/ng-output/value'),
+      ng_array: require('../jade/ng-output/array'),
+      // ng_object: require('../jade/ng-output/object'),
+      ng_value: require('../jade/ng-output/value'),
+    ng_fn_list: require('../jade/ng-output/functions'),
+
     // ng-input
-    ng_input_array: require('../jade/ng-input/array'),
-    ng_auth: require('../jade/ng-input/auth'),
-    // ng_datalist: require('../jade/ng-input/datalist'),
-    ng_date: require('../jade/ng-input/date'),
-    ng_field: require('../jade/ng-input/field'),
-    ng_file: require('../jade/ng-input/file'),
     ng_form: require('../jade/ng-input/form'),
-    ng_input: require('../jade/ng-input/input'),
+    ng_input_value: require('../jade/ng-input/value'),
+    ng_input_table: require('../jade/ng-input/table'),
+    ng_input_array: require('../jade/ng-input/array'),
     ng_input_object: require('../jade/ng-input/object'),
+    ng_field: require('../jade/ng-input/field'),
+    ng_input: require('../jade/ng-input/input'),
+    ng_date: require('../jade/ng-input/date'),
+    ng_file: require('../jade/ng-input/file'),
     ng_radio: require('../jade/ng-input/radio'),
+    // ng_datalist: require('../jade/ng-input/datalist'),
     // ng_range: require('../jade/ng-input/range'),
     // ng_select: require('../jade/ng-input/select'),
     // ng_switch: require('../jade/ng-input/switch'),
-    ng_input_table: require('../jade/ng-input/table'),
-    ng_input_value: require('../jade/ng-input/value'),
-  },
-  _.mapValues(t => jade.compile(t, {}), {
-    // output
-    card_object: require('!raw!../jade/output/card_object'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
-    card_table: require('!raw!../jade/output/card_table'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
-      ul_table: require('!raw!../jade/output/ul_table'), //- {k, id, rows: [{id, val}]}
-      dl_table: require('!raw!../jade/output/dl_table'), //- {rows: [{k, id, val}]}
-      dl      : require('!raw!../jade/output/dl'),       //- {rows: [{k, id, val}]}
-    // input
-    input_s: require('!raw!../jade/input/input'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-    // input:   require('!raw!../jade/input/input'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-    switch: require('!raw!../jade/input/switch'),
-    // radio: require('!raw!../jade/input/radio'),
-    range: require('!raw!../jade/input/range'),
-    select: require('!raw!../jade/input/select'),
-    datalist: require('!raw!../jade/input/datalist'),
-    date: require('!raw!../jade/input/date'),
-    field: require('!raw!../jade/input/field'), //- {html, k, label}
-    form: require('!raw!../jade/input/form'), //- {fields: [html]}
-  }),    //filename:
-  {
-    input: wrap('field', 'input_s'),
-  })
+    ng_auth: require('../jade/ng-input/auth'),
+  // },
+  // _.mapValues(t => jade.compile(t, {}), {
+  //   // output
+  //   card_object: require('!raw!../jade/output/card_object'), //- {k, id, scal: {k -> {type, pars}}, obj: {k -> {type, pars}}, arr: {k -> {type, pars}}}
+  //   card_table: require('!raw!../jade/output/card_table'), //- {k, id, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+  //     ul_table: require('!raw!../jade/output/ul_table'), //- {k, id, rows: [{id, val}]}
+  //     dl_table: require('!raw!../jade/output/dl_table'), //- {rows: [{k, id, val}]}
+  //     dl      : require('!raw!../jade/output/dl'),       //- {rows: [{k, id, val}]}
+  //   // input
+  //   input_s: require('!raw!../jade/input/input'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+  //   // input:   require('!raw!../jade/input/input'), //- {attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
+  //   switch: require('!raw!../jade/input/switch'),
+  //   // radio: require('!raw!../jade/input/radio'),
+  //   range: require('!raw!../jade/input/range'),
+  //   select: require('!raw!../jade/input/select'),
+  //   datalist: require('!raw!../jade/input/datalist'),
+  //   date: require('!raw!../jade/input/date'),
+  //   field: require('!raw!../jade/input/field'), //- {html, k, label}
+  //   form: require('!raw!../jade/input/form'), //- {fields: [html]}
+  // }),    //filename:
+  // {
+  //   input: wrap('field', 'input_s'),
+  // })
   // ^ using extends would require me to load the Jade from a web directory... now I was preloading by webpack to prevent duplicate work. guess caching helps though?
-// }
+}
 // )
 
 /*
 Materialize classes used:
 Stateful (replace):
-* tooltips ($): .tooltipped
-* tabs ($, justin): .tabs/.tab
-* collapsibles ($): .collapsible/.collapsible-header/.collapsible-body
+* tooltips ($, paper): .tooltipped
+* tabs ($, justin, paper): .tabs/.tab  //also potentially unfortunate in its current use of IDs, which makes components not reusable without jade (/ng2?) prefix hacks
+* collapsibles ($, iron-collapse): .collapsible/.collapsible-header/.collapsible-body
 * nav ($, ng2mat?, justin): .button-collapse
-* inputs (ng2comp): .range-field, select ($), .switch/.lever (justin, ng2comp), .file-field/.file-path-wrapper/.file-path, .datepicker ($), radio input (justin, ng2comp)
-* progress linear (justin, ng2comp), progress circle (ng2mat, justin)
-//* toasts: Materialize.toast() -> https://github.com/stabzs/Angular2-Toaster
+* inputs (ng2comp): .range-field (iron-range-behavior?), select ($, iron-dropdown, paper-dropdown-menu), .switch/.lever (justin, ng2comp), .file-field/.file-path-wrapper/.file-path, .datepicker ($), radio input (justin, ng2comp)
+* progress linear (justin, ng2comp, paper), progress circle (ng2mat, justin)
+//* toasts (paper): Materialize.toast() -> https://github.com/stabzs/Angular2-Toaster
 
 Cosmetic (can keep):
 * inputs: .input-field (justin), .validate/.errors/.error, checkbox's .filled-in (justin, ng2comp)

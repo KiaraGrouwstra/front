@@ -1,9 +1,10 @@
-let _ = require('lodash/fp');
 let marked = require('marked');
+let _ = require('lodash/fp');
 import { Array_last, Array_has, Array_clean, Array_flatten, Object_filter, RegExp_escape, arr2obj, toast, mapBoth, String_stripOuter, getPaths, id_cleanse } from './js.js'; //, Obs_do, Obs_then
 import { Validators, Control, ControlGroup, ControlArray } from 'angular2/common';
 import { Templates } from './jade';
 import { ControlList } from './control_list';
+import { ControlObject } from './control_object';
 
 // get the default value for a value type
 let get_default = (type) => {
@@ -88,7 +89,7 @@ let input_attrs = (path, spec) => {
       maxlength: maxLength,
       minlength: minLength,
       pattern: pattern,
-      title: 'title test', //still used in native browser 'required' popup?
+      // title: 'title test', //used in browser's native (ugly) tooltip and 'required' popup. what of ng-aria?
       'data-tooltip': desc,
       autocomplete: AUTO_COMP.includes(name) ? name : 'on', //off
     },
@@ -144,8 +145,9 @@ function input_control(spec = {}, validator = get_validators(spec).validator) {
       new ControlList(new ControlGroup(_.mapValues(prop => input_control(prop), spec.items.properties))) :  // table, not native Swagger
       new ControlList(input_control(spec.items));
     case 'object':  // not native Swagger
-      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern: '[\w_][\w_\d]*'});
-      return new ControlGroup({name: ctrl, val: input_control(spec.additionalProperties)});
+      let pattern = '[\\w_][\\w_\\d]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
+      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern: pattern});
+      return new ControlObject(new ControlGroup({name: ctrl, val: input_control(spec.additionalProperties)}));
     default:
       let def = spec.default;
       let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
@@ -155,43 +157,33 @@ function input_control(spec = {}, validator = get_validators(spec).validator) {
 }
 
 // get a form template
-let make_form = (path_spec_pairs, desc = '', tmplt = Templates.form) => {
+// let make_form = (input_pars, desc = '', tmplt = Templates.form) => {
+//   let fields = input_pars.map(par => param_field(par.path, par.spec));
+//   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) });
+//   let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {};
+//   return { html: html, obj: obj };
+// }
+
+// use to map an array of input specs to a version with path added
+let input_specs = (path = []) => (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v })
+
+// pars to make a form for a given API function
+let method_pars = (spec, fn_path) => {
   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
-  let fields = path_spec_pairs.map(([path, spec]) => param_field(path, spec));
-  let html = tmplt({ desc: desc, fields: fields.map(x => x.html) });
-  let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {};
-  return { html: html, obj: obj };
+  let hops = ['paths', fn_path, 'get', 'parameters'];
+  let path = hops.map(x => id_cleanse(x));
+  let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
+  let input_pars = [scheme].concat((_.get(hops, spec) || []).map(input_specs(path)));
+  let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
+  return { pars: input_pars, desc: desc };
 }
 
 // form for a given API function
-let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
-  let hops = ['paths', fn_path, 'get', 'parameters'];
-  let path = hops.map(x => id_cleanse(x));
-  let scheme = [['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes}];
-  let path_spec_pairs = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => [path.concat(idx), v]));
-  let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '');
-  return make_form(path_spec_pairs, desc, tmplt);
-}
-
-// get the form template for a given API function
-// let method_form = (api_spec, fn_path, tmplt = Templates.form) => {
-//   let hops = ['paths', fn_path, 'get', 'parameters'];
-//   let path = hops.map(x => id_cleanse(x));
-//   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
-//   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
-//   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
-//   let scheme = param_field(['schemes'], {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: api_spec.schemes[0], enum: api_spec.schemes});
-//   let fields = [scheme].concat((_.get(hops, api_spec) || []).map((v, idx) => param_field(path.concat(idx), v)));
-//   // console.log('fields', fields);
-//   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'), api_spec) || '');
-//   let html = tmplt({ desc: desc, fields: fields.map(x => x.html) });
-//   // console.log('html', html);
-//   //console.log('fields', fields);
-//   let obj = fields.length ? Object.assign(...fields.map(x => x.obj)) : {};
-//   //console.log('obj', obj);
-//   return { html: html, obj: obj };
+// let method_form = (spec, fn_path, tmplt = Templates.form) => {
+//   let { pars: pars, desc: desc } = method_pars(spec, fn_path);
+//   return make_form(pars, desc, tmplt);
 // }
 
 // validators
@@ -237,7 +229,10 @@ let val_errors = {
   exclusiveMinimum: x => `Must be more than ${x}.`,
   maxLength: x => `Must be within ${x} characters.`,
   minLength: x => `Must be at least ${x} characters.`,
-  pattern: x => `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${x}">${x}</a>/.`,
+  pattern: x => {
+    let patt = `^${x}$`;  //.replace(/\\/g, '\\\\')
+    return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
+  },
   maxItems: x => `Must have at most ${x} items.`,
   minItems: x => `Must have at least ${x} items.`,
   uniqueItems: x => `All items must be unique.`,
@@ -247,4 +242,11 @@ let val_errors = {
 
 // async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81
 
-export { method_form, make_form, input_attrs, input_control, get_validators, input_opts, get_template };
+// [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
+// [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js#L233)
+// [swagger editor ng1 html](https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html)
+// json editor:
+// - functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js)
+// - [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
+
+export { method_pars, input_attrs, input_control, get_validators, input_opts, get_template, input_specs }; //, method_form, make_form

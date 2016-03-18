@@ -15,7 +15,7 @@ let _ = require('lodash/fp');
     FieldComp,
   ]
 })
-export class InputArrayComp implements OnInit {
+export class InputArrayComp {
   // type: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
@@ -40,9 +40,9 @@ export class InputArrayComp implements OnInit {
     this.cdr.markForCheck();
   }
 
-  remove(item) {
-    let idx = _.findIndex(x => x == item, this.items);  //does this work on Sets?
-    ctrl.removeAt(idx);
+  remove(item, i) {
+    let idx = _.findIndex(x => x == item)(Array.from(this.items));
+    this.ctrl.removeAt(idx);
     this.items.delete(item);
     this.cdr.markForCheck();
   }

@@ -1,0 +1,20 @@
+//- convert to ng2 thing instead of using jade variable `prefix`? this ID thing as used by Materialize tabs is annoying.
+.row
+  .col.s12
+    ul.tabs
+      - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
+      - each id in Object.keys(tabs)
+        li.tab.col.s4
+          a(href=`#${prefix+id}`)= tabs[id]
+  .col.s12
+    .card
+      .card-content
+        //- #raw
+        div(id=prefix+'raw')
+          pre {{ raw | async }}
+        //- #colored
+        div(id=prefix+'colored')
+          pre('innerHtml'='{{ colored | async }}')
+        //- #rendered
+        div(id=prefix+'rendered')
+          value('[path$]'=`path$`, '[val$]'=`data$`, '[schema$]'=`spec$`)

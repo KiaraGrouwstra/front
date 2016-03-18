@@ -1,4 +1,4 @@
-console.log("SPECS");
+// ditched in favor of karma's karma-test-shim.js
 
 // https://github.com/AngularClass/angular2-webpack-starter/blob/master/spec-bundle.js
 
@@ -47,5 +47,3 @@ console.log(`LOL`);
 describe('stuff', () => {
   it('true is false', () => expect(true).toEqual(false));
 });
-
-console.log("END SPECS");

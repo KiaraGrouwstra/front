@@ -6,14 +6,14 @@ form
   //- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
   //- '[ngControl]'=`name`
   //- '[ngControl]'=`spec.name`
+  //- '[ngControl]'=`ctrl`
   //- '#frm'='ngForm'
   input.tooltipped.validate(
-    '[ngClass]'=`{valid: ctrl.valid, invalid: ctrl.invalid}`
-    '[ngControl]'=`ctrl`
+    '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+    '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
     '[id]'=`attrs.id`
     '[required]'=`attrs.required`
-    '[placeholder]'=`attrs.placeholder`
     '[type]'=`attrs.type`
     
     '[attr.maxlength]'=`attrs.maxlength`
@@ -26,5 +26,7 @@ form
     '[max]'=`attrs.max`
     '[min]'=`attrs.min`
     '[step]'=`attrs.step`
-
   )
+  //- TODO: leave out attributes with undefined values?
+  //- '[placeholder]'=`attrs.placeholder`
+  //- ^ should not be used together with value?

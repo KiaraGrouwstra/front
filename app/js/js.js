@@ -1,5 +1,6 @@
 let _ = require('lodash/fp');
-global.$ = global.jQuery = require("jquery");
+let $ = require('jquery');
+
 require("materialize-css/dist/js/materialize.min");
 import { test_comp } from './dynamic_class';
 // import { EventEmitter } from 'angular2/core';
@@ -35,7 +36,7 @@ Array.prototype.flatten = Array_flatten;
 // create an element from an HTML string (for now with a single root element)
 // let elFromHtml = (html) => {
 //   try {
-//     return jQuery(html).toArray()[0] || elFromText(html)
+//     return $(html).toArray()[0] || elFromText(html)
 //   }
 //   catch(e) {
 //     return elFromText(html)
@@ -222,9 +223,9 @@ let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 
 // asynchronously create and test a component
 // let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
-let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
-  // let fixture = await tcb.createAsync(test_class);
-  return tcb.createAsync(test_class).then((fixture) => {
+let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
+  try {
+    let fixture = await tcb.createAsync(test_class);
     fixture.detectChanges();
     let test_cmp = fixture.componentInstance;
     let target_comp = test_cmp.comp;
@@ -235,7 +236,10 @@ let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => 
     fixture.detectChanges();
     let native_el = fixture.debugElement.childNodes[0].nativeElement;
     test_fn(done, target_comp, native_el);
-  }).catch(done.fail);
+  }
+  catch(e) {
+    done.fail(e);
+  }
 }
 
 // test_fn for comp_test to check a property value
@@ -263,13 +267,13 @@ let typed = (from, to, fn) => function() {
     // console.log(i, frm, v, (frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)));
     if(frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)) return (new to).valueOf();
   }
-  return fn(...arguments);
+  return fn.call(this, ...arguments);
 }
 
 // simpler guard, just a try-catch wrapper with default value
 let fallback = (def, fn) => function() {
   try {
-    return fn(...arguments);
+    return fn.call(this, ...arguments);
   }
   catch(e) {
     console.log('an error occurred, falling back to default value:', e);
@@ -277,4 +281,14 @@ let fallback = (def, fn) => function() {
   }
 }
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback };  //, Obs_do, Obs_then, elementText
+// just log errors. only useful in contexts with silent crash.
+let try_log = (fn) => function() {
+  try {
+    return fn.call(this, ...arguments);
+  }
+  catch(e) {
+    console.log('try_log error:', e);
+  }
+}
+
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback, try_log };  //, Obs_do, Obs_then, elementText

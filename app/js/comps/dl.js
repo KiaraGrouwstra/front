@@ -18,7 +18,7 @@ let inputs = ['path$', 'val$']; //, 'schema$'
     forwardRef(() => ValueComp),
   ]
 })
-export class DLComp implements OnInit {
+export class DLComp {
   //k: Observable<string>;
   //id: Observable<string>;
   rows$: Observable<Array<any>>; //[{id, path, val, schema}]
@@ -45,7 +45,7 @@ export class DLComp implements OnInit {
     this.rows$
     .subscribe(x => {
       // this.rows = x;
-      // this.rows = x.map(obj => _.mapValues(v => new BehaviorSubject(v), obj));
+      // this.rows = x.map(_.mapValues(v => new BehaviorSubject(v)));
       this.cdr.markForCheck();
     });
   }

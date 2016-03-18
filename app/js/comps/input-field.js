@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from 'angular2/core';
 import { Templates } from '../jade';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 import { InputComp } from './input-input';
-import { get_validators } from '../input';
+import { get_validators, input_attrs, input_opts, get_template } from '../input';
 import { getPaths } from '../js';
 let marked = require('marked');
-import { input_attrs, input_opts, get_template } from '../input';
 
 @Component({
   selector: 'input-field',
@@ -18,7 +17,7 @@ import { input_attrs, input_opts, get_template } from '../input';
     InputComp,
   ]
 })
-export class FieldComp implements OnInit {
+export class FieldComp {
   // type: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
@@ -37,6 +36,11 @@ export class FieldComp implements OnInit {
     // this.ctrl: from controls[key];
     this.attrs = input_attrs(this.path, this.spec);
     this.type = get_template(input_opts(this.spec, this.attrs, {}));
+    this.cdr.markForCheck();
+  }
+
+  showError(vldtr) {
+    return (this.ctrl.errors||{})[vldtr];
   }
 
 }
@@ -44,3 +48,5 @@ export class FieldComp implements OnInit {
 FieldComp.parameters = [
   [ChangeDetectorRef],
 ]
+
+Reflect.decorate([ViewChild(InputComp)], FieldComp.prototype, 'i');

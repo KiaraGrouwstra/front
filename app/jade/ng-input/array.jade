@@ -7,15 +7,15 @@
         '[ngControlGroup]'=`spec.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
-        li(*ngFor="#item of items; #i = index")
-          button('(click)'=`remove(item)`)
-          | x
+        li.row(*ngFor="#item of items; #i = index")
+          button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item, i)`)
+            | ×
           //- '[name]'=`i`
-          input-field(
+          input-field.col(
             '[named]'=`false`
             '[path]'=`path.concat(item)`
             '[spec]'=`spec.items`
             '[ctrl]'=`ctrl.at(i)`
           )
-    button('(click)'=`add()`)
-    | +
+    a.btn.waves-effect.waves-light.green('(click)'=`add()`)
+      i.material-icons add

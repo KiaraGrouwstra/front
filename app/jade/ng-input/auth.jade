@@ -3,7 +3,7 @@
 //-   include ../ng-output/loader.jade
 //- p token: {{parent.auths.instagram?.token}}
 .row
-  .input-field.col.s6(*ngFor=`#scope of scopes_arr`)
+  .input-field.col.s6(*ngFor=`#scope of scopes$ | async`)
     input.filled-in(
       type='checkbox'
       '[id]'=`scope`

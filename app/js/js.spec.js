@@ -7,7 +7,6 @@ Promise.prototype.finally = Prom_finally;
 Array.prototype.clean = Array_clean;
 Array.prototype.flatten = Array_flatten;
 String.prototype.stripOuter = String_stripOuter;
-jQuery = require("jquery")
 
 describe('js', () => {
 
@@ -92,7 +91,7 @@ describe('js', () => {
 
   it('toast creates popup toasts with a message', () => {
     toast.success('foo')
-    expect(jQuery('.toast').length).toEqual(1)
+    expect($('.toast').length).toEqual(1)
   })
 
   it('getKV cannot load from non-existing keys', (d) => do_prom(d,

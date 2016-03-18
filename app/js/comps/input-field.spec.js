@@ -24,6 +24,7 @@ let pars = {
   named: named,
   // name: name,
 };
+let req = 'This field is required.';
 
 describe('FieldComp', () => {
   let builder: TestComponentBuilder;
@@ -35,7 +36,7 @@ describe('FieldComp', () => {
 
   it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n'))
+    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
   ));
 
 });

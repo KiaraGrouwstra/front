@@ -100,6 +100,6 @@ describe('Rx Helpers', () => {
   //   (v) => expect(v).toEqual('foo')
   // ))
 
-  // CAN'T STRINGIFY SETS
+  // CAN'T STRINGIFY SETS without Array.from(set)
 
 })

@@ -1,7 +1,7 @@
 var Phoenix = require('phoenix-js-derp');
 import { Observable } from '@reactivex/rxjs';
 import { autobind } from 'core-decorators';
-import { addUrl, parsley, toCurl } from './requests';
+// import { addUrl, parsley, toCurl } from './requests';
 
 @autobind export class WS {
 //   requests: {};
@@ -53,7 +53,7 @@ import { addUrl, parsley, toCurl } from './requests';
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
     return this.out
-      .filter(_ => _.id == id)
+      .filter(x => x.id == id)
       .map(e => e.body);
   }
   // ^ the server doesn't currently send complete events. Rx operators definitely affected by this:
@@ -67,11 +67,11 @@ import { addUrl, parsley, toCurl } from './requests';
     return this.ask_many(url, pars).take(n);
   }
 
-  // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security`?
+  // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security` or by making this into an extension?
 
-  addUrl = addUrl;
-  parsley = parsley;
-  toCurl = toCurl;
+  // addUrl = addUrl;
+  // parsley = parsley;
+  // toCurl = toCurl;
 
 }
 

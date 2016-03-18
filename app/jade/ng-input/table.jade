@@ -8,12 +8,12 @@
         '[ngControlGroup]'=`spec.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
-        li(*ngFor="#item of items; #i = index")
-          button('(click)'=`remove(item)`)
-          | x
+        li.row(*ngFor="#item of items; #i = index")
+          button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item)`)
+            | ×
           //- based on ng-outputs/dl_table.jade
           //- ('#path_i = path.concat(item); ctrl_i = ctrl.at(i);')
-          table.bordered.highlight
+          table.bordered.highlight.col
             tbody
               //- id=`{{?.id}}`
               tr(*ngFor=`#key of keys`)
@@ -28,5 +28,5 @@
                     '[ctrl]'=`ctrl.at(i).controls[key]`
                   )
 
-    button('(click)'=`add()`)
-    | +
+    a.btn.waves-effect.waves-light.green('(click)'=`add()`)
+      i.material-icons add

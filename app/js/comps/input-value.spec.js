@@ -25,6 +25,7 @@ let pars = (spec) => ({
   ctrl: input_control(spec),
   // name: name,
 });
+let req = 'This field is required.';
 
 describe('InputValueComp', () => {
   let builder: TestComponentBuilder;
@@ -36,7 +37,7 @@ describe('InputValueComp', () => {
 
   it('should work with scalars', test(
     cls({}, pars(scalar)),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n'))
+    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
   ));
 
   it('should work with arrays', test(

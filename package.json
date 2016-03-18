@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@polymer/polymer": "^1.2.5-npm-test.2",
     "JSONPath": "^0.10.0",
     "angular-animate": "latest",
     "angular-aria": "latest",
@@ -38,6 +39,8 @@
     "material2": "github:angular/material2",
     "materialize-css": "latest",
     "normalize.css": "^3.0.3",
+    "npm-polymer-elements": "0.0.1",
+    "polymer-js": "^1.0.5",
     "postcss": "^5.0.14",
     "postcss-browser-reporter": "^0.4.0",
     "postcss-cssnext": "^2.4.0",
@@ -55,6 +58,7 @@
     "tv4": "tycho01/tv4",
     "typescript-register": "^1.1.0",
     "typescript-require": "^0.2.9",
+    "webcomponents": "^0.1.4",
     "yamljs": "^0.2.4",
     "zone.js": "^0.5.11"
   },
@@ -86,12 +90,14 @@
     "gulp-util": "latest",
     "html-loader": "latest",
     "http-server": "^0.8.5",
+    "http2": "^3.3.2",
     "imports-loader": "latest",
     "jade-html-loader": "latest",
     "jade-loader": "latest",
     "jasmine-core": "^2.4.1",
     "jasmine-rx": "tycho01/jasmine-rx",
     "json-loader": "latest",
+    "jspm": "^0.16.31",
     "karma": "^0.13.19",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-chrome-launcher": "^0.2.2",
@@ -144,5 +150,13 @@
     "pretest": "npm run build",
     "test": "karma start karma.conf.js",
     "posttest": "node_modules/.bin/remap-istanbul -i coverage/coverage-final.json -o coverage -t html"
+  },
+  "jspm": {
+    "dependencies": {},
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   }
 }

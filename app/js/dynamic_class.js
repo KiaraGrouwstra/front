@@ -10,45 +10,45 @@ import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 // }
 
 // a generic component class
-let gen_comp = (pars) =>
-  // ann_pars([
-  //   [ChangeDetectorRef],
-  // ],
-  class {  // implements OnInit <-- TS only? not like it was working though. but then how to make this work here?
-    //var __param = (this && this.__param) || function (paramIndex, decorator) {
-  	//    return function (target, key) { decorator(target, key, paramIndex); }
-  	//};
-    constructor(cdr: ChangeDetectorRef) {
-      //, @Optional() @Host() parent: App
-      // v ugly workaround to `loadAsRoot`: https://github.com/angular/angular/issues/3474
-      // still causes an exception with observables too -_-;
-      // worse, Karma crashes with this, the components won't render without it...
-      window.setInterval(() => cdr.detectChanges(), 500);
-      for (let k in pars) this[k] = pars[k];
-    }
-    ngOnInit() {
-      //TODO: get this to work, though the current promise works too?
-      console.log('gen_class ngOnInit, BROKEN?');
-      //if(this.init) this.init();
-    }
-  }
-// )
-
-// a component class for forms based on given form Controls
-let form_comp = (pars) =>
-  // ann_pars([
-  //   [ChangeDetectorRef],
-  //   [FormBuilder],
-  // ],
-  class {
-    constructor(cdr: ChangeDetectorRef, builder: FormBuilder) {
-      window.setInterval(() => cdr.detectChanges(), 500);
-      for (let k in pars) this[k] = pars[k];
-      this.form = builder.group(mapBoth(pars.params, (v, k) => this.params[k].val));
-      //console.log('frm cmp', pars, this.params, this.form.controls);
-    }
-  }
-// )
+// let gen_comp = (pars) =>
+//   // ann_pars([
+//   //   [ChangeDetectorRef],
+//   // ],
+//   class {
+//     //var __param = (this && this.__param) || function (paramIndex, decorator) {
+//   	//    return function (target, key) { decorator(target, key, paramIndex); }
+//   	//};
+//     constructor(cdr: ChangeDetectorRef) {
+//       //, @Optional() @Host() parent: App
+//       // v ugly workaround to `loadAsRoot`: https://github.com/angular/angular/issues/3474
+//       // still causes an exception with observables too -_-;
+//       // worse, Karma crashes with this, the components won't render without it...
+//       window.setInterval(() => cdr.detectChanges(), 500);
+//       for (let k in pars) this[k] = pars[k];
+//     }
+//     ngOnInit() {
+//       //TODO: get this to work, though the current promise works too?
+//       console.log('gen_class ngOnInit, BROKEN?');
+//       //if(this.init) this.init();
+//     }
+//   }
+// // )
+//
+// // a component class for forms based on given form Controls
+// let form_comp = (pars) =>
+//   // ann_pars([
+//   //   [ChangeDetectorRef],
+//   //   [FormBuilder],
+//   // ],
+//   class {
+//     constructor(cdr: ChangeDetectorRef, builder: FormBuilder) {
+//       window.setInterval(() => cdr.detectChanges(), 500);
+//       for (let k in pars) this[k] = pars[k];
+//       this.form = builder.group(mapBoth(pars.params, (v, k) => this.params[k].val));
+//       //console.log('frm cmp', pars, this.params, this.form.controls);
+//     }
+//   }
+// // )
 
 // a component template for testing other components, by just selector (easier than html)
 let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, content = '') => {
@@ -85,4 +85,4 @@ let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}) => {
 //https://github.com/mbostock/d3/wiki/Gallery
 
 
-export { gen_comp, form_comp, test_comp, test_comp_html };
+export { test_comp, test_comp_html }; //gen_comp, form_comp, 

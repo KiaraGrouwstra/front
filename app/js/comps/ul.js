@@ -18,7 +18,7 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
     forwardRef(() => ValueComp),
   ]
 })
-export class ULComp implements OnInit {
+export class ULComp {
   // @Input() named: boolean;
   // k: Observable<string>;
   // id: Observable<string>;

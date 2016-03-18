@@ -14,13 +14,13 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
   selector: 'array',
   inputs: inputs,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: Templates.array,
+  template: Templates.ng_array,
   directives: [CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,
     forwardRef(() => ULComp),
     forwardRef(() => TableComp),
   ]
 })
-export class ArrayComp implements OnInit {
+export class ArrayComp {
   type: Observable<string>;
   new_spec$: Observable<any>;
 
@@ -33,7 +33,7 @@ export class ArrayComp implements OnInit {
   }
 
   ngOnInit() {
-    let first$ = this.val$.map(v => _.get([0], v));
+    let first$ = this.val$.map(_.get([0]));
     this.new_spec$ = mapComb([first$, this.schema$], getSpec);
     let type$ = mapComb([first$, this.new_spec$], (first, spec) => _.get(['type'], spec) || infer_type(first));
     type$.subscribe(x => {

@@ -1,6 +1,6 @@
-require("./styles");
-import "babel-core/register";
-import "babel-polyfill";
+require('./styles');
+import 'babel-core/register';
+import 'babel-polyfill';
 
 import 'angular2/bundles/angular2-polyfills.js';
 import { App } from './app';
@@ -17,9 +17,10 @@ let singletons = [WS, HTTP_BINDINGS, ROUTER_PROVIDERS,
 ];
 bootstrap(App, singletons).catch(err => console.error(err));
 
+window._ = require('lodash/fp');
+window.$ = window.jQuery = require('jquery');
 //Materialize
-global.$ = global.jQuery = require("jquery");
-require("materialize-css/dist/js/materialize");
+require('materialize-css/dist/js/materialize');
 (function($){
   $(function(){
     $('.button-collapse').sideNav();

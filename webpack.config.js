@@ -81,7 +81,7 @@ module.exports = {
 	resolve: {
 		extensions: [
 			// you can now require('file') instead of require('file.coffee')
-			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss'	//'', '.coffee', '.ls', '.tsx', '.html'
+			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss', '.html'	//'', '.coffee', '.ls', '.tsx'
 		],
 		// root: ['node_modules', 'bower_components', 'app'].map((folder) => path.join(__dirname, folder))
 		modulesDirectories: ['node_modules', 'bower_components', 'app'],
