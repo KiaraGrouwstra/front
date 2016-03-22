@@ -2,7 +2,8 @@
 //- v to allow opening multiple: expandable instead of accordion
 ul.collapsible#fn-list(data-collapsible='accordion')
   li(*ngFor='#tag of tags')
-    .collapsible-header.tooltipped.bold(
+    //- div(tabindex="0")
+    .collapsible-header.bold.tooltipped(
       '[ngClass]'=`{ 'grey lighten-3': !has_usable[tag.name]  }`
       '[attr.data-tooltip]'=`tag?.description`
     ) {{tag.name}}
@@ -19,3 +20,4 @@ ul.collapsible#fn-list(data-collapsible='accordion')
           //- ^ can I optionally disable the click attribute if `!have_scopes[path]`? I could only make it `load_form(path)` if `have_scopes[path]` but that's kinda lame/ugly...
           //- .chip.get GET
           | {{path}}
+    //- paper-tooltip {{ tag?.description }}

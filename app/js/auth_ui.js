@@ -9,12 +9,13 @@ let _ = require('lodash/fp');
   selector: 'auth-ui',
   // inputs: ['name', 'scopes', 'oauth_info', 'delim', 'have'],
   inputs: ['name', 'scopes$', 'oauth_info$', 'delim', 'have$'],
+  outputs: ['handler'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_auth,
   directives: [COMMON_DIRECTIVES],
 })
 export class AuthUiComp {
-  @Output() handler = new EventEmitter(false);
+  handler = new EventEmitter(false);    // @Output()
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;

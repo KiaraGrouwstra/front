@@ -14,8 +14,6 @@ let inputs = ['path$', 'val$', 'schema$'];
   // div :(, replace component with like scalar pipe? ngContent if it'd work with piping/Rx?
 })
 export class ScalarComp {
-  //@Input() val$: Observable<any>;
-  // html$: Observable<string>;
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;

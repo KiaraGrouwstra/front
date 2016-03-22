@@ -1,9 +1,10 @@
 var Phoenix = require('phoenix-js-derp');
 import { Observable } from '@reactivex/rxjs';
-import { autobind } from 'core-decorators';
+// import { autobind } from 'core-decorators';
 // import { addUrl, parsley, toCurl } from './requests';
 
-@autobind export class WS {
+// @autobind
+export class WS {
 //   requests: {};
 //   id: number;
 //   ws: any;  //Phoenix.Socket

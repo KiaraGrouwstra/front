@@ -4,8 +4,10 @@
 //- )
 //-   span(*ngIf=bool.val)= bool.ok
 //-   span(*ngIf='!'+bool.val)= bool.ng
-.btn-floating.btn-large.tooltipped.red(
+//- div(tabindex="0")
+.btn-floating.btn-large.red.tooltipped(
   '[ngClass]'=`{green: ${bool.val} }`
   '[attr.data-tooltip]'=`${bool.val} ? '${bool.ok}' : '${bool.ng}'`
 )
   i.material-icons power_settings_new
+//- paper-tooltip=`{{ ${bool.val} ? '${bool.ok}' : '${bool.ng}' }}`

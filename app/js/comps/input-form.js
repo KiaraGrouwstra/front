@@ -11,6 +11,7 @@ let _ = require('lodash/fp');
 @Component({
   selector: 'input-form',
   inputs: ['inputs$', 'desc'],  // {path, spec}?  //inputs, inputs$
+  outputs: ['submit'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_form,
   directives: [
@@ -21,7 +22,7 @@ let _ = require('lodash/fp');
 export class FormComp {
   // type: Observable<string>;
   // form: ControlGroup;
-  @Output() submit = new EventEmitter(false);
+  submit = new EventEmitter(false);    // @Output()
   // ^ handle with `<input-form (submit)="callback()"></input-form>`
 
   constructor(cdr: ChangeDetectorRef, builder: FormBuilder) { //cdr: ChangeDetectorRef,

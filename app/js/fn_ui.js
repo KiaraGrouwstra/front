@@ -9,12 +9,13 @@ let marked = require('marked');
   selector: 'fn-ui',
   // inputs: ['spec', 'oauth_sec', 'have'],
   inputs: ['spec$', 'oauth_sec$', 'have$'],
+  outputs: ['handler'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: Templates.ng_fn_list,
   directives: [COMMON_DIRECTIVES],
 })
 export class FnUiComp {
-  @Output() handler = new EventEmitter(false);
+  handler = new EventEmitter(false);    // @Output() 
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;

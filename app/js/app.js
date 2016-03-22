@@ -38,13 +38,13 @@ import { ValueComp } from './comps/value';
 // import { ObjectComp } from './comps/object';
 // import { DLComp } from './comps/dl';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui'; //, load_auth_ui, load_fn_ui, load_scrape_ui
-import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
+// import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { AuthUiComp } from './auth_ui';
 import { FnUiComp } from './fn_ui';
 import { InputUiComp } from './input_ui';
 // import { ScrapeUiComp } from './scrape_ui';
 import { FormComp } from './comps/input-form';
-import { ViewEncapsulation } from 'angular2/core';
+// import { ViewEncapsulation } from 'angular2/core';
 
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ROUTER_DIRECTIVES, ValueComp, AuthUiComp, FnUiComp, InputUiComp, FormComp];  //, ScalarComp, ULComp, ObjectComp, DLComp, ScrapeUiComp
 let pipes = [MarkedPipe];
@@ -58,6 +58,7 @@ let pipes = [MarkedPipe];
 //require('http://warfares.github.io/pretty-json/pretty-json-min.js');
 // require('../vendor/pretty-json-min');
 
+// let App = global.ng.core.Component({
 @Component({
   selector: 'app',
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
@@ -66,12 +67,12 @@ let pipes = [MarkedPipe];
   pipes: pipes,
   // encapsulation: ViewEncapsulation.Native,
 })
-@RouteConfig([
+// @RouteConfig([
 //   {path:'/test',          name: 'CrisisCenter', component: genClass({}, html) },
 //   {path:'/hero/:id',      name: 'HeroDetail',   component: HeroDetailComponent},
 //   {path: '/home', loader: () => Promise.resolve(MyLoadedCmp), name: 'MyLoadedCmp'}
-          //(name, path) => System.import(path).then(c => c[name])      //<- given systemjs; does that do http? what of http.get(url)? then how to load the code?
-])
+// // (name, path) => System.import(path).then(c => c[name])      //<- given systemjs; does that do http? what of http.get(url)? then how to load the code?
+// ])
 //DynamicRouteConfigurator: http://blog.mgechev.com/2015/12/30/angular2-router-dynamic-route-config-definition-creation/
 // <router-outlet></router-outlet>
 // [child routes](https://angular.io/docs/ts/latest/guide/router.html#!#child-router), e.g. within non-root:
@@ -80,7 +81,10 @@ let pipes = [MarkedPipe];
 // programmatic navigation in two router-outlets with param passing: this._router.navigate(['/', ['EditEntity'], { id: id }]);
 // ... note that I'm fuzzy on the details of how that works, i.e. which routes and params would go to which router-outlets.
 
-@autobind export class App {
+// @autobind export class App {
+export class App {
+// .class({
+// @autobind class App {
 //   deps: any;
 //   ws: WS;
 //   items: any;
@@ -334,6 +338,8 @@ let pipes = [MarkedPipe];
   doCurl = doCurl;
 
 }
+// });
+
 App.parameters = [
   [DynamicComponentLoader],
   [Router],
@@ -347,3 +353,5 @@ Reflect.decorate([ViewChild(AuthUiComp)], App.prototype, 'auth_ui');
 Reflect.decorate([ViewChild(FnUiComp)], App.prototype, 'fn_ui');
 Reflect.decorate([ViewChild(InputUiComp)], App.prototype, 'input_ui');
 // Reflect.decorate([ViewChild(ScrapeUiComp)], App.prototype, 'scrape_ui');
+
+// module.exports = App;

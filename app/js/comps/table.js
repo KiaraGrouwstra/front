@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
+import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from 'angular2/core';
 import { mapComb, arrToSet } from '../rx_helpers';
 import { getPaths, typed, fallback } from '../js';
 import { Templates } from '../jade';
@@ -7,6 +7,8 @@ import { ValueComp } from './value';
 import { key_spec, get_fixed, get_patts } from '../output';
 
 let inputs = ['path$', 'val$', 'schema$', 'named'];
+// 'colOrder': Array<String>, 'sortColsDesc': Map<bool>, 'filters': Map<string>
+// used in template: sortClick(col_name?), sortCol/sortAsc -- restructure each (use idk resp. sortColsDesc)
 
 @Component({
   selector: 'mytable',
@@ -15,7 +17,12 @@ let inputs = ['path$', 'val$', 'schema$', 'named'];
   template: Templates.ng_card_table,
   directives: [
     forwardRef(() => ValueComp),
-  ]
+  ],
+  styles: [
+    require('!raw!./table.css'),
+  ],
+  // encapsulation: ViewEncapsulation.Native,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class TableComp {
   // @Input() named: boolean; //somehow uncommenting it without TS actually breaks it...
@@ -51,6 +58,25 @@ export class TableComp {
     this.rows$ = mapComb([col_keys$, this.path$, this.val$, this.schema$, fixed$, patts$], rowPars)
     this.rows_disp = this.rows$.subscribe(x => { this.cdr.markForCheck(); });
   };
+
+  // // set and filter() for data/filters, sort() for rest
+  // set data(v) {
+  //   this.raw = v;
+  //   this.filter();
+  // }
+  //
+  // public filter() {
+  //   // this.filtered = _.filter(this.raw)
+  // }
+  //
+  // public sort() {
+  //   // this.data = _.sortBy(this.filtered)
+  // }
+  //
+  // public sortClick(col) {
+  //   // set
+  //   this.sort();
+  // }
 
 }
 

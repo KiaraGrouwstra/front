@@ -1,6 +1,7 @@
 .row
   .col.s12
     ul.tabs
+      //- div(tabindex="0")
       li.tab.tooltipped(
         *ngFor=`#api of apis`
         '[attr.data-tooltip]'='auths[api]?.token ? "auth token: " + auths[api]?.token : "connect to " + api'
@@ -9,6 +10,7 @@
           '[ngClass]'=`{ 'green-text': auths[api]?.token }`
           '(click)'=`load_ui(api)`
         ) {{api}}
+    //- paper-tooltip {{ auths[api]?.token ? "auth token: " + auths[api]?.token : "connect to " + api }}
 
 .row
   ul.collapsible#scope-list(data-collapsible='expandable')

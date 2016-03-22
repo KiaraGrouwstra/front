@@ -8,7 +8,8 @@ form
   //- '[ngControl]'=`spec.name`
   //- '[ngControl]'=`ctrl`
   //- '#frm'='ngForm'
-  input.tooltipped.validate(
+  //- div(tabindex="0")
+  input.validate.tooltipped(
     '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
@@ -16,17 +17,18 @@ form
     '[required]'=`attrs.required`
     '[type]'=`attrs.type`
     
+    '[attr.data-tooltip]'=`attrs.tooltip`
     '[attr.maxlength]'=`attrs.maxlength`
     '[attr.minlength]'=`attrs.minlength`
     '[pattern]'=`attrs.pattern`
     '[title]'=`attrs.title`
     '[autocomplete]'=`attrs.autocomplete`
-    '[attr.data-tooltip]'=`attrs.tooltip`
 
     '[max]'=`attrs.max`
     '[min]'=`attrs.min`
     '[step]'=`attrs.step`
   )
+  //- paper-tooltip {{ attrs.tooltip }}
   //- TODO: leave out attributes with undefined values?
   //- '[placeholder]'=`attrs.placeholder`
   //- ^ should not be used together with value?

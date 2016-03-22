@@ -10,6 +10,7 @@ import { FormComp } from './comps/input-form';
 @Component({
   selector: 'input-ui',
   inputs: ['spec$', 'fn_path$', 'token'],
+  outputs: ['handler'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<input-form [inputs$]="pars$" [desc]="desc$ | async" (submit)="submit($event)"></input-form>`,
   directives: [
@@ -18,7 +19,7 @@ import { FormComp } from './comps/input-form';
   ],
 })
 export class InputUiComp {
-  @Output() handler = new EventEmitter(false);
+  handler = new EventEmitter(false);    // @Output()
 
   constructor(cdr: ChangeDetectorRef) {
     this.cdr = cdr;

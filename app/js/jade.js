@@ -89,7 +89,7 @@ Stateful (replace):
 * tabs ($, justin, paper): .tabs/.tab  //also potentially unfortunate in its current use of IDs, which makes components not reusable without jade (/ng2?) prefix hacks
 * collapsibles ($, iron-collapse): .collapsible/.collapsible-header/.collapsible-body
 * nav ($, ng2mat?, justin): .button-collapse
-* inputs (ng2comp): .range-field (iron-range-behavior?), select ($, iron-dropdown, paper-dropdown-menu), .switch/.lever (justin, ng2comp), .file-field/.file-path-wrapper/.file-path, .datepicker ($), radio input (justin, ng2comp)
+* inputs (ng2comp): .range-field (iron-range-behavior?), select ($, iron-dropdown, paper-dropdown-menu), .switch/.lever (justin, ng2comp), .file-field/.file-path-wrapper/.file-path, .datepicker ($), radio input (justin, ng2mat, ng2comp)
 * progress linear (justin, ng2comp, paper), progress circle (ng2mat, justin)
 //* toasts (paper): Materialize.toast() -> https://github.com/stabzs/Angular2-Toaster
 
@@ -107,7 +107,8 @@ Cosmetic (can keep):
 * waves: .waves-effect, .waves-light
 * css: .right, .center, .hide-on-med-and-down
 
-[ng2mat](https://github.com/angular/material2/tree/master/src/components): not enough; card, button, nav, progress circle
+[ng2mat](https://github.com/angular/material2/tree/master/src/components): 7/32: card, button, sidenav, progress circle, checkbox, radio, toolbar
+  - [log](https://github.com/angular/material2/blob/master/CHANGELOG.md), [docs](https://github.com/angular/material2/wiki/Design-doc-directory)
 [justin](https://justindujardin.github.io/ng2-material/): Button, Card, Checkbox, Dialog, Input, List, Progress Circular, Progress Linear, Radio, Sidenav, Switch, Tabs, Toolbar, Whiteframe
 [ng2 comp](https://github.com/angular/angular/tree/master/modules/angular2_material/src/components): button, checkbox, dialog, grid_list, input, progress-circular, progress-linear, radio, switcher
 [ng1mat](http://material.angularjs.org/) 1.0: 32 MD components.
