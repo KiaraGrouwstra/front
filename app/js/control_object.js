@@ -2,7 +2,7 @@ import { AbstractControl } from 'angular2/common';
 import { ControlList } from './control_list';
 
 export class ControlObject extends ControlList {
-  constructor(ctrl: AbstractControl, controls: AbstractControl[] = []) {
+  constructor(ctrl, controls = []) { //: AbstractControl, : AbstractControl[]
     super(ctrl, controls);
     this.ctrl = ctrl;
   }

@@ -14,12 +14,17 @@ let pars = {
 // let comp = test_comp('myul', ULComp, pars, { named: true });
 
 describe('ULComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'ul';
+  // })
 
   // it('should work',
   //   test(comp, assert(

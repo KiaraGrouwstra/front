@@ -27,19 +27,24 @@ let pars = {
 };
 
 describe('InputObjectComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
 
-  it('should work', test(
+  // it('should test', () => {
+  //   throw 'input-object';
+  // })
+
+  xit('should work', test(
     cls({}, pars),
     assert((comp, el) => expect(el).toHaveText('NameValue+'))
   ));
 
-  it('should work named', test(
+  xit('should work named', test(
     cls({}, _.assign(pars, {named: true})),
     assert((comp, el) => expect(el).toHaveText('testNameValue+'))
   ));

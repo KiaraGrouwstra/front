@@ -1,5 +1,7 @@
 let _ = require('lodash/fp');
 let $ = require('jquery');
+let ng = require('angular2/core');
+import { ComponentMetadata } from 'angular2/core';
 
 require("materialize-css/dist/js/materialize.min");
 import { test_comp } from './dynamic_class';
@@ -223,9 +225,11 @@ let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 
 // asynchronously create and test a component
 // let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
-let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
-  try {
-    let fixture = await tcb.createAsync(test_class);
+let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
+  return tcb.createAsync(test_class).then((fixture) => {
+// let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
+//   try {
+//     let fixture = await tcb.createAsync(test_class);
     fixture.detectChanges();
     let test_cmp = fixture.componentInstance;
     let target_comp = test_cmp.comp;
@@ -236,10 +240,11 @@ let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => 
     fixture.detectChanges();
     let native_el = fixture.debugElement.childNodes[0].nativeElement;
     test_fn(done, target_comp, native_el);
-  }
-  catch(e) {
-    done.fail(e);
-  }
+  }).catch(done.fail);
+  // }
+  // catch(e) {
+  //   done.fail(e);
+  // }
 }
 
 // test_fn for comp_test to check a property value
@@ -291,4 +296,17 @@ let try_log = (fn) => function() {
   }
 }
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback, try_log };  //, Obs_do, Obs_then, elementText
+// create a Component, decorating the class with the provided metadata
+// export let FooComp = ng2comp({ component: {}, parameters: [], decorators: {}, class: class FooComp {} })
+let ng2comp = (o) => {
+  let cls = o.class;
+  cls.annotations = [new ComponentMetadata(o.component || {})];
+  cls.parameters = (o.parameters || []).map(x => [x]);
+  Object.keys(o.decorators || {}).forEach(k => {
+    Reflect.decorate([o.decorators[k]], cls.prototype, k);
+  });
+  // return ng.Component(o.component)(cls);
+  return cls;
+}
+
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback, try_log, ng2comp };  //, Obs_do, Obs_then, elementText

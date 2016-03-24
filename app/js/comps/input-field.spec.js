@@ -27,12 +27,17 @@ let pars = {
 let req = 'This field is required.';
 
 describe('FieldComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'input-field';
+  // })
 
   it('should work', test(
     cls({}, pars),

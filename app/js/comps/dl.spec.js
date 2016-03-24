@@ -24,12 +24,17 @@ let nestr_pars = Object.assign({}, pars, { val$: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';
 
 describe('DLComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'dl';
+  // })
 
   // it('should work', test(
   //   comp,

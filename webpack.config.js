@@ -7,20 +7,20 @@ var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
 	"presets": [
-		"es2015",
-		"stage-1",
-		"stage-0"
+		"es2015", // used for 'import'
+		"stage-1", // used for assigned methods
+		// "stage-0", // used for: async/await
 	],
-	"plugins": [
-		"syntax-async-functions",
-		"transform-regenerator",
-		"transform-runtime",
-		"add-module-exports",
-		"transform-decorators-legacy",
-		"angular2-annotations",
-		"transform-class-properties",
-		"transform-flow-strip-types"
-	],
+	// "plugins": [
+	// 	"syntax-async-functions", // async/await
+	// 	"transform-regenerator",
+	// 	"transform-runtime",
+	// 	"add-module-exports",
+	// 	"transform-decorators-legacy", // @
+	// 	"angular2-annotations",	// @Component, etc.
+	// 	"transform-class-properties",
+	// 	"transform-flow-strip-types",
+	// ],
 };
 
 module.exports = {
@@ -52,8 +52,9 @@ module.exports = {
 				include: [ path.resolve(__dirname, "app"), ],
 				//exclude: [ path.resolve(__dirname, "node_modules"), ],
 				loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
+				// loader: 'sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
 				//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
-	 		},
+				},
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },

@@ -17,7 +17,8 @@ let obs_pars = {
 let nest_pars = Object.assign({}, obs_pars, { val$: [1, [2, 3], 4] });
 
 describe('ArrayComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   // how could I override a provider for one specific test instead?
@@ -28,6 +29,10 @@ describe('ArrayComp', () => {
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'array';
+  // })
 
   it('should work with truthy header value', test(
     cls(obs_pars, { named: 'lol' }),

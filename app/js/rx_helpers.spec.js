@@ -27,6 +27,10 @@ describe('Rx Helpers', () => {
     flat = obs.mergeMap((x,i) => x);
   })
 
+  // it('should test', () => {
+  //   throw 'rx_helpers';
+  // })
+
   it('spits out the original array (like http)', (d) => do_obs(d,
     obs,
     (v) => expect(v).toEqual(people)

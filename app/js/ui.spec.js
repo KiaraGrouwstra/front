@@ -2,6 +2,10 @@ import { get_submit } from './ui';
 
 describe('ui', () => {
 
+  // it('should test', () => {
+  //   throw 'ui';
+  // })
+
   // let swagger = require('../swagger/swagger.json');
   let api_spec = require('../swagger/instagram.json');
   let fn_path = '/geographies/{geo-id}/media/recent';

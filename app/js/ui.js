@@ -13,7 +13,8 @@ import { fallback, typed, try_log } from './js';
 import 'rxjs/add/operator/toArray';
 import { elemToArr } from './rx_helpers';  //elemToArr, arrToArr, elemToSet, setToSet, loggers, arrToSet
 
-let load_ui = async function(name) {
+// let load_ui = async function(name) {
+let load_ui = function(name) {
   this.api = name;
   //pars.subscribe(x => this.loadHtml('swagger', x, require('../jade/ng-output/swagger')));
   //notify('pars', pars);
@@ -21,13 +22,14 @@ let load_ui = async function(name) {
 
   let $RefParser = require('json-schema-ref-parser');
 
-  let api = await (
+  // let api = await (
     this.deps.http
     .get(`./swagger/${name}.json`)
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
     .toPromise()
-  )
+  // )
+  .then(function(api) {
 
   let sec_defs = api.securityDefinitions;
   let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', Object.keys(sec_defs));
@@ -91,6 +93,8 @@ let load_ui = async function(name) {
   // )
   // let html = parseVal([], api, schema);
   // this.loadHtml('output', {}, html);
+
+  }.bind(this))
 
 }
 

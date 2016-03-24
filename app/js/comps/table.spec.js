@@ -15,12 +15,17 @@ let obs_pars = {
 let flat = Object.keys(val[0]).concat(_.flatten(val.map(row => Object.keys(row).map(k => row[k])))).join('');
 
 describe('TableComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'table';
+  // })
 
   it('should work without header, spec or nesting using a table without holes', test(
     cls(obs_pars, {}),

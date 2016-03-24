@@ -9,6 +9,10 @@ describe("ControlObject", () => {
     obj = input_control({type: 'object', additionalProperties: { type: 'number' } });
   });
 
+  // it('should test', () => {
+  //   throw 'control_object';
+  // })
+
   it("should serialize as an object", () => {
     obj.add();
     obj.controls[0].controls['name'].updateValue('foo');

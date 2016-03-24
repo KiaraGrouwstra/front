@@ -28,19 +28,24 @@ let pars = (spec) => ({
 let req = 'This field is required.';
 
 describe('InputValueComp', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
 
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
 
+  // it('should test', () => {
+  //   throw 'input-value';
+  // })
+
   it('should work with scalars', test(
     cls({}, pars(scalar)),
     assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
   ));
 
-  it('should work with arrays', test(
+  xit('should work with arrays', test(
     cls({}, pars(array)),
     assert((comp, el) => expect(el).toHaveText('test+'))
   ));

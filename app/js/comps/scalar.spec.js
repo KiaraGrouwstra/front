@@ -13,7 +13,8 @@ let pars = {
 };
 
 describe('Scalar', () => {
-  let builder: TestComponentBuilder;
+  // let builder: TestComponentBuilder;
+  let builder;
   // console.log('builder', builder);
   // let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
   // let test = (done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => comp_test(builder, done, test_class, test_fn, actions);
@@ -32,6 +33,10 @@ describe('Scalar', () => {
   beforeEach(inject([TestComponentBuilder], (tcb) => {
     builder = tcb;
   }));
+
+  // it('should test', () => {
+  //   throw 'scalar';
+  // })
 
   it('should work', test(
     cls(pars, {}),

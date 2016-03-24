@@ -17,6 +17,7 @@ tsd update
   - `get message() { return 'Expected ' + actualText + ' ' + show(actualText) + ' to be equal to ' + expectedText + ' ' + show(expectedText); }`
 - copy over materialize.css as .less, cuz Less never realized you might wanna import css from a Sass project.
 
+```
 # ./node_modules/karma/bin/karma start
 # npm install -g karma-cli
 webpack --entry karma-test-shim.js --output-filename foo.js --verbose
@@ -40,5 +41,6 @@ webpack --watch
 node server.js
 # node-ts server.ts
 # apache: https://gist.github.com/leocaseiro/4305e06948aa97e77c93
+```
 
 file:///C:/Users/T/Desktop/ng2/coverage/

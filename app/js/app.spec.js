@@ -1,5 +1,9 @@
 describe('App', () => {
 
+  // it('should test', () => {
+  //   throw 'app';
+  // })
+
 // it('makeTable', () => {
 //   expect().toEqual()
 // })

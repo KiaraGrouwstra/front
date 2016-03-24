@@ -10,6 +10,10 @@ describe('WebSocket', () => {
     spyOn(ws.chan, 'push');
   })
 
+  // it('should test', () => {
+  //   throw 'ws';
+  // })
+
   it('should not call functions by itself', () => {
     expect(ws.chan.push).not.toHaveBeenCalled();
   })

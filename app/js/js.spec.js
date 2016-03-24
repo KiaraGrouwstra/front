@@ -1,4 +1,4 @@
-import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse, typed, fallback } from './js';
+import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse, typed, fallback, ng2comp } from './js';
 import {Observable} from 'rxjs/Observable';
 Promise.prototype.do = Prom_do;
 Promise.prototype.finally = Prom_finally;
@@ -20,6 +20,10 @@ describe('js', () => {
     prom = new Promise((res, rej) => res('prince'));
     // console.log('initialized promise', prom)
   })
+
+  // it('should test', () => {
+  //   throw 'js';
+  // })
 
   // it('Array.last gets the last item of an array', () => {
   //   expect(['a','b'].last()).toEqual('b')
@@ -158,6 +162,24 @@ describe('js', () => {
     let safe = fallback(123, thrower);
     expect(safe('hi')).toEqual(123);
   })
+
+  // it('ng2comp', () => {
+  //   let cmp_cls = ng2comp({
+  //     component: {
+  //       selector: 'value',
+  //     },
+  //     decorators: {
+  //       // array: ViewChild(ArrayComp),
+  //     },
+  //     parameters: [ChangeDetectorRef],
+  //     class: class tmp {
+  //       constructor(cdr) {
+  //         this.cdr = cdr;
+  //       }
+  //     },
+  //   });
+  //   expect().toEqual();
+  // })
 
   // it('', () => {
   //   expect().toEqual();

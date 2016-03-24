@@ -9,6 +9,10 @@ describe("ControlList", () => {
     a = new ControlList(c1);
   });
 
+  // it('should test', () => {
+  //   throw 'control_list';
+  // })
+
   it("should support pushing", () => {
     a.add();
     expect(a.length).toEqual(1);
