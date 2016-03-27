@@ -28,15 +28,6 @@ export let DLComp = ng2comp({
     //id: Observable<string>;
     // rows: Observable<Array<any>>; //[{id, path, val, schema}]
 
-    constructor(cdr) {
-      // cdr.detach();
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     // get path() { return this._path; }
     // set path(x) {
     //   this._path = x;
@@ -49,7 +40,6 @@ export let DLComp = ng2comp({
       if(_.isUndefined(x)) return;
       // this._val = x;
       this.rows = x.map(obj => _.assign(obj, getPaths(obj.path)));
-      this.cdr.markForCheck();
     }
 
   }

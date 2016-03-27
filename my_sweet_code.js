@@ -31,14 +31,16 @@ syntax λ = function (ctx) {
 // // https://github.com/mozilla/sweet.js/issues/509
 // syntax getters = function (ctx) {
 //   let expr = ctx.next().value;
+//   console.log('expr', expr);
 //   let props = expr.val();
 //   console.log('props', props);
-//   return #`${props}`;
-//   // let lines = props.map(prop => `get ${prop}(x) { this._${prop} = x; }`).join('\n');
-//   // return #`${lines}`;
+//   // return #`${props}`;
+//   let lines = props.map(prop => `get ${prop}(x) { this._${prop} = x; }`).join('\n');
+//   console.log('lines', lines);
+//   return #`${lines}`;
 // }
-// // getters ['foo', 'bar']
-// getters 1
+// getters ['foo', 'bar']
+// // getters 1
 // // I could try say [`m (1 2 3 4)`](https://rawgit.com/mozilla/sweet.js/redesign/doc/main/sweet.html), but docs are obsolete wrt redesign...
 
 // // `set` boilerplate

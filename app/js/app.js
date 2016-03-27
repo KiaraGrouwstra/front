@@ -243,8 +243,6 @@ export let App = ng2comp({
         notify("cols", this.cols);
         */
 
-        //spawn_n(() => this.refresh(), 30);
-
         this.load_ui(api);
 
       };
@@ -255,10 +253,6 @@ export let App = ng2comp({
         this.raw = JSON.stringify(x);
         this.colored = prettyPrint(x);
       }
-
-      refresh() {
-        this.deps.cdr.detectChanges();
-      };
 
       // // insert a table component populated with an Observable (separate rows)
       // // failed to populate from (ws) Observable, maybe due to `detectChanges()` bug on `loadAsRoot()`; wait?

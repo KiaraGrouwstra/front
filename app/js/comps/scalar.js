@@ -18,13 +18,6 @@ export let ScalarComp = ng2comp({
   parameters: [ChangeDetectorRef],
   decorators: {},
   class: class ScalarComp {
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
 
     get path() { return this._path; }
     set path(x) {
@@ -49,7 +42,6 @@ export let ScalarComp = ng2comp({
 
     combInputs = () => combine((path, val, schema) => {
       this.html = parseScalar(path, val, schema);
-      this.cdr.markForCheck();
     }, { schema: true })(this.path, this.val, this.schema);
 
   }

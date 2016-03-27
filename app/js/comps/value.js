@@ -38,20 +38,6 @@ export let ValueComp = ng2comp({
     // type: Observable<string>;
     // new_spec$: Observable<any>;
 
-    constructor(cdr, router) {
-      // cdr.detach();
-      this.cdr = cdr;
-      this.router = router;
-    }
-
-    // ngAfterViewChecked() {
-    //   console.log("value ngAfterViewChecked");
-    // }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     // get path() { return this._path; }
     // set path(x) {
     //   this._path = x;
@@ -75,7 +61,6 @@ export let ValueComp = ng2comp({
     combInputs = () => combine((val, schema) => {
       this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
       this.type = _.get(['type'], schema) || infer_type(val);
-      this.cdr.markForCheck();
     }, { schema: true })(this.val, this.schema);
 
   }

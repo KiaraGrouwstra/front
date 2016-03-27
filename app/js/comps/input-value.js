@@ -35,10 +35,6 @@ export let InputValueComp = ng2comp({
   class: class InputValueComp {
     // type: Observable<string>;
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     ngOnInit() {
       // this calculates only once -- move out like HostBinding? convert to Rx?
       let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];

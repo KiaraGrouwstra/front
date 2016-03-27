@@ -172,11 +172,7 @@ describe('js', () => {
   //       // array: ViewChild(ArrayComp),
   //     },
   //     parameters: [ChangeDetectorRef],
-  //     class: class tmp {
-  //       constructor(cdr) {
-  //         this.cdr = cdr;
-  //       }
-  //     },
+  //     class: class tmp {},
   //   });
   //   expect().toEqual();
   // })

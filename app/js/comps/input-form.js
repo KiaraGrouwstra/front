@@ -31,7 +31,6 @@ export let FormComp = ng2comp({
     // ^ handle with `<input-form (submit)="callback()"></input-form>`
 
     constructor(cdr, builder) { //cdr: ChangeDetectorRef,
-      this.cdr = cdr;
       this.builder = builder;
       this.items = [];
       this.form = this.builder.group({});
@@ -46,7 +45,6 @@ export let FormComp = ng2comp({
       this.form = this.builder.group(params);
       // shouldn't map like this, all controls' state will be ditched whenever I'd like to add a control upstream
       // transitively wrap every object with `this.builder.group({})` with matching in-form `ngControlGroup`s.
-      this.cdr.markForCheck();
       // implied by new input value?
     }
 

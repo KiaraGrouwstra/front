@@ -25,10 +25,6 @@ export let FieldComp = ng2comp({
   class: class FieldComp {
     // type: Observable<string>;
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     ngOnInit() {
       // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
       this.hidden = this.spec.type == 'hidden';
@@ -41,7 +37,6 @@ export let FieldComp = ng2comp({
       // this.ctrl: from controls[key];
       this.attrs = input_attrs(this.path, this.spec);
       this.type = get_template(input_opts(this.spec, this.attrs, {}));
-      this.cdr.markForCheck();
     }
 
     showError(vldtr) {

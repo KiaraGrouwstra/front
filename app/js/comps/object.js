@@ -39,15 +39,6 @@ export let ObjectComp = ng2comp({
     // object: Observable<Array<any>>;
     // array: Observable<Array<any>>;
 
-    constructor(cdr) {
-      // cdr.detach();
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -77,7 +68,6 @@ export let ObjectComp = ng2comp({
       TYPES.forEach(x => {
         this[x] = coll.filter(v => v.type == x);
       });
-      this.cdr.markForCheck();
     }, { schema: true })(this.path, this.val, this.schema);
 
   }

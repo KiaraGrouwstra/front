@@ -27,10 +27,6 @@ export let InputUiComp = ng2comp({
     handler = new EventEmitter(false);    // @Output()
     desc = '';
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     get spec() { return this._spec; }
     set spec(x) {
       if(_.isUndefined(x)) return;
@@ -50,7 +46,6 @@ export let InputUiComp = ng2comp({
       this.pars = obj.pars;
       this.desc = obj.desc || '';
       // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
-      this.cdr.markForCheck();
     })(this.spec, this.fn_path);
 
     // submit param inputs for an API function

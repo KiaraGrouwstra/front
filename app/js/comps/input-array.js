@@ -21,10 +21,6 @@ export let InputArrayComp = ng2comp({
   class: class InputArrayComp {
     // type: Observable<string>;
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     ngOnInit() {
       // let props = this.path.map(p => getPaths(p));
       // ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
@@ -40,14 +36,12 @@ export let InputArrayComp = ng2comp({
     add() {
       this.items.add(this.counter++);
       this.ctrl.add();
-      this.cdr.markForCheck();
     }
 
     remove(item, i) {
       let idx = _.findIndex(x => x == item)(Array.from(this.items));
       this.ctrl.removeAt(idx);
       this.items.delete(item);
-      this.cdr.markForCheck();
     }
 
   }

@@ -19,10 +19,6 @@ export let FnUiComp = ng2comp({
   class: class FnUiComp {
     handler = new EventEmitter(false);    // @Output()
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     get spec() { return this._spec; }
     set spec(x) {
       if(_.isUndefined(x)) return;
@@ -74,7 +70,6 @@ export let FnUiComp = ng2comp({
       this.have_scopes = _.mapValues(_.every(s => have.includes(s)))(path_scopes);
       this.path_tooltips = _.mapValues(s => `required scopes: ${s.join(', ')}`)(path_scopes);
       this.has_usable = _.mapValues(_.some(p => this.have_scopes[p]))(this.tag_paths);
-      this.cdr.markForCheck();
       setTimeout(() => {
         global.$('#fn-list .collapsible-header').eq(0).click();
         global.$('.tooltipped').tooltip({delay: 0})

@@ -34,14 +34,6 @@ export let TableComp = ng2comp({
     // cols$: Observable<Array<any>>;
     // rows$: Observable<Array<any>>;
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -74,7 +66,6 @@ export let TableComp = ng2comp({
       this.cols = this.col_keys.map(k => getPaths(path.concat(k))); //skip on schema change
       let fixed = get_fixed(schema, val); //skip on path change
       this.rows = rowPars(this.col_keys, path, val, schema, fixed, this.patts);
-      this.cdr.markForCheck();
     }, { schema: true })(this.path, this.val, this.schema);
 
     // // set and filter() for data/filters, sort() for rest

@@ -28,14 +28,6 @@ export let ArrayComp = ng2comp({
     // type: Observable<string>;
     // new_spec$: Observable<any>;
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -60,7 +52,6 @@ export let ArrayComp = ng2comp({
     combInputs = () => combine((val, schema) => {
       this.new_spec = getSpec(this.first, schema);
       this.type = _.get(['type'], this.new_spec) || infer_type(this.first);
-      this.cdr.markForCheck();
     }, { schema: true })(this.val, this.schema);
 
   }

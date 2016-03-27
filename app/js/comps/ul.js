@@ -27,14 +27,6 @@ export let ULComp = ng2comp({
     // id: Observable<string>;
     // rows: Array<any>; //[{id, path, val, schema}]
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
-    ngOnDestroy() {
-      this.cdr.detach();
-    }
-
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -63,7 +55,6 @@ export let ULComp = ng2comp({
         let path_k = path.concat(idx)
         return { path: path_k, val: v, schema: _.get(['items'], schema) };
       });
-      this.cdr.markForCheck();
     }, { schema: true })(this.path, this.val, this.schema);
 
   }

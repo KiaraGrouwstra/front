@@ -19,10 +19,6 @@ export let AuthUiComp = ng2comp({
   class: class AuthUiComp {
     handler = new EventEmitter(false);    // @Output()
 
-    constructor(cdr) {
-      this.cdr = cdr;
-    }
-
     get oauth_info() { return this._oauth_info; }
     set oauth_info(x) {
       if(_.isUndefined(x)) return;
