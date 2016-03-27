@@ -26,7 +26,7 @@ export let InputArrayComp = ng2comp({
     }
 
     ngOnInit() {
-      // let props = this.path$.map(p => getPaths(p));
+      // let props = this.path.map(p => getPaths(p));
       // ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
       let props = getPaths(this.path);
       ['k', 'id'].forEach(x => this[x] = props[x]);

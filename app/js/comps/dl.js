@@ -7,7 +7,7 @@ import { ValueComp } from './value';
 import 'rxjs/add/operator/filter';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
-let inputs = ['path$', 'val$']; //, 'schema$'
+let inputs = ['path', 'val']; //, 'schema'
 
 export let DLComp = ng2comp({
   component: {
@@ -26,7 +26,7 @@ export let DLComp = ng2comp({
   class: class DLComp {
     //k: Observable<string>;
     //id: Observable<string>;
-    // rows$: Observable<Array<any>>; //[{id, path, val, schema}]
+    // rows: Observable<Array<any>>; //[{id, path, val, schema}]
 
     constructor(cdr) {
       // cdr.detach();
@@ -37,22 +37,19 @@ export let DLComp = ng2comp({
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      //let props = this.path$.map(p => getPaths(p));
-      //['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
-      this.rows$ =
-      this.val$
-      // .filter(v => v[0] !== undefined)
-      .map(typed([Array], Array, coll => coll.map(obj =>
-        _.assign(obj, getPaths(obj.path))
-        // _.mapValues(x => new BehaviorSubject(x), obj)
-      )))
-      this.rows$
-      .subscribe(x => {
-        // this.rows = x;
-        // this.rows = x.map(_.mapValues(v => new BehaviorSubject(v)));
-        this.cdr.markForCheck();
-      });
+    // get path() { return this._path; }
+    // set path(x) {
+    //   this._path = x;
+    //   // let props = getPaths(x);
+    //   // ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
+    // }
+
+    // get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      // this._val = x;
+      this.rows = x.map(obj => _.assign(obj, getPaths(obj.path)));
+      this.cdr.markForCheck();
     }
 
   }

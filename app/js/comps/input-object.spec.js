@@ -39,14 +39,14 @@ describe('InputObjectComp', () => {
   //   throw 'input-object';
   // })
 
-  xit('should work', test(
+  it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('NameValue+'))
+    assert((comp, el) => expect(el).toHaveText('NameValueadd'))
   ));
 
-  xit('should work named', test(
+  it('should work named', test(
     cls({}, _.assign(pars, {named: true})),
-    assert((comp, el) => expect(el).toHaveText('testNameValue+'))
+    assert((comp, el) => expect(el).toHaveText('testNameValueadd'))
   ));
 
 });

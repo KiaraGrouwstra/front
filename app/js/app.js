@@ -147,14 +147,7 @@ export let App = ng2comp({
         global.ws = this.ws;
         global.app = this;
         this.auths = {};
-        this.data$ = new BehaviorSubject({test: "lol"});
-        //setTimeout(() =>
-        //    this.data$.emit({test: "lol"})
-        //, 1000)
-        this.raw = this.data$.map((o) => JSON.stringify(o));
-        this.colored = this.data$.map(x => prettyPrint(x));
-        //this.rendered = this.data$.map(o => parseVal([], o, {}))
-        // this.data$.subscribe((o) => new window.PrettyJSON.view.Node({el: $('#expandable'), data: o }).expandAll());
+        this.data = {test: "lol"};
         global.Control = Control;
         //let pollTimer = window.setInterval(this.refresh, 500);
         //dcl.loadAsRoot(Dummy, "#foo", inj);
@@ -164,26 +157,17 @@ export let App = ng2comp({
           this.auths[name] = v;
           if(name == api) $('#scope-list .collapsible-header').click();
         }));
-        // this.fn_path$ = new Subject();
-        this.fn_path$ = new BehaviorSubject();
-        this.spec$ = new BehaviorSubject({});
-        this.path$ = new BehaviorSubject(['test']);
-        // this.path$ = this.fn_path$.map(fn_path => ['paths', fn_path, 'get', 'responses', '200']);
-        // this.input_ui_token = '1435508345.a974ee2.d2772bf69b7645958412979e498fa842';
+        // this.fn_path = null;
+        this.spec = {};
+        this.path = ['test'];
         // this.fn_ui_spec = null;
-        // this.fn_ui_oauth_sec = 'instagram_auth';
+        this.fn_ui_oauth_sec = 'instagram_auth';
         // this.fn_ui_have = null;
-        // this.fn_ui_spec = new BehaviorSubject();
-        // this.fn_ui_oauth_sec = new BehaviorSubject();
-        // this.fn_ui_have = new BehaviorSubject();
-        this.fn_ui_spec = new EventEmitter();
-        this.fn_ui_oauth_sec = new EventEmitter();
-        this.fn_ui_have = new EventEmitter();
-        this.auth_ui_name = null;
-        this.auth_ui_scopes$ = new BehaviorSubject();
-        this.auth_ui_oauth_info$ = new BehaviorSubject();
-        this.auth_ui_delim = null;
-        this.auth_ui_have$ = new BehaviorSubject();
+        // this.auth_ui_name = null;
+        // this.auth_ui_scopes = null;
+        // this.auth_ui_oauth_info = null;
+        // this.auth_ui_delim = null;
+        // this.auth_ui_have = null;
 
         // testing alt. approach of that used in scrape_ui
         let curl_spec = [{
@@ -193,7 +177,7 @@ export let App = ng2comp({
         	description: "CURL (bash) command as copied from Chrome's network tab",
           default: "curl 'https://detailskip.taobao.com/json/sib.htm?itemId=521372858018&sellerId=1979798612&p=1&rcid=124484008&sts=404492288,1170936092094889988,72057594037960704,4503603924500483&chnl=pc&price=3000&shopId=&vd=1&skil=false&pf=1&al=false&ap=1&ss=0&free=0&defaultCityId=110100&st=1&ct=1&prior=1&ref=' -H 'dnt: 1' -H 'accept-encoding: gzip, deflate, sdch' -H 'accept-language: en-US,en;q=0.8,nl;q=0.6,ja;q=0.4,zh;q=0.2,zh-CN;q=0.2,zh-TW;q=0.2,de;q=0.2' -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2452.0 Safari/537.36' -H 'accept: */*' -H 'cache-control: max-age=0' -H 'cookie: cna=1N2yDDXQjjoCAXbBNqyT5owh; thw=cn; uc3=nk2=F4%2B0H36sEg%3D%3D&id2=VWZ2FrcUdSGe&vt3=F8dASMunk2BSL1gwtQQ%3D&lg2=WqG3DMC9VAQiUQ%3D%3D; hng=CN%7Czh-cn%7CCNY; lgc=tycho01; tracknick=tycho01; _cc_=UIHiLt3xSw%3D%3D; tg=0; ucn=center; v=0; mt=ci=-1_0; cookie2=1c394919b47e6111c6279b7ddadd35c8; t=f47b09a247a1f9d820c2952d24f0aed5; _tb_token_=ebbe336e3b73e; x=e%3D1%26p%3D*%26s%3D0%26c%3D0%26f%3D0%26g%3D0%26t%3D0%26__ll%3D-1%26_ato%3D0; uc1=cookie14=UoWzW98jWt%2F5oQ%3D%3D; isg=766D7D6644BB6A5AE37614EC2842F40F; l=AgQE-yl0rvSAeuw7zpWVQTiNVIz3XiiH' -H 'referer: https://item.taobao.com/item.htm?spm=a230r.1.14.51.VADz4n&id=521372858018&ns=1&abbucket=18' --compressed",
         }];
-        this.curl$ = new BehaviorSubject(curl_spec.map(input_specs()));
+        this.curl = curl_spec.map(input_specs());
 
         // TODO: update so as to incorporate nesting
         let scrape_spec = [
@@ -225,7 +209,7 @@ export let App = ng2comp({
             // in: 'path',
           },
         ];
-        this.scrape_spec$ = new BehaviorSubject(scrape_spec.map(input_specs()));
+        this.scrape_spec = scrape_spec.map(input_specs());
 
         //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/
         //@ContentChildren, @ContentChild
@@ -264,6 +248,13 @@ export let App = ng2comp({
         this.load_ui(api);
 
       };
+
+      get data() { return this._data; }
+      set data(x) {
+        this._data = x;
+        this.raw = JSON.stringify(x);
+        this.colored = prettyPrint(x);
+      }
 
       refresh() {
         this.deps.cdr.detectChanges();

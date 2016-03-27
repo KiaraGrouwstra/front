@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ViewChildren } from 'angular2/core';
-import { getPaths, id_cleanse, arr2obj, Object_filter, ng2comp } from '../js';
+import { getPaths, id_cleanse, arr2obj, Object_filter, ng2comp, combine } from '../js';
 import { mapComb, notify } from '../rx_helpers';
 import { Templates } from '../jade';
 import { DLComp } from './dl';
@@ -10,7 +10,7 @@ import { ValueComp } from './value';
 import { key_spec, get_fixed, get_patts, infer_type } from '../output';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
-let inputs = ['path$', 'val$', 'schema$', 'named'];
+let inputs = ['path', 'val', 'schema', 'named'];
 
 export let ObjectComp = ng2comp({
   component: {
@@ -48,27 +48,37 @@ export let ObjectComp = ng2comp({
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      let props = this.path$.map(p => getPaths(p));
-      ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
+    get path() { return this._path; }
+    set path(x) {
+      if(_.isUndefined(x)) return;
+      this._path = x;
+      let props = getPaths(x);
+      ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
+      this.combInputs();
+    }
 
-      let coll = mapComb(inputs.slice(0,3).map(k => this[k]), getColl)
-        .filter(v => v !== undefined);
+    get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      this._val = x;
+      this.combInputs();
+    }
+
+    get schema() { return this._schema; }
+    set schema(x) {
+      if(_.isUndefined(x)) return;
+      this._schema = x;
+      this.combInputs();
+    }
+
+    combInputs = () => combine((path, val, schema) => {
+      let coll = getColl(path, val, schema);
       let TYPES = ['array','object','scalar'];
       TYPES.forEach(x => {
-        this[x] = coll
-        .map(c => c.filter(v => v.type == x))
+        this[x] = coll.filter(v => v.type == x);
       });
-      TYPES.forEach(x => {
-        this[x].subscribe(v => {
-          // console.log("object cdr");
-          this.cdr.markForCheck();
-          // console.log("object cdr end");
-        })
-      });
-      //['scalar'].forEach(x => this[x] = coll.map(c => Object_filter(c, v => v.type == x))
-      // this.scalar = coll.map(c => c.filter(v => v.type == 'scalar'));
-    };
+      this.cdr.markForCheck();
+    }, { schema: true })(this.path, this.val, this.schema);
 
   }
 })
@@ -78,20 +88,16 @@ export let ObjectComp = ng2comp({
       let keys = Object.keys(val);
       let fixed = get_fixed(spec, val);
       let patts = get_patts(spec);
-      //return arr2obj(keys, k => {
       return keys.map(k => {
         let new_spec = key_spec(k, spec, fixed, patts);
         let path_k = path.concat(id_cleanse(k));
-        //let pars = [path_k, val[k], new_spec] //v.
         let tp = _.get(['type'], new_spec) || infer_type(val[k]);
         if(SCALARS.includes(tp)) tp = 'scalar';
-        //return {pars: pars, type: tp}  //spec: new_spec, kind: kind,
-        let obj = {
+        return {
           path: path_k,
           val: val[k],
           schema: new_spec,
+          type: tp,
         };
-        return Object.assign({ type: tp }, (tp == 'scalar') ? obj : _.mapValues(x => new BehaviorSubject(x), obj));
-      //}).clean()) //switch to _.compact()? also, if I filter the v array, how will they match up with the keys??
       })
   }

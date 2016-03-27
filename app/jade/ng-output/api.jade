@@ -23,26 +23,26 @@
           auth-ui(
             '(handler)'=`handle_implicit($event)`
             '[name]'=`auth_ui_name`
-            '[scopes$]'=`auth_ui_scopes$`
-            '[oauth_info$]'=`auth_ui_oauth_info$`
+            '[scopes]'=`auth_ui_scopes`
+            '[oauth_info]'=`auth_ui_oauth_info`
             '[delim]'=`auth_ui_delim`
-            '[have$]'=`auth_ui_have$`
+            '[have]'=`auth_ui_have`
           )
       
 .row
   #functions.col.s3
     fn-ui(
       '(handler)'=`pick_fn($event)`
-      '[spec$]'=`spec$`
-      '[oauth_sec$]'=`fn_ui_oauth_sec`
-      '[have$]'=`fn_ui_have`
+      '[spec]'=`spec`
+      '[oauth_sec]'=`fn_ui_oauth_sec`
+      '[have]'=`fn_ui_have`
     )
   
   #input.col.s6
     input-ui(
       '(handler)'=`req_url($event)`
-      '[spec$]'=`spec$`
-      '[fn_path$]'=`fn_path$`
+      '[spec]'=`spec`
+      '[fn_path]'=`fn_path`
       '[token]'=`input_ui_token`
     )
   

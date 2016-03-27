@@ -11,14 +11,14 @@ let cls = test_comp('object', ObjectComp);
 let path = ['test'];
 let obj = { one: 1, two: 2 };
 let obs_pars = {
-  path$: path,
-  val$: obj,
-  schema$: {},
+  path: path,
+  val: obj,
+  schema: {},
 };
 // let flat = _.flatten(_.toPairs(obj)).join('');
 let flat = _.flatten(Object.keys(obj).map(k => [k, obj[k]])).join('');
-let nesto_pars = Object.assign({}, obs_pars, { val$: { one: { two: 'three' } } });
-let nestr_pars = Object.assign({}, obs_pars, { val$: { one: ['two', 'three'] } });
+let nesto_pars = Object.assign({}, obs_pars, { val: { one: { two: 'three' } } });
+let nestr_pars = Object.assign({}, obs_pars, { val: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';
 
 describe('ObjectComp', () => {
@@ -40,24 +40,24 @@ describe('ObjectComp', () => {
   // })
 
   it('should work without header', test(
-    cls(obs_pars, {}),
+    cls({}, obs_pars),
     assert((comp, el) => expect(el).toHaveText(flat))
   ));
 
   it('should work with headers', test(
-    cls(obs_pars, { named: true }),
+    cls({}, Object.assign({ named: true }, obs_pars)),
     assert((comp, el) => expect(el).toHaveText('test' + flat))
   ));
 
   it('should work with nested objects', test(
-    cls(nesto_pars, {}),
+    cls({}, nesto_pars),
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));
 
   // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
   // screwed up this test since value passes named=false, which forced me to work around it by adding 'named' to value...
   it('should work with nested arrays', test(
-    cls(nestr_pars, {}),
+    cls({}, nestr_pars),
     assert((comp, el) => expect(el).toHaveText(mashed))
   ));
 

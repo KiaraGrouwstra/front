@@ -8,8 +8,8 @@ let cls = test_comp('mydl', DLComp);
 let path = ['test'];
 let obj = { one: 1, two: 2 };
 let pars = {
-  path$: path,
-  val$: Object.keys(obj).map((k) => ({
+  path: path,
+  val: Object.keys(obj).map((k) => ({
     path: path.concat(k),
     val: obj[k],
     schema: null,
@@ -19,8 +19,8 @@ let pars = {
 // let comp = cls(pars, {});
 // let flat = _.flatten(_.toPairs(obj)).join('');
 let flat = _.flatten(Object.keys(obj).map(k => [k, obj[k]])).join('');
-let nesto_pars = Object.assign({}, pars, { val$: { one: { two: 'three' } } });
-let nestr_pars = Object.assign({}, pars, { val$: { one: ['two', 'three'] } });
+let nesto_pars = Object.assign({}, pars, { val: { one: { two: 'three' } } });
+let nestr_pars = Object.assign({}, pars, { val: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';
 
 describe('DLComp', () => {
@@ -42,7 +42,7 @@ describe('DLComp', () => {
   // ));
 
   it('should display scalars', test(
-    cls(pars, {}),
+    cls({}, pars),
     assert((comp, el) => expect(el).toHaveText(flat))
   ));
 

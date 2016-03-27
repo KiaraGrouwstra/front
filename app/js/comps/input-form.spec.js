@@ -1,3 +1,4 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
 import { test_comp } from '../dynamic_class';
 import { comp_test, assert, assert$ } from '../js'
@@ -15,16 +16,14 @@ let scalar_spec = {
   "required": true,
   "type": "string"
 };
-// let inputs$ = ;
 let inputs = [
   { path: ['foo'], spec: scalar_spec },
   { path: ['bar'], spec: scalar_spec },
 ];
 let obs_pars = {
-  inputs$: inputs,
+  inputs: inputs,
 };
 let pars = {
-  // inputs$: inputs$,
   // inputs: inputs,
   desc: desc,
 };
@@ -34,7 +33,7 @@ let arr_inputs = [
   { path: ['bar'], spec: arr_spec },
 ];
 let arr_pars = {
-  inputs$: arr_inputs,
+  inputs: arr_inputs,
 };
 let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
@@ -52,13 +51,13 @@ describe('FormComp', () => {
   // })
 
   it('should do scalar inputs', test(
-    cls(obs_pars, pars),
+    cls({}, _.assign(obs_pars, pars)),
     assert((comp, el) => expect(el).toHaveText(desc + text + text + 'Submit'))
   ));
 
-  xit('should do array inputs', test(
-    cls(arr_pars, pars),
-    assert((comp, el) => expect(el).toHaveText('hifoo+bar+Submit'))
+  it('should do array inputs', test(
+    cls({}, _.assign(arr_pars, pars)),
+    assert((comp, el) => expect(el).toHaveText('hifooaddbaraddSubmit'))
   ));
 
 });

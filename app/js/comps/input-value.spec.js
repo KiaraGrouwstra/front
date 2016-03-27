@@ -45,9 +45,9 @@ describe('InputValueComp', () => {
     assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
   ));
 
-  xit('should work with arrays', test(
+  it('should work with arrays', test(
     cls({}, pars(array)),
-    assert((comp, el) => expect(el).toHaveText('test+'))
+    assert((comp, el) => expect(el).toHaveText('testadd'))
   ));
 
 });

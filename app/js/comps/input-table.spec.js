@@ -39,14 +39,14 @@ describe('InputTableComp', () => {
   //   throw 'input-value';
   // })
 
-  xit('should work', test(
+  it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('+'))
+    assert((comp, el) => expect(el).toHaveText('add'))
   ));
 
-  xit('should work named', test(
+  it('should work named', test(
     cls({}, _.assign(pars, {named: true})),
-    assert((comp, el) => expect(el).toHaveText('test+'))
+    assert((comp, el) => expect(el).toHaveText('testadd'))
   ));
 
 });

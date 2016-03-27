@@ -275,6 +275,18 @@ let typed = (from, to, fn) => function() {
   return fn.call(this, ...arguments);
 }
 
+// wrapper for setter methods, return if not all parameters are defined
+let combine = (fn, allow_undef = {}) => function() {
+  // let names = /([^\(]+)(?=\))'/.exec(fn.toString()).split(',').slice(1);
+  let names = fn.toString().split('(')[1].split(')')[0].split(/[,\s]+/);
+  for (var i = 0; i < arguments.length; i++) {
+    let v = arguments[i];
+    let name = names[i];
+    if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNull(v)
+  }
+  fn.call(this, ...arguments);  //return
+}
+
 // simpler guard, just a try-catch wrapper with default value
 let fallback = (def, fn) => function() {
   try {
@@ -309,4 +321,4 @@ let ng2comp = (o) => {
   return cls;
 }
 
-export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback, try_log, ng2comp };  //, Obs_do, Obs_then, elementText
+export { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, Prom_toast, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, prettyPrint, getPaths, id_cleanse, comp_test, assert, assert$, typed, fallback, try_log, ng2comp, combine };  //, Obs_do, Obs_then, elementText

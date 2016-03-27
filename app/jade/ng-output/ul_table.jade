@@ -1,16 +1,16 @@
 //- {k, id, named, rows: [{id, val}]}
-table.bordered.highlight(id=`{{id | async}}`)
+table.bordered.highlight(id=`{{id}}`)
   thead(*ngIf=`named`)
-    th {{k | async}}
+    th {{k}}
   tbody
-    //-  | async
     tr(*ngFor=`#r of rows`)
       td(
         id=`{{r.id}}`
       )
+        //- p {{ r | json }}
         //- scalar(
         value(
-          '[path$]'=`r.path`
-          '[val$]'=`r.val`
-          '[schema$]'=`r.schema`
+          '[path]'=`r.path`
+          '[val]'=`r.val`
+          '[schema]'=`r.schema`
         )

@@ -1,4 +1,4 @@
-import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse, typed, fallback, ng2comp } from './js';
+import { Array_clean, Array_flatten, Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, Prom_do, Prom_finally, spawn_n, arr2obj, mapBoth, do_return, String_stripOuter, getPaths, id_cleanse, typed, fallback, ng2comp, combine } from './js';
 import {Observable} from 'rxjs/Observable';
 Promise.prototype.do = Prom_do;
 Promise.prototype.finally = Prom_finally;
@@ -180,6 +180,37 @@ describe('js', () => {
   //   });
   //   expect().toEqual();
   // })
+
+  it('combine', () => {
+    let cls = class tmp {
+      get a() { return this._a; }
+      get b() { return this._b; }
+      set a(x) { this._a = x; this.combInputs(); }
+      set b(x) { this._b = x; this.combInputs(); }
+      combInputs = () => combine((a, b) => {
+        this.c = a + b;
+      })(this.a, this.b);
+    }
+    let obj = new cls();
+    obj.a = 1;
+    obj.b = 1;
+    expect(obj.c).toEqual(2);
+  })
+
+  it('combine with optional undefined values', () => {
+    let cls = class tmp {
+      get a() { return this._a; }
+      get b() { return this._b; }
+      set a(x) { this._a = x; this.combInputs(); }
+      set b(x) { this._b = x; this.combInputs(); }
+      combInputs = () => combine((a, b) => {
+        this.c = a + b;
+      }, { b: true })(this.a, this.b);
+    }
+    let obj = new cls();
+    obj.a = 1;
+    expect(obj.c).toEqual(NaN);
+  })
 
   // it('', () => {
   //   expect().toEqual();

@@ -1,13 +1,13 @@
 let _ = require('lodash/fp');
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from 'angular2/core';
 import { mapComb, notify } from '../rx_helpers';
-import { getPaths, arr2obj, ng2comp } from '../js';
+import { getPaths, arr2obj, ng2comp, combine } from '../js';
 import { Templates } from '../jade';
 import { ValueComp } from './value';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
-let inputs = ['path$', 'val$', 'schema$', 'named'];
+let inputs = ['path', 'val', 'schema', 'named'];
 
 export let ULComp = ng2comp({
   component: {
@@ -35,23 +35,36 @@ export let ULComp = ng2comp({
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      let props = this.path$.map(p => getPaths(p));
-      ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
-      //this.rows =
-      mapComb(inputs.slice(0,3).map(k => this[k]),        //[this.path$, this.val$, this.schema$]
-        (path, val, spec) => (_.isArray(val) ? val : []).map((v, idx) => {
-          let path_k = path.concat(idx)
-          let obj = { path: path_k, val: v, schema: _.get(['items'], spec) };
-          // return obj;
-          return _.mapValues(x => new BehaviorSubject(x), obj);
-        })
-      )
-      .subscribe(x => {
-        this.rows = x;
-        this.cdr.markForCheck();
+    get path() { return this._path; }
+    set path(x) {
+      if(_.isUndefined(x)) return;
+      this._path = x;
+      let props = getPaths(x);
+      ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
+      this.combInputs();
+    }
+
+    get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      this._val = x;
+      this.combInputs();
+    }
+
+    get schema() { return this._schema; }
+    set schema(x) {
+      if(_.isUndefined(x)) return;
+      this._schema = x;
+      this.combInputs();
+    }
+
+    combInputs = () => combine((path, val, schema) => {
+      this.rows = val.map((v, idx) => {
+        let path_k = path.concat(idx)
+        return { path: path_k, val: v, schema: _.get(['items'], schema) };
       });
-    };
+      this.cdr.markForCheck();
+    }, { schema: true })(this.path, this.val, this.schema);
 
   }
 })

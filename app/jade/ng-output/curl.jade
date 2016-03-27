@@ -1,7 +1,7 @@
 .row
   .col.s12#curl-ui
     input-form(
-      '[inputs$]'=`curl$`
+      '[inputs]'=`curl`
       '[desc]'=`"curl desc"`
       '(submit)'=`doCurl($event)`
     )

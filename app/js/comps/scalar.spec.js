@@ -7,9 +7,9 @@ import { comp_test, assert, assert$ } from '../js'
 import { ScalarComp } from './scalar';
 let cls = test_comp('scalar', ScalarComp);
 let pars = {
-  path$: ['test'],
-  val$: '<em>foo</em>',
-  schema$: {},
+  path: ['test'],
+  val: '<em>foo</em>',
+  schema: {},
 };
 
 describe('Scalar', () => {
@@ -39,8 +39,8 @@ describe('Scalar', () => {
   // })
 
   it('should work', test(
-    cls(pars, {}),
-    assert$(x => x.html$, x => x.toEqual('<em>foo</em>'))
+    cls({}, pars),
+    assert((comp, el) => expect(comp.html).toEqual('<em>foo</em>'))
   ));
 
   // it('should fail', test(

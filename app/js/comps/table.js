@@ -1,12 +1,12 @@
 let _ = require('lodash/fp');
 import { Component, OnInit, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from 'angular2/core';
 import { mapComb, arrToSet } from '../rx_helpers';
-import { getPaths, typed, fallback, ng2comp } from '../js';
+import { getPaths, typed, fallback, ng2comp, combine } from '../js';
 import { Templates } from '../jade';
 import { ValueComp } from './value';
 import { key_spec, get_fixed, get_patts } from '../output';
 
-let inputs = ['path$', 'val$', 'schema$', 'named'];
+let inputs = ['path', 'val', 'schema', 'named'];
 // 'colOrder': Array<String>, 'sortColsDesc': Map<bool>, 'filters': Map<string>
 // used in template: sortClick(col_name?), sortCol/sortAsc -- restructure each (use idk resp. sortColsDesc)
 
@@ -39,28 +39,43 @@ export let TableComp = ng2comp({
     }
 
     ngOnDestroy() {
-      this.rows_disp.unsubscribe();
-      this.cols_disp.unsubscribe();
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      let props = this.path$.map(p => getPaths(p));
-      ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
-      // fallback([],
-      let col_keys$ = this.val$.map(typed([Array], Array, val => Array.from(val
-        .map(x => Object.keys(x))
+    get path() { return this._path; }
+    set path(x) {
+      if(_.isUndefined(x)) return;
+      this._path = x;
+      let props = getPaths(x);
+      ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
+      this.combInputs();
+    }
+
+    get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      this._val = x;
+      this.col_keys = Array.from(x
+        .map(o => Object.keys(o))
         .reduce(arrToSet, new Set)
-      )));
-      // col_keys$.map(col_keys => col_keys.map(k => getPaths(path.concat(k))))
-      this.cols$ = mapComb([col_keys$, this.path$], (col_keys, path) => col_keys.map(k => getPaths(path.concat(k))))
-      this.cols_disp = this.cols$.subscribe(x => { this.cdr.markForCheck(); });
-      let fixed$ = mapComb([this.schema$, this.val$], (spec, val) => get_fixed(spec, val));
-      let patts$ = this.schema$.map(spec => get_patts(spec));
-      //inputs.slice(0,3).map(k => this[k])
-      this.rows$ = mapComb([col_keys$, this.path$, this.val$, this.schema$, fixed$, patts$], rowPars)
-      this.rows_disp = this.rows$.subscribe(x => { this.cdr.markForCheck(); });
-    };
+      );
+      this.combInputs();
+    }
+
+    get schema() { return this._schema; }
+    set schema(x) {
+      if(_.isUndefined(x)) return;
+      this._schema = x;
+      this.patts = get_patts(x);
+      this.combInputs();
+    }
+
+    combInputs = () => combine((path, val, schema) => {
+      this.cols = this.col_keys.map(k => getPaths(path.concat(k))); //skip on schema change
+      let fixed = get_fixed(schema, val); //skip on path change
+      this.rows = rowPars(this.col_keys, path, val, schema, fixed, this.patts);
+      this.cdr.markForCheck();
+    }, { schema: true })(this.path, this.val, this.schema);
 
     // // set and filter() for data/filters, sort() for rest
     // set data(v) {
@@ -86,7 +101,7 @@ export let TableComp = ng2comp({
 
 // adapted from makeTable to return what the template wants
 // fallback([],
-let rowPars = typed([null, null, Array, null, null, null], Array, (col_keys, path, val, schema, fixed, patts) => val.map((rw, idx) => {
+let rowPars = (col_keys, path, val, schema, fixed, patts) => val.map((rw, idx) => {
   let row_path = path.concat(idx);
   let { k: k, id: id, model: model } = getPaths(row_path);
   let cells = col_keys.map(col => ({
@@ -95,4 +110,4 @@ let rowPars = typed([null, null, Array, null, null, null], Array, (col_keys, pat
     schema: key_spec(col, schema, fixed, patts),
   }));
   return { id: id, cells: cells };
-}));
+});

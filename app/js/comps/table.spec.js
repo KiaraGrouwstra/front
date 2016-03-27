@@ -8,9 +8,9 @@ let cls = test_comp('mytable', TableComp);
 let path = ['test'];
 let val = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
 let obs_pars = {
-  path$: path,
-  val$: val,
-  schema$: {},
+  path: path,
+  val: val,
+  schema: {},
 };
 let flat = Object.keys(val[0]).concat(_.flatten(val.map(row => Object.keys(row).map(k => row[k])))).join('');
 
@@ -28,12 +28,12 @@ describe('TableComp', () => {
   // })
 
   it('should work without header, spec or nesting using a table without holes', test(
-    cls(obs_pars, {}),
+    cls({}, obs_pars),
     assert((comp, el) => expect(el).toHaveText(flat))
   ));
 
   it('should work with header', test(
-    cls(obs_pars, { named: true }),
+    cls({}, Object.assign({ named: true }, obs_pars)),
     assert((comp, el) => expect(el).toHaveText('test' + flat))
   ));
 

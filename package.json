@@ -51,7 +51,7 @@
     "requirejs": "^2.1.22",
     "rxjs": "^5.0.0-beta.0",
     "swagger-schema-official": "^1.2.0",
-    "sweet.js": "^1.0.0-pre.0",
+    "sweet.js": "github:mozilla/sweet.js#redesign",
     "symbol-enum": "^3.2.1",
     "systemjs": "^0.19.6",
     "titon-probe": "^0.4.1",

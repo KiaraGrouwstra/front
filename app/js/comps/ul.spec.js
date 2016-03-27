@@ -7,9 +7,9 @@ let cls = test_comp('myul', ULComp);
 let path = ['test'];
 let val = ['foo', 'bar', 'baz'];
 let pars = {
-  path$: path,
-  val$: val,
-  schema$: {},
+  path: path,
+  val: val,
+  schema: {},
 };
 // let comp = test_comp('myul', ULComp, pars, { named: true });
 
@@ -32,12 +32,12 @@ describe('ULComp', () => {
   // )));
 
   it('should display scalars', test(
-    cls(pars, {}),
+    cls({}, pars),
     assert((comp, el) => expect(el).toHaveText(val.join('')))
   ));
 
   it('should allow named', test(
-    cls(pars, { named: true }),
+    cls({}, Object.assign({ named: true }, pars)),
     assert((comp, el) => expect(el).toHaveText(path.concat(val).join('')))
   ));
 

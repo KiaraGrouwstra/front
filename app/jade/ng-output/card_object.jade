@@ -1,24 +1,24 @@
 //- {k, id, named, scalar: [], object: [], array: []}
 .card
-  .card-content(id=`{{id | async}}`)
-    span.card-title(*ngIf='named') {{k | async}}
+  .card-content(id=`{{id}}`)
+    span.card-title(*ngIf='named') {{k}}
     mydl(
-      '[path$]'=`path$`
-      '[val$]'=`scalar`
+      '[path]'=`path`
+      '[val]'=`scalar`
     )
     object(
-      *ngFor=`#x of (object | async)`
-      '[path$]'=`x.path`
-      '[val$]'=`x.val`
-      '[schema$]'=`x.schema`
+      *ngFor=`#x of (object)`
+      '[path]'=`x.path`
+      '[val]'=`x.val`
+      '[schema]'=`x.schema`
       '[named]'=`true`
     )
     //- array
     value(
-      *ngFor=`#x of (array | async)`
-      '[path$]'=`x.path`
-      '[val$]'=`x.val`
-      '[schema$]'=`x.schema`
+      *ngFor=`#x of (array)`
+      '[path]'=`x.path`
+      '[val]'=`x.val`
+      '[schema]'=`x.schema`
       '[named]'=`true`
     )
     //- ^ named due to #7084 workaround (switch from array to value)

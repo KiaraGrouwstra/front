@@ -1,11 +1,11 @@
 //- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
 .card
   .card-content
-    span.card-title(*ngIf='named') {{k | async}}
-    table.bordered.highlight(id=`{{id | async}}`)
+    span.card-title(*ngIf='named') {{k}}
+    table.bordered.highlight(id=`{{id}}`)
       thead
         th.waves-effect(
-          *ngFor=`#col of cols$ | async`
+          *ngFor=`#col of cols`
           id=`{{col.id}}`
           '[class.sort]'=`sortCol == col`
           '[class.asc]'=`sortCol == col && sortAsc`
@@ -17,7 +17,7 @@
             path(d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z')
       tbody
         tr(
-          *ngFor=`#r of rows$ | async`
+          *ngFor=`#r of rows`
           id=`{{r.id}}`
         )
           //- rearrange as objects with *ngFor=`#col of cols` -> #cell=`r[col]`?
@@ -26,7 +26,7 @@
             id=`{{c.id}}`
           )
             value(
-              '[path$]'=`c.path`
-              '[val$]'=`c.val`
-              '[schema$]'=`c.schema`
+              '[path]'=`c.path`
+              '[val]'=`c.val`
+              '[schema]'=`c.schema`
             )

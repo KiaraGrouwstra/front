@@ -46,10 +46,10 @@ let load_ui = function(name) {
   // // '(handler)'=`handle_implicit($event)`
   // I'd love to switch these parts to proper ng2 components used with router, but aux routes aren't ready yet (2016/03/01)...
   this.auth_ui_name = name;
-  this.auth_ui_scopes$.next(scopes);
-  this.auth_ui_oauth_info$.next(oauth_info);
+  this.auth_ui_scopes = scopes;
+  this.auth_ui_oauth_info = oauth_info;
   this.auth_ui_delim = _.get(['scope_delimiter'], this.oauth_misc[name]) || ' ';
-  this.auth_ui_have$.next(_.get([name, 'scopes_have'], this.auths) || []);
+  this.auth_ui_have = _.get([name, 'scopes_have'], this.auths) || [];
 
   // this.functions = await this.load_fn_ui(name, scopes, api, oauth_sec);
   let token = this.auths[name].token;
@@ -62,9 +62,9 @@ let load_ui = function(name) {
   // this.fn_ui_spec = api;
   // this.fn_ui_oauth_sec = oauth_sec;
   // this.fn_ui_have = this.auths[name].scopes_have;
-  this.spec$.next(api);
-  this.fn_ui_oauth_sec.next(oauth_sec);
-  this.fn_ui_have.next(this.auths[name].scopes_have);
+  this.spec = api;
+  this.fn_ui_oauth_sec = oauth_sec;
+  this.fn_ui_have = this.auths[name].scopes_have;
   // console.log('token', token);
   // console.log('oauth_sec', oauth_sec);
   // console.log('api', api);
@@ -100,10 +100,10 @@ let load_ui = function(name) {
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
 let pick_fn = try_log(function(fn_path) {
-  this.data$.next([]);
+  this.data = [];
   // this.input_ui.fn_path = fn_path;
-  this.fn_path$.next(fn_path);
-  this.path$.next(['paths', fn_path, 'get', 'responses', '200']);
+  this.fn_path = fn_path;
+  this.path = ['paths', fn_path, 'get', 'responses', '200'];
 });
 
 let submit_req = function(fn) {
@@ -118,7 +118,7 @@ let submit_req = function(fn) {
         // console.log('str', JSON.stringify(x));
         // toast.info(`response received`);
         // toast.info(x);
-        this.data$.next(x);
+        this.data = x;
         // this.refresh();
       },
       e => {
@@ -241,14 +241,12 @@ let doCurl = submit_req(function(v) {
 //       // input form
 //       let { html: html, obj: params } = method_form(api, fn_path);
 //       let onSubmit = get_submit(api, fn_path, () => this.auths[name].token, x => {
-//         this.data$.next(JSON.parse(x));
+//         this.data = JSON.parse(x);
 //         this.refresh();
 //       });
 //       let inp_pars = { parent: this, onSubmit: onSubmit, params: params };
 //       this.loadHtml('input', inp_pars, html, form_comp).then(x => this.inputs = x);
-//       this.data$.next([]);
-//       // this.rendered = this.data$.map(o => parseVal(['paths', fn_path, 'get', 'responses', '200'], o, api));
-//       //ripple: .waves, sort: Rx map collection to _.orderBy(users, ['user'], ['asc']), arrow svg: http://iamisti.github.io/mdDataTable/ -> animated sort icon; rotating -> https://rawgit.com/iamisti/mdDataTable/master/dist/md-data-table-style.css (transform: rotate)
+//       this.data = [];
 //     },
 //   });
 //   // init: $('.collapsible')['collapsible']()

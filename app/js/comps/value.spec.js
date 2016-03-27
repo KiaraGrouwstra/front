@@ -13,9 +13,9 @@ let arr = [ 'foo', 'bar', 'baz' ];
 let obj = { a: 1, b: 2 };
 let table = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
 let obs_pars = {
-  path$: path,
-  val$: null,
-  schema$: {},
+  path: path,
+  val: null,
+  schema: {},
 };
 
 describe('ValueComp', () => {
@@ -37,22 +37,22 @@ describe('ValueComp', () => {
   // })
 
   it('should handle scalars', test(
-    cls(Object.assign({}, obs_pars, { val$: scalar }), {}),
+    cls({}, Object.assign({}, obs_pars, { val: scalar })),
     assert((comp, el) => expect(el).toHaveText(scalar))
   ));
 
   it('should handle arrays', test(
-    cls(Object.assign({}, obs_pars, { val$: arr }), {}),
+    cls({}, Object.assign({}, obs_pars, { val: arr })),
     assert((comp, el) => expect(el).toHaveText(arr.join('')))
   ));
 
   it('should handle objects', test(
-    cls(Object.assign({}, obs_pars, { val$: obj }), {}),
+    cls({}, Object.assign({}, obs_pars, { val: obj })),
     assert((comp, el) => expect(el).toHaveText('a1b2'))
   ));
 
   it('should handle tables', test(
-    cls(Object.assign({}, obs_pars, { val$: table }), {}),
+    cls({}, Object.assign({}, obs_pars, { val: table })),
     assert((comp, el) => expect(el).toHaveText('ab12AB'))
   ));
 

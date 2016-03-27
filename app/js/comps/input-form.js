@@ -9,9 +9,9 @@ import { notify } from '../rx_helpers';
 let _ = require('lodash/fp');
 
 export let FormComp = ng2comp({
-  component: {
+    component: {
     selector: 'input-form',
-    inputs: ['inputs$', 'desc'],  // {path, spec}?  //inputs, inputs$
+    inputs: ['inputs', 'desc'],  // {path, spec}?
     outputs: ['submit'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: Templates.ng_form,
@@ -35,49 +35,20 @@ export let FormComp = ng2comp({
       this.builder = builder;
       this.items = [];
       this.form = this.builder.group({});
-      // notify('input-form:submit', this.submit);
     }
 
-    ngOnInit() {
-      // this.items = this.inputs.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
-      // let params = _.fromPairs(this.items.map(x => [x.spec.name, x.ctrl]));
-      // this.form = this.builder.group(params);
-      // // ^ inefficient to redo for old ones each time, move into Store so I can unwrap Rx here?
-      // // well, `Obs.map(fn).scan(elToArr, [])` populates an array with a derived value without recalc... so separate$.map.scan over arr$.map
-
-      // console.log('input-form:init');
-      // console.log('this.inputs$', this.inputs$);
-      // this.items$ = this.inputs$.map(typed([Array], Array, inputs => inputs.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }))));
-      // this.pairs$ = this.items$.map(items => _.fromPairs(items.map(x => [x.spec.name, x.ctrl])));
-      // this.pairs$.subscribe(params => this.form = this.builder.group(params));
-      // // shouldn't map like this, all controls' state will be ditched whenever I'd like to add a control upstream
-      // // transitively wrap every object with `this.builder.group({})` with matching in-form `ngControlGroup`s.
-      // console.log('controls', this.form.controls);
-      // console.log('this.form.value', this.form.value);
-
-      this.inputs$.subscribe(typed([Array], Array, inputs => {
-        // console.log('REMAKING FORM');
-        this.items = inputs.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
-        let params = _.fromPairs(this.items.map(x => [x.spec.name, x.ctrl]));
-        this.form = this.builder.group(params);
-        this.cdr.markForCheck();
-      }));
+    set inputs(x) {
+      if(_.isUndefined(x)) return;
+      // console.log('REMAKING FORM');
+      this.items = x.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
+      // ^ inefficient to redo for old ones each time, switch to additive mutations
+      let params = _.fromPairs(this.items.map(x => [x.spec.name, x.ctrl]));
+      this.form = this.builder.group(params);
+      // shouldn't map like this, all controls' state will be ditched whenever I'd like to add a control upstream
+      // transitively wrap every object with `this.builder.group({})` with matching in-form `ngControlGroup`s.
+      this.cdr.markForCheck();
+      // implied by new input value?
     }
-
-    // onSubmit(v) {
-    //   // console.log('input_form:onSubmit', v);
-    //   if(v.constructor == Event) return;
-    //   this.submit.emit(v);
-    // }
-
-    // ngAfterViewChecked() {
-    //   console.log('this.vals', this.vals.length);
-    //   console.log('this.vals', this.vals.toArray());
-    // }
-
-    // get value(): string {
-    //   return JSON.stringify(this.form.value);
-    // }
 
   }
 })

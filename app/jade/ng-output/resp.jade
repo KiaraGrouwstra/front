@@ -11,10 +11,10 @@
       .card-content
         //- #raw
         div(id=prefix+'raw')
-          pre {{ raw | async }}
+          pre {{ raw }}
         //- #colored
         div(id=prefix+'colored')
-          pre('innerHtml'='{{ colored | async }}')
+          pre('[innerHtml]'='colored')
         //- #rendered
         div(id=prefix+'rendered')
-          value('[path$]'=`path$`, '[val$]'=`data$`, '[schema$]'=`spec$`)
+          value('[path]'=`path`, '[val]'=`data`, '[schema]'=`spec`)

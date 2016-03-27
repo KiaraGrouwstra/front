@@ -7,17 +7,13 @@
 // }
 // inc 100
 
-// // why does it dislike @?
-// // #foo -> this.foo
-// syntax # = function (ctx) {
-//   // return #`bar.`;
-//   // return #`this`;
-//   // return #`thi`.merge(#`s`);
-//   let x = ctx.next().value;
-//   // return syntaxQuote { x };
-//   return #`this.${x}`;
-// }
-// #foo
+// @ ●
+// #foo -> this.foo
+syntax # = function (ctx) {
+  let x = ctx.next().value;
+  return #`this.${x}`;
+}
+#foo
 
 // // use only on array/object literals to allow using both this and `this` macro?
 // syntax # = function (ctx) {
@@ -27,13 +23,36 @@
 // }
 // #[1, 2, 3]
 
-// import { Syntax } from "./node_modules/sweet.js/src/syntax";
-// // let Syntax = require("sweet.js/src/syntax").Syntax;
-// // add hygiene!
-// syntax λ = function (ctx) {
-//   let foo = Syntax.fromIdentifier('foo');
-//   return #`${foo}`;
-//   // return #`x => x`;
+syntax λ = function (ctx) {
+  return #`x => x`;
+}
+λ.map(λ.foo > x)
+
+// // https://github.com/mozilla/sweet.js/issues/509
+// syntax getters = function (ctx) {
+//   let expr = ctx.next().value;
+//   let props = expr.val();
+//   console.log('props', props);
+//   return #`${props}`;
+//   // let lines = props.map(prop => `get ${prop}(x) { this._${prop} = x; }`).join('\n');
+//   // return #`${lines}`;
 // }
-// λ
-// // λ.map(λ.foo > x)
+// // getters ['foo', 'bar']
+// getters 1
+// // I could try say [`m (1 2 3 4)`](https://rawgit.com/mozilla/sweet.js/redesign/doc/main/sweet.html), but docs are obsolete wrt redesign...
+
+// // `set` boilerplate
+// syntax setter = function (ctx) {
+//   let name = ctx.next().value;
+//   let fn = ctx.next().value;
+//   return #`
+//   set ${name}(x) {
+//     if(_.isUndefined(x)) return;
+//     this._${name} = x;
+//     ${fn}(x);
+//   }
+//   `;
+// }
+// setter foo(x) {}
+// // better yet, have it take a fn arg, to allow `setter foo this.combInputs`
+// // ... or even get additional batching as with `getters`, making compactness closer to mapComb.

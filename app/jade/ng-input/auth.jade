@@ -3,7 +3,7 @@
 //-   include ../ng-output/loader.jade
 //- p token: {{parent.auths.instagram?.token}}
 .row
-  .input-field.col.s6(*ngFor=`#scope of scopes$ | async`)
+  .input-field.col.s6(*ngFor=`#scope of scopes`)
     input.filled-in(
       type='checkbox'
       '[id]'=`scope`
@@ -14,7 +14,7 @@
       '[ngClass]'=`{ 'green-text': have_scope[scope] }`
     )
       b {{scope}}: 
-      | {{scope_descs[scope]}}
+      | {{ scope_descs ? scope_descs[scope] : '' }}
 .row
   button.btn.waves-effect.waves-light.col.offset-s3(
     '(click)'=`onSubmit()`

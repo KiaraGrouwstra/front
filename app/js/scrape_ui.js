@@ -9,7 +9,7 @@
 // @Component({
 //   selector: 'scrape-ui',
 //   changeDetection: ChangeDetectionStrategy.OnPush,
-//   template: `<input-form [inputs$]="pars$" [desc]="desc" (submit)="handler.emit($event)"></input-form>`,
+//   template: `<input-form [inputs]="pars" [desc]="desc" (submit)="handler.emit($event)"></input-form>`,
 //   directives: [
 //     FormComp,
 //   ],

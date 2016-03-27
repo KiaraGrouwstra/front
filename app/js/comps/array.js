@@ -7,9 +7,9 @@ import { Templates } from '../jade';
 import { ULComp } from './ul';
 import { TableComp } from './table';
 import { infer_type, try_schema } from '../output'
-import { ng2comp } from '../js';
+import { ng2comp, combine } from '../js';
 
-let inputs = ['path$', 'val$', 'schema$', 'named'];
+let inputs = ['path', 'val', 'schema', 'named'];
 
 export let ArrayComp = ng2comp({
   component: {
@@ -36,15 +36,32 @@ export let ArrayComp = ng2comp({
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      let first$ = this.val$.map(_.get([0]));
-      this.new_spec$ = mapComb([first$, this.schema$], getSpec);
-      let type$ = mapComb([first$, this.new_spec$], (first, spec) => _.get(['type'], spec) || infer_type(first));
-      type$.subscribe(x => {
-        this.type = x;
-        this.cdr.markForCheck();
-      });
+    get path() { return this._path; }
+    set path(x) {
+      if(_.isUndefined(x)) return;
+      this._path = x;
     }
+
+    get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      this._val = x;
+      this.first = _.get([0])(x);
+      this.combInputs();
+    }
+
+    get schema() { return this._schema; }
+    set schema(x) {
+      if(_.isUndefined(x)) return;
+      this._schema = x;
+      this.combInputs();
+    }
+
+    combInputs = () => combine((val, schema) => {
+      this.new_spec = getSpec(this.first, schema);
+      this.type = _.get(['type'], this.new_spec) || infer_type(this.first);
+      this.cdr.markForCheck();
+    }, { schema: true })(this.val, this.schema);
 
   }
 })

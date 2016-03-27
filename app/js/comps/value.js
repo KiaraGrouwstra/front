@@ -9,9 +9,9 @@ import { ObjectComp } from './object';
 import { ScalarComp } from './scalar';
 import { infer_type, try_schema } from '../output'
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
-import { ng2comp } from '../js';
+import { ng2comp, combine } from '../js';
 
-let inputs = ['path$', 'val$', 'schema$', 'named'];
+let inputs = ['path', 'val', 'schema', 'named'];
 // 'named' provided solely because of work-around to [#7084](https://github.com/angular/angular/issues/7084) in Object
 
 export let ValueComp = ng2comp({
@@ -52,19 +52,31 @@ export let ValueComp = ng2comp({
       this.cdr.detach();
     }
 
-    ngOnInit() {
-      //['val$', 'schema$'].map(k => this[k])
+    // get path() { return this._path; }
+    // set path(x) {
+    //   this._path = x;
+    //   this.combInputs();
+    // }
 
-      this.new_spec$ = mapComb([this.val$, this.schema$], (v, spec) => _.get(['type'], spec) ? spec : try_schema(v, spec));
-      let type$ = mapComb([this.val$, this.new_spec$], (v, spec) => _.get(['type'], spec) || infer_type(v));
-      type$.subscribe(x => {
-        this.type = x;
-        // console.log("value cdr");
-        this.cdr.markForCheck();
-        // this.cdr.detectChanges();
-        // console.log("value cdr end");
-      });
+    get val() { return this._val; }
+    set val(x) {
+      if(_.isUndefined(x)) return;
+      this._val = x;
+      this.combInputs();
     }
+
+    get schema() { return this._schema; }
+    set schema(x) {
+      if(_.isUndefined(x)) return;
+      this._schema = x;
+      this.combInputs();
+    }
+
+    combInputs = () => combine((val, schema) => {
+      this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
+      this.type = _.get(['type'], schema) || infer_type(val);
+      this.cdr.markForCheck();
+    }, { schema: true })(this.val, this.schema);
 
   }
 })
