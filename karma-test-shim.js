@@ -1,19 +1,9 @@
-require('./app/js/styles');
-// require("normalize.css/normalize");
-// require("materialize-css/dist/css/materialize");
-// require("../style");
-
 require('babel-polyfill');
 // require('phantomjs-polyfill');
 require('es6-promise');
 require('es6-shim');
 require('reflect-metadata');
 require('zone.js/dist/zone-microtask.js');
-// require('zone.js/dist/long-stack-trace-zone.js');
-// require('zone.js/dist/jasmine-patch.js');
-
-// source: http://twofuckingdevelopers.com/2016/01/testing-angular-2-with-karma-and-jasmine/
-// original: https://github.com/juliemr/ng2-test-seed/blob/master/karma-test-shim.js
 
 Error.stackTraceLimit = 1; //1 3 5 8 Infinity
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
@@ -34,4 +24,4 @@ global._ = require('lodash/fp');
 global.$ = global.jQuery = require("jquery");
 
 const requireAll = function(ctxt) { ctxt.keys().map(ctxt); };
-requireAll(require.context('./app/js', true, /\.spec\.[tj]s$/));
+requireAll(require.context('./app', true, /\.spec\.[tj]s$/));

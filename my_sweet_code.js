@@ -1,13 +1,6 @@
 // sjs my_sweet_code.js
 
-// // test
-// syntax inc = function (ctx) {
-//   let x = ctx.next().value;
-//   return #`${x} + 1`;
-// }
-// inc 100
-
-// @ ●
+// # Ξ Φ @ ●
 // #foo -> this.foo
 syntax # = function (ctx) {
   let x = ctx.next().value;
@@ -15,13 +8,14 @@ syntax # = function (ctx) {
 }
 #foo
 
-// // use only on array/object literals to allow using both this and `this` macro?
-// syntax # = function (ctx) {
-//   let x = ctx.next().value;
-//   // return #`${x.token.type}`;
-//   return #`Immutable.fromJS(${x})`;
-// }
-// #[1, 2, 3]
+// use only on array/object literals to allow using both this and `this` macro?
+syntax Φ = function (ctx) {
+  let x = ctx.next().value;
+  // console.log(); //.inner().val() .token.type
+  // if(x.isBrackets() || x.isBraces())
+  return #`Immutable.fromJS(${x})`;
+}
+Φ[1, 2, 3]
 
 syntax λ = function (ctx) {
   return #`x => x`;

@@ -123,6 +123,7 @@
     "remap-istanbul": "^0.5.1",
     "request": "^2.65.0",
     "style-loader": "latest",
+    "sweet.js": "github:mozilla/sweet.js",
     "sweetjs-loader": "github:tycho01/sweetjs-loader",
     "systemjs": "^0.19.17",
     "traceur": "0.0.93",

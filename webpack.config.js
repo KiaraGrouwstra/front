@@ -24,9 +24,8 @@ var babelSettings = {
 };
 
 module.exports = {
-	context: path.join(__dirname, 'app/js'),
+	context: path.join(__dirname, 'app'),
 	entry: {
-		// specs: './specs',
 		boot: './boot',
 	},
 	output: {
@@ -41,14 +40,12 @@ module.exports = {
   devtool: 'eval', //'source-map',
 	module: {
 		loaders: [
-			// { test: /\.coffee$/, loader: 'coffee' },
-			// { test: /\.ls$/, loader: 'livescript' },
 			{
-				test: /\.tsx?$/,
+				test: /\.ts$/,
 				loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
 			},
 			{
-				test: /\.jsx?$/,
+				test: /\.js$/,
 				include: [ path.resolve(__dirname, "app"), ],
 				//exclude: [ path.resolve(__dirname, "node_modules"), ],
 				loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
@@ -82,7 +79,7 @@ module.exports = {
 	resolve: {
 		extensions: [
 			// you can now require('file') instead of require('file.coffee')
-			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss', '.html'	//'', '.coffee', '.ls', '.tsx'
+			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss', '.html'
 		],
 		// root: ['node_modules', 'bower_components', 'app'].map((folder) => path.join(__dirname, folder))
 		modulesDirectories: ['node_modules', 'bower_components', 'app'],
@@ -111,12 +108,6 @@ module.exports = {
 		tls: 'empty',
 		net: 'empty',
 		dns: 'empty',
-		// console: false,
-		// global: true,
-		// process: true,
-		// Buffer: true,
-		// __filename: 'mock',
-		// __dirname: 'mock',
 		setImmediate: true
 	},
 	// noParse: [/\/dist\//],

@@ -1,0 +1,32 @@
+//- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+.card
+  .card-content
+    span.card-title(*ngIf='named') {{k}}
+    table.bordered.highlight(id=`{{id}}`)
+      thead
+        th.tbl-hdr.waves-effect(
+          *ngFor=`#col of cols`
+          id=`{{col.id}}`
+          '[class.sort]'=`sortCol == col`
+          '[class.asc]'=`sortCol == col && sortAsc`
+          '[class.desc]'=`sortCol == col && !sortAsc`
+          '(click)'=`sortClick(col)`
+        )
+          | {{col.k}}
+          svg(xmlns='http://www.w3.org/2000/svg', viewbox='0 0 24 24', width='24', height='24')
+            path(d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z')
+      tbody
+        tr(
+          *ngFor=`#r of rows`
+          id=`{{r.id}}`
+        )
+          //- rearrange as objects with *ngFor=`#col of cols` -> #cell=`r[col]`?
+          td(
+            *ngFor=`#c of r.cells`
+            id=`{{c.id}}`
+          )
+            value(
+              '[path]'=`c.path`
+              '[val]'=`c.val`
+              '[schema]'=`c.schema`
+            )

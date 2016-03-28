@@ -1,9 +1,0 @@
-//- {k, id, named, rows: [{id, val}]}
-table.bordered.highlight(id=id)
-  - if(named)
-    thead
-      th= k
-  tbody
-    - each r in rows
-      tr
-        td(id=r.id)!= r.val
