@@ -45,6 +45,26 @@ export let App = ng2comp({
       //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
       constructor(router, http) {
         this.deps = { router: router, http: http };
+
+        // sets and saves the auth token + scopes from the given get/hash
+        this.handle_implicit = (url) => handle_auth(url, (get, hash) => {
+          let name = get.callback;
+          let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
+          let auth = {
+            name: name,
+            token: hash.access_token,
+            scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
+          };
+          this.auths[name] = auth;
+          //localStorage.setItem(name, JSON.stringify(auth));
+          setKV(name, auth);
+        });
+
+        this.load_ui = load_ui;
+        this.req_url = req_url;
+        this.pick_fn = pick_fn;
+        this.extract_url = extract_url;
+        this.doCurl = doCurl;
       }
 
       ngOnInit() {
@@ -122,26 +142,6 @@ export let App = ng2comp({
         this.raw = JSON.stringify(x);
         this.colored = prettyPrint(x);
       }
-
-      // sets and saves the auth token + scopes from the given get/hash
-      handle_implicit = (url) => handle_auth(url, (get, hash) => {
-        let name = get.callback;
-        let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
-        let auth = {
-          name: name,
-          token: hash.access_token,
-          scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
-        };
-        this.auths[name] = auth;
-        //localStorage.setItem(name, JSON.stringify(auth));
-        setKV(name, auth);
-      });
-
-      load_ui = load_ui;
-      req_url = req_url;
-      pick_fn = pick_fn;
-      extract_url = extract_url;
-      doCurl = doCurl;
   }
 })
 

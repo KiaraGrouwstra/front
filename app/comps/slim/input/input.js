@@ -75,9 +75,33 @@ function input_control(spec = {}, validator = get_validators(spec).validator) {
 // http://swagger.io/specification/#parameterObject
 let input_attrs = (path, spec) => {
   // general parameters
-  let { name: name, in: kind, description: desc, required: req, schema: schema, type: type, format: format, allowEmptyValue: allow_empty, items: items, collectionFormat: collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, maxLength: maxLength, minLength: minLength, pattern: pattern, maxItems: maxItems, minItems: minItems, uniqueItems: uniqueItems, enum: enum_options, multipleOf: multipleOf } = spec;
+  let {
+    name = '',
+    in: kind = '',
+    description: desc = '',
+    required: req = false,
+    schema = {},
+    type = 'string',
+    format = '',
+    allowEmptyValue: allow_empty = false,
+    items = {},
+    collectionFormat = 'csv',
+    default: def = null,
+    maximum: inc_max = Number.MAX_VALUE,
+    exclusiveMaximum: ex_max = false,
+    minimum: inc_min = Number.MIN_VALUE,
+    exclusiveMinimum: ex_min = false,
+    maxLength = Math.pow(2,53)-1,
+    minLength = 0,
+    pattern = '.*',
+    maxItems = Math.pow(2,32)-1,
+    minItems = 0,
+    uniqueItems = false,
+    enum: enum_options = null,
+    multipleOf = 1,
+  } = spec;
   desc = marked(desc || '') //.stripOuter();
-  let { id: id, variable: variable } = getPaths(path);  //, k: k, model: elvis
+  let { id: id } = getPaths(path);  //, k: k, model: elvis, variable: variable
   let key = name;  // variable
   let model = `form.controls.${key}`;
   let attrs = {
@@ -86,8 +110,8 @@ let input_attrs = (path, spec) => {
     id: id,
     required: req,
   };
-  // if(desc) marked)(attrs.placeholder = description;;
-  attrs[`#${variable}`] = 'ngForm';
+  // if(desc) attrs.placeholder = description;
+  // attrs[`#${variable}`] = 'ngForm';
 
   // numbers:
   let max = inc_max || ex_max ? ex_max + 1 : null;

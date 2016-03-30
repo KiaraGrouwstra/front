@@ -1,4 +1,4 @@
-// sjs my_sweet_code.js
+// // sjs my_sweet_code.js
 
 // # Ξ Φ @ ●
 // #foo -> this.foo
@@ -17,33 +17,74 @@ syntax Φ = function (ctx) {
 }
 Φ[1, 2, 3]
 
-syntax λ = function (ctx) {
-  return #`x => x`;
-}
-λ.map(λ.foo > x)
-
-// // https://github.com/mozilla/sweet.js/issues/509
-// syntax getters = function (ctx) {
-//   let expr = ctx.next().value;
-//   console.log('expr', expr);
-//   let props = expr.val();
-//   console.log('props', props);
-//   // return #`${props}`;
-//   let lines = props.map(prop => `get ${prop}(x) { this._${prop} = x; }`).join('\n');
-//   console.log('lines', lines);
-//   return #`${lines}`;
+// syntax λ = function (ctx) {
+//   return #`x => x`;
 // }
-// getters ['foo', 'bar']
-// // getters 1
-// // I could try say [`m (1 2 3 4)`](https://rawgit.com/mozilla/sweet.js/redesign/doc/main/sweet.html), but docs are obsolete wrt redesign...
+// λ.map(λ.foo > x)
+//
+// // source: http://sweetjs.org/doc/1.0/tutorial.html
+// syntax cond = function (ctx) {
+//   let bodyCtx = ctx.next().value.inner();
+//   let result = #``;
+//   for (let stx of bodyCtx) {
+//     if (stx.isKeyword('case')) {
+//       let test = bodyCtx.next('expr').value;
+//       // eat `:`
+//       bodyCtx.next();
+//       let r = bodyCtx.next('expr').value;
+//       result = result.concat(#`${test} ? ${r} :`);
+//     } else if (stx.isKeyword('default')) {
+//       // eat `:`
+//       bodyCtx.next();
+//       let r = bodyCtx.next('expr').value;
+//       result = result.concat(#`${r}`);
+//     } else {
+//       throw new Error('unknown syntax: ' + stx);
+//     }
+//   }
+//   return result;
+// }
+// // show pattern matching:
+// let x = null;
+// let realTypeof = cond {
+//   case x === null: 'null'
+//   case Array.isArray(x): 'array'
+//   case typeof x === 'object': 'object'
+//   default: typeof x
+// }
 
+// // Error: Only methods are allowed in classes
+// syntax getters = function (ctx) {
+//   console.log('TRYING GETTERS');
+//   let nxt = ctx.next().value;
+//   if(!nxt.isParens()) throw new Error('names go in parent!');
+//   let inner = nxt.inner();
+//   let result = #``;
+//   for (let stx of inner) {
+//     if (stx.isIdentifier()) {
+//       result = result.concat(#`get ${stx}(x) { this._${stx} = x; }`);
+//     } else if (stx.isPunctuator()) {
+//       // next...
+//     } else {
+//       throw new Error('unknown syntax: ' + stx);
+//     }
+//   }
+//   let rest = ctx.next().value;
+//   if(!rest.isBraces()) throw new Error('expecting empty braces after!');
+//   return result;
+// }
+// class tmp {
+//   getters(foo, bar){}
+// }
+
+// // needs two 'parameters', retry after finishing getters
 // // `set` boilerplate
 // syntax setter = function (ctx) {
 //   let name = ctx.next().value;
 //   let fn = ctx.next().value;
 //   return #`
 //   set ${name}(x) {
-//     if(_.isUndefined(x)) return;
+//     if(typeof x == 'undefined') return;
 //     this._${name} = x;
 //     ${fn}(x);
 //   }

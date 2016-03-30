@@ -8,7 +8,7 @@ var babelSettings = {
 	cacheDirectory: true,
 	"presets": [
 		"es2015", // used for 'import'
-		"stage-1", // used for assigned methods
+		// "stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
 		// "stage-0", // used for: async/await
 	],
 	// "plugins": [
@@ -51,7 +51,7 @@ module.exports = {
 				loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
 				// loader: 'sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
 				//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
-				},
+			},
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },
 			{ test: /\.jade$/, loader: 'html!jade-html' },

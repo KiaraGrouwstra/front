@@ -17,6 +17,12 @@ export let ScalarComp = ng2comp({
   decorators: {},
   class: class ScalarComp {
 
+    constructor() {
+      this.combInputs = () => combine((path, val, schema) => {
+        this.html = parseScalar(path, val, schema);
+      }, { schema: true })(this.path, this.val, this.schema);
+    }
+
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -37,10 +43,6 @@ export let ScalarComp = ng2comp({
       this._schema = x;
       this.combInputs();
     }
-
-    combInputs = () => combine((path, val, schema) => {
-      this.html = parseScalar(path, val, schema);
-    }, { schema: true })(this.path, this.val, this.schema);
 
   }
 })

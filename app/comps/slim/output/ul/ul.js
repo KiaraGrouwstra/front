@@ -26,6 +26,15 @@ export let ULComp = ng2comp({
     // id: Observable<string>;
     // rows: Array<any>; //[{id, path, val, schema}]
 
+    constructor() {
+      this.combInputs = () => combine((path, val, schema) => {
+        this.rows = val.map((v, idx) => {
+          let path_k = path.concat(idx)
+          return { path: path_k, val: v, schema: _.get(['items'], schema) };
+        });
+      }, { schema: true })(this.path, this.val, this.schema);
+    }
+
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -48,13 +57,6 @@ export let ULComp = ng2comp({
       this._schema = x;
       this.combInputs();
     }
-
-    combInputs = () => combine((path, val, schema) => {
-      this.rows = val.map((v, idx) => {
-        let path_k = path.concat(idx)
-        return { path: path_k, val: v, schema: _.get(['items'], schema) };
-      });
-    }, { schema: true })(this.path, this.val, this.schema);
 
   }
 })

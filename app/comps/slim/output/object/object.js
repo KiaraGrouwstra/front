@@ -28,6 +28,16 @@ export let ObjectComp = ng2comp({
   },
   class: class ObjectComp {
 
+    constructor() {
+      this.combInputs = () => combine((path, val, schema) => {
+        let coll = getColl(path, val, schema);
+        let TYPES = ['array','object','scalar'];
+        TYPES.forEach(x => {
+          this[x] = coll.filter(v => v.type == x);
+        });
+      }, { schema: true })(this.path, this.val, this.schema);
+    }
+
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -50,14 +60,6 @@ export let ObjectComp = ng2comp({
       this._schema = x;
       this.combInputs();
     }
-
-    combInputs = () => combine((path, val, schema) => {
-      let coll = getColl(path, val, schema);
-      let TYPES = ['array','object','scalar'];
-      TYPES.forEach(x => {
-        this[x] = coll.filter(v => v.type == x);
-      });
-    }, { schema: true })(this.path, this.val, this.schema);
 
   }
 })

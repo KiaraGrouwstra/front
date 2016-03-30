@@ -15,7 +15,12 @@ export let AuthUiComp = ng2comp({
   parameters: [],
   // decorators: {},
   class: class AuthUiComp {
-    handler = new EventEmitter(false);    // @Output()
+    constructor() {
+      this.handler = new EventEmitter(false);    // @Output()
+      this.combInputs = () => combine((scopes, have) => {
+        this.have_scope = arr2obj(scopes, s => have.includes(s));
+      })(this.scopes, this.have);
+    }
 
     get oauth_info() { return this._oauth_info; }
     set oauth_info(x) {
@@ -40,10 +45,6 @@ export let AuthUiComp = ng2comp({
       this.scope_descs = x.scopes;
       this.combInputs();
     }
-
-    combInputs = () => combine((scopes, have) => {
-      this.have_scope = arr2obj(scopes, s => have.includes(s));
-    })(this.scopes, this.have);
 
     onSubmit() {
       // let delim = _.get(['scope_delimiter'], this.oauth_misc) || ' ';

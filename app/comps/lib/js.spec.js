@@ -114,13 +114,16 @@ describe('js', () => {
 
   it('combine', () => {
     let cls = class tmp {
+      constructor() {
+
+      }
       get a() { return this._a; }
       get b() { return this._b; }
       set a(x) { this._a = x; this.combInputs(); }
       set b(x) { this._b = x; this.combInputs(); }
-      combInputs = () => combine((a, b) => {
-        this.c = a + b;
-      })(this.a, this.b);
+      // combInputs = () => combine((a, b) => {
+      //   this.c = a + b;
+      // })(this.a, this.b);
     }
     let obj = new cls();
     obj.a = 1;
@@ -130,13 +133,15 @@ describe('js', () => {
 
   it('combine with optional undefined values', () => {
     let cls = class tmp {
+      constructor() {
+        this.combInputs = () => combine((a, b) => {
+          this.c = a + b;
+        }, { b: true })(this.a, this.b);
+      }
       get a() { return this._a; }
       get b() { return this._b; }
       set a(x) { this._a = x; this.combInputs(); }
       set b(x) { this._b = x; this.combInputs(); }
-      combInputs = () => combine((a, b) => {
-        this.c = a + b;
-      }, { b: true })(this.a, this.b);
     }
     let obj = new cls();
     obj.a = 1;

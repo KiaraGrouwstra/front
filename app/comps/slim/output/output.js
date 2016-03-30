@@ -50,11 +50,10 @@ function parseScalar(path, api_spec, swagger) {
     val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
   }
   switch (_.get(['format'], swagger)) {
-    case "uri": val = `<a href="${val}">${val}</a>`; break;
-    case "email": val = `<a href="mailto:${val}">${val}</a>`; break;
-    // default:
+    case "uri": return `<a href="${val}">${val}</a>`; //break;
+    case "email": return `<a href="mailto:${val}">${val}</a>`; //break;
+    default: return val;
   }
-  return val;
 }
 
 export { parseScalar, key_spec, get_fixed, get_patts, try_schema, infer_type };

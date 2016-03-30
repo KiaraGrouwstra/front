@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 let $ = require('jquery');
 let ng = require('angular2/core');
+let marked = require('marked');
 import { ComponentMetadata } from 'angular2/core';
 
 require("materialize-css/dist/js/materialize.min");

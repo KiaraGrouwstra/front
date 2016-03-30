@@ -22,6 +22,13 @@ export let ArrayComp = ng2comp({
   // decorators: {},
   class: class ArrayComp {
 
+    constructor() {
+      this.combInputs = () => combine((val, schema) => {
+        this.new_spec = getSpec(this.first, schema);
+        this.type = _.get(['type'], this.new_spec) || infer_type(this.first);
+      }, { schema: true })(this.val, this.schema);
+    }
+
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -42,11 +49,6 @@ export let ArrayComp = ng2comp({
       this._schema = x;
       this.combInputs();
     }
-
-    combInputs = () => combine((val, schema) => {
-      this.new_spec = getSpec(this.first, schema);
-      this.type = _.get(['type'], this.new_spec) || infer_type(this.first);
-    }, { schema: true })(this.val, this.schema);
 
   }
 })

@@ -25,13 +25,14 @@ export let FormComp = ng2comp({
   class: class FormComp {
     // type: Observable<string>;
     // form: ControlGroup;
-    submit = new EventEmitter(false);    // @Output()
-    // ^ handle with `<input-form (submit)="callback()"></input-form>`
 
     constructor(builder) {
       this.builder = builder;
       this.items = [];
       this.form = this.builder.group({});
+
+      this.submit = new EventEmitter(false);    // @Output()
+      // ^ handle with `<input-form (submit)="callback()"></input-form>`
     }
 
     set inputs(x) {
