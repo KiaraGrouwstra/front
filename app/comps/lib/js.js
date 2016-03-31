@@ -100,7 +100,8 @@ let mapBoth = (obj, fn) => {
 // pretty print a json object
 let prettyPrint = (o) => {
   let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
-    ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
+    // ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
+    ((pKey) ? "<span class=json-key>" + pKey.replace(/[": ]/g, '') + "</span>: " : '') +
     ((pVal) ? `<span class=${pVal[0] == '"' ? 'json-string' : 'json-value'}>${pVal}</span>` : '') + pEnd;
   return JSON.stringify(o, null, 3)
   .replace(/&/g, '&amp;')
@@ -121,7 +122,6 @@ let typed = (from, to, fn) => function() {
   for (var i = 0; i < from.length; i++) {
     let frm = from[i];
     let v = arguments[i];
-    // console.log(i, frm, v, (frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)));
     if(frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)) return (new to).valueOf();
   }
   return fn.call(this, ...arguments);
@@ -133,7 +133,9 @@ let combine = (fn, allow_undef = {}) => function() {
   let names = fn.toString().split('(')[1].split(')')[0].split(/[,\s]+/);
   for (var i = 0; i < arguments.length; i++) {
     let v = arguments[i];
-    let name = names[i];
+    let name = names[i]
+      .replace(/_\d+$/, '')   // fixes SweetJS suffixing all names with like _123. this will however break functions already named .*_\d+, e.g. foo_123
+      // do not minify the code while uing this function, it will break -- functions wrapped in combine will no longer trigger.
     if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNull(v)
   }
   fn.call(this, ...arguments);  //return

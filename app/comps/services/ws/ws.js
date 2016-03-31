@@ -17,7 +17,9 @@ export class WS {
     this.requests = {};
     this.id = 0;
     let logger = ((kind, msg, data) => {}); // console.log(`${kind}: ${msg}`, data)
-    this.ws = new Phoenix.Socket(url, {logger: logger});
+    // this.ws = new Phoenix.Socket(url, {logger: logger});
+    let Socket = Phoenix.Socket;
+    this.ws = new Socket(url, {logger: logger});
     this.ws.connect({});
     this.chan = this.ws.channel(chan_name, {user: "tycho"});
     this.chan.join();
@@ -54,7 +56,7 @@ export class WS {
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
     return this.out
-      .filter(x => x.id == id)
+      .filter(λ.id == id)
       .map(e => e.body);
   }
   // ^ the server doesn't currently send complete events. Rx operators definitely affected by this:

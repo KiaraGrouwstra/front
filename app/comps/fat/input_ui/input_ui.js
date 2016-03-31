@@ -54,7 +54,7 @@ export let InputUiComp = ng2comp({
       let spec = this.spec;
       let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes}
       let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
-        let good_keys = Object.keys(Object_filter(kind_map, v => v == x));
+        let good_keys = Object.keys(Object_filter(kind_map, λ == x));
         return arr2obj(good_keys, k => form_val[k]);
       });
       let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);

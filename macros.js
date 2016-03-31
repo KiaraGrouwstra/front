@@ -1,35 +1,25 @@
-// https://github.com/jlongster/sweetjs-loader
-// http://sweetjs.org/doc/main/sweet.html
+// #lang "sweet.js"
+// import { class } from './es2015-macros';
+// export
 
-// ditching used babel:
-// import -- https://bugs.chromium.org/p/v8/issues/detail?id=1569
-// assigned methods
-// // async/await
-// // type annotations in constructors
+// lambda shortcut
+// inspiration: https://github.com/natefaubion/lambda-chop
+syntax λ = function (ctx) {
+  return #`x => x`;
+}
 
-// pipe-forward: https://gist.github.com/aaronpowell/d5ffaf78666f2b8fb033
+// ImmutableJS wrapper; Φ (phi) stands for Facebook, who made Immutable.
+syntax Φ = function (ctx) {
+  let x = ctx.next().value;
+  // if(x.isBrackets() || x.isBraces())
+  return #`global.Immutable.fromJS(${x})`;
+}
 
-// export macro (|>) {
-// 	case infix { $val | _ $fn($args (,) ...) } => {
-// 		return #{
-// 			($fn.length <= [$args (,) ...].length + 1 ? $fn($args (,) ..., $val) : $fn.bind(null, $args (,) ..., $val))
-// 		}
-// 	}
-//
-// 	case infix { $val | _ $fn } => {
-// 		return #{
-// 			($fn.length <= 1 ? $fn($val) : $fn.bind(null, $val))
-// 		}
-// 	}
+// // # Ξ Φ @ ●
+// // #foo -> this.foo
+// // inspiration: CoffeeScript's @foo
+// syntax # = function (ctx) {
+//   let x = ctx.next().value;
+//   return #`this.${x}`;
 // }
-
-// https://github.com/natefaubion/lambda-chop
-// offers shorthand property lambdas
-// var names = arr.map(λ.name);
-
-// https://github.com/natefaubion/sparkler
-// pattern matching
-
-// something to use CoffeeScript's `@` as `this.`?
-
-// elvis operator: https://gist.github.com/disnet/b971aeb690a856b21dd9
+// #foo

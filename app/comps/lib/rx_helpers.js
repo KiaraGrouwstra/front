@@ -11,10 +11,8 @@ let elemToArr = (arr, x) => arr.concat(x); // concatenates arrays rather than pu
 // let elemToArr = (arr, x) => { let c = _.cloneDeep(arr); c.push(x); return c; } // slower, but no overriding and arrays become one item
 let arrToArr = (a, b) => a.concat(b);
 // // append to Set:
-//let elemToSet = (set, x) => set.add(x);
-let elemToSet = (set, x) => new Set([...Array.from(set), x]);
-//let arrToSet = (set, arr) => arr.reduce((set, x) => set.add(x), set);
-let arrToSet = (set, arr) => new Set([...Array.from(set), ...arr]);
+let elemToSet = (set, x) => set.add(x);
+let arrToSet = (set, arr) => arr.reduce((set, x) => set.add(x), set);
 let setToSet = (a, b) => new Set(function*() { yield* a; yield* b; }()); //ES6
 // let setToSet = (a, b) => new Set([...Array.from(a), ...Array.from(b)]);
 

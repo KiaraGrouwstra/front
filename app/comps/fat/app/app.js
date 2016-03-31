@@ -15,6 +15,7 @@ import { Http } from 'angular2/http'; //Headers
 // global.ng = require('angular2/core');
 let _ = require('lodash/fp');
 // let Immutable = require('immutable');
+global.Immutable = require('immutable');
 // import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { MarkedPipe } from '../../lib/pipes';
 import WS from '../../services/ws/ws';

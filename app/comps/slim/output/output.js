@@ -14,12 +14,15 @@ let try_schema = (val, swag) => {
 }
 
 // for a given object key get the appropriate swagger spec
-let key_spec = (
-  k,
-  swagger,
-  fixed,
-  patts = get_patts(swagger)
-) => {
+// let key_spec = (
+//   k,
+//   swagger,
+//   fixed,
+//   patts = get_patts(swagger)
+// ) => {
+// let key_spec = (k, swagger, fixed, patts = get_patts(swagger)) => {
+let key_spec = (k, swagger, fixed, patts) => {
+  if(typeof patts == 'undefined') patts = get_patts(swagger);
   let swag = _.get(['additionalProperties'], swagger);
   if(fixed.includes(k)) {
     swag = swagger.properties[k]
@@ -47,11 +50,15 @@ function parseScalar(path, api_spec, swagger) {
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...
   if(last == "description") {
-    val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
+    // val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
+    let tmp = marked(val);
+    val = `<span class="markdown">${tmp}</span>`  // swagger MD descs, wrapped to ensure 1 node
   }
   switch (_.get(['format'], swagger)) {
-    case "uri": return `<a href="${val}">${val}</a>`; //break;
-    case "email": return `<a href="mailto:${val}">${val}</a>`; //break;
+    // case "uri": return `<a href="${val}">${val}</a>`; //break;
+    // case "email": return `<a href="mailto:${val}">${val}</a>`; //break;
+    case "uri": let str1 = `<a href="${val}">${val}</a>`; return str1; //break;
+    case "email": let str2 = `<a href="mailto:${val}">${val}</a>`; return str2; //break;
     default: return val;
   }
 }

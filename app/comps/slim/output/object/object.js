@@ -33,7 +33,7 @@ export let ObjectComp = ng2comp({
         let coll = getColl(path, val, schema);
         let TYPES = ['array','object','scalar'];
         TYPES.forEach(x => {
-          this[x] = coll.filter(v => v.type == x);
+          this[x] = coll.filter(λ.type == x);
         });
       }, { schema: true })(this.path, this.val, this.schema);
     }

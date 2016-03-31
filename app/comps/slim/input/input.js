@@ -53,7 +53,9 @@ let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path
 })
 
 // return initial key/value pair for the model
-function input_control(spec = {}, validator = get_validators(spec).validator) {
+// function input_control(spec = {}, validator = get_validators(spec).validator) {
+function input_control(spec = {}, validator) {
+  if(typeof validator == 'undefined') validator = get_validators(spec).validator;
   switch(spec.type) {
     case 'array':
       return _.get(['items','properties'], spec) ?
@@ -75,33 +77,44 @@ function input_control(spec = {}, validator = get_validators(spec).validator) {
 // http://swagger.io/specification/#parameterObject
 let input_attrs = (path, spec) => {
   // general parameters
+  // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
+  let kind = spec.in || '';
+  let desc = spec.description || '';
+  let req = spec.required || false;
+  let allow_empty = spec.allowEmptyValue || false;
+  let def = spec.default || null;
+  let inc_max = spec.maximum || Number.MAX_VALUE;
+  let ex_max = spec.exclusiveMaximum || false;
+  let inc_min = spec.minimum || Number.MIN_VALUE;
+  let ex_min = spec.exclusiveMinimum || false;
+  let enum_options = spec.enum || null;
   let {
     name = '',
-    in: kind = '',
-    description: desc = '',
-    required: req = false,
+    // in: kind = '',
+    // description: desc = '',
+    // required: req = false,
     schema = {},
     type = 'string',
     format = '',
-    allowEmptyValue: allow_empty = false,
+    // allowEmptyValue: allow_empty = false,
     items = {},
     collectionFormat = 'csv',
-    default: def = null,
-    maximum: inc_max = Number.MAX_VALUE,
-    exclusiveMaximum: ex_max = false,
-    minimum: inc_min = Number.MIN_VALUE,
-    exclusiveMinimum: ex_min = false,
-    maxLength = Math.pow(2,53)-1,
-    minLength = 0,
+    // default: def = null,
+    // maximum: inc_max = Number.MAX_VALUE,
+    // exclusiveMaximum: ex_max = false,
+    // minimum: inc_min = Number.MIN_VALUE,
+    // exclusiveMinimum: ex_min = false,
     pattern = '.*',
-    maxItems = Math.pow(2,32)-1,
+    minLength = 0,
+    maxLength = 9007199254740991, //Math.pow(2, 53) - 1
+    maxItems = 4294967295,  //Math.pow(2, 32) - 1
     minItems = 0,
     uniqueItems = false,
-    enum: enum_options = null,
+    // enum: enum_options = null,
     multipleOf = 1,
   } = spec;
   desc = marked(desc || '') //.stripOuter();
-  let { id: id } = getPaths(path);  //, k: k, model: elvis, variable: variable
+  let { id } = getPaths(path);  //, k: k, model: elvis, variable: variable
   let key = name;  // variable
   let model = `form.controls.${key}`;
   let attrs = {
@@ -167,7 +180,7 @@ let input_attrs = (path, spec) => {
 
 // prepare the form control validators
 let get_validators = (spec) => {
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? { [k]: true } : null);
+  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
   // let val_fns = Object.keys(val_conds).map((k) => (par) => (c) => val_conds[k](c.value, par) ? { [k]: true } : null);
   Object.assign(Validators, val_fns);
   // 'schema', 'format', 'items', 'collectionFormat', 'type'
@@ -209,12 +222,20 @@ let val_errors = {
   minLength: x => `Must be at least ${x} characters.`,
   pattern: x => {
     let patt = `^${x}$`;  //.replace(/\\/g, '\\\\')
-    return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
+    // return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
+    let str = `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
+    return str;
   },
   maxItems: x => `Must have at most ${x} items.`,
   minItems: x => `Must have at least ${x} items.`,
   uniqueItems: x => `All items must be unique.`,
-  enum: x => `Must be one of the following values: ${JSON.stringify(x)}.`,
+  // enum: x => `Must be one of the following values: ${JSON.stringify(x)}.`,
+  enum: x => {
+    let json = JSON.stringify(x);
+    // return `Must be one of the following values: ${json}.`;
+    let str = `Must be one of the following values: ${json}.`;
+    return str;
+  },
   multipleOf: x => `Must be a multiple of ${x}.`,
 }
 

@@ -1,7 +1,7 @@
 import { Pipe } from 'angular2/core';
 
 let marked = require('marked');
-let ng = require('angular2/core');
+// let ng = require('angular2/core');
 
 // js alternative to @Pipe annotation: http://angular-craft.com/custom-pipes-in-angular-2/
 // @Pipe({
@@ -15,7 +15,8 @@ class MarkedPipe {
 }
 
 MarkedPipe.annotations = [
-  new ng.Pipe({
+  // new ng.Pipe({
+  new Pipe({
     name: 'marked'
   })
 ];

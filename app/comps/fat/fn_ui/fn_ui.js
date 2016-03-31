@@ -23,7 +23,7 @@ export let FnUiComp = ng2comp({
         let misc_key;
         if(this.tags) {
           misc_key = 'misc';
-          this.tag_paths = _.assign(arr2obj(this.tags.map(x => x.name), tag =>
+          this.tag_paths = _.assign(arr2obj(this.tags.map(λ.name), tag =>
               Object.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
             ),
             { [misc_key]: Object.keys(paths).filter(path => ! (_.get(['get', 'tags'], paths[path]) || []).length ) }
@@ -45,7 +45,12 @@ export let FnUiComp = ng2comp({
           marked((_.get(['get', 'description'], path) || '')) //.stripOuter()
         )(paths);
         this.have_scopes = _.mapValues(_.every(s => have.includes(s)))(path_scopes);
-        this.path_tooltips = _.mapValues(s => `required scopes: ${s.join(', ')}`)(path_scopes);
+        // this.path_tooltips = _.mapValues(s => `required scopes: ${s.join(', ')}`)(path_scopes);
+        this.path_tooltips = _.mapValues(s => {
+          let joined = s.join(', ');
+          let str = `required scopes: ${joined}`;
+          return str;
+        })(path_scopes);
         this.has_usable = _.mapValues(_.some(p => this.have_scopes[p]))(this.tag_paths);
         setTimeout(() => {
           global.$('#fn-list .collapsible-header').eq(0).click();

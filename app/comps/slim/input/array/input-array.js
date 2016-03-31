@@ -23,7 +23,7 @@ export let InputArrayComp = ng2comp({
 
     ngOnInit() {
       // let props = this.path.map(p => getPaths(p));
-      // ['k', 'id'].forEach(x => this[x] = props.map(v => v[x]));  //, 'model'  //.pluck(x)
+      // ['k', 'id'].forEach(x => this[x] = props.map(λ[x]));  //, 'model'  //.pluck(x)
       let props = getPaths(this.path);
       ['k', 'id'].forEach(x => this[x] = props[x]);
       // FieldComp's
@@ -39,7 +39,7 @@ export let InputArrayComp = ng2comp({
     }
 
     remove(item, i) {
-      let idx = _.findIndex(x => x == item)(Array.from(this.items));
+      let idx = _.findIndex(λ == item)(Array.from(this.items));
       this.ctrl.removeAt(idx);
       this.items.delete(item);
     }

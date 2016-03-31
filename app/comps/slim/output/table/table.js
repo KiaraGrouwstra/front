@@ -96,7 +96,7 @@ export let TableComp = ng2comp({
 // fallback([],
 let rowPars = (col_keys, path, val, schema, fixed, patts) => val.map((rw, idx) => {
   let row_path = path.concat(idx);
-  let { k: k, id: id } = getPaths(row_path);  //, model: model
+  let { k, id } = getPaths(row_path);  //, model
   let cells = col_keys.map(col => ({
     path: row_path.concat(col),
     val: rw[col],
