@@ -30,7 +30,7 @@ let handle_auth = (url, fn) => {
   let url_bit = (url, part) => {
     let par_str = url[part].substring(1);
     let params = decodeURIComponent(par_str).split('&');
-    return arr2obj(params, s => s.split('='));
+    return arr2obj(params, λ.split('='));
   }
   let url_get_hash = (url) => ['search', 'hash'].map(x => url_bit(url, x))
   let [get, hash] = url_get_hash(url)

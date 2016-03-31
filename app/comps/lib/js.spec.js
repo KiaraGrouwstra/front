@@ -72,7 +72,7 @@ describe('js', () => {
   describe('typed', () => {
 
     it('strLen', () => {
-      let strLen = s => s.length;
+      let strLen = λ.length;
       expect(strLen ('lol')).toEqual(3);
       expect(strLen (123)).toEqual(undefined);
       let strLen_ = typed([String], Number, strLen);

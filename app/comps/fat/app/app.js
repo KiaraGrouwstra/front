@@ -150,7 +150,7 @@ export let App = ng2comp({
 //   {path:'/test',          name: 'CrisisCenter', component: genClass({}, html) },
 //   {path:'/hero/:id',      name: 'HeroDetail',   component: HeroDetailComponent},
 //   {path: '/home', loader: () => Promise.resolve(MyLoadedCmp), name: 'MyLoadedCmp'}
-// // (name, path) => System.import(path).then(c => c[name])      //<- given systemjs; does that do http? what of http.get(url)? then how to load the code?
+// // (name, path) => System.import(path).then(λ[name])      //<- given systemjs; does that do http? what of http.get(url)? then how to load the code?
 // ])
 //DynamicRouteConfigurator: http://blog.mgechev.com/2015/12/30/angular2-router-dynamic-route-config-definition-creation/
 // <router-outlet></router-outlet>
