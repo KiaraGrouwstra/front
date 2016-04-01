@@ -7,7 +7,6 @@ export let AuthUiComp = ng2comp({
   component: {
     selector: 'auth-ui',
     inputs: ['name', 'scopes', 'oauth_info', 'delim', 'have'],
-    outputs: ['handler'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./auth_ui.jade'),
     directives: [COMMON_DIRECTIVES],
@@ -15,12 +14,7 @@ export let AuthUiComp = ng2comp({
   parameters: [],
   // decorators: {},
   class: class AuthUiComp {
-    constructor() {
-      this.handler = new EventEmitter(false);    // @Output()
-      this.combInputs = () => combine((scopes, have) => {
-        this.have_scope = arr2obj(scopes, s => have.includes(s));
-      })(this.scopes, this.have);
-    }
+    @Output() handler = new EventEmitter(false);
 
     get oauth_info() { return this._oauth_info; }
     set oauth_info(x) {
@@ -45,6 +39,10 @@ export let AuthUiComp = ng2comp({
       this.scope_descs = x.scopes;
       this.combInputs();
     }
+
+    combInputs = () => combine((scopes, have) => {
+      this.have_scope = arr2obj(scopes, s => have.includes(s));
+    })(this.scopes, this.have);
 
     onSubmit() {
       // let delim = _.get(['scope_delimiter'], this.oauth_misc) || ' ';

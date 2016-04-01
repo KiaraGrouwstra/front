@@ -32,13 +32,6 @@ export let ValueComp = ng2comp({
   },
   class: class ValueComp {
 
-    constructor() {
-      this.combInputs = () => combine((val, schema) => {
-        this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
-        this.type = _.get(['type'], schema) || infer_type(val);
-      }, { schema: true })(this.val, this.schema);
-    }
-
     // type: Observable<string>;
     // new_spec$: Observable<any>;
 
@@ -61,6 +54,11 @@ export let ValueComp = ng2comp({
       this._schema = x;
       this.combInputs();
     }
+
+    combInputs = () => combine((val, schema) => {
+      this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
+      this.type = _.get(['type'], schema) || infer_type(val);
+    }, { schema: true })(this.val, this.schema);
 
   }
 })

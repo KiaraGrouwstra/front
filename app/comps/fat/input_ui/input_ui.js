@@ -7,7 +7,6 @@ export let InputUiComp = ng2comp({
   component: {
     selector: 'input-ui',
     inputs: ['spec', 'fn_path', 'token'],
-    outputs: ['handler'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<input-form [inputs]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
     directives: [
@@ -20,16 +19,8 @@ export let InputUiComp = ng2comp({
     form: ViewChild(FormComp),
   },
   class: class InputUiComp {
-    constructor() {
-      this.handler = new EventEmitter(false);    // @Output()
-      this.desc = '';
-      this.combInputs = () => combine((spec, fn_path) => {
-        // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
-        let obj = method_pars(spec, fn_path);
-        this.pars = obj.pars;
-        this.desc = obj.desc || '';
-      })(this.spec, this.fn_path);
-    }
+    @Output() handler = new EventEmitter(false);
+    desc = '';
 
     get spec() { return this._spec; }
     set spec(x) {
@@ -44,6 +35,13 @@ export let InputUiComp = ng2comp({
       this._fn_path = x;
       this.combInputs();
     }
+
+    combInputs = () => combine((spec, fn_path) => {
+      // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
+      let obj = method_pars(spec, fn_path);
+      this.pars = obj.pars;
+      this.desc = obj.desc || '';
+    })(this.spec, this.fn_path);
 
     // submit param inputs for an API function
     submit(form_val) {

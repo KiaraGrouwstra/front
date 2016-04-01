@@ -5,7 +5,7 @@ require('es6-shim');
 require('reflect-metadata');
 require('zone.js/dist/zone-microtask.js');
 
-Error.stackTraceLimit = 1; //1 3 5 8 Infinity
+Error.stackTraceLimit = 8; //1 3 5 8 Infinity
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000;
 
 require('angular2/src/platform/browser/browser_adapter').BrowserDomAdapter.makeCurrent();

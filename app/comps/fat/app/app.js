@@ -44,28 +44,8 @@ export let App = ng2comp({
   },
   class: class App {
       //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
-      constructor(router, http) {
+      constructor(router: Router, http: Http) {
         this.deps = { router: router, http: http };
-
-        // sets and saves the auth token + scopes from the given get/hash
-        this.handle_implicit = (url) => handle_auth(url, (get, hash) => {
-          let name = get.callback;
-          let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
-          let auth = {
-            name: name,
-            token: hash.access_token,
-            scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
-          };
-          this.auths[name] = auth;
-          //localStorage.setItem(name, JSON.stringify(auth));
-          setKV(name, auth);
-        });
-
-        this.load_ui = load_ui;
-        this.req_url = req_url;
-        this.pick_fn = pick_fn;
-        this.extract_url = extract_url;
-        this.doCurl = doCurl;
       }
 
       ngOnInit() {
@@ -75,7 +55,7 @@ export let App = ng2comp({
         // global.ws = this.ws;
         global.app = this;
         this.auths = {};
-        this.data = {test: 'lol' };
+        this.data = { test: 'lol' };
         this.apis = ['instagram', 'github', 'ganalytics'];
         let api = this.apis[0];
         this.apis.forEach(name => getKV(name).then((v) => {
@@ -143,6 +123,27 @@ export let App = ng2comp({
         this.raw = JSON.stringify(x);
         this.colored = prettyPrint(x);
       }
+
+      // sets and saves the auth token + scopes from the given get/hash
+      handle_implicit = (url) => handle_auth(url, (get, hash) => {
+        let name = get.callback;
+        let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
+        let auth = {
+          name: name,
+          token: hash.access_token,
+          scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
+        };
+        this.auths[name] = auth;
+        //localStorage.setItem(name, JSON.stringify(auth));
+        setKV(name, auth);
+      });
+
+      load_ui = load_ui;
+      req_url = req_url;
+      pick_fn = pick_fn;
+      extract_url = extract_url;
+      doCurl = doCurl;
+
   }
 })
 

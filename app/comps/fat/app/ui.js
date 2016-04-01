@@ -5,20 +5,18 @@ let _ = require('lodash/fp');
 import { RegExp_escape, toast, try_log } from '../../lib/js';
 import { elemToArr } from '../../lib/rx_helpers';
 
-// let load_ui = async function(name) {
-let load_ui = function(name) {
+let load_ui = async function(name) {
   this.api = name;
 
   let $RefParser = require('json-schema-ref-parser');
 
-  // let api = await (
+  let api = await (
     this.deps.http
     .get(`./swagger/${name}.json`)
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
     .toPromise()
-  // )
-  .then(function(api) {
+  )
 
   let sec_defs = api.securityDefinitions;
   let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', Object.keys(sec_defs));
@@ -56,8 +54,6 @@ let load_ui = function(name) {
   // )
   // let html = parseVal([], api, schema);
   // this.loadHtml('output', {}, html);
-
-  }.bind(this))
 
 }
 

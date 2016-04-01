@@ -34,14 +34,6 @@ export let TableComp = ng2comp({
     // cols$: Observable<Array<any>>;
     // rows$: Observable<Array<any>>;
 
-    constructor() {
-      this.combInputs = () => combine((path, val, schema) => {
-        this.cols = this.col_keys.map(k => getPaths(path.concat(k))); //skip on schema change
-        let fixed = get_fixed(schema, val); //skip on path change
-        this.rows = rowPars(this.col_keys, path, val, schema, fixed, this.patts);
-      }, { schema: true })(this.path, this.val, this.schema);
-    }
-
     get path() { return this._path; }
     set path(x) {
       if(_.isUndefined(x)) return;
@@ -69,6 +61,12 @@ export let TableComp = ng2comp({
       this.patts = get_patts(x);
       this.combInputs();
     }
+
+    combInputs = () => combine((path, val, schema) => {
+      this.cols = this.col_keys.map(k => getPaths(path.concat(k))); //skip on schema change
+      let fixed = get_fixed(schema, val); //skip on path change
+      this.rows = rowPars(this.col_keys, path, val, schema, fixed, this.patts);
+    }, { schema: true })(this.path, this.val, this.schema);
 
     // // set and filter() for data/filters, sort() for rest
     // set data(v) {

@@ -10,7 +10,6 @@ export let FormComp = ng2comp({
     component: {
     selector: 'input-form',
     inputs: ['inputs', 'desc'],  // {path, spec}?
-    outputs: ['submit'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./input-form.jade'),
     directives: [
@@ -25,14 +24,13 @@ export let FormComp = ng2comp({
   class: class FormComp {
     // type: Observable<string>;
     // form: ControlGroup;
+    @Output() submit = new EventEmitter(false);
+    // ^ handle with `<input-form (submit)="callback()"></input-form>`
 
     constructor(builder) {
       this.builder = builder;
       this.items = [];
       this.form = this.builder.group({});
-
-      this.submit = new EventEmitter(false);    // @Output()
-      // ^ handle with `<input-form (submit)="callback()"></input-form>`
     }
 
     set inputs(x) {

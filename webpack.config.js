@@ -3,24 +3,28 @@
 // https://github.com/angular-class/angular2-webpack-starter/blob/master/webpack.config.js
 var path = require('path');
 var webpack = require('webpack');
-// var babelSettings = {
-// 	cacheDirectory: true,
-// 	"presets": [
-// 		"es2015", // used for 'import'
-// 		// "stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
-// 		// "stage-0", // used for: async/await
-// 	],
-// 	// "plugins": [
-// 	// 	"syntax-async-functions", // async/await
-// 	// 	"transform-regenerator",
-// 	// 	"transform-runtime",
-// 	// 	"add-module-exports",
-// 	// 	"transform-decorators-legacy", // @
-// 	// 	"angular2-annotations",	// @Component, etc.
-// 	// 	"transform-class-properties",
-// 	// 	"transform-flow-strip-types",
-// 	// ],
-// };
+var babelSettings = {
+	cacheDirectory: true,
+	"presets": [
+		// "es2015", // used for 'import'; sweetjs already does this conversion
+		"stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
+		"stage-0", // used for: async/await
+	],
+	"plugins": [
+		"syntax-async-functions", // async/await
+		"transform-regenerator",
+		"transform-runtime",
+		"add-module-exports",
+		"transform-decorators-legacy", // @
+		"angular2-annotations",	// @Component, etc.
+		"transform-class-properties",
+		"transform-flow-strip-types",
+	],
+};
+
+function q(loader, query) {
+  return loader + "?" + JSON.stringify(query);
+}
 
 module.exports = {
 	context: path.join(__dirname, 'app'),
@@ -39,17 +43,35 @@ module.exports = {
   devtool: 'eval', //'source-map',
 	module: {
 		loaders: [
-			// {
-			// 	test: /\.ts$/,
-			// 	loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
-			// },
+			{
+				test: /\.ts$/,
+				// loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
+				loaders: [
+					q('sweetjs', {
+						modules: [
+							path.join(__dirname, './macros.js')
+						],
+					}),
+					q('babel', babelSettings),
+					q('ts', {}),
+				],
+			},
 			{
 				test: /\.js$/,
 				include: [ path.resolve(__dirname, "app"), ],
 				//exclude: [ path.resolve(__dirname, "node_modules"), ],
 				// loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
-				loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js'),	//,readers[]=reader-mod
-				//^ !sweetjs?modules[]=./macros.sjs,readers[]=reader-mod
+				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js'),	//,readers[]=reader-mod
+				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js') + '!babel?' + JSON.stringify(babelSettings),
+				loaders: [
+					q('sweetjs', {
+						modules: [
+							path.join(__dirname, './macros.js')
+						],
+					}),
+					q('babel', babelSettings),
+					// q('ts', {}),		// no point, TSC won't even load JS files?
+				],
 			},
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },

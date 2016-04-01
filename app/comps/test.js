@@ -30,11 +30,11 @@ let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}) => {
 
 // asynchronously create and test a component
 // let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
-let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
-  return tcb.createAsync(test_class).then((fixture) => {
-// let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
-//   try {
-//     let fixture = await tcb.createAsync(test_class);
+// let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
+//   return tcb.createAsync(test_class).then((fixture) => {
+let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
+  try {
+    let fixture = await tcb.createAsync(test_class);
     fixture.detectChanges();
     let test_cmp = fixture.componentInstance;
     let target_comp = test_cmp.comp;
@@ -45,11 +45,11 @@ let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => 
     fixture.detectChanges();
     let native_el = fixture.debugElement.childNodes[0].nativeElement;
     test_fn(done, target_comp, native_el);
-  }).catch(done.fail);
-  // }
-  // catch(e) {
-  //   done.fail(e);
-  // }
+  // }).catch(done.fail);
+  }
+  catch(e) {
+    done.fail(e);
+  }
 }
 
 // test_fn for comp_test to check a property value
