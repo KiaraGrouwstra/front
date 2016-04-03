@@ -14,6 +14,9 @@ let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 // wrap into lodash like here?
 // https://github.com/jonahkagan/schematic-ipsum/blob/master/src/underscoreExt.coffee
 let arr2obj = (arr, fn) => _.zipObject(arr, arr.map(fn));
+// let arr2obj = (arr, fn) => _.fromPairs(arr.map(k => [k, fn(k)]));
+
+let arr2map = (arr, fn) => arr.reduce((map, k) => map.set(k, fn(k)), new Map());
 
 let do_return = (fn) => (v) => {
   fn(v);
@@ -30,7 +33,7 @@ let handle_auth = (url, fn) => {
   let url_bit = (url, part) => {
     let par_str = url[part].substring(1);
     let params = decodeURIComponent(par_str).split('&');
-    return arr2obj(params, λ.split('='));
+    return arr2obj(params, y => y.split('='));
   }
   let url_get_hash = (url) => ['search', 'hash'].map(x => url_bit(url, x))
   let [get, hash] = url_get_hash(url)
@@ -94,7 +97,8 @@ let getKV = (k) => new Promise((resolve, reject) => {
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
 let mapBoth = (obj, fn) => {
   let keys = Object.keys(obj)
-  return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
+  // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
+  return arr2obj(keys, k => fn(obj[k], k));
 }
 
 // pretty print a json object
@@ -198,4 +202,4 @@ let method_pars = (spec, fn_path) => {
 // - functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js)
 // - [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
 
-export { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, mapBoth, prettyPrint, id_cleanse, typed, fallback, try_log, ng2comp, combine, method_pars, input_specs };
+export { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, prettyPrint, id_cleanse, typed, fallback, try_log, ng2comp, combine, method_pars, input_specs };

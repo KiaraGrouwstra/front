@@ -22,7 +22,7 @@ describe('Rx Helpers', () => {
   var obs, flat;
 
   beforeEach(() => {
-    // obs = http.get(`api/people.json`).map(λ.json())
+    // obs = http.get(`api/people.json`).map(y => y.json())
     obs = Observable.from([people])
     flat = obs.mergeMap((x,i) => x);
   })

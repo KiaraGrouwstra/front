@@ -23,7 +23,7 @@ describe('ULComp', () => {
 
   // it('should work',
   //   test(comp, assert(
-  //     c => expect(c.rows.map(λ.val)).toEqual(['foo','bar','baz'])
+  //     c => expect(c.rows.map(y => y.val)).toEqual(['foo','bar','baz'])
   // )));
 
   // it('should test', () => {

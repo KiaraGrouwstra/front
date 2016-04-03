@@ -1,4 +1,4 @@
-describe('macros', () => {
+xdescribe('macros', () => {
 
   let sweet = require('sweet.js/dist/sweet');
   let macros = require('!raw!../macros.js');
@@ -32,6 +32,11 @@ describe('macros', () => {
       expect(Φ[1, 2, 3]).toEqual(Immutable.fromJS([1, 2, 3]));
     })
   })
+
+  it('should not transpile in errors', testMacro(
+    `new ns.cls()`,
+    `new ns.cls()`
+  ))
 
   // describe('', () => {
   //   it('transpiles', testMacro(

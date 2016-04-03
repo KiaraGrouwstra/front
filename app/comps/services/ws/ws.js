@@ -56,8 +56,8 @@ export class WS {
     let id = this.id++;
     this.chan.push(url, {body: pars, id: id});
     return this.out
-      .filter(λ.id == id)
-      .map(λ.body);
+      .filter(y => y.id == id)
+      .map(y => y.body);
   }
   // ^ the server doesn't currently send complete events. Rx operators definitely affected by this:
   // Last, SkipLast, TakeLast, To(Array/Map/Set), Sum, Reduce, Min, Max, Count, Concat, IgnoreElements

@@ -9,6 +9,7 @@ syntax λ = function (ctx) {
 }
 
 // ImmutableJS wrapper; Φ (phi) stands for Facebook, who made Immutable.
+// [ES proposal](https://github.com/sebmarkbage/ecmascript-immutable-data-structures)
 syntax Φ = function (ctx) {
   let x = ctx.next().value;
   // if(x.isBrackets() || x.isBraces())

@@ -36,6 +36,31 @@
 // }
 
 // // Error: Only methods are allowed in classes
+// syntax getter = function (ctx) {
+//   let nxt = ctx.next().value;
+//   if(!nxt.isParens()) throw new Error('names go in parent!');
+//   let inner = nxt.inner();
+//   var result;
+//   let name = inner.next();  // inner[0]?
+//   if(inner.length == 1) {
+//     // can't I infer a good default from the variable's type annotation?
+//     result = #`
+//     get ${stx}() {
+//       return this._${stx};
+//     }`;
+//   } else {
+//     if(!inner.next().isPunctuator(',')) throw new Error('expected comma!');
+//     let def = inner.next();
+//     result = #`
+//     get ${stx}() {
+//       let x = this._${stx};
+//       if(typeof x == 'undefined') x = this.${stx} = ${def};
+//       return x;
+//     }`;
+//   }
+// }
+// getter(foo, 1)
+//
 // syntax getters = function (ctx) {
 //   console.log('TRYING GETTERS');
 //   let nxt = ctx.next().value;
@@ -44,7 +69,7 @@
 //   let result = #``;
 //   for (let stx of inner) {
 //     if (stx.isIdentifier()) {
-//       result = result.concat(#`get ${stx}(x) { this._${stx} = x; }`);
+//       result = result.concat(#`getter (${stx})`);
 //     } else if (stx.isPunctuator()) {
 //       // next...
 //     } else {

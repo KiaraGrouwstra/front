@@ -44,7 +44,7 @@ describe('Scalar', () => {
 
   // it('should fail', test(
   //   cls(pars, {}),
-  //   assert$(λ.html, λ.toEqual('<em>bar</em>'))
+  //   assert$(y => y.html, y => y.toEqual('<em>bar</em>'))
   // ));
 
 });

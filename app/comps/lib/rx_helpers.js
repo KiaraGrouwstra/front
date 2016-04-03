@@ -34,8 +34,8 @@ let Obs_combLast = (arr) => arr.reduce((obj_obs, v, idx) => {
       obj_obs.map(obs => combiner(obs, v));
 	},
   new BehaviorSubject({})
-// ).map(r => Object.values(r))
-).map(r => Object.keys(r).map(k => r[k]))
+).map(r => Object.values(r))
+// ).map(r => Object.keys(r).map(k => r[k]))
 
 // maps the latest values of a set of Observables to a lambda
 let mapComb = (arr, fn) => Obs_combLast(arr).map(r => fn(...r));

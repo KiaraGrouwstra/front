@@ -1,4 +1,5 @@
-import { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, mapBoth, id_cleanse, typed, fallback, ng2comp, combine } from './js';
+let _ = require('lodash/fp');
+import { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine } from './js';
 
 describe('js', () => {
 
@@ -18,7 +19,7 @@ describe('js', () => {
   // })
 
   it('Object_filter allows filtering an object by values', () => {
-    expect(Object_filter({a: 1, b: 2}, (v) => v > 1)).toEqual({b: 2})
+    expect(Object_filter({a: 1, b: 2}, y => y > 1)).toEqual({b: 2})
   })
 
   it('RegExp_escape escapes regex characters with backslashes', () => {
@@ -26,7 +27,11 @@ describe('js', () => {
   })
 
   it('arr2obj maps an array to an object', () => {
-    expect(arr2obj([1,2,3], x => 2 * x)).toEqual({ 1: 2, 2: 4, 3: 6 })
+    expect(arr2obj([1,2,3], y => y * 2)).toEqual({ 1: 2, 2: 4, 3: 6 })
+  })
+
+  it('arr2map maps an array to a Map', () => {
+    expect(_.fromPairs(arr2map([1,2,3], y => y * 2).toJSON())).toEqual({ 1: 2, 2: 4, 3: 6 })
   })
 
   it('handle_auth extracts get/hash params and triggers a callback for ?callback=<name> urls', () => {
@@ -72,7 +77,7 @@ describe('js', () => {
   describe('typed', () => {
 
     it('strLen', () => {
-      let strLen = λ.length;
+      let strLen = y => y.length;
       expect(strLen ('lol')).toEqual(3);
       expect(strLen (123)).toEqual(undefined);
       let strLen_ = typed([String], Number, strLen);

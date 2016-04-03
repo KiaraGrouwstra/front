@@ -6,7 +6,7 @@ var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
 	"presets": [
-		// "es2015", // used for 'import'; sweetjs already does this conversion
+		"es2015", // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports 
 		"stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
 		"stage-0", // used for: async/await
 	],
@@ -64,11 +64,11 @@ module.exports = {
 				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js'),	//,readers[]=reader-mod
 				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js') + '!babel?' + JSON.stringify(babelSettings),
 				loaders: [
-					q('sweetjs', {
-						modules: [
-							path.join(__dirname, './macros.js')
-						],
-					}),
+					// q('sweetjs', {
+					// 	modules: [
+					// 		path.join(__dirname, './macros.js')
+					// 	],
+					// }),
 					q('babel', babelSettings),
 					// q('ts', {}),		// no point, TSC won't even load JS files?
 				],
@@ -84,18 +84,18 @@ module.exports = {
 			{ test: /\.(jpe?g|png)$/, loader: 'url?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
 			{ test: /\.(gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: 'file' }
 		],
-		postLoaders: [
-      // instrument only testing sources with Istanbul
-      {
-        test: /\.[tj]s$/,
-        include: path.join(__dirname, 'app'),
-        loader: 'babel-istanbul-loader',	//istanbul-instrumenter-loader
-        exclude: [
-          /\.(e2e|spec)\.[tj]s$/,
-          /node_modules/
-        ]
-      },
-    ],
+		// postLoaders: [
+    //   // instrument only testing sources with Istanbul
+    //   {
+    //     test: /\.[tj]s$/,
+    //     include: path.join(__dirname, 'app'),
+    //     loader: 'babel-istanbul-loader',	//istanbul-instrumenter-loader
+    //     exclude: [
+    //       /\.(e2e|spec)\.[tj]s$/,
+    //       /node_modules/
+    //     ]
+    //   },
+    // ],
 	},
 	resolve: {
 		extensions: [

@@ -1,32 +1,52 @@
 //- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
+include ./svg-icons.jade
 .card
   .card-content
     span.card-title(*ngIf='named') {{k}}
     table.bordered.highlight(id=`{{id}}`)
       thead
+        //- https://github.com/angular/angular/issues/2451
+        //- *ngFor=`#col of cols`
+        //- ; #col = cols[name]
+        //- *assign-local=`#col to cols[name]`
+        //- *assignLocal=`#isDesc to sortColsDesc[name]`
         th.tbl-hdr.waves-effect(
-          *ngFor=`#col of cols`
-          id=`{{col.id}}`
-          '[class.sort]'=`sortCol == col`
-          '[class.asc]'=`sortCol == col && sortAsc`
-          '[class.desc]'=`sortCol == col && !sortAsc`
-          '(click)'=`sortClick(col)`
+          *ngFor=`#name of colOrder; #idx = index`
+          id=`{{cols[name].id}}`
+          '[class.sort]'=`sortedCols.includes(name)`
+          '[class.asc]'=`sortColsDesc[name] == false`
+          '[class.desc]'=`sortColsDesc[name]`
+          '[ngClass]'=`{ 'waves-red': idx % 6 == 0, 'waves-orange': idx % 6 == 1, 'waves-yellow': idx % 6 == 2, 'waves-green': idx % 6 == 3, 'waves-teal': idx % 6 == 4, 'waves-purple': idx % 6 == 5 }`
+          '(click)'=`sortClick(name)`
         )
-          | {{col.k}}
-          svg(xmlns='http://www.w3.org/2000/svg', viewbox='0 0 24 24', width='24', height='24')
-            path(d='M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z')
+          | {{cols[name].k}}
+          svg.icon.current(width='24', height='24')
+            use(xlink:href='#arrow')
+          svg.icon.desired(width='24', height='24')
+            use(xlink:href='#arrow')
       tbody
+        //- *ngFor=`#r of rows`
         tr(
-          *ngFor=`#r of rows`
+          *ngFor=`#r of data`
           id=`{{r.id}}`
         )
-          //- rearrange as objects with *ngFor=`#col of cols` -> #cell=`r[col]`?
+          //- *ngFor=`#c of r.cells`
+          //- ; #c = r.cells[name]
           td(
-            *ngFor=`#c of r.cells`
-            id=`{{c.id}}`
+            *ngFor=`#name of colOrder`
+            id=`{{r.cells[name].id}}`
           )
             value(
-              '[path]'=`c.path`
-              '[val]'=`c.val`
-              '[schema]'=`c.schema`
+              '[path]'=`r.cells[name].path`
+              '[val]'=`r.cells[name].val`
+              '[schema]'=`r.cells[name].schema`
             )
+          //- td(
+          //-   *ngFor=`#name of colOrder; #c = r.cells.get(name)`
+          //-   id=`{{r.cells[name].id}}`
+          //- )
+          //-   value(
+          //-     '[path]'=`c.path`
+          //-     '[val]'=`c.val`
+          //-     '[schema]'=`c.schema`
+          //-   )

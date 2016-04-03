@@ -36,7 +36,7 @@ export let InputTableComp = ng2comp({
     }
 
     remove(item) {
-      let idx = _.findIndex(λ == item)(Array.from(this.items));
+      let idx = _.findIndex(y => y == item)(Array.from(this.items));
       this.ctrl.removeAt(idx);
       this.items.delete(item);
     }

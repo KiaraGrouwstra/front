@@ -2,6 +2,15 @@ require('./styles');
 import 'babel-core/register';
 import 'babel-polyfill';
 
+// https://github.com/angular/angular/issues/5169
+"format register";
+interface System {
+  register: Function
+}
+System.register("angular2/src/core/change_detection/pipe_lifecycle_reflector", [], true, function(require, exports, module) {
+  exports.implementsOnDestroy = (pipe) => pipe ? pipe.constructor.prototype.ngOnDestroy : false
+})
+
 import 'angular2/bundles/angular2-polyfills.js';
 import { bootstrap } from 'angular2/platform/browser';
 // // <script src="node_modules/angular2/bundles/router.dev.js"></script>
@@ -26,6 +35,7 @@ window.$ = window.jQuery = require('jquery');
 require('materialize-css/dist/js/materialize');
 (function($){
   $(function(){
+    Waves.displayEffect();
     $('.button-collapse').sideNav();
     $('.collapsible').collapsible({});
     $('.tooltipped').tooltip({delay: 50});
