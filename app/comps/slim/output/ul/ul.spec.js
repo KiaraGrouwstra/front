@@ -6,8 +6,8 @@ let cls = test_comp('myul', ULComp);
 let path = ['test'];
 let val = ['foo', 'bar', 'baz'];
 let pars = {
-  path: path,
-  val: val,
+  path,
+  val,
   schema: {},
 };
 // let comp = test_comp('myul', ULComp, pars, { named: true });

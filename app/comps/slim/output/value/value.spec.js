@@ -12,7 +12,7 @@ let arr = [ 'foo', 'bar', 'baz' ];
 let obj = { a: 1, b: 2 };
 let table = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
 let obs_pars = {
-  path: path,
+  path,
   val: null,
   schema: {},
 };

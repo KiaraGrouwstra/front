@@ -47,13 +47,13 @@ export let AuthUiComp = ng2comp({
     onSubmit() {
       // let delim = _.get(['scope_delimiter'], this.oauth_misc) || ' ';
       let scope = this.scopes.filter(s => this.want_scope[s]).join(this.delim);
-      //let redirect_uri = `http://127.0.0.1:8090/callback/${this.name}/?` + global.$.param({scope: scope});
-      let redirect_uri = `http://127.0.0.1:8090/?` + global.$.param({scope: scope, callback: this.name});
+      //let redirect_uri = `http://127.0.0.1:8090/callback/${this.name}/?` + global.$.param({scope});
+      let redirect_uri = `http://127.0.0.1:8090/?` + global.$.param({scope, callback: this.name});
       let url = this.oauth_info.authorizationUrl + '?' + global.$.param({
-        scope: scope,
+        scope,
         //state: 'abc',
         response_type: 'token',
-        redirect_uri: redirect_uri,
+        redirect_uri,
         client_id: 'a974ee2962104288a9915d20e76dec5c',
       });
       // this.loading = true;

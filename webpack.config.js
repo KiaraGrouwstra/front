@@ -6,7 +6,8 @@ var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
 	"presets": [
-		"es2015", // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports 
+		"es2015", // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
+		"stage-2",	// does this add something?
 		"stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
 		"stage-0", // used for: async/await
 	],

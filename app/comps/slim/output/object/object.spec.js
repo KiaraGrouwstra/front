@@ -10,7 +10,7 @@ let cls = test_comp('object', ObjectComp);
 let path = ['test'];
 let obj = { one: 1, two: 2 };
 let obs_pars = {
-  path: path,
+  path,
   val: obj,
   schema: {},
 };

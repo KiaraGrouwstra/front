@@ -19,10 +19,10 @@ let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "item
 let ctrl = input_control(spec);
 let named = false;
 let pars = {
-  path: path,
-  spec: spec,
-  ctrl: ctrl,
-  named: named,
+  path,
+  spec,
+  ctrl,
+  named,
 };
 
 describe('InputArrayComp', () => {

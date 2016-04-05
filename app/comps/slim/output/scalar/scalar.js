@@ -7,7 +7,7 @@ let inputs = ['path', 'val', 'schema'];
 export let ScalarComp = ng2comp({
   component: {
     selector: 'scalar',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<div [innerHtml]='html'></div>`,
     // template: `<template [innerHtml]='html'></template>`,

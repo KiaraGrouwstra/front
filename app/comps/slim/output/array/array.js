@@ -10,7 +10,7 @@ let inputs = ['path', 'val', 'schema', 'named'];
 export let ArrayComp = ng2comp({
   component: {
     selector: 'array',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./array.jade'),
     directives: [CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,

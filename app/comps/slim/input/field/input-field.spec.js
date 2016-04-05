@@ -17,11 +17,11 @@ let ctrl = input_control(spec);
 let named = true;
 // let name = 'foo';
 let pars = {
-  path: path,
-  spec: spec,
-  ctrl: ctrl,
-  named: named,
-  // name: name,
+  path,
+  spec,
+  ctrl,
+  named,
+  // name,
 };
 let req = 'This field is required.';
 

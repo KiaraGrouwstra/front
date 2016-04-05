@@ -18,11 +18,11 @@ let scalar = {
 };
 let array = { "type": "array", "items": scalar };
 let pars = (spec) => ({
-  path: path,
-  spec: spec,
-  named: named,
+  path,
+  spec,
+  named,
   ctrl: input_control(spec),
-  // name: name,
+  // name,
 });
 let req = 'This field is required.';
 

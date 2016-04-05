@@ -66,7 +66,7 @@ export let InputUiComp = ng2comp({
       //   (['application/x-www-form-urlencoded', 'multipart/form-data']))
       //     throw "consider adding a form-appropriate header!";
       let verb = 'GET';
-      let req = { urls: url, headers: p_header, verb: verb, body: body };
+      let req = { urls: url, headers: p_header, verb, body };
       this.handler.emit(req);
       // return url;
 

@@ -10,7 +10,7 @@ let inputs = ['path', 'val', 'schema', 'named'];
 export let ObjectComp = ng2comp({
   component: {
     selector: 'object',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./object.jade'),
     directives: [

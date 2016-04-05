@@ -11,7 +11,7 @@ let inputs = ['path', 'val', 'schema', 'named'];
 export let ULComp = ng2comp({
   component: {
     selector: 'myul',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./ul.jade'),
     directives: [

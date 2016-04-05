@@ -17,11 +17,11 @@ let spec = {
 let ctrl = input_control(spec);
 let attrs = input_attrs(path, spec);
 let pars = {
-  // path: path,
-  // spec: spec,
-  ctrl: ctrl,
-  attrs: attrs,
-  // name: name,
+  // path,
+  // spec,
+  ctrl,
+  attrs,
+  // name,
 };
 
 describe('InputComp', () => {

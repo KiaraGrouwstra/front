@@ -42,7 +42,7 @@ let get_template = (opts) => _.get([opts.type], {
 }) || 'input'
 
 let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path, spec), val_msgs = get_validators(spec).val_msgs
-  attrs: attrs,
+  attrs,
   type: spec.type,
   enum_opts: spec.enum,
   id: attrs.id,
@@ -63,7 +63,7 @@ function input_control(spec = {}, validator) {
       new ControlList(input_control(spec.items));
     case 'object':  // not native Swagger
       let pattern = '[\\w_][\\w_\\d]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
-      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern: pattern});
+      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern});
       return new ControlObject(new ControlGroup({name: ctrl, val: input_control(spec.additionalProperties)}));
     default:
       let def = spec.default;
@@ -114,13 +114,13 @@ let input_attrs = (path, spec) => {
     multipleOf = 1,
   } = spec;
   desc = marked(desc || '') //.stripOuter();
-  let { id } = getPaths(path);  //, k: k, model: elvis, variable: variable
+  let { id } = getPaths(path);  //, k, variable, model: elvis
   let key = name;  // variable
   let model = `form.controls.${key}`;
   let attrs = {
     '[(ngModel)]': `${model}.value`,
     ngControl: key,
-    id: id,
+    id,
     required: req,
   };
   // if(desc) attrs.placeholder = description;
@@ -154,19 +154,19 @@ let input_attrs = (path, spec) => {
     string: {
       maxlength: maxLength,
       minlength: minLength,
-      pattern: pattern,
+      pattern,
       // title: 'title test', //used in browser's native (ugly) tooltip and 'required' popup. what of ng-aria?
       'data-tooltip': desc,
       autocomplete: AUTO_COMP.includes(name) ? name : 'on', //off
     },
     number: {
-      max: max,
-      min: min,
+      max,
+      min,
       step: multipleOf,
     },
     integer: {
-      max: max,
-      min: min,
+      max,
+      min,
       step: multipleOf || 1,
     },
   }
@@ -189,7 +189,7 @@ let get_validators = (spec) => {
   let validators = used_vals.map(k => Validators[k](spec[k]));
   let validator = Validators.compose(validators);
   let val_msgs = arr2obj(used_vals, k => val_errors[k](spec[k]));
-  return { validator: validator, val_msgs: val_msgs };
+  return { validator, val_msgs };
 }
 
 let val_conds = {

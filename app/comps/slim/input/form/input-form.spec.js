@@ -20,11 +20,11 @@ let inputs = [
   { path: ['bar'], spec: scalar_spec },
 ];
 let obs_pars = {
-  inputs: inputs,
+  inputs,
 };
 let pars = {
-  // inputs: inputs,
-  desc: desc,
+  // inputs,
+  desc,
 };
 let arr_spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
 let arr_inputs = [

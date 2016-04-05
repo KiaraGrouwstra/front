@@ -13,7 +13,7 @@ let inputs = ['path', 'val', 'schema', 'named'];
 export let ValueComp = ng2comp({
   component: {
     selector: 'value',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./value.jade'),
     // template: `<router-outlet></router-outlet>`,

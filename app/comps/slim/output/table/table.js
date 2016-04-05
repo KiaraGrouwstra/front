@@ -15,7 +15,7 @@ let inputs = ['schema', 'path', 'val', 'named', 'colOrder', 'sortColsDesc', 'fil
 export let TableComp = ng2comp({
   component: {
     selector: 'mytable',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./table.jade'),
     directives: [
@@ -205,5 +205,5 @@ let rowPars = (col_keys, path, val, schema, fixed, patts) => val.map((rw, idx) =
     val: rw[col],
     schema: key_spec(col, schema, fixed, patts),
   }));
-  return { id: id, cells: cells };
+  return { id, cells };
 });

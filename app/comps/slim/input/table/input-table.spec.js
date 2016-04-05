@@ -18,12 +18,7 @@ let scalar = {
 let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
 let ctrl = input_control(spec);
 let named = false;
-let pars = {
-  path: path,
-  spec: spec,
-  ctrl: ctrl,
-  named: named,
-};
+let pars = { path, spec, ctrl, named };
 
 describe('InputTableComp', () => {
   // let builder: TestComponentBuilder;

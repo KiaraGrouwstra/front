@@ -18,12 +18,7 @@ let scalar = {
 let spec = {type: "object", additionalProperties: scalar };
 let ctrl = input_control(spec);
 let named = false;
-let pars = {
-  path: path,
-  spec: spec,
-  ctrl: ctrl,
-  named: named,
-};
+let pars = { path, spec, ctrl, named };
 
 describe('InputObjectComp', () => {
   // let builder: TestComponentBuilder;

@@ -192,7 +192,7 @@ let method_pars = (spec, fn_path) => {
   let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let input_pars = [scheme].concat((_.get(hops, spec) || []).map(input_specs(path)));
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
-  return { pars: input_pars, desc: desc };
+  return { pars: input_pars, desc };
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

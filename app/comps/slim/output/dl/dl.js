@@ -9,7 +9,7 @@ let inputs = ['path', 'val']; //, 'schema'
 export let DLComp = ng2comp({
   component: {
     selector: 'mydl',
-    inputs: inputs,
+    inputs,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./dl.jade'),
     directives: [

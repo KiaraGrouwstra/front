@@ -9,8 +9,8 @@ let cls = test_comp('array', ArrayComp);
 let path = ['test'];
 let val = ['foo', 'bar', 'baz'];
 let obs_pars = {
-  path: path,
-  val: val,
+  path,
+  val,
   schema: {},
 };
 let nest_pars = Object.assign({}, obs_pars, { val: [1, [2, 3], 4] });

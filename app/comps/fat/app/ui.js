@@ -120,7 +120,7 @@ let doCurl = submit_req(function(v) {
     /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
   ));
   let n = Object.keys(headers).length + 2;  // current server implementation 'try without each + all/none'
-  return this.ws.ask("/check", {urls: url, headers: headers}, n).scan(elemToArr, []);
+  return this.ws.ask("/check", {urls: url, headers}, n).scan(elemToArr, []);
   // `CURL command` //: ${v.curl}
   // `CURL reply received`
 });

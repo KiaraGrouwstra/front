@@ -7,8 +7,8 @@ let cls = test_comp('mytable', TableComp);
 let path = ['test'];
 let val = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
 let obs_pars = {
-  path: path,
-  val: val,
+  path,
+  val,
   schema: {},
 };
 let flat = Object.keys(val[0]).concat(_.flatten(val.map(row => Object.keys(row).map(k => row[k])))).join('');

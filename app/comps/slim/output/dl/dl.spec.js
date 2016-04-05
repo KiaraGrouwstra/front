@@ -7,7 +7,7 @@ let cls = test_comp('mydl', DLComp);
 let path = ['test'];
 let obj = { one: 1, two: 2 };
 let pars = {
-  path: path,
+  path,
   val: Object.keys(obj).map((k) => ({
     path: path.concat(k),
     val: obj[k],
