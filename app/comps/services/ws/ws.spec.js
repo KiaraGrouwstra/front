@@ -1,8 +1,8 @@
 import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from "angular2/testing";
 import { WS } from './ws';
-import { Observable } from '@reactivex/rxjs';
+import { Subject } from 'rxjs';
 
-describe('WebSocket', () => {
+fdescribe('WebSocket', () => {
   var ws;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('WebSocket', () => {
   })
 
   it('should expose an Observable', () => {
-    expect(ws.out).toBeAnInstanceOf(Observable)
+    expect(ws.out).toBeAnInstanceOf(Subject)
   })
 
   it('should allow making requests', () => {

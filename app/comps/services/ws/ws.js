@@ -1,60 +1,33 @@
 var Phoenix = require('phoenix-js-derp');
-import { Observable } from '@reactivex/rxjs';
-// import { autobind } from 'core-decorators';
-// import { addUrl, parsley, toCurl } from './requests';
+import { Subject, BehaviorSubject } from 'rxjs';
 
-// @autobind
 export class WS {
-//   requests: {};
-//   id: number;
-//   ws: any;  //Phoenix.Socket
-//   chan: any;  //Phoenix.Channel
-//   _out: Observable<any>;
-//   connected: boolean;
+  requests = {};
+  id: number = 0;
+  connected$ = new BehaviorSubject(false);
+  // ws: any;  //Phoenix.Socket
+  // chan: any;  //Phoenix.Channel
+  out = new Subject();
 
-  constructor(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", onOpen = () => {}, onClose = () => {}) {
-  //constructor({ url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", onOpen = () => {}, onClose = () => {} }) {
-    this.requests = {};
-    this.id = 0;
-    let logger = ((kind, msg, data) => {}); // console.log(`${kind}: ${msg}`, data)
-    // this.ws = new Phoenix.Socket(url, {logger: logger});
+  constructor(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby") {
+    let logger = (kind, msg, data) => {}; // console.log(`${kind}: ${msg}`, data)
+    // this.ws = new Phoenix.Socket(url, {logger});
     let Socket = Phoenix.Socket;
-    this.ws = new Socket(url, {logger: logger});
+    this.ws = new Socket(url, {logger});
     this.ws.connect({});
+    this.ws.onOpen(() => this.connected$.next(true));
+    this.ws.onClose(() => this.connected$.next(false));
     this.chan = this.ws.channel(chan_name, {user: "tycho"});
     this.chan.join();
-    this.ws.onOpen(() => {
-      this.connected = true;
-      onOpen();
-    });
-    this.ws.onClose(() => {
-      this.connected = false;
-      onClose();
-    });
-  }
-
-  // taken from https://github.com/robwormald/aim/, example at TickerService.ts (also exposed `in` Observer).
-  // should soon be made into a RxJS 5 compatible Subject at https://github.com/blesh/RxSocketSubject/
-  get out() {   //: Observable<any>
-    if(!this._out) {
-      this._out = Observable.create(sub => {
-        let chan = this.chan;
-        chan.onClose(() => sub.complete());
-        chan.onError(e => sub.error(e));
-		    chan.on("msg", e => sub.next(e));
-        //return () => {
-        //  chan.leave();
-        //  this._out = null;
-        //};
-      }).share();
-    }
-    return this._out;
+    this.chan.onClose(() => this.out.complete());
+    this.chan.onError(e => this.out.error(e));
+    this.chan.on("msg", e => this.out.next(e));
   }
 
   //url: string, pars: {}
   ask_many(url, pars = {}) {
     let id = this.id++;
-    this.chan.push(url, {body: pars, id: id});
+    this.chan.push(url, {body: pars, id});
     return this.out
       .filter(y => y.id == id)
       .map(y => y.body);
@@ -71,10 +44,6 @@ export class WS {
   }
 
   // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security` or by making this into an extension?
-
-  // addUrl = addUrl;
-  // parsley = parsley;
-  // toCurl = toCurl;
 
 }
 

@@ -18,8 +18,10 @@
       
   //- data-error='wrong'
   //- data-success='right'
-  label.active(
+  //- .active
+  label(
     *ngIf=`named`
+    '[ngClass]'=`{ 'active': attrs.default }`
     '[attr.for]'=`id`
     '[innerHtml]'=`label`
   )

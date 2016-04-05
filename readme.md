@@ -1,6 +1,5 @@
 npm-windows-upgrade
 npm i <pkg> --save
-npm i angular2@latest --save
 npm i angular2@2.0.0-alpha.45 --save
 npm update
 
@@ -11,10 +10,9 @@ tsd update
 - patch `babel-plugin-transform-runtime/lib/definitions.js`: comment `defineProperty: "object/define-property"`
 - patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
 - patch karma-jasmine: make lib/adapter.js using /src/ version wrapped in wrapper: https://github.com/karma-runner/karma-jasmine/blob/master/tasks/build.js
-- patch [angular2/src/core/change_detection/pipe_lifecycle_reflector.ts](https://github.com/angular/angular/issues/5169)
-- patch [toHaveText](https://github.com/angular/angular/blob/master/modules/angular2/src/testing/matchers.ts#L159-L169):
-  - `var show = function(str) { return JSON.stringify(str.split('').map(x => x.charCodeAt(0))); }`
-  - `get message() { return 'Expected ' + actualText + ' ' + show(actualText) + ' to be equal to ' + expectedText + ' ' + show(expectedText); }`
+//- patch [toHaveText](https://github.com/angular/angular/blob/master/modules/angular2/src/testing/matchers.ts#L159-L169):
+//  - `var show = function(str) { return JSON.stringify(str.split('').map(x => x.charCodeAt(0))); }`
+//  - `get message() { return 'Expected ' + actualText + ' ' + show(actualText) + ' to be equal to ' + expectedText + ' ' + show(expectedText); }`
 - copy over materialize.css as .less, cuz Less never realized you might wanna import css from a Sass project.
 
 ```

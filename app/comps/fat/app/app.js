@@ -31,8 +31,8 @@ export let App = ng2comp({
     selector: 'app',
     //changeDetection: ChangeDetectionStrategy.CheckAlways,
     template: require('./app.jade'),
-    directives: directives, // one instance per component   //viewDirectives: private from ng-content
-    pipes: pipes,
+    directives, // one instance per component   //viewDirectives: private from ng-content
+    pipes,
     // encapsulation: ViewEncapsulation.Native,
   },
   parameters: [ Router, Http ],
@@ -45,13 +45,12 @@ export let App = ng2comp({
   class: class App {
       //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
       constructor(router: Router, http: Http) {
-        this.deps = { router: router, http: http };
+        this.deps = { router, http };
       }
 
       ngOnInit() {
-        //this.ws = new WS(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby", () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
-        //this.ws = new WS({ onOpen: () => toast.success('websocket connected!'), onClose: () => toast.warn('websocket disconnected!') });
-        this.ws = new WS('ws://127.0.0.1:8080/socket', 'rooms:lobby', () => toast.success('websocket connected!'), () => toast.warn('websocket disconnected!'));
+        this.ws = new WS('ws://127.0.0.1:8080/socket', 'rooms:lobby');
+        this.ws.connected$.subscribe(y => y ? toast.success('websocket connected!') : toast.warn('websocket disconnected!'));
         // global.ws = this.ws;
         global.app = this;
         this.auths = {};
@@ -129,7 +128,7 @@ export let App = ng2comp({
         let name = get.callback;
         let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
         let auth = {
-          name: name,
+          name,
           token: hash.access_token,
           scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
         };
@@ -158,5 +157,5 @@ export let App = ng2comp({
 // [child routes](https://angular.io/docs/ts/latest/guide/router.html) -> child-router, e.g. within non-root:
 // <a [routerLink]="['./Product-one']">, <a [routerLink]="['/Home']">
 // [aux routing](http://plnkr.co/edit/n0IZWh?p=preview): multiple router-outlets in one view, but still ["more trouble than it's worth"](https://github.com/angular/angular/issues/5027)
-// programmatic navigation in two router-outlets with param passing: this._router.navigate(['/', ['EditEntity'], { id: id }]);
+// programmatic navigation in two router-outlets with param passing: this._router.navigate(['/', ['EditEntity'], { id }]);
 // ... note that I'm fuzzy on the details of how that works, i.e. which routes and params would go to which router-outlets.
