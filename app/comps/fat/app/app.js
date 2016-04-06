@@ -20,6 +20,7 @@ global.Immutable = require('immutable');
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG, Config } from '../../../config';
 import { WsService } from '../../services/ws/ws';
+import { RequestService } from '../../services/request/request';
 import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp, input_specs } from '../../lib/js.js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../../comps';
@@ -39,6 +40,7 @@ export let App = ng2comp({
   parameters: [
     Router,
     Http,
+    RequestService,
     WsService,
     APP_CONFIG,
   ],
@@ -53,17 +55,19 @@ export let App = ng2comp({
       constructor(
         router: Router,
         http: Http,
+        req: RequestService,
         ws: WsService,
         config: Config,
       ) {
         this.router = router;
         this.http = http;
+        this.req = req;
         this.ws = ws;
         this.config = config;
       }
 
       ngOnInit() {
-        this.ws = new WS('ws://127.0.0.1:8080/socket', 'rooms:lobby');
+        // this.ws = new WS('ws://127.0.0.1:8080/socket', 'rooms:lobby');
         this.ws.connected$.subscribe(y => y ? toast.success('websocket connected!') : toast.warn('websocket disconnected!'));
         // global.ws = this.ws;
         global.app = this;

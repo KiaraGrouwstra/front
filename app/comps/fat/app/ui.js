@@ -3,7 +3,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 let _ = require('lodash/fp');
 import { RegExp_escape, toast, try_log } from '../../lib/js';
-import { elemToArr } from '../../lib/rx_helpers';
+// import { elemToArr } from '../../lib/rx_helpers';
 
 let load_ui = async function(name) {
   this.api = name;
@@ -70,59 +70,58 @@ let submit_req = function(fn) {
     // console.log('submit_req', v);
     // if(v.constructor == Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);
-    let obs = fn.call(this, v);
+    let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
+    toast.info(start);
     obs.subscribe(
       x => {
-        console.log('response', x);
-        // console.log('str', JSON.stringify(x));
-        // toast.info(`response received`);
-        // toast.info(x);
+        console.log(next, x);
+        // toast.info(next);
         this.data = x;
       },
       e => {
         toast.error(e);
       },
       () => {
-        toast.success(`request completed`);
+        toast.success(done);
       }
     );
     return obs; // how can I still use this?
   });
 }
 
-// // make this a RequestService between App and Socket with `this` Socket injected?
-
-// handle emit api input_ui -- addUrl(url)
+// handle emit api input_ui
 let req_url = submit_req(function(v) {
-  // return this.ws.addUrl(v.url).map(x => JSON.parse(x));
-  return this.ws.ask("/urls", v).map(x => JSON.parse(x));
-  // ^ JSON.parse is an assumption of the returned content
-  // `GET ${url}`
-  // `got ${url}`
+  return {
+    obs: this.req.addUrl(v).map(x => JSON.parse(x)),
+    // ^ JSON.parse is an assumption of the returned content
+    start: `starting fetch request`,
+    next: `GET ${url}`,
+    done: `got ${url}`,
+  };
 });
 
-// handle scrape form submit -- parsley(url, json)
+// handle scrape form submit
 let extract_url = submit_req(function(v) {
   let json = JSON.stringify(v.parselet);
-  // return this.ws.parsley(v.url, json);
-  let pars = {url: v.url, parselet: json};
-  return this.ws.ask("/parse", pars);
-  // `GET ${v.url} with extractors: ${json}`
-  // `got ${url}`
+  let { url } = v;
+  return {
+    obs: this.req.parsley(url, json),
+    start: `starting HTML extraction request`,
+    next: `GET ${url} with extractors: ${json}`,
+    done: `got ${url}`,
+  };
 });
 
-// handle curl form submit -- toCurl(str)
+// handle curl form submit
 let doCurl = submit_req(function(v) {
-  let str = v.curl;
-  let found = str.match(/-H '([^']+)'/g);
-  let url = /'[^']+(?=')/.exec(str)[0].substr(1);
-  let headers = _.fromPairs(found.map(x =>
-    /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
-  ));
-  let n = Object.keys(headers).length + 2;  // current server implementation 'try without each + all/none'
-  return this.ws.ask("/check", {urls: url, headers}, n).scan(elemToArr, []);
-  // `CURL command` //: ${v.curl}
-  // `CURL reply received`
+  let { curl } = v;
+  return {
+    obs: this.req.toCurl(curl),
+    start: `CURL command`, //: ${curl}`
+    next: `CURL reply received`,
+    done: `CURL request finished`,
+  };
+  return this.req.toCurl(curl);
 });
 
 // mime types: http://camendesign.com/code/uth4_mime-type/mime-types.php
