@@ -1,7 +1,9 @@
 var Phoenix = require('phoenix-js-derp');
 import { Subject, BehaviorSubject } from 'rxjs';
+import { Injectable } from 'angular2/core';
 
-export class WS {
+@Injectable()
+export class WsService {
   requests = {};
   id: number = 0;
   connected$ = new BehaviorSubject(false);
@@ -9,19 +11,24 @@ export class WS {
   // chan: any;  //Phoenix.Channel
   out = new Subject();
 
-  constructor(url = "ws://127.0.0.1:8080/socket", chan_name = "rooms:lobby") {
+  constructor(url, chan_name) {
+    this.url = url;
+    this.chan_name = chan_name;
+  }
+
+  connect() {
     let logger = (kind, msg, data) => {}; // console.log(`${kind}: ${msg}`, data)
-    // this.ws = new Phoenix.Socket(url, {logger});
+    // this.ws = new Phoenix.Socket(this.url, {logger});
     let Socket = Phoenix.Socket;
-    this.ws = new Socket(url, {logger});
+    this.ws = new Socket(this.url, {logger});
     this.ws.connect({});
     this.ws.onOpen(() => this.connected$.next(true));
     this.ws.onClose(() => this.connected$.next(false));
-    this.chan = this.ws.channel(chan_name, {user: "tycho"});
+    this.chan = this.ws.channel(this.chan_name, {user: 'tycho'});
     this.chan.join();
     this.chan.onClose(() => this.out.complete());
     this.chan.onError(e => this.out.error(e));
-    this.chan.on("msg", e => this.out.next(e));
+    this.chan.on('msg', e => this.out.next(e));
   }
 
   //url: string, pars: {}
@@ -46,5 +53,3 @@ export class WS {
   // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security` or by making this into an extension?
 
 }
-
-export default WS

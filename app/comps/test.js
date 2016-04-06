@@ -2,21 +2,23 @@ import { Component, ViewChild } from 'angular2/core';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
 // a component template for testing other components, by just selector (easier than html)
-let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, content = '') => {
+let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, outputs = {}, content = '') => {
   let obj = Object.assign({}, obs_pars, static_pars);
-  let par_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
-  let tmplt = `<${selector}${par_str}>${content}</${selector}>`;
-  return test_comp_html(tmplt, cls, obs_pars, static_pars);
+  let in_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
+  let out_str = Object.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
+  let tmplt = `<${selector}${in_str}${out_str}>${content}</${selector}>`;
+  return test_comp_html(tmplt, cls, obs_pars, static_pars, outputs);
 }
 
 // a component template for testing other components, by full html template
-let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}) => {
+let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, outputs = {}) => {
   let cmp = class {
     //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders
     // @ViewChild(cls) comp;
     constructor() {
       for (let k in obs_pars) this[k] = new BehaviorSubject(obs_pars[k]);
       for (let k in static_pars) this[k] = static_pars[k];
+      for (let k in outputs) this[k] = outputs[k];
     }
   };
   Reflect.decorate([Component({

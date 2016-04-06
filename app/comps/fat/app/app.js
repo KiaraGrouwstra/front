@@ -18,7 +18,8 @@ let _ = require('lodash/fp');
 global.Immutable = require('immutable');
 // import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { MarkedPipe } from '../../lib/pipes';
-import WS from '../../services/ws/ws';
+import { APP_CONFIG, Config } from '../../../config';
+import { WsService } from '../../services/ws/ws';
 import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp, input_specs } from '../../lib/js.js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../../comps';
@@ -35,7 +36,12 @@ export let App = ng2comp({
     pipes,
     // encapsulation: ViewEncapsulation.Native,
   },
-  parameters: [ Router, Http ],
+  parameters: [
+    Router,
+    Http,
+    WsService,
+    APP_CONFIG,
+  ],
   decorators: {
     v: ViewChild(ValueComp),
     auth_ui: ViewChild(AuthUiComp),
@@ -44,8 +50,16 @@ export let App = ng2comp({
   },
   class: class App {
       //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
-      constructor(router: Router, http: Http) {
-        this.deps = { router, http };
+      constructor(
+        router: Router,
+        http: Http,
+        ws: WsService,
+        config: Config,
+      ) {
+        this.router = router;
+        this.http = http;
+        this.ws = ws;
+        this.config = config;
       }
 
       ngOnInit() {

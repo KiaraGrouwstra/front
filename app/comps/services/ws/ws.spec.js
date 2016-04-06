@@ -1,18 +1,31 @@
 import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from "angular2/testing";
-import { WS } from './ws';
+import { Injector, provide } from 'angular2/core';
 import { Subject } from 'rxjs';
+import { WsService } from './ws';
+import { wsServiceProvider } from './ws.provider';
+import { CONFIG, APP_CONFIG } from '../../../config';
 
-fdescribe('WebSocket', () => {
+describe('WebSocket', () => {
+  let injector: Injector;
   var ws;
 
   beforeEach(() => {
-    ws = new WS();
+    injector = Injector.resolveAndCreate([
+      wsServiceProvider,
+      provide(APP_CONFIG, { useValue: CONFIG }),
+    ]);
+    ws = injector.get(WsService);
+    ws.connect();
     spyOn(ws.chan, 'push');
   })
 
   // it('should test', () => {
   //   throw "works"
   // })
+
+  it('should be able to create the service', () => {
+    expect(ws).toBeDefined();
+  });
 
   it('should not call functions by itself', () => {
     expect(ws.chan.push).not.toHaveBeenCalled();

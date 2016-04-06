@@ -20,11 +20,14 @@ import { provide } from 'angular2/core';
 import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
 
 import { App } from './comps/fat/app/app';
-import { WS } from './comps/services/ws/ws';
+import { WsService } from './comps/services/ws/ws';
+import { wsServiceProvider } from './comps/services/ws/ws.provider';
+import { CONFIG, APP_CONFIG } from './config';
 
 let singletons = [
   HTTP_BINDINGS, ROUTER_PROVIDERS,
-  WS,
+  wsServiceProvider,
+  provide(APP_CONFIG, { useValue: CONFIG }),
   provide(ChangeDetectorGenConfig, { useValue: new ChangeDetectorGenConfig(false, false, false) }),
 ];
 bootstrap(App, singletons).catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));

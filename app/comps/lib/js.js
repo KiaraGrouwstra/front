@@ -171,7 +171,7 @@ let try_log = (fn) => function() {
 let ng2comp = (o) => {
   let cls = o.class;
   cls.annotations = [new ComponentMetadata(o.component || {})];
-  cls.parameters = (o.parameters || []).map(x => [x]);
+  cls.parameters = (o.parameters || []).map(x => x._desc ? x : [x]);
   Object.keys(o.decorators || {}).forEach(k => {
     Reflect.decorate([o.decorators[k]], cls.prototype, k);
   });
@@ -190,9 +190,9 @@ let method_pars = (spec, fn_path) => {
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => id_cleanse(x));
   let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
-  let input_pars = [scheme].concat((_.get(hops, spec) || []).map(input_specs(path)));
+  let pars = [scheme].concat((_.get(hops, spec) || []).map(input_specs(path)));
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
-  return { pars: input_pars, desc };
+  return { pars, desc };
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

@@ -48,11 +48,11 @@ module.exports = {
 				test: /\.ts$/,
 				// loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
 				loaders: [
-					q('sweetjs', {
-						modules: [
-							path.join(__dirname, './macros.js')
-						],
-					}),
+					// q('sweetjs', {
+					// 	modules: [
+					// 		path.join(__dirname, './macros.js')
+					// 	],
+					// }),
 					q('babel', babelSettings),
 					q('ts', {}),
 				],
