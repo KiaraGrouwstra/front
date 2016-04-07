@@ -25,6 +25,32 @@ include ./svg-icons.jade
           svg.icon.desired(width='24', height='24')
             use(xlink:href='#arrow')
       tbody
+        tr
+          th(
+            *ngFor=`#name of colOrder`
+          )
+            form
+              .input-field
+                //- #tmp=`ngForm`
+                //- '[(ngModel)]'=`_filters[name]`
+                //- id=`{{cols[name].id}}-input`
+                input(
+                  '[ngModel]'=`filters[name]`
+                  '(input)'=`setFilter(name, $event.target.value)`
+                )
+                //- //-  || tmp.touched
+                //- label(
+                //-   'attr.for'=`{{cols[name].id}}-input`
+                //-   '[ngClass]'=`{ 'active': filters[name] }`
+                //- )
+                //-   | {{cols[name].k}}
+                //-   //- | {{cols[name].k}}: {{_filters[name] | json}}
+              button.btn.waves-effect.waves-light.btn-floating.red.col(
+                '[hidden]'=`!filters[name]`
+                '(click)'=`setFilter(name, '')`
+              )
+                | ×
+
         //- *ngFor=`#r of rows`
         tr(
           *ngFor=`#r of data`

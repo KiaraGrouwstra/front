@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from 'angular2/core'; //, ChangeDetectorRef
-import { arr2obj, arr2map, typed, fallback, ng2comp, combine } from '../../../lib/js';
+import { arr2obj, arr2map, typed, fallback, ng2comp, combine, try_log } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ValueComp } from '../../../comps';
 import { key_spec, get_fixed, get_patts } from '../output';
@@ -116,13 +116,13 @@ export let TableComp = ng2comp({
     }
 
     get filters() {
-      // console.log('get:filters');
       let x = this._filters;
       if(_.isUndefined(x)) x = this.filters = {};
+      // console.log('get:filters', x);
       return x;
     }
     set filters(x) {
-      // console.log('set:filters', x);
+      // console.log('SET:filters', x);
       if(_.isUndefined(x)) return;
       this._filters = x;
       this.filter();
@@ -138,26 +138,23 @@ export let TableComp = ng2comp({
       this.filter();
     }, { schema: true })(this.path, this.val, this.schema);
 
-    filter() {
+    filter = try_log(() => {
       // console.log('filter');
       let filters = this.filters;
+      let filter_keys = Object.keys(this.filters);
       // this.filtered = _.filter((row) => _.every((v, k) => row[k].includes(v), filters), this.val);
       // this.filtered = _.filter((row) => _.every((v, k) => row.cells[k].includes(v), filters), this.rows);
-      this.filtered = _.filter((row) => _.every((v, k) => {
-        // console.log('row', row);
-        // console.log('k', k);
-        // console.log('v', v);
-        // console.log('row.cells', row.cells);
-        // console.log('row.cells[k]', row.cells[k]);
-        return row.cells[k].includes(v);
-      }, filters), this.rows);
+      this.filtered = _.filter((row) => _.every((k) => {
+        let v = filters[k];
+        return row.cells[k].val.toString().includes(v);
+      }, filter_keys), this.rows);
       // this.showRow = this.val.map((row) => _.every((v, k) => row[k].includes(v), this.filters));
       // this.filtered = _.filter((row, idx) => this.showRow[idx], this.rows);
       // console.log('this.filtered', JSON.stringify(this.filtered));
       this.sort();
-    }
+    })
 
-    sort() {
+    sort = try_log(() => {
       // console.log('sort');
       let sort = this.sortColsDesc;
       // console.log('sort', sort);
@@ -165,7 +162,7 @@ export let TableComp = ng2comp({
       this.data = _.orderBy(Object.keys(sort).map(y => `cells.${y}.val`), Object.values(sort).map(y => y ? 'desc' : 'asc'), this.filtered);
       // this.cdr.markForCheck();
       // console.log('this.data', JSON.stringify(this.data));
-    }
+    })
 
     sortClick(col) {
       // console.log('sortClick', col);
@@ -188,6 +185,11 @@ export let TableComp = ng2comp({
       }
       // console.log('this.sortColsDesc', col, this.sortColsDesc[col]);
       this.sort();
+    }
+
+    setFilter(k, v) {
+      // console.log('setFilter', k, v);
+      this.filters = _.set(k, v)(this.filters);
     }
 
   }
