@@ -180,8 +180,8 @@ let input_attrs = (path, spec) => {
 
 // prepare the form control validators
 let get_validators = (spec) => {
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
-  // let val_fns = Object.keys(val_conds).map((k) => (par) => (c) => val_conds[k](c.value, par) ? { [k]: true } : null);
+  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
+  // ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
   Object.assign(Validators, val_fns);
   // 'schema', 'format', 'items', 'collectionFormat', 'type'
   let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf'];
