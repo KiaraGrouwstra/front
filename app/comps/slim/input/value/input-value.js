@@ -37,8 +37,8 @@ export let InputValueComp = ng2comp({
 
     ngOnInit() {
       // this calculates only once -- move out like HostBinding? convert to Rx?
-      let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
       this.type = this.spec.type;
+      let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
       if(SCALARS.includes(this.type)) this.type = 'scalar';
 
       // type:scalar/array/object/table, FieldComp|InputArrayComp|InputObjectComp|InputTableComp

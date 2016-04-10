@@ -14,35 +14,13 @@ let try_schema = (val, swag) => {
 }
 
 // for a given object key get the appropriate swagger spec
-// let key_spec = (
-//   k,
-//   swagger,
-//   fixed,
-//   patts = get_patts(swagger)
-// ) => {
-// let key_spec = (k, swagger, fixed, patts = get_patts(swagger)) => {
-let key_spec = (k, swagger, fixed, patts) => {
-  if(typeof patts == 'undefined') patts = get_patts(swagger);
-  let swag = _.get(['additionalProperties'], swagger);
-  if(fixed.includes(k)) {
-    swag = swagger.properties[k]
-  } else {
-    patts.forEach(p => {
-      if(new RegExp(p).test(k)) {
-        swag = swagger.patternProperties[p]
-        // v.patt = p
-      }
-    })
-  }
-  return swag;
+let key_spec = (k, swagger) => {
+  return _.get(['properties', k], swagger)
+  || _.get(['patternProperties', _.find(p => new RegExp(p).test(k)(
+    Object.keys(_.get(['patternProperties'], swagger) || {})
+  ))], swagger)
+  || _.get(['additionalProperties'], swagger);
 }
-
-let get_fixed = (swag, api) => {
-  let keys = Object.keys(api);
-  return Object.keys(_.get(['properties'], swag) || {}).filter(k => keys.includes(k));
-}
-
-let get_patts = (swag) => Object.keys(_.get(['patternProperties'], swag) || {})
 
 // meant to use without makeTemplate
 function parseScalar(path, api_spec, swagger) {
@@ -63,4 +41,4 @@ function parseScalar(path, api_spec, swagger) {
   }
 }
 
-export { parseScalar, key_spec, get_fixed, get_patts, try_schema, infer_type };
+export { parseScalar, key_spec, try_schema, infer_type };

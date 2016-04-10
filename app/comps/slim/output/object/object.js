@@ -3,7 +3,7 @@ import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild, ViewC
 import { id_cleanse, ng2comp, combine } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { DLComp, ArrayComp, ValueComp } from '../../../comps';
-import { key_spec, get_fixed, get_patts, infer_type } from '../output';
+import { key_spec, infer_type } from '../output';
 
 let inputs = ['path', 'val', 'schema', 'named'];
 
@@ -65,10 +65,8 @@ export let ObjectComp = ng2comp({
   let getColl = (path, val, spec) => {
       let SCALARS = ['boolean', 'integer', 'number', 'string', 'null', 'scalar'];
       let keys = Object.keys(val);
-      let fixed = get_fixed(spec, val);
-      let patts = get_patts(spec);
       return keys.map(k => {
-        let new_spec = key_spec(k, spec, fixed, patts);
+        let new_spec = key_spec(k, spec);
         let path_k = path.concat(id_cleanse(k));
         let tp = _.get(['type'], new_spec) || infer_type(val[k]);
         if(SCALARS.includes(tp)) tp = 'scalar';

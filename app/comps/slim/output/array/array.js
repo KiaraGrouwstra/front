@@ -36,8 +36,12 @@ export let ArrayComp = ng2comp({
       this.combInputs();
     }
 
-    get schema() { return this._schema; }
+    get schema() {
+      // console.log('array:get:schema');
+      return this._schema;
+    }
     set schema(x) {
+      // console.log('array:set:schema', x);
       if(_.isUndefined(x)) return;
       this._schema = x;
       this.combInputs();

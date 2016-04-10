@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild } from 'angular2/core'; //, forwardRef
 import { COMMON_DIRECTIVES } from 'angular2/common';
-import { arr2obj, fallback, typed, Object_filter, ng2comp, combine, method_pars } from '../../lib/js';
+import { arr2obj, Object_filter, ng2comp, combine, method_pars } from '../../lib/js';
 import { FormComp } from '../../comps';
 
 export let InputUiComp = ng2comp({

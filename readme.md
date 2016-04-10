@@ -14,6 +14,8 @@ tsd update
 //  - `var show = function(str) { return JSON.stringify(str.split('').map(x => x.charCodeAt(0))); }`
 //  - `get message() { return 'Expected ' + actualText + ' ' + show(actualText) + ' to be equal to ' + expectedText + ' ' + show(expectedText); }`
 - copy over materialize.css as .less, cuz Less never realized you might wanna import css from a Sass project.
+- build dependencies:
+  * core-decorators: `npm build`
 
 ```
 # ./node_modules/karma/bin/karma start
@@ -30,8 +32,8 @@ karma start
 # http://127.0.0.1:8070/app/unit-tests.html
 http://127.0.0.1:8090/tests.html
 
-gulp index && webpack --watch
-gulp index
+# gulp index && webpack --watch
+# gulp index
 webpack --watch
 
 # cd dist

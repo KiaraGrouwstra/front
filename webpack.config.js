@@ -5,27 +5,35 @@ var path = require('path');
 var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
-	"presets": [
-		"es2015", // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
-		"stage-2",	// does this add something?
-		"stage-1", // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
-		"stage-0", // used for: async/await
+	'presets': [
+		'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
+		'stage-2',	// does this add something?
+		'stage-1', // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
+		'stage-0', // used for: async/await
 	],
-	"plugins": [
-		"syntax-async-functions", // async/await
-		"transform-regenerator",
-		"transform-runtime",
-		"add-module-exports",
-		"transform-decorators-legacy", // @
-		"angular2-annotations",	// @Component, etc.
-		"transform-class-properties",
-		"transform-flow-strip-types",
+	'plugins': [
+		'syntax-async-functions', // async/await
+		'transform-regenerator',
+		'transform-runtime',
+		'add-module-exports',
+		'transform-decorators-legacy', // @
+		'angular2-annotations',	// @Component, etc.
+		'transform-class-properties',
+		'transform-flow-strip-types',
 	],
 };
 
 function q(loader, query) {
-  return loader + "?" + JSON.stringify(query);
+  return loader + '?' + JSON.stringify(query);
 }
+
+var sweet = q('sweetjs', {
+	modules: [
+		path.join(__dirname, './macros.js')
+	],
+});
+var babel = q('babel', babelSettings);
+var ts = q('ts', {});
 
 module.exports = {
 	context: path.join(__dirname, 'app'),
@@ -46,32 +54,22 @@ module.exports = {
 		loaders: [
 			{
 				test: /\.ts$/,
-				// loader: 'babel?'+JSON.stringify(babelSettings)+'!ts',
 				loaders: [
-					// q('sweetjs', {
-					// 	modules: [
-					// 		path.join(__dirname, './macros.js')
-					// 	],
-					// }),
-					q('babel', babelSettings),
-					q('ts', {}),
+					// sweet,
+					babel,
+					ts,
 				],
 			},
 			{
 				test: /\.js$/,
-				include: [ path.resolve(__dirname, "app"), ],
-				//exclude: [ path.resolve(__dirname, "node_modules"), ],
-				// loader: 'babel?'+JSON.stringify(babelSettings) //+ '!sweetjs?modules[]=../../macros.js',	//,readers[]=reader-mod
-				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js'),	//,readers[]=reader-mod
-				// loader: 'sweetjs?modules[]=' + path.join(__dirname, './macros.js') + '!babel?' + JSON.stringify(babelSettings),
+				//exclude: [ path.resolve(__dirname, 'node_modules'), ],
+				include: [
+					path.resolve(__dirname, 'app'),
+				],
 				loaders: [
-					// q('sweetjs', {
-					// 	modules: [
-					// 		path.join(__dirname, './macros.js')
-					// 	],
-					// }),
-					q('babel', babelSettings),
-					// q('ts', {}),		// no point, TSC won't even load JS files?
+					// sweet,
+					babel,
+					// ts,		// no point, TSC won't even load JS files?
 				],
 			},
 			{ test: /\.json$/, loader: 'json' },

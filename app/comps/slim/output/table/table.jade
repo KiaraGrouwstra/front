@@ -3,6 +3,27 @@ include ./svg-icons.jade
 .card
   .card-content
     span.card-title(*ngIf='named') {{k}}
+    a.btn.waves-effect.waves-light.clear-btn.teal(
+      '[ngClass]'=`{ 'disabled': !filterKeys.length }`
+      '(click)'=`filters={}`
+    )
+      | clear filters
+    a.btn.waves-effect.waves-light.clear-btn.yellow(
+      '[ngClass]'=`{ 'disabled': !sortedCols.length }`
+      '(click)'=`sortColsDesc={}`
+    )
+      | clear sort
+    a.btn.waves-effect.waves-light.clear-btn.blue(
+      '[ngClass]'=`{ 'disabled': colOrder.length==col_keys.length }`
+      '(click)'=`colOrder=col_keys`
+    )
+      | clear hide
+    a.btn.waves-effect.waves-light.clear-btn.orange(
+      '[ngClass]'=`{ 'disabled': !condCols.length }`
+      '(click)'=`condFormat={}`
+    )
+      | clear formatting
+      
     table.bordered.highlight(id=`{{id}}`)
       thead
         //- https://github.com/angular/angular/issues/2451
@@ -24,32 +45,81 @@ include ./svg-icons.jade
             use(xlink:href='#arrow')
           svg.icon.desired(width='24', height='24')
             use(xlink:href='#arrow')
+            
+          a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.blue(
+            'data-tooltip'='hide'
+            '(click)'=`$event.stopPropagation(); hideCol(name)`
+          )
+            i.material-icons visibility_off
+          a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.orange(
+            'data-tooltip'='conditional formatting'
+            '[hidden]'=`!colMeta[name].isNum || condFormat[name]`
+            '(click)'=`$event.stopPropagation(); setFormat(name, [{ r: 255, g: 220, b: 220 }, null, { r: 220, g: 255, b: 220 }])`
+          )
+            i.material-icons mode_edit
+          button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.orange(
+            'data-tooltip'='clear formatting'
+            '[hidden]'=`!colMeta[name].isNum || !condFormat[name]`
+            '(click)'=`$event.stopPropagation(); clearFormat(name)`
+          )
+            | ×
+          a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.teal(
+            'data-tooltip'='filter'
+            '[hidden]'=`!colMeta[name].isNum || filters[name]`
+            '(click)'=`$event.stopPropagation(); openNumFilterModal(name)`
+          )
+            i.material-icons search
+          button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.teal(
+            'data-tooltip'='clear filter'
+            '[hidden]'=`!colMeta[name].isNum || !filters[name]`
+            '(click)'=`$event.stopPropagation(); clearFilter(name)`
+          )
+            | ×
       tbody
         tr
           th(
             *ngFor=`#name of colOrder`
           )
             form
-              .input-field
-                //- #tmp=`ngForm`
-                //- '[(ngModel)]'=`_filters[name]`
-                //- id=`{{cols[name].id}}-input`
-                input(
-                  '[ngModel]'=`filters[name]`
-                  '(input)'=`setFilter(name, $event.target.value)`
-                )
-                //- //-  || tmp.touched
-                //- label(
-                //-   'attr.for'=`{{cols[name].id}}-input`
-                //-   '[ngClass]'=`{ 'active': filters[name] }`
-                //- )
-                //-   | {{cols[name].k}}
-                //-   //- | {{cols[name].k}}: {{_filters[name] | json}}
-              button.btn.waves-effect.waves-light.btn-floating.red.col(
-                '[hidden]'=`!filters[name]`
-                '(click)'=`setFilter(name, '')`
-              )
-                | ×
+              //- .numFilter
+              //-   .range-field
+              //-     input(
+              //-       type='range'
+              //-       '[min]'=`colMeta[name].min`
+              //-       '[max]'=`colMeta[name].max`
+              //-       '(input)'=`setFilter(name, $event.target.value)`
+              //-     )
+              //-   button.btn.waves-effect.waves-light.btn-floating.red.col(
+              //-     '[hidden]'=`!filters[name]`
+              //-     '(click)'=`clearFilter(name)`
+              //-   )
+              //-     | ×
+              .textFilter('[hidden]'=`colMeta[name].isNum`)
+                .input-field
+                  i.material-icons.prefix(
+                    '[hidden]'=`filters[name]`
+                  )
+                    | search
+                  //- '(click)'=`setFilter(name, '')`
+                  button.waves-effect.waves-light.btn-floating.red.col.prefix(
+                    '[hidden]'=`!filters[name]`
+                    '(click)'=`clearFilter(name)`
+                  )
+                    | ×
+                  //- #tmp=`ngForm`
+                  //- '[(ngModel)]'=`_filters[name]`
+                  //- id=`{{cols[name].id}}-input`
+                  input(
+                    '[ngModel]'=`filters[name]`
+                    '(input)'=`setFilter(name, $event.target.value)`
+                  )
+                  //- //-  || tmp.touched
+                  //- label(
+                  //-   'attr.for'=`{{cols[name].id}}-input`
+                  //-   '[ngClass]'=`{ 'active': filters[name] }`
+                  //- )
+                  //-   | {{cols[name].k}}
+                  //-   //- | {{cols[name].k}}: {{_filters[name] | json}}
 
         //- *ngFor=`#r of rows`
         tr(
@@ -61,11 +131,13 @@ include ./svg-icons.jade
           td(
             *ngFor=`#name of colOrder`
             id=`{{r.cells[name].id}}`
+            '[ngClass]'=`{ 'num-col': colMeta[name].isNum }`
+            '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
           )
             value(
               '[path]'=`r.cells[name].path`
               '[val]'=`r.cells[name].val`
-              '[schema]'=`r.cells[name].schema`
+              '[schema]'=`colMeta[name].spec`
             )
           //- td(
           //-   *ngFor=`#name of colOrder; #c = r.cells.get(name)`
