@@ -30,7 +30,7 @@ let input_type = (type) => _.get([type], {
 }) || type;
 
 // pick a Jade template
-let get_template = (opts) => _.get([opts.type], {
+export let get_template = (opts) => _.get([opts.type], {
   //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
   string: opts.enum_opts ? 'datalist' : null, //select, radio
   integer: (opts.attrs.max > opts.attrs.min) ? 'range' : null,
@@ -41,7 +41,7 @@ let get_template = (opts) => _.get([opts.type], {
   // object: [fieldset],
 }) || 'input'
 
-let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path, spec), val_msgs = get_validators(spec).val_msgs
+export let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path, spec), val_msgs = get_validators(spec).val_msgs
   attrs,
   type: spec.type,
   enum_opts: spec.enum,
@@ -54,7 +54,7 @@ let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path
 
 // return initial key/value pair for the model
 // function input_control(spec = {}, validator = get_validators(spec).validator) {
-function input_control(spec = {}, validator) {
+export function input_control(spec = {}, validator) {
   if(typeof validator == 'undefined') validator = get_validators(spec).validator;
   switch(spec.type) {
     case 'array':
@@ -75,7 +75,7 @@ function input_control(spec = {}, validator) {
 
 // get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
-let input_attrs = (path, spec) => {
+export let input_attrs = (path, spec) => {
   // general parameters
   // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
   let kind = spec.in || '';
@@ -179,7 +179,7 @@ let input_attrs = (path, spec) => {
 // validators
 
 // prepare the form control validators
-let get_validators = (spec) => {
+export let get_validators = (spec) => {
   let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
   // ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
   Object.assign(Validators, val_fns);
@@ -240,5 +240,3 @@ let val_errors = {
 }
 
 // async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81
-
-export { input_opts, get_template, input_control, input_attrs, get_validators };

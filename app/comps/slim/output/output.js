@@ -2,10 +2,11 @@
 let _ = require('lodash/fp');
 let tv4 = require('tv4');
 let marked = require('marked');
+let validUrl = require('valid-url');
 
-let infer_type = (v) => Array.isArray(v) ? "array" : _.isObject(v) ? "object" : "scalar"
+export let infer_type = (v) => Array.isArray(v) ? "array" : _.isObject(v) ? "object" : "scalar"
 
-let try_schema = (val, swag) => {
+export let try_schema = (val, swag) => {
   let options = _.get(['oneOf'], swag) || _.get(['anyOf'], swag) || _.get(['allOf'], swag) || []
   let tp = _.find((schema, idx, arr) => tv4.validate(val, schema, false, false, false), options)
   return _.get(['type'], tp) ? tp :
@@ -14,7 +15,7 @@ let try_schema = (val, swag) => {
 }
 
 // for a given object key get the appropriate swagger spec
-let key_spec = (k, swagger) => {
+export let key_spec = (k, swagger) => {
   return _.get(['properties', k], swagger)
   || _.get(['patternProperties', _.find(p => new RegExp(p).test(k)(
     Object.keys(_.get(['patternProperties'], swagger) || {})
@@ -23,14 +24,21 @@ let key_spec = (k, swagger) => {
 }
 
 // meant to use without makeTemplate
-function parseScalar(path, api_spec, swagger) {
-  let val = `${api_spec}`
+export function parseScalar(path, api_spec, swagger) {
+  let val = `${api_spec}`;
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...
   if(last == "description") {
     // val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
     let tmp = marked(val);
-    val = `<span class="markdown">${tmp}</span>`  // swagger MD descs, wrapped to ensure 1 node
+    val = `<span class="markdown">${tmp}</span>`;  // swagger MD descs, wrapped to ensure 1 node
+  } else if (validUrl.isUri(val)) {
+    const IMG_EXTS = ['jpg','jpeg','bmp','png','gif','tiff','svg','bpg','heif','hdr','webp','ppm','pgm','pbm','pnm'].map(ext => '\\.' + ext);
+    if (_.some(reg => new RegExp(reg, 'i').test(val))(IMG_EXTS)) {
+      val = `<img src="${val}">`;
+    } else {
+      val = `<a href="${val}">${val}</a>`;
+    }
   }
   switch (_.get(['format'], swagger)) {
     // case "uri": return `<a href="${val}">${val}</a>`; //break;
@@ -40,5 +48,3 @@ function parseScalar(path, api_spec, swagger) {
     default: return val;
   }
 }
-
-export { parseScalar, key_spec, try_schema, infer_type };

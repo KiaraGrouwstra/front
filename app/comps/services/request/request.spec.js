@@ -42,10 +42,10 @@ describe('RequestService', () => {
   })
 
   it('parsley', () => {
-    let url = 'https://baidu.com/';
+    let urls = 'https://baidu.com/';
     let parselet = '{}';
-    req.parsley(url, parselet);
-    expect(req.ws.chan.push).toHaveBeenCalledWith('/parse', { body: {url, parselet}, id: 0 });
+    req.parsley(urls, parselet);
+    expect(req.ws.chan.push).toHaveBeenCalledWith('/parse', { body: {urls, parselet}, id: 0 });
   })
 
   it('toCurl', () => {

@@ -2,10 +2,11 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 let _ = require('lodash/fp');
-import { RegExp_escape, toast, tryLog } from '../../lib/js';
+import { RegExp_escape, toast, tryLog, findTables } from '../../lib/js';
+import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
 
-let load_ui = async function(name) {
+export let load_ui = async function(name) {
   this.api = name;
 
   let $RefParser = require('json-schema-ref-parser');
@@ -58,7 +59,7 @@ let load_ui = async function(name) {
 }
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
-let pick_fn = tryLog(function(fn_path) {
+export let pick_fn = tryLog(function(fn_path) {
   this.data = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
@@ -72,11 +73,22 @@ let submit_req = function(fn) {
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
     toast.info(start);
+    this.spec = null;
+    // ^ wait, this should trigger inference, but what about APIs, for which I do have specs?
+    this.data = []; // array to concat to
+    // ^ forcing everything into an array is great for the purpose of making results combineable,
+    // whether they were originally arrays or not, but could make for terrible use of space...
+    // under what circumstances should I go with this approach? expected responses n > 1.
+    // ... distinguish with Promise vs. Observable or something?
+    this.meat_opts = null;
     obs.subscribe(
       x => {
         console.log(next, x);
         // toast.info(next);
-        this.data = x;
+        if(!this.spec) this.spec = getSchema(x);
+        if(!this.meat_opts) this.meat_opts = findTables(this.spec);
+        // this.data = x;
+        this.data = this.data.concat(x);
       },
       e => {
         toast.error(e);
@@ -90,30 +102,31 @@ let submit_req = function(fn) {
 }
 
 // handle emit api input_ui
-let req_url = submit_req(function(v) {
+export let req_url = submit_req(function(v) {
+  let { urls } = v;
   return {
     obs: this.req.addUrl(v).map(x => JSON.parse(x)),
     // ^ JSON.parse is an assumption of the returned content
     start: `starting fetch request`,
-    next: `GET ${url}`,
-    done: `got ${url}`,
+    next: `GET ${urls}`,
+    done: `got ${urls}`,
   };
 });
 
 // handle scrape form submit
-let extract_url = submit_req(function(v) {
+export let extract_url = submit_req(function(v) {
   let json = JSON.stringify(v.parselet);
-  let { url } = v;
+  let { urls } = v;
   return {
-    obs: this.req.parsley(url, json),
+    obs: this.req.parsley(urls, json),
     start: `starting HTML extraction request`,
-    next: `GET ${url} with extractors: ${json}`,
-    done: `got ${url}`,
+    next: `GET ${urls} with extractors: ${json}`,
+    done: `got ${urls}`,
   };
 });
 
 // handle curl form submit
-let doCurl = submit_req(function(v) {
+export let doCurl = submit_req(function(v) {
   let { curl } = v;
   return {
     obs: this.req.toCurl(curl),
@@ -121,11 +134,8 @@ let doCurl = submit_req(function(v) {
     next: `CURL reply received`,
     done: `CURL request finished`,
   };
-  return this.req.toCurl(curl);
 });
 
 // mime types: http://camendesign.com/code/uth4_mime-type/mime-types.php
 // http headers: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpheaders.js
 // http status codes: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpstatuscodes.js
-
-export { load_ui, req_url, pick_fn, extract_url, doCurl }; //, load_auth_ui, load_fn_ui, get_submit, load_scrape_ui

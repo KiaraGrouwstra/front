@@ -60,6 +60,7 @@
     "tv4": "tycho01/tv4",
     "typescript-register": "^1.1.0",
     "typescript-require": "^0.2.9",
+    "valid-url": "^1.0.9",
     "webcomponents": "^0.1.4",
     "yamljs": "^0.2.4",
     "zone.js": "^0.6.6"

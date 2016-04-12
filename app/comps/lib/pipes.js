@@ -4,10 +4,8 @@ let marked = require('marked');
 @Pipe({
   name: 'marked',
 })
-class MarkedPipe {
+export class MarkedPipe {
   transform(s: string, args: string[]): string {
     return marked(s);
   }
 }
-
-export { MarkedPipe };

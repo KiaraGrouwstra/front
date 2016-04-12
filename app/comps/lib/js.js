@@ -7,27 +7,27 @@ import { ComponentMetadata } from 'angular2/core';
 require("materialize-css/dist/js/materialize.min");
 // let YAML = require('yamljs');
 
-let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+export let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
 // wrap into lodash like here?
 // https://github.com/jonahkagan/schematic-ipsum/blob/master/src/underscoreExt.coffee
-let arr2obj = (arr, fn) => _.zipObject(arr, arr.map(fn));
+export let arr2obj = (arr, fn) => _.zipObject(arr, arr.map(fn));
 // let arr2obj = (arr, fn) => _.fromPairs(arr.map(k => [k, fn(k)]));
 
-let arr2map = (arr, fn) => arr.reduce((map, k) => map.set(k, fn(k)), new Map());
+export let arr2map = (arr, fn) => arr.reduce((map, k) => map.set(k, fn(k)), new Map());
 
-let do_return = (fn) => (v) => {
+export let do_return = (fn) => (v) => {
   fn(v);
   return v;
 }
 
-let Prom_toast = function(msg) {
+export let Prom_toast = function(msg) {
   // return this.do(_v => toast.success(msg), e => toast.error(e));
   return this.then(do_return(_v => toast.success(msg)), do_return(e => toast.error(e)));
 }
 Promise.prototype.toast_result = Prom_toast;
 
-let handle_auth = (url, fn) => {
+export let handle_auth = (url, fn) => {
   let url_bit = (url, part) => {
     let par_str = url[part].substring(1);
     let params = decodeURIComponent(par_str).split('&');
@@ -46,7 +46,7 @@ let handle_auth = (url, fn) => {
   }
 }
 
-let popup = (popup_url, watch_url) => new Promise((resolve, reject) => {
+export let popup = (popup_url, watch_url) => new Promise((resolve, reject) => {
   let win = window.open(popup_url);
   let pollTimer = window.setInterval(() => {
     if(win.location.pathname) {
@@ -72,15 +72,15 @@ let toasts = {
 };
 let TOAST_LEVEL = toasts.success.val;
 let LOG_LEVEL = toasts.info.val;
-let toast = arr2obj(Object.keys(toasts), (kind) => (msg, ms = 1000) => {
+export let toast = arr2obj(Object.keys(toasts), (kind) => (msg, ms = 1000) => {
   let level = toasts[kind].val;
   if(level >= TOAST_LEVEL) Materialize.toast(msg, ms, toasts[kind].class);
   if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
 });
 
-let setKV = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+export let setKV = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
-let getKV = (k) => new Promise((resolve, reject) => {
+export let getKV = (k) => new Promise((resolve, reject) => {
   let saved = localStorage.getItem(k);
   if(saved != null) {
     resolve(JSON.parse(saved));
@@ -93,7 +93,7 @@ let getKV = (k) => new Promise((resolve, reject) => {
 // let spawn_n = (fn, n = 5, interval = 1000) => range(n).forEach((x) => setTimeout(fn, x * interval));
 // let yaml2json = _.flow(YAML.parse, JSON.stringify);
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
-let mapBoth = (obj, fn) => {
+export let mapBoth = (obj, fn) => {
   let keys = Object.keys(obj)
   // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
   return arr2obj(keys, k => fn(obj[k], k));
@@ -103,7 +103,7 @@ let mapBoth = (obj, fn) => {
 // let _ = require('lodash/fp').convert({ 'cap': false });
 
 // pretty print a json object
-let prettyPrint = (o) => {
+export let prettyPrint = (o) => {
   let replacer = (match, r = '', pKey, pVal, pEnd = '') => r +
     // ((pKey) ? `<span class=json-key>${pKey.replace(/[": ]/g, '')}</span>: ` : '') +
     ((pKey) ? "<span class=json-key>" + pKey.replace(/[": ]/g, '') + "</span>: " : '') +
@@ -117,13 +117,13 @@ let prettyPrint = (o) => {
 }
 
 // cleanse a string to use as an ID
-let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
+export let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 
 // 'cast' a function such that in case it receives a bad (non-conformant)
 // value for input, it will return a default value of its output type
 // intercepts bad input values for a function so as to return a default output value
 // ... this might hurt when switching to like Immutable.js though.
-let typed = (from, to, fn) => function() {
+export let typed = (from, to, fn) => function() {
   for (var i = 0; i < from.length; i++) {
     let frm = from[i];
     let v = arguments[i];
@@ -133,7 +133,7 @@ let typed = (from, to, fn) => function() {
 }
 
 // wrapper for setter methods, return if not all parameters are defined
-let combine = (fn, allow_undef = {}) => function() {
+export let combine = (fn, allow_undef = {}) => function() {
   // let names = /([^\(]+)(?=\))'/.exec(fn.toString()).split(',').slice(1);
   let names = fn.toString().split('(')[1].split(')')[0].split(/[,\s]+/);
   for (var i = 0; i < arguments.length; i++) {
@@ -147,7 +147,7 @@ let combine = (fn, allow_undef = {}) => function() {
 }
 
 // simpler guard, just a try-catch wrapper with default value
-let fallback = (def, fn) => function() {
+export let fallback = (def, fn) => function() {
   try {
     return fn.call(this, ...arguments);
   }
@@ -158,7 +158,7 @@ let fallback = (def, fn) => function() {
 }
 
 // just log errors. only useful in contexts with silent crash.
-let tryLog = (fn) => function() {
+export let tryLog = (fn) => function() {
   try {
     return fn.call(this, ...arguments);
   }
@@ -169,7 +169,7 @@ let tryLog = (fn) => function() {
 
 // create a Component, decorating the class with the provided metadata
 // export let FooComp = ng2comp({ component: {}, parameters: [], decorators: {}, class: class FooComp {} })
-let ng2comp = (o) => {
+export let ng2comp = (o) => {
   let cls = o.class;
   cls.annotations = [new ComponentMetadata(o.component || {})];
   cls.parameters = (o.parameters || []).map(x => x._desc ? x : [x]);
@@ -181,10 +181,10 @@ let ng2comp = (o) => {
 }
 
 // use to map an array of input specs to a version with path added
-let input_specs = (path = []) => (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v })
+export let input_specs = (path = []) => (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v })
 
 // pars to make a form for a given API function
-let method_pars = (spec, fn_path) => {
+export let method_pars = (spec, fn_path) => {
   // I'd consider json path, but [one implementation](https://github.com/flitbit/json-path) needs escaping
   // [the other](https://github.com/s3u/JSONPath/) uses async callbacks...
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
@@ -196,11 +196,22 @@ let method_pars = (spec, fn_path) => {
   return { pars, desc };
 }
 
+// finds and returns an array of all json paths (as string arrays) of any tables (not within arrays)
+// in a JSON schema as suggestions to use as the meat extractor for fetched JSON results.
+export let findTables = (spec, path = []) => {
+  if (spec.type == 'array' && spec.items.type == 'object') {
+    return [path];
+  } else {
+    if (spec.type == 'object') {
+      let keys = Object.keys(spec.properties);
+      return _.flatten(keys.map(k => findTables(spec.properties[k], path.concat(k))));
+    }
+  }
+}
+
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)
 // [swagger editor ng1 html](https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html)
 // json editor:
 // - functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js)
 // - [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
-
-export { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, prettyPrint, id_cleanse, typed, fallback, tryLog, ng2comp, combine, method_pars, input_specs };

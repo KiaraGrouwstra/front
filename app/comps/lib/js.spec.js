@@ -1,5 +1,6 @@
 let _ = require('lodash/fp');
-import { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine } from './js';
+import { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables } from './js';
+import { getSchema } from './schema';
 
 describe('js', () => {
 
@@ -142,6 +143,12 @@ describe('js', () => {
     let obj = new cls();
     obj.a = 1;
     expect(obj.c).toEqual(NaN);
+  })
+
+  it('findTables', () => {
+    let data = { foo: [ { bar: 1 } ] };
+    let spec = getSchema(data);
+    expect(findTables(spec)).toEqual([['foo']]);
   })
 
   // it('', () => {

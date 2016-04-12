@@ -12,13 +12,15 @@ export class RequestService {
   // fetch URL content
   addUrl(pars) {
     // { urls, headers, verb, body }
-    return this.ws.ask('/urls', pars);
+    let n = [].concat(pars.urls).length;
+    return this.ws.ask('/urls', pars, n);
   }
 
   // fetch URL content (and Parsley parse)
-  parsley(url, json) {
-    let pars = {url, parselet: json};
-    return this.ws.ask('/parse', pars);
+  parsley(urls, json) {
+    let pars = {urls, parselet: json};
+    let n = [].concat(urls).length;
+    return this.ws.ask('/parse', pars, n);
   }
 
   // try variations of a CURL command by skipping different headers
@@ -29,7 +31,7 @@ export class RequestService {
       /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
     ));
     let n = Object.keys(headers).length + 2;  // current server implementation 'try without each + all/none'
-    return this.ws.ask('/check', {urls: url, headers}, n).scan(elemToArr, []);
+    return this.ws.ask('/check', {urls: url, headers}, n); //.scan(elemToArr, []);
   }
 
 }

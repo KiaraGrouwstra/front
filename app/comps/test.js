@@ -2,7 +2,7 @@ import { Component, ViewChild } from 'angular2/core';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 
 // a component template for testing other components, by just selector (easier than html)
-let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, outputs = {}, content = '') => {
+export let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, outputs = {}, content = '') => {
   let obj = Object.assign({}, obs_pars, static_pars);
   let in_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
   let out_str = Object.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
@@ -11,7 +11,7 @@ let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, outputs = {
 }
 
 // a component template for testing other components, by full html template
-let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, outputs = {}) => {
+export let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, outputs = {}) => {
   let cmp = class {
     //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders
     // @ViewChild(cls) comp;
@@ -34,7 +34,7 @@ let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, outputs = {})
 // let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
 // let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
 //   return tcb.createAsync(test_class).then((fixture) => {
-let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
+export let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
   try {
     let fixture = await tcb.createAsync(test_class);
     fixture.detectChanges();
@@ -55,17 +55,15 @@ let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => 
 }
 
 // test_fn for comp_test to check a property value
-let assert = (assertion) => (pass, comp, el) => {
+export let assert = (assertion) => (pass, comp, el) => {
   assertion(comp, el);
   pass();
 }
 
 // test_fn for comp_test to check an Observable property's first value
-let assert$ = (selector, matcher) => (pass, comp) => {
+export let assert$ = (selector, matcher) => (pass, comp) => {
   selector(comp).subscribe(prop => {
     matcher(expect(prop));
     pass();
   })
 }
-
-export { test_comp, test_comp_html, comp_test, assert, assert$ };
