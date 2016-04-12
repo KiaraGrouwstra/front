@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild } from 'angular2/core'; //, forwardRef
 import { COMMON_DIRECTIVES } from 'angular2/common';
-import { arr2obj, Object_filter, ng2comp, combine, method_pars } from '../../lib/js';
+import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
 import { FormComp } from '../../comps';
 
 export let InputUiComp = ng2comp({
@@ -52,7 +52,7 @@ export let InputUiComp = ng2comp({
       let spec = this.spec;
       let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes}
       let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
-        let good_keys = Object.keys(Object_filter(kind_map, y => y == x));
+        let good_keys = Object.keys(_.pickBy(y => y == x)(kind_map));
         return arr2obj(good_keys, k => form_val[k]);
       });
       let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);

@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine } from './js';
+import { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine } from './js';
 
 describe('js', () => {
 
@@ -17,10 +17,6 @@ describe('js', () => {
   // it('should test', () => {
   //   throw "works"
   // })
-
-  it('Object_filter allows filtering an object by values', () => {
-    expect(Object_filter({a: 1, b: 2}, y => y > 1)).toEqual({b: 2})
-  })
 
   it('RegExp_escape escapes regex characters with backslashes', () => {
     expect(RegExp_escape('a+b[]')).toEqual('a\\+b\\[\\]')

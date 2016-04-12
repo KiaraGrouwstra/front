@@ -1,13 +1,8 @@
 //- {k, id, named, cols: [{k, id}], rows: [{id, cells: [{id, val}]}]}
-include ./svg-icons.jade
+//- include ./svg-icons.jade
 .card
   .card-content
-    span.card-title(*ngIf='named') {{k}}
-    a.btn.waves-effect.waves-light.clear-btn.teal(
-      '[ngClass]'=`{ 'disabled': !filterKeys.length }`
-      '(click)'=`filters={}`
-    )
-      | clear filters
+    p.card-title(*ngIf='named') {{k}}
     a.btn.waves-effect.waves-light.clear-btn.yellow(
       '[ngClass]'=`{ 'disabled': !sortedCols.length }`
       '(click)'=`sortColsDesc={}`
@@ -23,6 +18,11 @@ include ./svg-icons.jade
       '(click)'=`condFormat={}`
     )
       | clear formatting
+    a.btn.waves-effect.waves-light.clear-btn.teal(
+      '[ngClass]'=`{ 'disabled': !filterKeys.length }`
+      '(click)'=`filters={}`
+    )
+      | clear filters
       
     table.bordered.highlight(id=`{{id}}`)
       thead
@@ -41,11 +41,23 @@ include ./svg-icons.jade
           '(click)'=`sortClick(name)`
         )
           | {{cols[name].k}}
-          svg.icon.current(width='24', height='24')
-            use(xlink:href='#arrow')
-          svg.icon.desired(width='24', height='24')
-            use(xlink:href='#arrow')
+          //- svg.icon.current(width='24', height='24')
+          //-   use(xlink:href='#arrow')
+          //- svg.icon.desired(width='24', height='24')
+          //-   use(xlink:href='#arrow')
             
+          button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.yellow(
+            'data-tooltip'='sort'
+          )
+            div('[ngSwitch]'=`sortColsDesc[name]`)
+              template('[ngSwitchWhen]'=`true`)
+                | ▼
+              template('[ngSwitchWhen]'=`false`)
+                | ▲
+              template(ngSwitchDefault)
+                i.material-icons import_export
+                //- sort_by_alpha
+
           a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.blue(
             'data-tooltip'='hide'
             '(click)'=`$event.stopPropagation(); hideCol(name)`
@@ -53,25 +65,25 @@ include ./svg-icons.jade
             i.material-icons visibility_off
           a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.orange(
             'data-tooltip'='conditional formatting'
-            '[hidden]'=`!colMeta[name].isNum || condFormat[name]`
+            '[hidden]'=`!colMeta[name].hasNum || condFormat[name]`
             '(click)'=`$event.stopPropagation(); setFormat(name, [{ r: 255, g: 220, b: 220 }, null, { r: 220, g: 255, b: 220 }])`
           )
             i.material-icons mode_edit
           button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.orange(
             'data-tooltip'='clear formatting'
-            '[hidden]'=`!colMeta[name].isNum || !condFormat[name]`
+            '[hidden]'=`!colMeta[name].hasNum || !condFormat[name]`
             '(click)'=`$event.stopPropagation(); clearFormat(name)`
           )
             | ×
           a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.teal(
             'data-tooltip'='filter'
-            '[hidden]'=`!colMeta[name].isNum || filters[name]`
+            '[hidden]'=`!colMeta[name].hasNum || filters[name]`
             '(click)'=`$event.stopPropagation(); openNumFilterModal(name)`
           )
             i.material-icons search
           button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.teal(
             'data-tooltip'='clear filter'
-            '[hidden]'=`!colMeta[name].isNum || !filters[name]`
+            '[hidden]'=`!colMeta[name].hasNum || !filters[name]`
             '(click)'=`$event.stopPropagation(); clearFilter(name)`
           )
             | ×
@@ -94,7 +106,7 @@ include ./svg-icons.jade
               //-     '(click)'=`clearFilter(name)`
               //-   )
               //-     | ×
-              .textFilter('[hidden]'=`colMeta[name].isNum`)
+              .textFilter('[hidden]'=`!colMeta[name].hasText`)
                 .input-field
                   i.material-icons.prefix(
                     '[hidden]'=`filters[name]`
@@ -131,7 +143,7 @@ include ./svg-icons.jade
           td(
             *ngFor=`#name of colOrder`
             id=`{{r.cells[name].id}}`
-            '[ngClass]'=`{ 'num-col': colMeta[name].isNum }`
+            '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
           )
             value(
@@ -148,3 +160,13 @@ include ./svg-icons.jade
           //-     '[val]'=`c.val`
           //-     '[schema]'=`c.schema`
           //-   )
+
+.modal#modal
+  .modal-content
+    h4 Filter range
+    #slider
+  .modal-footer
+    a.modal-action.modal-close.waves-effect.waves-green.btn-flat(
+      '(click)'=`setNumFilter()`
+    )
+      | OK

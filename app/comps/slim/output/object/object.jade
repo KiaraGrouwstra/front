@@ -1,7 +1,7 @@
 //- {k, id, named, scalar: [], object: [], array: []}
 .card
   .card-content(id=`{{id}}`)
-    span.card-title(*ngIf='named') {{k}}
+    p.card-title(*ngIf='named') {{k}}
     mydl(
       '[path]'=`path`
       '[val]'=`scalar`

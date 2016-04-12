@@ -2,7 +2,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 let _ = require('lodash/fp');
-import { RegExp_escape, toast, try_log } from '../../lib/js';
+import { RegExp_escape, toast, tryLog } from '../../lib/js';
 // import { elemToArr } from '../../lib/rx_helpers';
 
 let load_ui = async function(name) {
@@ -58,7 +58,7 @@ let load_ui = async function(name) {
 }
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
-let pick_fn = try_log(function(fn_path) {
+let pick_fn = tryLog(function(fn_path) {
   this.data = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
@@ -66,7 +66,7 @@ let pick_fn = try_log(function(fn_path) {
 });
 
 let submit_req = function(fn) {
-  return try_log(function(v) {
+  return tryLog(function(v) {
     // console.log('submit_req', v);
     // if(v.constructor == Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);

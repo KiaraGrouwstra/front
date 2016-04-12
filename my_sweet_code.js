@@ -169,6 +169,6 @@
 
 // need infix:
 // [pipe](https://gist.github.com/aaronpowell/d5ffaf78666f2b8fb033)
-// [elvis](https://gist.github.com/disnet/b971aeb690a856b21dd9): ?. / ?.[]
+// [elvis](https://gist.github.com/disnet/b971aeb690a856b21dd9): ?. / ?.[] / ?.['fixed', variable]
 // reverse assignment (<-)
 // await -- [old macro](https://github.com/jayphelps/sweet-async-await/blob/master/sweet-async-await.sjs)

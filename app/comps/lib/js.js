@@ -7,8 +7,6 @@ import { ComponentMetadata } from 'angular2/core';
 require("materialize-css/dist/js/materialize.min");
 // let YAML = require('yamljs');
 
-let Object_filter = (obj, pred) => arr2obj(Object.keys(obj).filter(k => pred(obj[k])), k => obj[k])
-
 let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 
 // wrap into lodash like here?
@@ -100,6 +98,9 @@ let mapBoth = (obj, fn) => {
   // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
   return arr2obj(keys, k => fn(obj[k], k));
 }
+// _.mapValues.convert({ 'cap': false })
+// ^ I could ditch this mapBoth crap for Lodash/FP if I could use say JSPM to global-import it as follows:
+// let _ = require('lodash/fp').convert({ 'cap': false });
 
 // pretty print a json object
 let prettyPrint = (o) => {
@@ -157,12 +158,12 @@ let fallback = (def, fn) => function() {
 }
 
 // just log errors. only useful in contexts with silent crash.
-let try_log = (fn) => function() {
+let tryLog = (fn) => function() {
   try {
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log('try_log error:', e);
+    console.log('tryLog error:', e);
   }
 }
 
@@ -202,4 +203,4 @@ let method_pars = (spec, fn_path) => {
 // - functional [elements](https://github.com/flibbertigibbet/json-editor/blob/develop/src/theme.js)
 // - [overrides](https://github.com/flibbertigibbet/json-editor/blob/develop/src/themes/bootstrap3.js)
 
-export { Object_filter, RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, prettyPrint, id_cleanse, typed, fallback, try_log, ng2comp, combine, method_pars, input_specs };
+export { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, prettyPrint, id_cleanse, typed, fallback, tryLog, ng2comp, combine, method_pars, input_specs };

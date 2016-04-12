@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from 'angular2/core'; //, ChangeDetectorRef
-import { arr2obj, arr2map, ng2comp, combine, mapBoth } from '../../../lib/js';
+import { arr2obj, arr2map, ng2comp, combine, mapBoth, tryLog } from '../../../lib/js';
+import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
 import { ValueComp } from '../../../comps';
@@ -67,6 +68,7 @@ export let TableComp = ng2comp({
     set val(x) {
       // console.log('set:val', x);
       if(_.isUndefined(x)) return;
+      if(!this.schema) this.schema = getSchema(x).items;
       this._val = x;
       this.col_keys = Array.from(x
         .map(o => Object.keys(o))
@@ -76,7 +78,7 @@ export let TableComp = ng2comp({
     }
 
     get schema() {
-      // console.log('table:get:schema');
+      // console.log('table:get:schema', this._schema);
       return this._schema;
     }
     set schema(x) {
@@ -170,10 +172,17 @@ export let TableComp = ng2comp({
       this.condFormat = _.set(col, v)(this.condFormat);
     }
 
+    @fallback(false)
+    cellIsNum(col, val) {
+      let { isNum, hasNum } = this.colMeta[col];
+      return isNum || (hasNum && _.isNumber(val));
+    }
+
     @fallback('rgba(0,0,0,0)')
     valColor(col, val) {
-      let { isNum, isLog } = this.colMeta[col];
-      if(!isNum) return null;
+      // console.log('valColor');
+      let { isLog } = this.colMeta[col];
+      if(!this.cellIsNum(col, val)) return null;
       let num = isLog ? Math.log10(val) : val;
       let colors = this.condFormat[col];
       if(!colors) return null;
@@ -223,39 +232,79 @@ export let TableComp = ng2comp({
 
     @try_log()
     openNumFilterModal(col) {
-      this.filters = _.set(col, 3)(this.filters);
+      let { min, max } = this.colMeta[col];
+      $('#modal').openModal();
+      let slider = document.getElementById('slider');
+      window.noUiSlider.create(slider, {
+       start: [min, max],
+       connect: true,
+       step: 1,
+       range: {
+         min: min,
+         max: max,
+       },
+       format: window.wNumb({
+         decimals: 0,
+       }),
+      });
+      this.modalCol = col;
+    }
+
+    @try_log()
+    setNumFilter() {
+      let col = this.modalCol;
+      let slider = document.getElementById('slider');
+      let rng = slider.noUiSlider.get().map(Number);
+      this.setFilter(col, rng);
+      $('#modal').closeModal();
     }
 
     // set and filter() for data/filters, sort() for rest
     // @try_log()
-    combInputs = () => combine((path, val, schema) => {
+    combInputs = () => tryLog(combine((path, val, schema) => {
       // console.log('combInputs');
       this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
       this.colMeta = arr2obj(this.col_keys, col => {
         let spec = key_spec(col, schema);
-        let isNum = ['number','integer'].includes(_.get(['type'], spec));
-        if(isNum) {
+        let type = _.get(['type'])(spec);
+        let anyOf = _.get(['anyOf'])(type) || [];
+        const NUM_TYPES = ['number','integer'];
+        let isNum = NUM_TYPES.includes(type);
+        let hasNum = isNum || _.some(t => NUM_TYPES.includes(t))(anyOf);
+        let isText = type == 'string';
+        let hasText = isText || _.some(y => y == 'string')(anyOf);
+        if(hasNum) {
           let vals = val.map(y => y[col]);
           var min = _.min(vals);
           var max = _.max(vals);
           var isLog = false;
           // var boundaries = [min, max];
         }
-        return { spec, isNum, min, max, isLog }; //, boundaries
+        return { spec, isNum, hasNum, isText, hasText, min, max, isLog }; //, boundaries
       });
       this.rows = rowPars(this.col_keys, path, val);
       this.filter();
       global.$('.tooltipped').tooltip({delay: 0});
-    }, { schema: true })(this.path, this.val, this.schema);
+    }))(this.path, this.val, this.schema);
+    // , { schema: true }
 
+    // current design flaw: the filter stored per column is shared between numbers/text, while columns may include both. first see what other filters I want.
     @try_log()
     filter() {
       // console.log('filter');
       let filters = this.filters;
       let filter_keys = this.filterKeys;
+      let colMeta = this.colMeta;
       this.filtered = _.filter((row) => _.every((k) => {
-        let v = filters[k];
-        return row.cells[k].val.toString().includes(v);
+        let filter = filters[k];
+        let val = row.cells[k].val;
+        // if(colMeta[k].isNum) {
+        if(_.isArray(filter)) {
+          let [min, max] = filter;
+          return val >= min && val <= max;
+        } else {
+          return val.toString().includes(filter);
+        }
       }, filter_keys), this.rows);
       this.sort();
     }

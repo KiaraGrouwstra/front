@@ -1,3 +1,4 @@
+let _ = require('lodash/fp');
 import { decorate } from 'core-decorators/lib/private/utils';  //, metaFor
 
 let decMethod = (
@@ -5,12 +6,14 @@ let decMethod = (
   wrapper = (fn) => fn.bind(this, ...arguments),
 ) => (target, key, descriptor, pars) => {
   const fn = descriptor.value;
+  // console.log('decMethod', key, pars, descriptor);
   if (typeof fn !== 'function') {
     throw new SyntaxError(`can only decorate methods, while ${key} is a ${typeof fn}!`);
   }
   return {
-    ...descriptor,
-    [k]: wrapper(fn, pars),
+    // ...descriptor,
+    // ..._.omit(['value'], descriptor),
+    [k]: wrapper(fn, pars, { target, key, descriptor }),
   };
 }
 
@@ -28,23 +31,23 @@ export let typed = (...args) => decorate(decMethod('value', (fn, [from, to]) => 
 }), args);
 
 // simpler guard, just a try-catch wrapper with default value
-export let fallback = (...args) => decorate(decMethod('value', (fn, [def]) => function() {
+export let fallback = (...args) => decorate(decMethod('value', (fn, [def], { target, key, descriptor }) => function() {
   try {
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log('an error occurred, falling back to default value:', e);
+    console.log(`${key} fallback error:`, e);
     return def;
   }
 }), args);
 
 // just log errors. only useful in contexts with silent crash.
-export let try_log = (...args) => decorate(decMethod('value', (fn, []) => function() {
+export let try_log = (...args) => decorate(decMethod('value', (fn, [], { target, key, descriptor }) => function() {
   try {
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log('try_log error:', e);
+    console.log(`${key} try_log error:`, e);
   }
 }), args);
 
