@@ -5,14 +5,13 @@ let _ = require('lodash/fp');
 import { RegExp_escape, toast, tryLog, findTables } from '../../lib/js';
 import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
+let $RefParser = require('json-schema-ref-parser');
 
-export let load_ui = async function(name) {
+export let load_ui = tryLog(async function(name) {
   this.api = name;
 
-  let $RefParser = require('json-schema-ref-parser');
-
   let api = await (
-    this.deps.http
+    this.http
     .get(`./swagger/${name}.json`)
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
@@ -43,7 +42,7 @@ export let load_ui = async function(name) {
 
   // output
   // let schema = await (
-  //     this.deps.http
+  //     this.http
   //     .get('./swagger/swagger.json')
   //     .map(x => {
   //         let esc = RegExp_escape("http://json-schema.org/draft-04/schema");
@@ -56,7 +55,7 @@ export let load_ui = async function(name) {
   // let html = parseVal([], api, schema);
   // this.loadHtml('output', {}, html);
 
-}
+})
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
 export let pick_fn = tryLog(function(fn_path) {
