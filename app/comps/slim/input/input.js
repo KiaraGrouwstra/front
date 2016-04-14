@@ -33,7 +33,7 @@ let input_type = (type) => _.get([type], {
 export let get_template = (opts) => _.get([opts.type], {
   //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
   string: opts.enum_opts ? 'datalist' : null, //select, radio
-  integer: (opts.attrs.max > opts.attrs.min) ? 'range' : null,
+  // integer: (opts.attrs.max > opts.attrs.min) ? 'range' : null, // bad idea with default min/max, but range should be an input type rather than template anyway
   boolean: 'switch',
   date: 'date',
   // number: null,

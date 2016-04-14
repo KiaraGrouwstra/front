@@ -1,5 +1,43 @@
 //- convert to ng2 thing instead of using jade variable `prefix`? this ID thing as used by Materialize tabs is annoying.
 .row
+  //- '[ngClass]'=`{ 'light-green lighten-2': meat, 'red lighten-5': meat_opts?.length && !meat }`
+  .card
+    .card-content
+      .input-field
+        //- uh-oh, disabled doesn't work with this Materialize-initialized stuff...
+        //- '[disabled]'=`!meat_opts?.length`
+        select(
+          '[(ngModel)]'=`meat`
+        )
+          option(
+            *ngFor='#opt of meat_opts; #idx = index'
+            '[value]'='opt'
+          )
+            | {{ meat_str_opts[idx] }}
+        label
+          | location of the data table to zoom in on
+        //- alt autocomplete: https://github.com/oferh/ng2-autocomplete/tree/master/src/component/ng2-autocomplete
+      .input-field
+        input.filled-in(
+          type='checkbox'
+          id=prefix+`auto_meat`
+          '[(ngModel)]'=`auto_meat`
+        )
+        label(
+          for=prefix+`auto_meat`
+        )
+          | automatically zoom in on data tables
+      .input-field
+        input.filled-in(
+          type='checkbox'
+          id=prefix+`keep_metadata`
+          '[(ngModel)]'=`keep_metadata`
+        )
+        label(
+          for=prefix+`keep_metadata`
+        )
+          | keep metadata from outside of the datatable into additional columns
+.row
   .col.s12
     ul.tabs
       - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
@@ -11,10 +49,10 @@
       .card-content
         //- #raw
         div(id=prefix+'raw')
-          pre {{ raw }}
+          pre {{ raw_str }}
         //- #colored
         div(id=prefix+'colored')
           pre('[innerHtml]'='colored')
         //- #rendered
         div(id=prefix+'rendered')
-          value('[path]'=`path`, '[val]'=`data`, '[schema]'=`spec`)
+          value('[path]'=`path`, '[val]'=`data`, '[schema]'=`zoomed_spec`)

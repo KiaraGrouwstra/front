@@ -38,8 +38,8 @@ export let FnUiComp = ng2comp({
     }
 
     combInputs = () => combine((spec, oauth_sec, have) => {
-      this.tags = spec.tags;
-      let paths = spec.paths;
+      this.tags = _.get(['tags'], spec) || [];
+      let paths = _.get(['paths'], spec) || {};
       let misc_key;
       if(this.tags) {
         misc_key = 'misc';

@@ -7,5 +7,5 @@ div([ngSwitch]='type')
   template([ngSwitchWhen]=`'scalar'`)
     scalar('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`)
   template(ngSwitchDefault)
-    p UNIMPLEMENTED OUTPUT-VALUE TYPE {{ type }}!
+    p UNIMPLEMENTED OUTPUT-VALUE TYPE ({{ type }})!
     //- | async

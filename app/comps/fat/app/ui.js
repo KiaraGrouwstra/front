@@ -59,7 +59,7 @@ export let load_ui = tryLog(async function(name) {
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
 export let pick_fn = tryLog(function(fn_path) {
-  this.data = [];
+  this.raw = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
   this.path = ['paths', fn_path, 'get', 'responses', '200'];
@@ -72,9 +72,9 @@ let submit_req = function(fn) {
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
     toast.info(start);
-    this.spec = null;
+    this.spec = {};
     // ^ wait, this should trigger inference, but what about APIs, for which I do have specs?
-    this.data = []; // array to concat to
+    this.raw = []; // array to concat to
     // ^ forcing everything into an array is great for the purpose of making results combineable,
     // whether they were originally arrays or not, but could make for terrible use of space...
     // under what circumstances should I go with this approach? expected responses n > 1.
@@ -84,10 +84,15 @@ let submit_req = function(fn) {
       x => {
         console.log(next, x);
         // toast.info(next);
-        if(!this.spec) this.spec = getSchema(x);
-        if(!this.meat_opts) this.meat_opts = findTables(this.spec);
-        // this.data = x;
-        this.data = this.data.concat(x);
+        if(!Object.keys(this.spec).length) this.spec = getSchema(x);
+        if(!this.meat_opts) {
+          this.meat_opts = findTables(this.spec);
+          this.meat_str_opts = this.meat_opts.map(y => y.join('.'));
+          window.setTimeout(() => $('select').material_select(), 500);
+        }
+        if(this.auto_meat && !this.meat.length && this.meat_opts.length == 1) this.meat = this.meat_opts[0];
+        // this.raw = x;
+        this.addData(x);
       },
       e => {
         toast.error(e);
