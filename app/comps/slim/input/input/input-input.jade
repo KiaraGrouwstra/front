@@ -7,6 +7,8 @@ form
   //- '[ngControl]'=`name`
   //- '[ngControl]'=`spec.name`
   //- '[ngControl]'=`ctrl`
+  //- '[title]'=`attrs.title`
+  //- used in browser's native (ugly) tooltip and 'required' popup
   //- '#frm'='ngForm'
   //- div(tabindex="0")
   input.validate.tooltipped(
@@ -16,12 +18,11 @@ form
     '[id]'=`attrs.id`
     '[required]'=`attrs.required`
     '[type]'=`attrs.type`
-    
     '[attr.data-tooltip]'=`attrs.tooltip`
+
     '[attr.maxlength]'=`attrs.maxlength`
     '[attr.minlength]'=`attrs.minlength`
-    '[pattern]'=`attrs.pattern`
-    '[title]'=`attrs.title`
+    '[attr.pattern]'=`attrs.pattern`
     '[autocomplete]'=`attrs.autocomplete`
 
     '[max]'=`attrs.max`

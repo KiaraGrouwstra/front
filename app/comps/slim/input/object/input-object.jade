@@ -25,7 +25,7 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('name')`
-                '[spec]'=`{name: 'name', type: 'string', required: true, pattern: '[\\\\w_][\\\\w_\\\\d]*'}`
+                '[spec]'=`{ name: 'name', type: 'string', required: true, pattern: '[\\\\w_][\\\\w_\\\\d\\\\-]*', enum: spec['x-keys']?.enum, additionalItems: spec['x-keys']?.additionalItems }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
             //- ("#key = 'val'")
@@ -34,7 +34,7 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('val')`
-                '[spec]'=`spec.additionalProperties`
+                '[spec]'=`((spec?.properties && i) ? spec?.properties[ctrl.at(i).controls.name] : null) || spec.additionalProperties`
                 '[ctrl]'=`ctrl.at(i).controls.val`
               )
             td

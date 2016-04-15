@@ -1,7 +1,22 @@
 //- {attrs: {}, enum_opts: []}
-input(list=`{{ id }}`)&attributes(attrs)
-datalist(id=`{{ id }}`)
-  option(
-    *ngFor='#opt of enum_opts'
-    [value]='opt'
+form
+  //- '[id]'=`attrs.id`
+  input(
+    '[attr.list]'=`attrs.id`
+    '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+    '[ngFormControl]'=`ctrl`
+    '[(ngModel)]'=`ctrl.value`
+    '[required]'=`attrs.required`
+    '[attr.data-tooltip]'=`attrs.tooltip`
+
+    '[attr.maxlength]'=`attrs.maxlength`
+    '[attr.minlength]'=`attrs.minlength`
+    '[attr.pattern]'=`attrs.pattern`
   )
+  datalist(
+    '[id]'=`attrs.id`
+  )
+    option(
+      *ngFor='#opt of spec.enum_opts'
+      '[value]'='opt'
+    )

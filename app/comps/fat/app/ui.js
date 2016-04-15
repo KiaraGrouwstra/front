@@ -141,5 +141,4 @@ export let doCurl = submit_req(function(v) {
 });
 
 // mime types: http://camendesign.com/code/uth4_mime-type/mime-types.php
-// http headers: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpheaders.js
 // http status codes: https://rawgit.com/postmanlabs/postman-chrome-extension-legacy/master/chrome/js/httpstatuscodes.js

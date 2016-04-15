@@ -13,6 +13,20 @@
         '[ctrl]'=`ctrl`
         '[attrs]'=`attrs`
       )
+    template('[ngSwitchWhen]'=`'range'`)
+      include ../range.jade
+    template('[ngSwitchWhen]'=`'switch'`)
+      include ../switch.jade
+    template('[ngSwitchWhen]'=`'date'`)
+      include ../date.jade
+    template('[ngSwitchWhen]'=`'file'`)
+      include ../file.jade
+    template('[ngSwitchWhen]'=`'datalist'`)
+      include ../datalist.jade
+    template('[ngSwitchWhen]'=`'select'`)
+      include ../select.jade
+    template('[ngSwitchWhen]'=`'radio'`)
+      include ../radio.jade
     template(ngSwitchDefault)
       p UNIMPLEMENTED FIELD TYPE {{ type }}!
       

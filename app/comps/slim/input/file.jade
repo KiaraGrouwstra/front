@@ -4,4 +4,17 @@
     span File
     input(type='file')
   .file-path-wrapper
-    input.file-path.validate(type='text')
+    input.file-path.validate(
+      type='text'
+      '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+      '[ngFormControl]'=`ctrl`
+      '[(ngModel)]'=`ctrl.value`
+      '[id]'=`attrs.id`
+      '[required]'=`attrs.required`
+      '[attr.data-tooltip]'=`attrs.tooltip`
+  
+      '[attr.maxlength]'=`attrs.maxlength`
+      '[attr.minlength]'=`attrs.minlength`
+      '[attr.pattern]'=`attrs.pattern`
+      '[autocomplete]'=`attrs.autocomplete`
+    )

@@ -1,3 +1,14 @@
 //- {attrs: {}}
 p.range-field
-  input(type='range')&attributes(attrs)
+  input(
+    type='range'
+    '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+    '[ngFormControl]'=`ctrl`
+    '[(ngModel)]'=`ctrl.value`
+    '[id]'=`attrs.id`
+    '[attr.data-tooltip]'=`attrs.tooltip`
+
+    '[max]'=`attrs.max`
+    '[min]'=`attrs.min`
+    '[step]'=`attrs.step`
+  )

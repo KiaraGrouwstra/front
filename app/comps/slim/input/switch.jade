@@ -1,6 +1,13 @@
 .switch
   label
     | Off
-    input(type='checkbox')&attributes(attrs)
+    input(
+      type='checkbox'
+      '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+      '[ngFormControl]'=`ctrl`
+      '[(ngModel)]'=`ctrl.value`
+      '[id]'=`attrs.id`
+      '[attr.data-tooltip]'=`attrs.tooltip`
+    )
     span.lever
     | On

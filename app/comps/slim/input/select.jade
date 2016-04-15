@@ -1,9 +1,30 @@
-//- {attrs: {}, enum_opts: []}
-select()&attributes(attrs)
-  //- | {{opt}}
-  option(
-    *ngFor='#opt of enum_opts'
-    '[value]'='opt'
-  )
+form
+  //- {attrs: {}, enum_opts: []}
+  //- &attributes(attrs)
+  //- '[autocomplete]'=`attrs.autocomplete`
+  //- '[type]'=`attrs.type`
+  //- '[title]'=`attrs.title`
+  .input-field
+    select(
+      '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+      '[ngFormControl]'=`ctrl`
+      '[(ngModel)]'=`ctrl.value`
+      '[id]'=`attrs.id`
+      '[required]'=`attrs.required`
+      '[attr.data-tooltip]'=`attrs.tooltip`
+
+      '[attr.maxlength]'=`attrs.maxlength`
+      '[attr.minlength]'=`attrs.minlength`
+      '[attr.pattern]'=`attrs.pattern`
+    )
+      //- | {{opt}}
+      //- ; #idx = index
+      option(
+        *ngFor='#opt of spec.enum_opts'
+        '[value]'='opt'
+      )
+      | {{opt}}
+      //- | {{ meat_str_opts[idx] }}
+      
 //- script.
 //-   $('select').material_select();

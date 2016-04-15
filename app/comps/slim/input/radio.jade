@@ -1,5 +1,23 @@
-//- input(
-//-   type='radio'
-//-   value='Male'
-//-   (click)='gender = male.value'
-//- )
+form
+  p(
+    *ngFor='#opt of spec.enum_opts'
+  )
+    //- '[ngModel]'=`{checked: ctrl.value == me.value}`
+    //- #me
+    //- '[name]'=`attrs.id`
+    //- '[(ngModel)]'=`ctrl.value`
+    //- '[ngModel]'=`{checked: ctrl.value == $event.target.value}`
+    input(
+      type='radio'
+      id=`{{attrs.id}}+'-'+{{opt}}`
+      '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+      '[required]'=`attrs.required`
+      '[ngFormControl]'=`ctrl`
+      '[value]'='opt'
+      '[checked]'=`ctrl.value == $event.target.value`
+      '(change)'=`ctrl.value = $event.target.value`
+    )
+    label(
+      'attr.for'=`{{attrs.id}}+'-'+{{opt}}`
+    )
+      | {{opt}}

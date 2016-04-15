@@ -1,2 +1,11 @@
 //- $('.datepicker').pickadate({ selectMonths: true, selectYears: 15 });
-input.datepicker(type='date')
+input.datepicker(
+  type='date'
+  '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+  '[ngFormControl]'=`ctrl`
+  '[(ngModel)]'=`ctrl.value`
+  '[id]'=`attrs.id`
+  '[required]'=`attrs.required`
+  '[attr.data-tooltip]'=`attrs.tooltip`
+  '[autocomplete]'=`attrs.autocomplete`
+)
