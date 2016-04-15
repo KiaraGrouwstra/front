@@ -188,7 +188,8 @@ export let get_validators = (spec) => {
   let used_vals = val_keys.filter(k => spec[k] != null);
   let validators = used_vals.map(k => Validators[k](spec[k]));
   let validator = Validators.compose(validators);
-  let val_msgs = arr2obj(used_vals, k => val_errors[k](spec[k]));
+  // let out_of_spec = ['uniqueKeys']; // gotta include these since I can't disregard them for absence from spec
+  let val_msgs = arr2obj(used_vals, k => val_errors[k](spec[k])); // .concat(out_of_spec)
   return { validator, val_msgs };
 }
 
@@ -229,6 +230,7 @@ let val_errors = {
   maxItems: x => `Must have at most ${x} items.`,
   minItems: x => `Must have at least ${x} items.`,
   uniqueItems: x => `All items must be unique.`,
+  // uniqueKeys: x => `All keys must be unique.`,
   // enum: x => `Must be one of the following values: ${JSON.stringify(x)}.`,
   enum: x => {
     let json = JSON.stringify(x);

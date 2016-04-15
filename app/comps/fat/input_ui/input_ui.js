@@ -50,7 +50,9 @@ export let InputUiComp = ng2comp({
       // why is the EventEmitter first yielding an Event?
       let kind_map = Object.assign(...this.pars.map(x => ({ [x.spec.name]: x.spec.in }) ));
       let spec = this.spec;
-      let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes}
+      // let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes} // Swagger
+      let host = spec.hosts[0];
+      let base = `${host.scheme}://${host.host}${host.basePath}`;  // OpenAPI
       let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
         let good_keys = Object.keys(_.pickBy(y => y == x)(kind_map));
         return arr2obj(good_keys, k => form_val[k]);

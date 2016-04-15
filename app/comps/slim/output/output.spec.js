@@ -3,8 +3,8 @@
 //
 // describe('output', () => {
 //
-//   let swagger = require('../swagger/swagger.json');
-//   let api_spec = require('../swagger/instagram.json');
+//   let swagger = require('../openapi/swagger.json');
+//   let api_spec = require('../openapi/instagram.json');
 //   // let fn_path = '/geographies/{geo-id}/media/recent';
 //
 //   it('parseVal turns JSON plus its spec into html', () => {

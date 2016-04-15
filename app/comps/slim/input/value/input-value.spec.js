@@ -41,7 +41,8 @@ describe('InputValueComp', () => {
 
   it('should work with scalars', test(
     cls({}, pars(scalar)),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
+    // assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
+    assert((comp, el) => expect(comp.ctrl.errors).toEqual({required: true}))
   ));
 
   it('should work with arrays', test(

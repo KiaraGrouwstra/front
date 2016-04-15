@@ -1,9 +1,15 @@
+let _ = require('lodash/fp');
 import { AbstractControl } from 'angular2/common';
 import { ControlList } from './control_list';
 
 export class ControlObject extends ControlList {
   constructor(ctrl, controls = []) { //: AbstractControl, : AbstractControl[]
-    super(ctrl, controls);
+    let validator = (ctrl) => {
+      let names = ctrl.controls.map(y => y.value.name);
+      let valid = names.length == _.uniq(names).length;
+      return valid ? null : {uniqueKeys: true};
+    }
+    super(ctrl, controls, validator);
     this.ctrl = ctrl;
   }
 

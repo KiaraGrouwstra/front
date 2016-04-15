@@ -12,7 +12,7 @@ export let load_ui = tryLog(async function(name) {
 
   let api = await (
     this.http
-    .get(`./swagger/${name}.json`)
+    .get(`./openapi/${name}.json`)
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
     .toPromise()
@@ -43,10 +43,10 @@ export let load_ui = tryLog(async function(name) {
   // output
   // let schema = await (
   //     this.http
-  //     .get('./swagger/swagger.json')
+  //     .get('./openapi/openapi.json')
   //     .map(x => {
   //         let esc = RegExp_escape("http://json-schema.org/draft-04/schema");
-  //         return x._body.replace(new RegExp(esc, 'g'), "/swagger/schema.json");
+  //         return x._body.replace(new RegExp(esc, 'g'), "/openapi/schema.json");
   //     })
   //     .map(x => JSON.parse(x))
   //     .mergeMap(x => $RefParser.dereference(x))

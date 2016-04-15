@@ -51,7 +51,8 @@ describe('FormComp', () => {
 
   it('should do scalar inputs', test(
     cls({}, _.assign(obs_pars, pars)),
-    assert((comp, el) => expect(el).toHaveText(desc + text + text + 'Submit'))
+    // assert((comp, el) => expect(el).toHaveText(desc + text + text + 'Submit'))
+    assert((comp, el) => expect(comp.items[0].ctrl.errors).toEqual({required: true}))
   ));
 
   it('should do array inputs', test(

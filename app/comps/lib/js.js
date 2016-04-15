@@ -190,8 +190,8 @@ export let method_pars = (spec, fn_path) => {
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => id_cleanse(x));
-  let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
-  let pars = [scheme].concat((_.get(hops, spec) || []).map(input_specs(path)));
+  // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
+  let pars = (_.get(hops, spec) || []).map(input_specs(path));  //[scheme].concat()
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
   return { pars, desc };
 }

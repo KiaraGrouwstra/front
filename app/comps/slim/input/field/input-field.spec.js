@@ -40,7 +40,8 @@ describe('FieldComp', () => {
 
   it('should work', test(
     cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
+    // assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
+    assert((comp, el) => expect(comp.ctrl.errors).toEqual({required: true}))
   ));
 
 });

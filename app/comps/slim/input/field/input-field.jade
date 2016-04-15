@@ -34,8 +34,9 @@
   //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
   ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
     //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
+    //- | {{vldtr}}: {{!showError(vldtr)}}
     li.error-item(
-      '*ngFor'=`#vldtr of validator_keys`
+      *ngFor=`#vldtr of validator_keys`
       '[innerHtml]'=`validator_msgs[vldtr]`
       '[hidden]'=`!showError(vldtr)`
     )

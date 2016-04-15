@@ -1,10 +1,10 @@
 {
-  "swagger": "2.0",
-  "schemes": [
-    "https"
-  ],
-  "host": "www.googleapis.com",
-  "basePath": "/analytics/v3",
+  "openapi": "2.0",
+  "hosts": {
+    "scheme": "https",
+    "host": "www.googleapis.com",
+    "basePath": "/analytics/v3"
+  },
   "info": {
     "contact": {
       "name": "Google",

@@ -50,7 +50,7 @@ describe('ValueComp', () => {
     assert((comp, el) => expect(el).toHaveText('a1b2'))
   ));
 
-  it('should handle tables', test(
+  xit('should handle tables', test(
     cls({}, Object.assign({}, obs_pars, { val: table })),
     assert((comp, el) => expect(el).toHaveText('ab12AB'))
   ));

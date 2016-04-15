@@ -35,7 +35,7 @@ export let appProvider = provide(App, {
   ),
 });
 
-describe('App', () => {
+xdescribe('App', () => {
   let injector: Injector;
   var app;
 

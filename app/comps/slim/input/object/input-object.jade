@@ -41,5 +41,8 @@
               button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`remove(item)`)
                 | ×
 
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
+      | Keys must be unique.
+        
     a.btn.waves-effect.waves-light.green('(click)'=`add()`)
       i.material-icons add

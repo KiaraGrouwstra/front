@@ -2,8 +2,8 @@ import { Control, ControlArray, AbstractControl } from 'angular2/common';
 let _ = require('lodash/fp');
 
 export class ControlList extends ControlArray {
-  constructor(ctrl, controls = []) {  //: AbstractControl, : AbstractControl[]
-    super(controls);
+  constructor(ctrl, controls = [], validator = null) {  //: AbstractControl, : AbstractControl[]
+    super(controls, validator);
     this.ctrl = ctrl;
   }
 

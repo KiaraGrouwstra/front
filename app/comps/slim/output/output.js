@@ -14,24 +14,24 @@ export let try_schema = (val, swag) => {
     try_schema(val, tp) : null //infer_type(val)
 }
 
-// for a given object key get the appropriate swagger spec
-export let key_spec = (k, swagger) => {
-  return _.get(['properties', k], swagger)
+// for a given object key get the appropriate openapi spec
+export let key_spec = (k, spec) => {
+  return _.get(['properties', k], spec)
   || _.get(['patternProperties', _.find(p => new RegExp(p).test(k)(
-    Object.keys(_.get(['patternProperties'], swagger) || {})
-  ))], swagger)
-  || _.get(['additionalProperties'], swagger);
+    Object.keys(_.get(['patternProperties'], spec) || {})
+  ))], spec)
+  || _.get(['additionalProperties'], spec);
 }
 
 // meant to use without makeTemplate
-export function parseScalar(path, api_spec, swagger) {
+export function parseScalar(path, api_spec, schema) {
   let val = `${api_spec}`;
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...
   if(last == "description") {
-    // val = `<span class="markdown">${marked(val)}</span>`  // swagger MD descs, wrapped to ensure 1 node
+    // val = `<span class="markdown">${marked(val)}</span>`  // openapi MD descs, wrapped to ensure 1 node
     let tmp = marked(val);
-    val = `<span class="markdown">${tmp}</span>`;  // swagger MD descs, wrapped to ensure 1 node
+    val = `<span class="markdown">${tmp}</span>`;  // openapi MD descs, wrapped to ensure 1 node
   } else if (validUrl.isUri(val)) {
     const IMG_EXTS = ['jpg','jpeg','bmp','png','gif','tiff','svg','bpg','heif','hdr','webp','ppm','pgm','pbm','pnm'].map(ext => '\\.' + ext);
     if (_.some(reg => new RegExp(reg, 'i').test(val))(IMG_EXTS)) {
@@ -40,7 +40,7 @@ export function parseScalar(path, api_spec, swagger) {
       val = `<a href="${val}">${val}</a>`;
     }
   }
-  switch (_.get(['format'], swagger)) {
+  switch (_.get(['format'], schema)) {
     // case "uri": return `<a href="${val}">${val}</a>`; //break;
     // case "email": return `<a href="mailto:${val}">${val}</a>`; //break;
     case "uri": let str1 = `<a href="${val}">${val}</a>`; return str1; //break;

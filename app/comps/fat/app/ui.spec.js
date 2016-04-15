@@ -2,8 +2,8 @@ import { get_submit } from './ui';
 
 describe('ui', () => {
 
-  // let swagger = require('../../../swagger/swagger.json');
-  let api_spec = require('../../../swagger/instagram.json');
+  // let swagger = require('../../../openapi/swagger.json');
+  let api_spec = require('../../../openapi/instagram.json');
   let fn_path = '/geographies/{geo-id}/media/recent';
 
   // it('get_submit returns the form submit function for an API function', () => {
