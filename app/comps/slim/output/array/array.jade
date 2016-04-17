@@ -1,5 +1,5 @@
 div([ngSwitch]='type')
   template([ngSwitchWhen]=`'object'`)
-    mytable('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`, '[named]'=`named`)
+    mytable('[path]'=`path`, '[val]'=`val`, '[schema]'=`schema`, '[named]'=`named`)
   template(ngSwitchDefault)
-    myul('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`, '[named]'=`named`)
+    myul('[path]'=`path`, '[val]'=`val`, '[schema]'=`schema`, '[named]'=`named`)

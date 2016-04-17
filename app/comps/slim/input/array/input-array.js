@@ -13,17 +13,15 @@ export let InputArrayComp = ng2comp({
     template: require('./input-array.jade'),
     directives: [
       COMMON_DIRECTIVES, FORM_DIRECTIVES,
-      FieldComp,
+      forwardRef(() => FieldComp),
     ]
   },
   parameters: [],
   // decorators: {},
   class: class InputArrayComp {
-    // type: Observable<string>;
+    option = null;
 
     ngOnInit() {
-      // let props = this.path.map(p => getPaths(p));
-      // ['k', 'id'].forEach(x => this[x] = props.map(y => y[x]));  //, 'model'  //.pluck(x)
       let props = getPaths(this.path);
       ['k', 'id'].forEach(x => this[x] = props[x]);
       // FieldComp's
@@ -31,6 +29,29 @@ export let InputArrayComp = ng2comp({
       this.items = new Set([]);
       // I could ditch this whole items/counter crap and just iterate over ctrl.controls if I no longer insist id's with unique paths
       // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
+    }
+
+    get spec() {
+      return this._spec;
+    }
+    set spec(x) {
+      if(_.isUndefined(x)) return;
+      this._spec = x;
+      this.indexBased = Array.isArray(_.get(['items'], x));
+      this.inAdditional = _.get(['additionalItems', 'oneOf'], x); //: boolean
+      this.isOneOf = this.inAdditional || _.get(['items', 'oneOf'], x); //: boolean
+      window.setTimeout(() => $('select').material_select(), 300);
+    }
+
+    getSpec(idx) {
+      let spec = this.spec;
+      return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
+    }
+
+    resolveSpec(idx) {
+      let opt = this.option;
+      let spec = this.getSpec(idx);
+      return !this.isOneOf ? spec : spec.oneOf[opt];
     }
 
     add() {

@@ -1,3 +1,4 @@
+let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from 'angular2/core';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 import { FieldComp, InputArrayComp, InputObjectComp, InputTableComp } from '../../../comps';
@@ -7,6 +8,9 @@ import { FieldComp, InputArrayComp, InputObjectComp, InputTableComp } from '../.
 // import { InputTableComp } from '../table/input-table';
 import { ng2comp } from '../../../lib/js';
 
+const SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
+const ofs = ['anyOf','oneOf','allOf'];
+
 export let InputValueComp = ng2comp({
   component: {
     selector: 'input-value',
@@ -15,14 +19,10 @@ export let InputValueComp = ng2comp({
     template: require('./input-value.jade'),
     directives: [
       COMMON_DIRECTIVES,
-      // forwardRef(() => FieldComp),
-      // forwardRef(() => InputArrayComp),
-      // forwardRef(() => InputObjectComp),
-      // forwardRef(() => InputTableComp),
-      FieldComp,
-      InputArrayComp,
-      InputObjectComp,
-      InputTableComp,
+      forwardRef(() => FieldComp),
+      forwardRef(() => InputArrayComp),
+      forwardRef(() => InputObjectComp),
+      forwardRef(() => InputTableComp),
     ]
   },
   parameters: [],
@@ -33,16 +33,14 @@ export let InputValueComp = ng2comp({
     t: ViewChild(InputTableComp),
   },
   class: class InputValueComp {
-    // type: Observable<string>;
-
-    ngOnInit() {
-      // this calculates only once -- move out like HostBinding? convert to Rx?
-      this.type = this.spec.type;
-      let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
-      if(SCALARS.includes(this.type)) this.type = 'scalar';
-
-      // type:scalar/array/object/table, FieldComp|InputArrayComp|InputObjectComp|InputTableComp
+    get spec() {
+      return this._spec;
     }
-
+    set spec(x) {
+      if(_.isUndefined(x)) return;
+      this._spec = x;
+      this.type = x.type;
+      if(SCALARS.includes(this.type) || _.some(k => x[k])(ofs) || _.some(x.type || {})(ofs)) this.type = 'scalar';
+    }
   }
 })

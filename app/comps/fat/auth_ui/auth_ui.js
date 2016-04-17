@@ -6,7 +6,7 @@ let _ = require('lodash/fp');
 export let AuthUiComp = ng2comp({
   component: {
     selector: 'auth-ui',
-    inputs: ['name', 'scopes', 'oauth_info', 'delim', 'have'],
+    inputs: ['name', 'scopes', 'oauth_info', 'have'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./auth_ui.jade'),
     directives: [COMMON_DIRECTIVES],
@@ -45,8 +45,7 @@ export let AuthUiComp = ng2comp({
     })(this.scopes, this.have);
 
     onSubmit() {
-      // let delim = _.get(['scope_delimiter'], this.oauth_misc) || ' ';
-      let scope = this.scopes.filter(s => this.want_scope[s]).join(this.delim);
+      let scope = this.scopes.filter(s => this.want_scope[s]).join(' ');
       //let redirect_uri = `http://127.0.0.1:8090/callback/${this.name}/?` + global.$.param({scope});
       let redirect_uri = `http://127.0.0.1:8090/?` + global.$.param({scope, callback: this.name});
       let url = this.oauth_info.authorizationUrl + '?' + global.$.param({

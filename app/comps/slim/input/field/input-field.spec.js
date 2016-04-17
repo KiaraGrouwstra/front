@@ -38,10 +38,25 @@ describe('FieldComp', () => {
   //   throw "works"
   // })
 
-  it('should work', test(
+  it('should validate', test(
     cls({}, pars),
-    // assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
-    assert((comp, el) => expect(comp.ctrl.errors).toEqual({required: true}))
+    assert((comp, el) => {
+      expect(comp.ctrl.errors).toEqual({required: true});
+    })
+  ));
+
+  it('should hold appropriate error messages', test(
+    cls({}, pars),
+    assert((comp, el) => {
+      expect(Object.keys(comp.validator_msgs)).toEqual(['required']);
+    })
+  ));
+
+  it('should show error messages', test(
+    cls({}, pars),
+    assert((comp, el) => {
+      expect(el).toHaveText('geo-id: The geography ID.\n' + req);
+    })
   ));
 
 });

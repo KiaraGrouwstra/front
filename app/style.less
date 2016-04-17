@@ -185,3 +185,117 @@ pre {
 // .submit-btn {
 //   .wavy-btn;
 // }
+
+// Materialize `.valid`/`.invalid` styles converted to `.ng-valid`/`.ng-invalid`, since thru `ngClass` it somehow doesn't sync well...
+
+input:not([type]).ng-valid, input:not([type]):focus.ng-valid,
+input[type=text].ng-valid,
+input[type=text]:focus.ng-valid,
+input[type=password].ng-valid,
+input[type=password]:focus.ng-valid,
+input[type=email].ng-valid,
+input[type=email]:focus.ng-valid,
+input[type=url].ng-valid,
+input[type=url]:focus.ng-valid,
+input[type=time].ng-valid,
+input[type=time]:focus.ng-valid,
+input[type=date].ng-valid,
+input[type=date]:focus.ng-valid,
+input[type=datetime-local].ng-valid,
+input[type=datetime-local]:focus.ng-valid,
+input[type=tel].ng-valid,
+input[type=tel]:focus.ng-valid,
+input[type=number].ng-valid,
+input[type=number]:focus.ng-valid,
+input[type=search].ng-valid,
+input[type=search]:focus.ng-valid,
+textarea.materialize-textarea.ng-valid,
+textarea.materialize-textarea:focus.ng-valid {
+  border-bottom: 1px solid #4CAF50;
+  box-shadow: 0 1px 0 0 #4CAF50;
+}
+
+input:not([type]).ng-valid + label:after,
+input:not([type]):focus.ng-valid + label:after,
+input[type=text].ng-valid + label:after,
+input[type=text]:focus.ng-valid + label:after,
+input[type=password].ng-valid + label:after,
+input[type=password]:focus.ng-valid + label:after,
+input[type=email].ng-valid + label:after,
+input[type=email]:focus.ng-valid + label:after,
+input[type=url].ng-valid + label:after,
+input[type=url]:focus.ng-valid + label:after,
+input[type=time].ng-valid + label:after,
+input[type=time]:focus.ng-valid + label:after,
+input[type=date].ng-valid + label:after,
+input[type=date]:focus.ng-valid + label:after,
+input[type=datetime-local].ng-valid + label:after,
+input[type=datetime-local]:focus.ng-valid + label:after,
+input[type=tel].ng-valid + label:after,
+input[type=tel]:focus.ng-valid + label:after,
+input[type=number].ng-valid + label:after,
+input[type=number]:focus.ng-valid + label:after,
+input[type=search].ng-valid + label:after,
+input[type=search]:focus.ng-valid + label:after,
+textarea.materialize-textarea.ng-valid + label:after,
+textarea.materialize-textarea:focus.ng-valid + label:after {
+  content: attr(data-success);
+  color: #4CAF50;
+  opacity: 1;
+}
+
+input:not([type]).ng-invalid, input:not([type]):focus.ng-invalid,
+input[type=text].ng-invalid,
+input[type=text]:focus.ng-invalid,
+input[type=password].ng-invalid,
+input[type=password]:focus.ng-invalid,
+input[type=email].ng-invalid,
+input[type=email]:focus.ng-invalid,
+input[type=url].ng-invalid,
+input[type=url]:focus.ng-invalid,
+input[type=time].ng-invalid,
+input[type=time]:focus.ng-invalid,
+input[type=date].ng-invalid,
+input[type=date]:focus.ng-invalid,
+input[type=datetime-local].ng-invalid,
+input[type=datetime-local]:focus.ng-invalid,
+input[type=tel].ng-invalid,
+input[type=tel]:focus.ng-invalid,
+input[type=number].ng-invalid,
+input[type=number]:focus.ng-invalid,
+input[type=search].ng-invalid,
+input[type=search]:focus.ng-invalid,
+textarea.materialize-textarea.ng-invalid,
+textarea.materialize-textarea:focus.ng-invalid {
+  border-bottom: 1px solid #F44336;
+  box-shadow: 0 1px 0 0 #F44336;
+}
+
+input:not([type]).ng-invalid + label:after,
+input:not([type]):focus.ng-invalid + label:after,
+input[type=text].ng-invalid + label:after,
+input[type=text]:focus.ng-invalid + label:after,
+input[type=password].ng-invalid + label:after,
+input[type=password]:focus.ng-invalid + label:after,
+input[type=email].ng-invalid + label:after,
+input[type=email]:focus.ng-invalid + label:after,
+input[type=url].ng-invalid + label:after,
+input[type=url]:focus.ng-invalid + label:after,
+input[type=time].ng-invalid + label:after,
+input[type=time]:focus.ng-invalid + label:after,
+input[type=date].ng-invalid + label:after,
+input[type=date]:focus.ng-invalid + label:after,
+input[type=datetime-local].ng-invalid + label:after,
+input[type=datetime-local]:focus.ng-invalid + label:after,
+input[type=tel].ng-invalid + label:after,
+input[type=tel]:focus.ng-invalid + label:after,
+input[type=number].ng-invalid + label:after,
+input[type=number]:focus.ng-invalid + label:after,
+input[type=search].ng-invalid + label:after,
+input[type=search]:focus.ng-invalid + label:after,
+textarea.materialize-textarea.ng-invalid + label:after,
+textarea.materialize-textarea:focus.ng-invalid + label:after {
+  content: attr(data-error);
+  color: #F44336;
+  opacity: 1;
+}

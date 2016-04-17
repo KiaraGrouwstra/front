@@ -17,13 +17,13 @@ export let InputObjectComp = ng2comp({
     template: require('./input-object.jade'),
     directives: [
       COMMON_DIRECTIVES, FORM_DIRECTIVES,
-      FieldComp,
+      forwardRef(() => FieldComp),
     ]
   },
   parameters: [],
   // decorators: {},
   class: class InputObjectComp {
-    // type: Observable<string>;
+    option = null;
 
     ngOnInit() {
       let props = getPaths(this.path);
@@ -31,6 +31,27 @@ export let InputObjectComp = ng2comp({
       this.counter = 0;
       this.items = new Set([]);
       this.keys = ['name', 'val'];
+    }
+
+    get spec() {
+      return this._spec;
+    }
+    set spec(x) {
+      if(_.isUndefined(x)) return;
+      this._spec = x;
+      this.isOneOf = _.get(['additionalProperties', 'oneOf'], x);  //: boolean
+      window.setTimeout(() => $('select').material_select(), 300);
+    }
+
+    resolveSpec(i) {
+      let opt = this.option;
+      let ctrl = this.ctrl;
+      let { properties, additionalProperties } = this.spec; //spec
+      if(properties && i) {
+      } else {
+        let spec = additionalProperties;
+        return !this.isOneOf ? spec : spec.oneOf[opt];
+      }
     }
 
     add() {

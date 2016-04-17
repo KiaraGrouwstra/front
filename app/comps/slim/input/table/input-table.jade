@@ -21,10 +21,11 @@
                 th {{key}}
                 td
                   //- '[name]'=`i`
+                  //- '[spec]'=`spec.items.properties[key]`
                   input-field(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat(key)`
-                    '[spec]'=`spec.items.properties[key]`
+                    '[spec]'=`getSpec(i, key)`
                     '[ctrl]'=`ctrl.at(i).controls[key]`
                   )
 

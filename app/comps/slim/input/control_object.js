@@ -1,15 +1,18 @@
 let _ = require('lodash/fp');
-import { AbstractControl } from 'angular2/common';
+let tv4 = require('tv4');
+import { Validators, AbstractControl } from 'angular2/common';
 import { ControlList } from './control_list';
+import { allUsed } from './input';
 
 export class ControlObject extends ControlList {
-  constructor(ctrl, controls = []) { //: AbstractControl, : AbstractControl[]
-    let validator = (ctrl) => {
+  constructor(ctrl, allOf = [], vldtr = null) { //: AbstractControl, : AbstractControl[]
+    let uniqueKeys = (ctrl) => {
       let names = ctrl.controls.map(y => y.value.name);
       let valid = names.length == _.uniq(names).length;
       return valid ? null : {uniqueKeys: true};
-    }
-    super(ctrl, controls, validator);
+    };
+    let validator = Validators.compose([uniqueKeys, allUsed(allOf, y => y.val), vldtr]);
+    super(ctrl, allOf, validator);
     this.ctrl = ctrl;
   }
 

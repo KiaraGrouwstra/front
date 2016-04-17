@@ -3,7 +3,25 @@
     p.card-title(*ngIf='named') {{k}}
     //- '[ngControlGroup]'=`ctrl`
     form
+    
+      //- select.jade
+      .input-field(
+        *ngIf=`isOneOf`
+      )
+        //- '(input)'=`option = $event.target.value`
+        select(
+          '[(ngModel)]'=`option`
+        )
+          option(
+            *ngFor=`#opt of spec.additionalProperties.oneOf; #idx = index`
+            '[value]'=`idx`
+          )
+            | {{opt.type}}
+      //- script.
+      //-   $('select').material_select();
+      
       ul(
+        *ngIf=`!isOneOf || option`
         '[ngControlGroup]'=`spec.name`
       )
         table.bordered.highlight
@@ -31,10 +49,11 @@
             //- ("#key = 'val'")
             td
               //- '[name]'=`i`
+              //- '[spec]'=`((spec?.properties && i) ? spec?.properties[ctrl.at(i).controls.name] : null) || spec.additionalProperties`
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('val')`
-                '[spec]'=`((spec?.properties && i) ? spec?.properties[ctrl.at(i).controls.name] : null) || spec.additionalProperties`
+                '[spec]'=`resolveSpec(i)`
                 '[ctrl]'=`ctrl.at(i).controls.val`
               )
             td
@@ -43,6 +62,8 @@
 
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
       | Keys must be unique.
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
+      | Must use and provide valid values for all types.
         
     a.btn.waves-effect.waves-light.green('(click)'=`add()`)
       i.material-icons add

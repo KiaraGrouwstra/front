@@ -13,7 +13,7 @@ export let InputTableComp = ng2comp({
     template: require('./input-table.jade'),
     directives: [
       COMMON_DIRECTIVES, FORM_DIRECTIVES,
-      FieldComp,
+      forwardRef(() => FieldComp),
     ]
   },
   parameters: [],
@@ -28,6 +28,21 @@ export let InputTableComp = ng2comp({
       this.items = new Set([]);
       // [working example](http://plnkr.co/edit/mcfYMx?p=preview)
       this.keys = Object.keys(this.spec.items.properties);
+    }
+
+    get spec() {
+      return this._spec;
+    }
+    set spec(x) {
+      if(_.isUndefined(x)) return;
+      this._spec = x;
+      this.indexBased = Array.isArray(_.get(['items'], x));
+    }
+
+    getSpec(idx, col) {
+      let spec = this.spec;
+      let row_spec = this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
+      return row_spec.properties[col];
     }
 
     add() {

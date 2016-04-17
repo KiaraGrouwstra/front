@@ -4,14 +4,17 @@ let tv4 = require('tv4');
 let marked = require('marked');
 let validUrl = require('valid-url');
 
-export let infer_type = (v) => Array.isArray(v) ? "array" : _.isObject(v) ? "object" : "scalar"
+// infer the type for a value lacking a spec
+export let infer_type = (v) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
 
-export let try_schema = (val, swag) => {
-  let options = _.get(['oneOf'], swag) || _.get(['anyOf'], swag) || _.get(['allOf'], swag) || []
-  let tp = _.find((schema, idx, arr) => tv4.validate(val, schema, false, false, false), options)
+// for a spec using `*Of` try its different options to see if any one is valid for the given data
+// (which seems fair for `oneOf` but blatantly disregards `allOf` and to lesser extent `anyOf`)
+export let try_schema = (val, spec) => {
+  let options = _.get(['oneOf'], spec) || _.get(['anyOf'], spec) || _.get(['allOf'], spec) || [];
+  let tp = _.find((schema, idx, arr) => tv4.validate(val, schema, false, false, false), options);
   return _.get(['type'], tp) ? tp :
     _.some(x => _.get([x], tp), ['oneOf','anyOf','allOf']) ?
-    try_schema(val, tp) : null //infer_type(val)
+    try_schema(val, tp) : null; //infer_type(val)
 }
 
 // for a given object key get the appropriate openapi spec

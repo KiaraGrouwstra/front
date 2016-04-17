@@ -26,7 +26,6 @@ export let load_ui = tryLog(async function(name) {
   this.auth_ui_name = name;
   this.auth_ui_scopes = scopes;
   this.auth_ui_oauth_info = oauth_info;
-  this.auth_ui_delim = _.get(['scope_delimiter'], this.oauth_misc[name]) || ' ';
   this.auth_ui_have = _.get([name, 'scopes_have'], this.auths) || [];
 
   let token = this.auths[name].token;

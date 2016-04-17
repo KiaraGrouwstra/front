@@ -1,10 +1,12 @@
 {
   "openapi": "2.0",
-  "hosts": {
-    "scheme": "https",
-    "host": "www.googleapis.com",
-    "basePath": "/analytics/v3"
-  },
+  "hosts": [
+    {
+      "scheme": "https",
+      "host": "www.googleapis.com",
+      "basePath": "/analytics/v3"
+    }
+  ],
   "info": {
     "contact": {
       "name": "Google",

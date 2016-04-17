@@ -11,8 +11,9 @@ form
   //- used in browser's native (ugly) tooltip and 'required' popup
   //- '#frm'='ngForm'
   //- div(tabindex="0")
+  //- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+  //- ^ this somehow doesn't actually sync well :(, gonna try through CSS instead...
   input.validate.tooltipped(
-    '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
     '[id]'=`attrs.id`

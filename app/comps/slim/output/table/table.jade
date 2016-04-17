@@ -141,15 +141,16 @@
           //- *ngFor=`#c of r.cells`
           //- ; #c = r.cells[name]
           td(
-            *ngFor=`#name of colOrder`
+            *ngFor=`#name of colOrder; #idx = index`
             id=`{{r.cells[name].id}}`
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
           )
+            //- colMeta[name].spec
             value(
               '[path]'=`r.cells[name].path`
               '[val]'=`r.cells[name].val`
-              '[schema]'=`colMeta[name].spec`
+              '[schema]'=`getSpec(idx)`
             )
           //- td(
           //-   *ngFor=`#name of colOrder; #c = r.cells.get(name)`

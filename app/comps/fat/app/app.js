@@ -63,11 +63,6 @@ export let App = ng2comp({
     apis = ['instagram', 'github', 'ganalytics'];
     spec = {};
     path = ['test'];
-    fn_ui_oauth_sec = 'instagram_auth';
-    // https://github.com/simov/grant/blob/master/config/oauth.json
-    oauth_misc = require('../../../vendor/oauth.json');
-    //authorize_url, access_url, oauth, scope_delimiter
-    // other crap: https://grant-oauth.herokuapp.com/providers
 
     //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
     constructor(

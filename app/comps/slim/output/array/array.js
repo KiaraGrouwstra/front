@@ -47,14 +47,10 @@ export let ArrayComp = ng2comp({
       this.combInputs();
     }
 
-    combInputs = () => combine((val, schema) => {
-      this.new_spec = getSpec(this.first, schema);
-      this.type = _.get(['type'], this.new_spec) || infer_type(this.first);
-    }, { schema: true })(this.val, this.schema);
+    combInputs = () => combine((val, spec) => {
+      let first = this.first;
+      this.type = _.get(['items', 'type'], spec) || (_.isObject(first) && !_.isArray(first)) ? 'object' : 'other';
+    }, { spec: true })(this.val, this.schema);
 
   }
 })
-
-let getSpec = (first, spec) => _.get(['items', 'type'], spec) ? spec.items : try_schema(first, _.get(['items'], spec))
-  //items/anyOf/allOf/oneOf, additionalItems
-  //no array of multiple, this'd be listed as anyOf/allOf or additionalItems, both currently unimplemented

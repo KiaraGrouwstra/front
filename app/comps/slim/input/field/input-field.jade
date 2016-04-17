@@ -1,7 +1,33 @@
 //- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
+div(*ngIf=`of`)
+
+  //- select.jade
+  form
+    .input-field
+      //- '(input)'=`option = $event.target.value`
+      select(
+        '[(ngModel)]'=`option`
+      )
+        option(
+          *ngFor=`#opt of spec[of]; #idx = index`
+          '[value]'=`idx`
+        )
+          | {{opt.type}}
+  //- script.
+  //-   $('select').material_select();
+
+  input-value(
+    *ngIf=`option`
+    '[path]'=`path`
+    '[spec]'=`resolveSpec()`
+    '[named]'=`named`
+    '[ctrl]'=`ctrl`
+  )
+
 //- '[hidden]'=`hidden`
 //- ^ I don't know why, but it seemed to dislike this version for some reason...
 .input-field(
+  *ngIf=`!of`
   '[ngClass]'=`{hidden: hidden}`
 )
   div('[ngSwitch]'='type')

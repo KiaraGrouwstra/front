@@ -58,6 +58,7 @@ export let ValueComp = ng2comp({
     combInputs = () => combine((val, schema) => {
       this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
       this.type = _.get(['type'], schema) || infer_type(val);
+      // ^ handles anyOf/oneOf/allOf as well; good.
       let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
       if(SCALARS.includes(this.type)) this.type = 'scalar';
     }, { schema: true })(this.val, this.schema);

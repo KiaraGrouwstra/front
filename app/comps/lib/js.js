@@ -209,6 +209,20 @@ export let findTables = (spec, path = []) => {
   }
 }
 
+export let updateSpec = (specification) => {
+  let spec = _.cloneDeep(specification);
+  // [Swagger 1.1 to 1.2](https://github.com/OAI/OpenAPI-Specification/wiki/1.2-transition)
+  // [1.2 to 2.0](https://github.com/OAI/OpenAPI-Specification/wiki/Swagger-1.2-to-2.0-Migration-Guide)
+  // [1.2 to 2.0 tool](https://github.com/apigee-127/swagger-converter)
+  // Swagger 2.0 to OpenAPI 3.0:
+  delete spec.swagger;
+  spec.openapi = '3.0.0';
+  spec.hosts = spec.schemes.map(scheme => ({ host: spec.host, basePath: spec.basePath, scheme }));
+  delete spec.host;
+  delete spec.basePath;
+  delete spec.schemes;
+}
+
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)
 // [swagger editor ng1 html](https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html)

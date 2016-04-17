@@ -33,16 +33,18 @@ describe('InputObjectComp', () => {
   //   throw "works"
   // })
 
-  // it('should work', test(
-  //   cls({}, pars),
-  //   assert((comp, el) => expect(el).toHaveText('NameValueadd'))
-  // ));
-
-  it('should work named', test(
-    cls({}, _.assign(pars, {named: true})),
-    // assert((comp, el) => expect(el).toHaveText('testNameValueadd'))
-    assert((comp, el) => expect(comp.ctrl.errors).toEqual(null))
+  it('should work', test(
+    cls({}, pars),
+    assert((comp, el) => {
+      expect(comp.ctrl.errors).toEqual(null));
+      // expect(el).toHaveText('NameValueadd');
+    }
   ));
+
+  // it('should work named', test(
+  //   cls({}, _.assign(pars, {named: true})),
+  //   assert((comp, el) => expect(el).toHaveText('testNameValueadd'))
+  // ));
 
   it('should validate key uniqueness', test(
     cls({}, pars),

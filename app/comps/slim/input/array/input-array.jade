@@ -3,19 +3,44 @@
     p.card-title(*ngIf='named') {{k}}
     //- '[ngControlGroup]'=`ctrl`
     form
+    
+      //- select.jade
+      .input-field(
+        *ngIf=`isOneOf`
+      )
+        //- '(input)'=`option = $event.target.value`
+        select(
+          '[(ngModel)]'=`option`
+        )
+          option(
+            *ngFor=`#opt of inAdditional ? spec.additionalItems.oneOf : spec.items.oneOf; #idx = index`
+            '[value]'=`idx`
+          )
+            | {{opt.type}}
+      //- script.
+      //-   $('select').material_select();
+      
       ul(
+        *ngIf=`!isOneOf || option`
         '[ngControlGroup]'=`spec.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
-        li.row(*ngFor="#item of items; #i = index")
+        li.row(
+          *ngFor=`#item of items; #i = index`
+        )
           button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item, i)`)
             | ×
           //- '[name]'=`i`
+          //- '[spec]'=`spec.items`
           input-field.col(
             '[named]'=`false`
             '[path]'=`path.concat(item)`
-            '[spec]'=`spec.items`
+            '[spec]'=`resolveSpec(i)`
             '[ctrl]'=`ctrl.at(i)`
           )
+          
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
+      | Must use and provide valid values for all types.
+          
     a.btn.waves-effect.waves-light.green('(click)'=`add()`)
       i.material-icons add

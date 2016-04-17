@@ -85,6 +85,7 @@ export let TableComp = ng2comp({
       // console.log('table:set:schema', x);
       if(_.isUndefined(x)) return;
       this._schema = x;
+      this.indexBased = Array.isArray(_.get(['items'], x));
       this.combInputs();
     }
 
@@ -280,7 +281,7 @@ export let TableComp = ng2comp({
           var isLog = false;
           // var boundaries = [min, max];
         }
-        return { spec, isNum, hasNum, isText, hasText, min, max, isLog }; //, boundaries
+        return { isNum, hasNum, isText, hasText, min, max, isLog }; //spec, boundaries
       });
       this.rows = rowPars(this.col_keys, path, val);
       this.filter();
@@ -334,6 +335,12 @@ export let TableComp = ng2comp({
           break;
       }
       this.sort();
+    }
+
+    getSpec(idx) {
+      let spec = this.schema;
+      return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
+      // _.get(['items', 'type'], spec) ? spec.items : try_schema(this.first, _.get(['items'], spec));
     }
 
   }

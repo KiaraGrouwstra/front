@@ -1,9 +1,12 @@
+let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from 'angular2/core';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 let marked = require('marked');
-import { get_validators, input_attrs, input_opts, get_template } from '../input';
+import { input_attrs, get_template } from '../input';
+import { val_errors, val_keys } from '../validators'; //get_validators,
+import { InputValueComp } from '../value/input-value';
 import { InputComp } from '../input/input-input';
-import { ng2comp } from '../../../lib/js';
+import { arr2obj, ng2comp } from '../../../lib/js';
 import { getPaths } from '../../slim';
 
 export let FieldComp = ng2comp({
@@ -14,7 +17,7 @@ export let FieldComp = ng2comp({
     template: require('./input-field.jade'),
     directives: [
       COMMON_DIRECTIVES,
-      // forwardRef(() => InputComp),
+      forwardRef(() => InputValueComp),
       InputComp,
     ]
   },
@@ -24,23 +27,44 @@ export let FieldComp = ng2comp({
   },
   class: class FieldComp {
     // type: Observable<string>;
+    option = null;
 
     ngOnInit() {
       // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
-      this.hidden = this.spec.type == 'hidden';
       let props = getPaths(this.path);
       ['id'].forEach(x => this[x] = props[x]);  //, 'k', 'model', 'variable'
-      this.label = marked(`**${this.spec.name}:** ${this.spec.description}`);
-      this.validator_msgs = get_validators(this.spec).val_msgs;
-      this.validator_keys = Object.keys(this.validator_msgs);
-      let key = this.spec.name;  // variable
+      let spec = this.spec;
+      // let key = spec.name;  // variable
       // this.ctrl: from controls[key];
-      this.attrs = input_attrs(this.path, this.spec);
-      this.type = get_template(input_opts(this.spec, this.attrs, {}));
+      this.attrs = input_attrs(this.path, spec);
+      this.type = get_template(spec, this.attrs);
+    }
+
+    get spec() {
+      return this._spec;
+    }
+    set spec(x) {
+      if(_.isUndefined(x)) return;
+      this._spec = x;
+      const ofs = ['anyOf','oneOf','allOf'];
+      this.of = _.find(k => x[k])(ofs) || _.findKey(x.type || {})(ofs);
+      window.setTimeout(() => $('select').material_select(), 300);
+      let spec = x;
+      this.hidden = spec.type == 'hidden';
+      this.label = marked(`**${spec.name}:** ${spec.description}`);
+      // this.validator_msgs = get_validators(spec).val_msgs;
+      // this.validator_keys = Object.keys(this.validator_msgs);
+      this.validator_keys = val_keys.filter(k => spec[k] != null);
+      // this.validator_msgs = mapBoth(val_errors, (fn, k) => fn(spec[k]));
+      this.validator_msgs = arr2obj(this.validator_keys, k => val_errors[k](spec[k]));
     }
 
     showError(vldtr) {
       return (this.ctrl.errors||{})[vldtr];
+    }
+
+    resolveSpec() {
+      return this.spec[this.of][this.option];
     }
 
   }
