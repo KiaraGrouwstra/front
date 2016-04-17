@@ -48,6 +48,7 @@ export let InputObjectComp = ng2comp({
       let ctrl = this.ctrl;
       let { properties, additionalProperties } = this.spec; //spec
       if(properties && i) {
+        return properties[ctrl.at(i).controls.name];
       } else {
         let spec = additionalProperties;
         return !this.isOneOf ? spec : spec.oneOf[opt];

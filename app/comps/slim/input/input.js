@@ -1,10 +1,10 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { Validators, Control, ControlGroup, ControlArray } from 'angular2/common';
+import { Control, ControlGroup, ControlArray } from 'angular2/common';
 import { ControlList } from './control_list';
 import { ControlObject } from './control_object';
-import { arr2obj, mapBoth } from '../../lib/js';
 import { getPaths } from '../slim';
+import { get_validators } from './validators';
 
 // get the default value for a value type
 let get_default = (type) => {
@@ -30,47 +30,41 @@ let input_type = (type) => _.get([type], {
 }) || type;
 
 // pick a Jade template
-export let get_template = (opts) => _.get([opts.type], {
-  //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
-  // string: opts.enum_opts ? (opts.additionalItems ? 'datalist' : 'select') : null, //radio over select? alt. autocomplete over datalist?
-  integer: (opts.attrs.max > opts.attrs.min && opts.attrs.min > Number.MIN_VALUE && opts.attrs.max > Number.MAX_VALUE) ? 'range' : null,
-  boolean: 'switch',
-  date: 'date',
-  file: 'file',
-  // number: null,
-  // array: [checkboxes, array],
-  // object: [fieldset],
-}) || 'input'
-
-export let input_opts = (spec, attrs, val_msgs) => ({  //path, attrs = input_attrs(path, spec), val_msgs = get_validators(spec).val_msgs
-  attrs,
-  type: spec.type,
-  enum_opts: spec.enum,
-  id: attrs.id,
-  ctrl: `form.controls.${spec.name}`,
-  label: marked(`**${spec.name}:** ${spec.description}`),
-  validators: val_msgs,
-  hidden: spec.type == 'hidden',
-})
+export let get_template = (spec, attrs) => {
+  return _.get([spec.type], {
+    //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
+    string: spec.enum ? (attrs.additionalItems ? 'datalist' : 'select') : null, //radio over select? alt. autocomplete over datalist?
+    integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
+    boolean: 'switch',
+    date: 'date',
+    file: 'file',
+    // number: null,
+    // array: [checkboxes, array],
+    // object: [fieldset],
+  }) || 'input';
+}
 
 // return initial key/value pair for the model
-// function input_control(spec = {}, validator = get_validators(spec).validator) {
-export function input_control(spec = {}, validator) {
-  if(typeof validator == 'undefined') validator = get_validators(spec).validator;
+export function input_control(spec = {}) {
   switch(spec.type) {
     case 'array':
-      return _.get(['items','properties'], spec) ?
-      new ControlList(new ControlGroup(_.mapValues(prop => input_control(prop), spec.items.properties))) :  // table, not native Swagger
-      new ControlList(input_control(spec.items));
-    case 'object':  // not native Swagger
+      let arrAllOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
+      let props = _.get(['items','properties'], spec);
+      let arrCtrl = props ?
+        new ControlGroup(_.mapValues(x => input_control(x), props)) :
+        input_control(spec.items);
+      return new ControlList(arrCtrl, arrAllOf);
+    case 'object':
+      let objAllOf = _.get(['additionalProperties','allOf'], spec) || [];
       let pattern = '[\\w_][\\w_\\d\\-]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
-      let ctrl = input_control({name: 'name', type: 'string', required: true, pattern});
-      return new ControlObject(new ControlGroup({name: ctrl, val: input_control(spec.additionalProperties)}));
+      let objCtrl = input_control({name: 'name', type: 'string', required: true, pattern});
+      let grp = new ControlGroup({name: objCtrl, val: input_control(spec.additionalProperties)});
+      return new ControlObject(grp, objAllOf);
     default:
       let def = spec.default;
       let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
+      let validator = get_validators(spec);
       return new Control(val, validator); //, async_validator
-      // return [val, validator];
   }
 }
 
@@ -111,6 +105,7 @@ export let input_attrs = (path, spec) => {
     maxItems = 4294967295,  //Math.pow(2, 32) - 1
     minItems = 0,
     uniqueItems = false,
+    additionalItems = false,
     // enum: enum_options = null,
     multipleOf = 1,
   } = spec;
@@ -123,6 +118,7 @@ export let input_attrs = (path, spec) => {
     ngControl: key,
     id,
     required: req,
+    additionalItems, // originally an array thing but also used in my `x-keys`
   };
   // if(desc) attrs.placeholder = description;
   // attrs[`#${variable}`] = 'ngForm';
@@ -177,69 +173,10 @@ export let input_attrs = (path, spec) => {
   return attrs;
 }
 
-// validators
-
-// prepare the form control validators
-export let get_validators = (spec) => {
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
-  // ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
-  Object.assign(Validators, val_fns);
-  // 'schema', 'format', 'items', 'collectionFormat', 'type'
-  let val_keys = ['required', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum', 'maxLength', 'minLength', 'pattern', 'maxItems', 'minItems', 'uniqueItems', 'enum', 'multipleOf'];
-  let used_vals = val_keys.filter(k => spec[k] != null);
-  let validators = used_vals.map(k => Validators[k](spec[k]));
-  let validator = Validators.compose(validators);
-  // let out_of_spec = ['uniqueKeys']; // gotta include these since I can't disregard them for absence from spec
-  let val_msgs = arr2obj(used_vals, k => val_errors[k](spec[k])); // .concat(out_of_spec)
-  return { validator, val_msgs };
-}
-
-let val_conds = {
-  required: (v, par) => (v == null || v.length == 0),
-  // schema: (v, par) => (v, par),
-  // format: (v, par) => (v, par),
-  // items: (v, par) => (v, par),
-  // collectionFormat: (v, par) => (v, par),
-  maximum: (v, par) => (v > par),
-  exclusiveMaximum: (v, par) => (v >= par),
-  minimum: (v, par) => (v < par),
-  exclusiveMinimum: (v, par) => (v <= par),
-  // maxLength: (v, par) => (v.length > par), //predefined
-  // minLength: (v, par) => (v.length < par), //predefined
-  pattern: (v, par) => (! new RegExp(`^${par}$`).test(v)),  //escape pattern backslashes? // alt: [Validators.pattern](https://github.com/angular/angular/commit/38cb526)
-  maxItems: (v, par) => (v.length > par),
-  minItems: (v, par) => (v.length < par),
-  uniqueItems: (v, par) => (par ? _.uniq(v).length < v.length : false),
-  enum: (v, par) => (! par.includes(v)),
-  multipleOf: (v, par) => (v % par != 0),
-}
-
-let val_errors = {
-  required: x => `This field is required.`,
-  maximum: x => `Must not be more than ${x}.`,
-  exclusiveMaximum: x => `Must be less than ${x}.`,
-  minimum: x => `Must not be less than ${x}.`,
-  exclusiveMinimum: x => `Must be more than ${x}.`,
-  maxLength: x => `Must be within ${x} characters.`,
-  minLength: x => `Must be at least ${x} characters.`,
-  pattern: x => {
-    let patt = `^${x}$`;  //.replace(/\\/g, '\\\\')
-    // return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
-    let str = `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
-    return str;
-  },
-  maxItems: x => `Must have at most ${x} items.`,
-  minItems: x => `Must have at least ${x} items.`,
-  uniqueItems: x => `All items must be unique.`,
-  // uniqueKeys: x => `All keys must be unique.`,
-  // enum: x => `Must be one of the following values: ${JSON.stringify(x)}.`,
-  enum: x => {
-    let json = JSON.stringify(x);
-    // return `Must be one of the following values: ${json}.`;
-    let str = `Must be one of the following values: ${json}.`;
-    return str;
-  },
-  multipleOf: x => `Must be a multiple of ${x}.`,
-}
-
-// async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81
+export let allUsed = (allOf, get_lens = y => y) => (ctrl) => {
+  let vals = ctrl.controls.map(x => get_lens(x.value));
+  // ideally it should validate as long as all types are used even without values, but this may
+  // require checking from input-array/-object by asking their `input-field`s through a QueryList...
+  let valid = _.every(spec => _.some(v => tv4.validate(v, spec, false, false, false))(vals))(allOf);
+  return valid ? null : {allOf: true};
+};
