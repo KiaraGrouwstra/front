@@ -65,22 +65,21 @@ export let getValStruct = (spec) => ({
 
 // return initial key/value pair for the model
 export function input_control(spec = {}, asFactory = false) {
-  let factory;
+  let factory, allOf, seed;
   switch(spec.type) {
     case 'array':
-      let arrAllOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
+      allOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
       let props = _.get(['items','properties'], spec);
-      let ctrlFactory = props ?
+      seed = props ?
         () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
         input_control(spec.items, true);
-      factory = () => new ControlList(ctrlFactory, arrAllOf);
+      factory = () => new ControlList(seed, allOf);
       break;
     case 'object':
-      let objAllOf = _.get(['additionalProperties','allOf'], spec) || [];
-      // let grp = new ControlGroup({name, val});
+      allOf = _.get(['additionalProperties','allOf'], spec) || [];
       let valStruct = getValStruct(spec);
-      let grpFactory = () => new ControlObjectKvPair(valStruct);
-      factory = () => new ControlObject(grpFactory, objAllOf);
+      seed = () => new ControlObjectKvPair(valStruct);
+      factory = () => new ControlObject(seed, allOf);
       break;
     default:
       let val = get_default(spec);

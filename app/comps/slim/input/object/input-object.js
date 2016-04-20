@@ -50,8 +50,8 @@ export let InputObjectComp = ng2comp({
       let opt = this.option;
       let ctrl = this.ctrl;
       let spec = this.spec;
-      let ret = i ?
-        key_spec(ctrl.at(i).controls.name, this.spec) :
+      let ret = _.isNumber(i) ?
+        key_spec(ctrl.at(i).controls.name.value, this.spec) :
         spec.additionalProperties;
       return (this.isOneOf && ret == spec.additionalProperties) ? ret.oneOf[opt] : ret;
     }

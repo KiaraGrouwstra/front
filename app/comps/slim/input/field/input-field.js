@@ -45,7 +45,6 @@ export let FieldComp = ng2comp({
     }
     set spec(x) {
       if(_.isUndefined(x)) return;
-      console.log('input-field:set:spec', x);
       this._spec = x;
       const ofs = ['anyOf','oneOf','allOf'];
       this.of = _.find(k => x[k])(ofs) || _.findKey(x.type || {})(ofs);
