@@ -53,6 +53,8 @@ export let App = ng2comp({
     input_ui: ViewChild(InputUiComp),
   },
   class: class App {
+    // @ViewChild('web') web_form; //: ElementRef
+    // @ViewChild('curl') curl_form; //: ElementRef
     auto_meat = true;
     keep_metadata = false;
     meat_opts = [];

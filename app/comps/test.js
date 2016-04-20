@@ -1,8 +1,9 @@
 import { Component, ViewChild } from 'angular2/core';
 import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
 
 // a component template for testing other components, by just selector (easier than html)
-export let test_comp = (selector, cls) => (obs_pars = {}, static_pars = {}, outputs = {}, content = '') => {
+export let test_comp = (selector, cls) => (static_pars = {}, obs_pars = {}, outputs = {}, content = '') => {
   let obj = Object.assign({}, obs_pars, static_pars);
   let in_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
   let out_str = Object.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
@@ -30,40 +31,35 @@ export let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, output
   return cmp;
 }
 
-// asynchronously create and test a component
-// let comp_test = (tcb, done, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => {
-// let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => {
-//   return tcb.createAsync(test_class).then((fixture) => {
-export let comp_test = (tcb, test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => async function(done) {
-  try {
-    let fixture = await tcb.createAsync(test_class);
-    fixture.detectChanges();
-    let test_cmp = fixture.componentInstance;
-    let target_comp = test_cmp.comp;
-    actions(test_cmp); //target_comp?
-    //test_cmp.items.push(3);
-    // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
-    // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
-    fixture.detectChanges();
-    let native_el = fixture.debugElement.childNodes[0].nativeElement;
-    test_fn(done, target_comp, native_el);
-  // }).catch(done.fail);
-  }
-  catch(e) {
-    done.fail(e);
-  }
+// create a component to test and return related stuff; run within `fakeAsync`.
+export let makeComp = (tcb, test_class) => {
+  let fixture;
+  tcb.createAsync(test_class).then(x => { fixture = x; });
+  flushMicrotasks();
+  fixture.detectChanges();
+  let test_cmp = fixture.componentInstance;
+  let comp = test_cmp.comp;
+  // actions(test_cmp); //target_comp?
+  //test_cmp.items.push(3);
+  // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
+  // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
+  fixture.detectChanges();
+  let debugEl = fixture.debugElement;
+  let el = debugEl.childNodes[0].nativeElement;
+  return { comp, el, fixture, debugEl };
 }
 
-// test_fn for comp_test to check a property value
-export let assert = (assertion) => (pass, comp, el) => {
-  assertion(comp, el);
-  pass();
-}
+// // failed hack to inject a tick into fakeAsync, since it appears usually needed...
+// export let myAsync = (fn) => fakeAsync(() => {
+//   fn();
+//   tick(1000);
+// })();
 
-// test_fn for comp_test to check an Observable property's first value
-export let assert$ = (selector, matcher) => (pass, comp) => {
-  selector(comp).subscribe(prop => {
-    matcher(expect(prop));
-    pass();
-  })
+// set the value of an input, and trigger the corresponding event. The input can be obtained using `debugEl.query(By.css(css))`.
+// trying to set a `select` element's value to something not contained in its option list sets it to '' instead...
+export let setInput = (input, val) => {
+  let el = input.nativeElement;
+  el.value = val;
+  dispatchEvent(el, 'input');
+  tick(10000);
 }

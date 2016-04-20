@@ -1,11 +1,10 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from 'angular2/core'; //, ChangeDetectorRef
-import { arr2obj, arr2map, ng2comp, combine, mapBoth, tryLog } from '../../../lib/js';
+import { arr2obj, arr2map, ng2comp, combine, mapBoth, tryLog, key_spec } from '../../../lib/js';
 import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
 import { ValueComp } from '../../../comps';
-import { key_spec } from '../output';
 import { arrToSet } from '../../../lib/rx_helpers';
 // import { LocalVariable } from '../../../lib/directives';
 

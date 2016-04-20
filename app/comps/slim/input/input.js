@@ -4,10 +4,11 @@ import { Control, ControlGroup, ControlArray } from 'angular2/common';
 import { ControlList } from './control_list';
 import { ControlObject } from './control_object';
 import { getPaths } from '../slim';
-import { get_validators } from './validators';
+import { get_validator } from './validators';
+import { ControlObjectKvPair } from './control_object_kv_pair';
 
 // get the default value for a value type
-let get_default = (type) => {
+let type_default = (type) => {
   let def_vals = {
     string: '',
     number: 0,
@@ -18,6 +19,11 @@ let get_default = (type) => {
     // file: 'file', //[],
   }
   return _.get([type], def_vals)
+}
+
+let get_default = (spec) => {
+  let def = spec.default;
+  return (!_.isUndefined(def)) ? def : type_default(spec.type);
 }
 
 // get the input type for a value type
@@ -33,7 +39,7 @@ let input_type = (type) => _.get([type], {
 export let get_template = (spec, attrs) => {
   return _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
-    string: spec.enum ? (attrs.additionalItems ? 'datalist' : 'select') : null, //radio over select? alt. autocomplete over datalist?
+    string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null, //radio over select? alt. autocomplete over datalist?
     integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
     boolean: 'switch',
     date: 'date',
@@ -44,28 +50,44 @@ export let get_template = (spec, attrs) => {
   }) || 'input';
 }
 
+// return the default value + validator for a spec
+let vldtrDefPair = (spec) => ({
+  val: get_default(spec),
+  vldtr: get_validator(spec),
+})
+
+// generature a default-validator pair structure from a spec
+export let getValStruct = (spec) => ({
+  properties: _.mapValues(vldtrDefPair)(spec.properties || {}),
+  patternProperties: _.mapValues(vldtrDefPair)(spec.patternProperties || {}),
+  additionalProperties: vldtrDefPair(spec.additionalProperties || {}),
+});
+
 // return initial key/value pair for the model
-export function input_control(spec = {}) {
+export function input_control(spec = {}, asFactory = false) {
+  let factory;
   switch(spec.type) {
     case 'array':
       let arrAllOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
       let props = _.get(['items','properties'], spec);
-      let arrCtrl = props ?
-        new ControlGroup(_.mapValues(x => input_control(x), props)) :
-        input_control(spec.items);
-      return new ControlList(arrCtrl, arrAllOf);
+      let ctrlFactory = props ?
+        () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
+        input_control(spec.items, true);
+      factory = () => new ControlList(ctrlFactory, arrAllOf);
+      break;
     case 'object':
       let objAllOf = _.get(['additionalProperties','allOf'], spec) || [];
-      let pattern = '[\\w_][\\w_\\d\\-]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
-      let objCtrl = input_control({name: 'name', type: 'string', required: true, pattern});
-      let grp = new ControlGroup({name: objCtrl, val: input_control(spec.additionalProperties)});
-      return new ControlObject(grp, objAllOf);
+      // let grp = new ControlGroup({name, val});
+      let valStruct = getValStruct(spec);
+      let grpFactory = () => new ControlObjectKvPair(valStruct);
+      factory = () => new ControlObject(grpFactory, objAllOf);
+      break;
     default:
-      let def = spec.default;
-      let val = (typeof def !== 'undefined') ? def : get_default(spec.type);
-      let validator = get_validators(spec);
-      return new Control(val, validator); //, async_validator
+      let val = get_default(spec);
+      let validator = get_validator(spec);
+      factory = () => new Control(val, validator); //, async_validator
   }
+  return asFactory ? factory : factory();
 }
 
 // get the html attributes for a given parameter/input
@@ -105,7 +127,7 @@ export let input_attrs = (path, spec) => {
     maxItems = 4294967295,  //Math.pow(2, 32) - 1
     minItems = 0,
     uniqueItems = false,
-    additionalItems = false,
+    exclusive = false,
     // enum: enum_options = null,
     multipleOf = 1,
   } = spec;
@@ -118,7 +140,7 @@ export let input_attrs = (path, spec) => {
     ngControl: key,
     id,
     required: req,
-    additionalItems, // originally an array thing but also used in my `x-keys`
+    exclusive, // used in input-object's `x-keys`
   };
   // if(desc) attrs.placeholder = description;
   // attrs[`#${variable}`] = 'ngForm';

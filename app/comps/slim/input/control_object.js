@@ -5,15 +5,14 @@ import { ControlList } from './control_list';
 import { allUsed } from './input';
 
 export class ControlObject extends ControlList {
-  constructor(ctrl, allOf = [], vldtr = null) { //: AbstractControl, : AbstractControl[]
+  constructor(factory, allOf = [], vldtr = null) { //: AbstractControl, : AbstractControl[]
     let uniqueKeys = (ctrl) => {
       let names = ctrl.controls.map(y => y.value.name);
       let valid = names.length == _.uniq(names).length;
       return valid ? null : {uniqueKeys: true};
     };
     let validator = Validators.compose([uniqueKeys, allUsed(allOf, y => y.val), vldtr]);
-    super(ctrl, allOf, validator);
-    this.ctrl = ctrl;
+    super(factory, allOf, validator);
   }
 
   _updateValue() {

@@ -1,7 +1,7 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
-import { Control, ControlGroup, ControlArray } from 'angular2/common';
-import { ControlList } from '../control_list';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
 import { input_control } from '../input'
 
 import { InputValueComp } from './input-value';
@@ -27,30 +27,24 @@ let pars = (spec) => ({
 let req = 'This field is required.';
 
 describe('InputValueComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should work with scalars', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars(scalar)));
+    // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
+    expect(comp.ctrl.errors).toEqual({required: true});
+    tick(1000);
+  }));
 
-  it('should work with scalars', test(
-    cls({}, pars(scalar)),
-    // assert((comp, el) => expect(el).toHaveText('geo-id: The geography ID.\n' + req))
-    assert((comp, el) => expect(comp.ctrl.errors).toEqual({required: true}))
-  ));
-
-  it('should work with arrays', test(
-    cls({}, pars(array)),
-    assert((comp, el) => {
-      expect(comp.ctrl.errors).toEqual(null));
-      // expect(el).toHaveText('testadd');
-    })
-  ));
+  it('should work with arrays', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars(array)));
+    expect(comp.ctrl.errors).toEqual(null);
+    // expect(el).toHaveText('testadd');
+    tick(1000);
+  }));
 
 });

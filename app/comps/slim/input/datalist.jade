@@ -1,7 +1,7 @@
 form
-  //- '[id]'=`attrs.id`
   input(
-    '[attr.list]'=`attrs.id`
+    '[id]'=`attrs.id`
+    '[attr.list]'=`attrs.id + '-datalist'`
     '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
@@ -13,7 +13,7 @@ form
     '[attr.pattern]'=`attrs.pattern`
   )
   datalist(
-    '[id]'=`attrs.id`
+    '[id]'=`attrs.id + '-datalist'`
   )
     option(
       *ngFor='#opt of spec.enum'

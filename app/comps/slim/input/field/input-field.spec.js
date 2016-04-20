@@ -1,5 +1,7 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test'
 import { Control } from 'angular2/common';
 import { input_control } from '../input'
 
@@ -16,47 +18,38 @@ let spec = {
 let ctrl = input_control(spec);
 let named = true;
 // let name = 'foo';
-let pars = {
+let pars = () => _.cloneDeep({
   path,
   spec,
   ctrl,
   named,
   // name,
-};
+});
 let req = 'This field is required.';
 
 describe('FieldComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should validate', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars()));
+    expect(comp.ctrl.errors).toEqual({required: true});
+    tick(1000);
+  }));
 
-  it('should validate', test(
-    cls({}, pars),
-    assert((comp, el) => {
-      expect(comp.ctrl.errors).toEqual({required: true});
-    })
-  ));
+  it('should hold appropriate error messages', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars()));
+    expect(Object.keys(comp.validator_msgs)).toEqual(['required']);
+    tick(1000);
+  }));
 
-  it('should hold appropriate error messages', test(
-    cls({}, pars),
-    assert((comp, el) => {
-      expect(Object.keys(comp.validator_msgs)).toEqual(['required']);
-    })
-  ));
-
-  it('should show error messages', test(
-    cls({}, pars),
-    assert((comp, el) => {
-      expect(el).toHaveText('geo-id: The geography ID.\n' + req);
-    })
-  ));
+  it('should show error messages', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars()));
+    expect(el).toHaveText('geo-id: The geography ID.\n' + req);
+    tick(1000);
+  }));
 
 });

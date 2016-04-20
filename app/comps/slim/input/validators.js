@@ -3,9 +3,9 @@ import { Validators } from 'angular2/common';
 import { arr2obj, mapBoth } from '../../lib/js';
 
 // prepare the form control validators
-export let get_validators = (spec) => {
+export let get_validator = (spec) => {
   const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validators(opt));
+  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validator(opt));
   let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
   let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
   // ... Object.keys(val_conds).map((k) => ... val_conds[k] ...

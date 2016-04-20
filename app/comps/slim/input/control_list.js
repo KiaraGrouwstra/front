@@ -4,15 +4,16 @@ let tv4 = require('tv4');
 import { allUsed } from './input';
 
 export class ControlList extends ControlArray {
-  constructor(ctrl, allOf = [], vldtr = null) {  //: AbstractControl, : AbstractControl[]
+  constructor(factory, allOf = [], vldtr = null) {  //: AbstractControl, : AbstractControl[]
     let controls = [];
     let validator = Validators.compose([allUsed(allOf), vldtr]);
     super(controls, validator);
-    this.ctrl = ctrl;
+    this._factory = factory;
   }
 
   add() { //: void
-    this.push(_.cloneDeep(this.ctrl));
+    let ctrl = this._factory();
+    this.push(ctrl);
   }
 
 }

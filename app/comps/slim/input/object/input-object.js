@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
 import { FieldComp } from '../field/input-field';
-import { ng2comp } from '../../../lib/js';
+import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 
 // ctrl is expected to be a ControlObject seeded with a ControlGroup consisting
@@ -39,20 +39,21 @@ export let InputObjectComp = ng2comp({
     set spec(x) {
       if(_.isUndefined(x)) return;
       this._spec = x;
-      this.isOneOf = _.get(['additionalProperties', 'oneOf'], x);  //: boolean
+      let { properties, patternProperties, additionalProperties } = x;
+      this.isOneOf = _.get(['oneOf'], additionalProperties);  //: boolean
+      this.keyEnum = _.uniq(Object.keys(properties || {}).concat(_.get(['x-keys', 'enum'], x)));
+      this.keyExclusive = _.get(['x-keys', 'exclusive'], x) || (!_.size(patternProperties) && !_.size(additionalProperties));
       window.setTimeout(() => $('select').material_select(), 300);
     }
 
     resolveSpec(i) {
       let opt = this.option;
       let ctrl = this.ctrl;
-      let { properties, additionalProperties } = this.spec; //spec
-      if(properties && i) {
-        return properties[ctrl.at(i).controls.name];
-      } else {
-        let spec = additionalProperties;
-        return !this.isOneOf ? spec : spec.oneOf[opt];
-      }
+      let spec = this.spec;
+      let ret = i ?
+        key_spec(ctrl.at(i).controls.name, this.spec) :
+        spec.additionalProperties;
+      return (this.isOneOf && ret == spec.additionalProperties) ? ret.oneOf[opt] : ret;
     }
 
     add() {

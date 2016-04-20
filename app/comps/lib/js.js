@@ -94,7 +94,7 @@ export let getKV = (k) => new Promise((resolve, reject) => {
 // let yaml2json = _.flow(YAML.parse, JSON.stringify);
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
 export let mapBoth = (obj, fn) => {
-  let keys = Object.keys(obj)
+  let keys = Object.keys(obj);
   // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
   return arr2obj(keys, k => fn(obj[k], k));
 }
@@ -221,6 +221,16 @@ export let updateSpec = (specification) => {
   delete spec.host;
   delete spec.basePath;
   delete spec.schemes;
+}
+
+// TODO: simplify the `_.find` part if with {cap:false} I can make lodash have it expose Object keys.
+// for a given object key get the appropriate openapi spec
+export let key_spec = (k, spec) => {
+  return _.get(['properties', k], spec)
+  || _.get(['patternProperties', _.find(p => new RegExp(p).test(k))(
+    Object.keys(_.get(['patternProperties'], spec) || {})
+  )], spec)
+  || _.get(['additionalProperties'], spec);
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

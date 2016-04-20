@@ -1,7 +1,9 @@
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
-
 let _ = require('lodash/fp');
+import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+
+
 import { DLComp } from './dl';
 let cls = test_comp('mydl', DLComp);
 let path = ['test'];
@@ -18,26 +20,21 @@ let pars = {
 // let comp = cls(pars, {});
 // let flat = _.flatten(_.toPairs(obj)).join('');
 let flat = _.flatten(Object.keys(obj).map(k => [k, obj[k]])).join('');
-let nesto_pars = Object.assign({}, pars, { val: { one: { two: 'three' } } });
-let nestr_pars = Object.assign({}, pars, { val: { one: ['two', 'three'] } });
+let nesto_pars = _.assign(pars, { val: { one: { two: 'three' } } });
+let nestr_pars = _.assign(pars, { val: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';
 
 describe('DLComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
-
-  it('should display scalars', test(
-    cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText(flat))
-  ));
+  it('should display scalars', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars));
+    expect(el).toHaveText(flat);
+    tick(1000);
+  }));
 
 });

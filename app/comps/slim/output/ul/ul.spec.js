@@ -1,5 +1,8 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+
 
 import { ULComp } from './ul';
 let cls = test_comp('myul', ULComp);
@@ -10,34 +13,30 @@ let pars = {
   val,
   schema: {},
 };
-// let comp = test_comp('myul', ULComp, pars, { named: true });
 
 describe('ULComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should work',
-  //   test(comp, assert(
-  //     c => expect(c.rows.map(y => y.val)).toEqual(['foo','bar','baz'])
-  // )));
+  it('should work', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
+    expect(comp.rows.map(y => y.val)).toEqual(['foo','bar','baz']);
+    tick(1000);
+  }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should display scalars', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(pars));
+    expect(el).toHaveText(val.join(''));
+    tick(1000);
+  }));
 
-  it('should display scalars', test(
-    cls({}, pars),
-    assert((comp, el) => expect(el).toHaveText(val.join('')))
-  ));
-
-  it('should allow named', test(
-    cls({}, Object.assign({ named: true }, pars)),
-    assert((comp, el) => expect(el).toHaveText(path.concat(val).join('')))
-  ));
+  it('should allow named', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
+    expect(el).toHaveText(path.concat(val).join(''));
+    tick(1000);
+  }));
 
 });

@@ -1,9 +1,9 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild, ViewChildren } from 'angular2/core';
-import { id_cleanse, ng2comp, combine } from '../../../lib/js';
+import { id_cleanse, ng2comp, combine, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { DLComp, ArrayComp, ValueComp } from '../../../comps';
-import { key_spec, infer_type } from '../output';
+import { infer_type } from '../output';
 
 let inputs = ['path', 'val', 'schema', 'named'];
 

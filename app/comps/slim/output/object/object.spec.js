@@ -1,10 +1,12 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+
 
 import { provide } from 'angular2/core';
 import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
 
-let _ = require('lodash/fp');
 import { ObjectComp } from './object';
 let cls = test_comp('object', ObjectComp);
 let path = ['test'];
@@ -16,48 +18,46 @@ let obs_pars = {
 };
 // let flat = _.flatten(_.toPairs(obj)).join('');
 let flat = _.flatten(Object.keys(obj).map(k => [k, obj[k]])).join('');
-let nesto_pars = Object.assign({}, obs_pars, { val: { one: { two: 'three' } } });
-let nestr_pars = Object.assign({}, obs_pars, { val: { one: ['two', 'three'] } });
+let nesto_pars = _.assign(obs_pars, { val: { one: { two: 'three' } } });
+let nestr_pars = _.assign(obs_pars, { val: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';
 
 describe('ObjectComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
   // how could I override a provider for one specific test instead?
   beforeEachProviders(() => [
     provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
   ]);
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should work without header', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(obs_pars));
+    expect(el).toHaveText(flat);
+    tick(1000);
+  }));
 
-  it('should work without header', test(
-    cls({}, obs_pars),
-    assert((comp, el) => expect(el).toHaveText(flat))
-  ));
+  it('should work with headers', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
+    expect(el).toHaveText('test' + flat);
+    tick(1000);
+  }));
 
-  it('should work with headers', test(
-    cls({}, Object.assign({ named: true }, obs_pars)),
-    assert((comp, el) => expect(el).toHaveText('test' + flat))
-  ));
-
-  it('should work with nested objects', test(
-    cls({}, nesto_pars),
-    assert((comp, el) => expect(el).toHaveText(mashed))
-  ));
+  it('should work with nested objects', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(nesto_pars));
+    expect(el).toHaveText(mashed);
+    tick(1000);
+  }));
 
   // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
   // screwed up this test since value passes named=false, which forced me to work around it by adding 'named' to value...
-  it('should work with nested arrays', test(
-    cls({}, nestr_pars),
-    assert((comp, el) => expect(el).toHaveText(mashed))
-  ));
+  it('should work with nested arrays', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(nestr_pars));
+    expect(el).toHaveText(mashed);
+    tick(1000);
+  }));
 
 });

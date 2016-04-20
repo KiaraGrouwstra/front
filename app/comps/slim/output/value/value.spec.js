@@ -1,5 +1,7 @@
+let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
 
 import { provide } from 'angular2/core';
 import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
@@ -18,41 +20,39 @@ let obs_pars = {
 };
 
 describe('ValueComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
   // how could I override a provider for one specific test instead?
   beforeEachProviders(() => [
     provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
   ]);
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should handle scalars', fakeAsync(() => {
+    let { comp, el, fixture, debugEl } = makeComp(tcb, cls(_.assign(obs_pars, { val: scalar })));
+    expect(el).toHaveText(scalar);
+    tick(1000);
+  }));
 
-  it('should handle scalars', test(
-    cls({}, Object.assign({}, obs_pars, { val: scalar })),
-    assert((comp, el) => expect(el).toHaveText(scalar))
-  ));
+  it('should handle arrays', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: arr })));
+    expect(el).toHaveText(arr.join(''));
+    tick(1000);
+  }));
 
-  it('should handle arrays', test(
-    cls({}, Object.assign({}, obs_pars, { val: arr })),
-    assert((comp, el) => expect(el).toHaveText(arr.join('')))
-  ));
+  it('should handle objects', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: obj })));
+    expect(el).toHaveText('a1b2');
+    tick(1000);
+  }));
 
-  it('should handle objects', test(
-    cls({}, Object.assign({}, obs_pars, { val: obj })),
-    assert((comp, el) => expect(el).toHaveText('a1b2'))
-  ));
-
-  xit('should handle tables', test(
-    cls({}, Object.assign({}, obs_pars, { val: table })),
-    assert((comp, el) => expect(el).toHaveText('ab12AB'))
-  ));
+  xit('should handle tables', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: table })));
+    expect(el).toHaveText('ab12AB');
+    tick(1000);
+  }));
 
 });

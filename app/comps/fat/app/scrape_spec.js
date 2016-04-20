@@ -36,7 +36,7 @@ export let scrape_spec = [
     minItems: 1,
     'x-keys': {
       enum: headers,
-      additionalItems: true,
+      exclusive: false,
     },
 
     // required: true,

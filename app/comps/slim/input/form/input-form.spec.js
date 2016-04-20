@@ -1,8 +1,7 @@
 let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { test_comp, comp_test, assert, assert$ } from '../../../test'
-import { Control, ControlGroup, ControlArray } from 'angular2/common';
-import { ControlList } from '../control_list';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
+import { test_comp, makeComp, setInput, myAsync } from '../../../test';
 import { input_control } from '../input'
 
 import { FormComp } from './input-form';
@@ -19,48 +18,42 @@ let inputs = [
   { path: ['foo'], spec: scalar_spec },
   { path: ['bar'], spec: scalar_spec },
 ];
-let obs_pars = {
+let obs_pars = () => _.cloneDeep({
   inputs,
-};
-let pars = {
+});
+let pars = () => _.cloneDeep({
   // inputs,
   desc,
-};
+});
 let arr_spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
 let arr_inputs = [
   { path: ['foo'], spec: arr_spec },
   { path: ['bar'], spec: arr_spec },
 ];
-let arr_pars = {
+let arr_pars = () => _.cloneDeep({
   inputs: arr_inputs,
-};
+});
 let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
 describe('FormComp', () => {
-  // let builder: TestComponentBuilder;
-  let builder;
-  let test = (test_class, test_fn = (cmp, el) => {}, actions = (cmp) => {}) => (done) => comp_test(builder, test_class, test_fn, actions)(done);
+  let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (tcb) => {
-    builder = tcb;
+  beforeEach(inject([TestComponentBuilder], (builder) => {
+    tcb = builder;
   }));
 
-  // it('should test', () => {
-  //   throw "works"
-  // })
+  it('should do scalar inputs', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars(), pars())));
+    // expect(el).toHaveText(desc + text + text + 'Submit');
+    expect(comp.items[0].ctrl.errors).toEqual({required: true});
+    tick(1000);
+  }));
 
-  it('should do scalar inputs', test(
-    cls({}, _.assign(obs_pars, pars)),
-    // assert((comp, el) => expect(el).toHaveText(desc + text + text + 'Submit'))
-    assert((comp, el) => expect(comp.items[0].ctrl.errors).toEqual({required: true}))
-  ));
-
-  it('should do array inputs', test(
-    cls({}, _.assign(arr_pars, pars)),
-    assert((comp, el) => {
-      expect(comp.ctrl.errors).toEqual(null));
-      // expect(el).toHaveText('hifooaddbaraddSubmit');
-    })
-  ));
+  it('should do array inputs', fakeAsync(() => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
+    expect(comp.items[0].ctrl.errors).toEqual(null);
+    // expect(el).toHaveText('hifooaddbaraddSubmit');
+    tick(1000);
+  }));
 
 });

@@ -17,15 +17,6 @@ export let try_schema = (val, spec) => {
     try_schema(val, tp) : null; //infer_type(val)
 }
 
-// for a given object key get the appropriate openapi spec
-export let key_spec = (k, spec) => {
-  return _.get(['properties', k], spec)
-  || _.get(['patternProperties', _.find(p => new RegExp(p).test(k)(
-    Object.keys(_.get(['patternProperties'], spec) || {})
-  ))], spec)
-  || _.get(['additionalProperties'], spec);
-}
-
 // meant to use without makeTemplate
 export function parseScalar(path, api_spec, schema) {
   let val = `${api_spec}`;

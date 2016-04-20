@@ -172,3 +172,4 @@
 // [elvis](https://gist.github.com/disnet/b971aeb690a856b21dd9): ?. / ?.[] / ?.['fixed', variable]
 // reverse assignment (<-)
 // await -- [old macro](https://github.com/jayphelps/sweet-async-await/blob/master/sweet-async-await.sjs)
+// fakeAwait: from `let a = fakeAwait PROM;` to `let a; PROM.then(x => { a = x; }); flushMicrotasks();`
