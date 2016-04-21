@@ -23,7 +23,7 @@ export let scrape_spec = [
     properties: {
       'Content-Type': {
         type: 'string',
-        enum: mimeTypes,
+        suggestions: mimeTypes,
       },
     },
     additionalProperties: {
@@ -37,8 +37,7 @@ export let scrape_spec = [
     },
     minItems: 1,
     'x-keys': {
-      enum: headers,
-      exclusive: false,
+      suggestions: headers,
     },
 
     // required: true,

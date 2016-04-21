@@ -55,7 +55,7 @@ describe('InputObjectComp', () => {
   //   tick(1000);
   // }));
 
-  // it should allow an `x-keys` property with `enum` of good keys and `exclusive` specifying whether to allow other values'
+  // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
   it('should validate key uniqueness', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
@@ -77,6 +77,7 @@ describe('InputObjectComp', () => {
     let { name: n, val: v } = comp.ctrl.at(0).controls;
 
     setInput(name, 'fixed');
+    fixture.detectChanges();
     expect(v.errors).not.toEqual(null);
     setInput(val, 'fixed');
     expect(v.errors).toEqual(null);

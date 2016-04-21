@@ -16,7 +16,7 @@ export class ControlObjectValue extends Control {
     if(this.validator != vldtr) {
       let typeError = _.get(['type'], vldtr(this));
       if(typeError) {
-        // value type-incompatible, replace it with a good default
+        console.warn('value type incompatible, replacing it with a valid default', val);
         this.updateValue(val);
       }
       this.validator = vldtr;

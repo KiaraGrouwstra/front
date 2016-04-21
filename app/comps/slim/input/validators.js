@@ -2,20 +2,6 @@ let _ = require('lodash/fp');
 import { Validators } from 'angular2/common';
 import { arr2obj, mapBoth } from '../../lib/js';
 
-// prepare the form control validators
-export let get_validator = (spec) => {
-  const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validator(opt));
-  let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
-  let val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
-  // ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
-  Object.assign(Validators, val_fns);
-  // 'schema', 'format', 'items', 'collectionFormat', 'type'
-  let used_vals = val_keys.filter(k => spec[k] != null);
-  let validators = used_vals.map(k => Validators[k](spec[k])).concat(of_vldtr);
-  return Validators.compose(validators);
-}
-
 const val_conds = {
   required: (v, par) => (v == null || v.length == 0),
   // schema: (v, par) => (v, par),
@@ -37,7 +23,12 @@ const val_conds = {
   enum: (v, par) => (! par.includes(v)),
   multipleOf: (v, par) => (v % par != 0),
   type: (v, par) => !matchesType(v, par),
+  not: (v, par) => !_.some(k => val_conds(v, par[k]))(Object.keys(par)),
 }
+
+const val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
+// ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
+const ng_validators = _.assign(Validators, val_fns);
 
 function matchesType(val, type) {
   const mapping = {
@@ -59,37 +50,48 @@ function matchesType(val, type) {
     false; // throw `bad type (?): ${type}`
 }
 
-export const val_errors = _.mapValues(_.curry)({
-  required: (x, v) => `This field is required.`,
-  maximum: (x, v) => `Must not be more than ${x}.`,
-  exclusiveMaximum: (x, v) => `Must be less than ${x}.`,
-  minimum: (x, v) => `Must not be less than ${x}.`,
-  exclusiveMinimum: (x, v) => `Must be more than ${x}.`,
-  maxLength: (x, v) => `Too many characters: ${_.get(['length'], v)}/${x}.`,
-  minLength: (x, v) => `Not enough characters: ${_.get(['length'], v)}/${x}.`,
-  pattern: (x, v) => {
+export const val_errors = {
+  required: x => v => `This field is required.`,
+  maximum: x => v => `Must not be more than ${x}.`,
+  exclusiveMaximum: x => v => `Must be less than ${x}.`,
+  minimum: x => v => `Must not be less than ${x}.`,
+  exclusiveMinimum: x => v => `Must be more than ${x}.`,
+  maxLength: x => v => `Too many characters: ${_.get(['length'], v)}/${x}.`,
+  minLength: x => v => `Not enough characters: ${_.get(['length'], v)}/${x}.`,
+  pattern: x => v => {
     let patt = `^${x}$`;  //.replace(/\\/g, '\\\\')
     // return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
     let str = `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
     return str;
   },
-  maxItems: (x, v) => `Too many items: ${_.get(['length'], v)}/${x}.`,
-  minItems: (x, v) => `Not enough items: ${_.get(['length'], v)}/${x}.`,
-  maxProperties: (x, v) => `Too many properties: ${Object.keys(v).length}/${x}.`,
-  minProperties: (x, v) => `Not enough properties: ${Object.keys(v).length}/${x}.`,
-  uniqueItems: (x, v) => `All items must be unique.`,
-  // uniqueKeys: (x, v) => `All keys must be unique.`,
-  // enum: (x, v) => `Must be one of the following values: ${JSON.stringify(x)}.`,
-  enum: (x, v) => {
+  maxItems: x => v => `Too many items: ${_.get(['length'], v)}/${x}.`,
+  minItems: x => v => `Not enough items: ${_.get(['length'], v)}/${x}.`,
+  maxProperties: x => v => `Too many properties: ${Object.keys(v).length}/${x}.`,
+  minProperties: x => v => `Not enough properties: ${Object.keys(v).length}/${x}.`,
+  uniqueItems: x => v => `All items must be unique.`,
+  // uniqueKeys: x => v => `All keys must be unique.`,
+  // enum: x => v => `Must be one of the following values: ${JSON.stringify(x)}.`,
+  enum: x => v => {
     let json = JSON.stringify(x);
     // return `Must be one of the following values: ${json}.`;
     let str = `Must be one of the following values: ${json}.`;
     return str;
   },
-  multipleOf: (x, v) => `Must be a multiple of ${x}.`,
-  type: (x, v) => `Should match type ${JSON.stringify(x)}.`,
-});
+  multipleOf: x => v => `Must be a multiple of ${x}.`,
+  type: x => v => `Should match type ${JSON.stringify(x)}.`,
+  not: x => v => `Should not match spec ${JSON.stringify(x)}.`,
+};
 
 export const val_keys = Object.keys(val_errors);
+
+// prepare the form control validators
+export let get_validator = (spec) => {
+  const ofs = ['anyOf','oneOf','allOf'];
+  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validator(opt));
+  let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
+  let used_vals = val_keys.filter(k => spec[k] != null);
+  let validators = used_vals.map(k => ng_validators[k](spec[k])).concat(of_vldtr);
+  return Validators.compose(validators);
+}
 
 // async validators: https://medium.com/@daviddentoom/angular-2-form-validation-9b26f73fcb81

@@ -39,7 +39,9 @@ let input_type = (type) => _.get([type], {
 export let get_template = (spec, attrs) => {
   return _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
-    string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null, //radio over select? alt. autocomplete over datalist?
+    // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
+    string: attrs.suggestions ? 'datalist' : spec.enum ? 'select' : null,
+    // ^ radio over select? alt. autocomplete over datalist?
     integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
     boolean: 'switch',
     date: 'date',
@@ -128,7 +130,8 @@ export let input_attrs = (path, spec) => {
     maxProperties = 4294967295,  //Math.pow(2, 32) - 1
     minProperties = 0,
     uniqueItems = false,
-    exclusive = false,
+    // exclusive = false,
+    suggestions = [],
     // enum: enum_options = null,
     multipleOf = 1,
   } = spec;
@@ -141,7 +144,8 @@ export let input_attrs = (path, spec) => {
     ngControl: key,
     id,
     required: req,
-    exclusive, // used in input-object's `x-keys`
+    // exclusive, // used in input-object's `x-keys`
+    suggestions,
   };
   // if(desc) attrs.placeholder = description;
   // attrs[`#${variable}`] = 'ngForm';
@@ -156,7 +160,7 @@ export let input_attrs = (path, spec) => {
       // parameters: allowEmptyValue:false, maxLength, minLength, pattern, format
       if(allow_empty) minLength = 0;
       // format: http://swagger.io/specification/#dataTypeFormat
-      // int32, int64, float, double, byte, binary, date, date-time, password; any other like email, uuid, ...
+      // int32, int64, float, double, byte, binary, date, date-time, password, hostname, ipv4, ipv6, uri; any other like email, uuid, ...
       let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
               'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'];
       if(format == 'date-time') format = 'datetime';
