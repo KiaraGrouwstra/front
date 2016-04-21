@@ -34,35 +34,58 @@ const val_conds = {
   uniqueItems: (v, par) => (par ? _.uniq(v).length < v.length : false),
   enum: (v, par) => (! par.includes(v)),
   multipleOf: (v, par) => (v % par != 0),
+  type: (v, par) => !matchesType(v, par),
 }
 
-export const val_errors = {
-  required: x => `This field is required.`,
-  maximum: x => `Must not be more than ${x}.`,
-  exclusiveMaximum: x => `Must be less than ${x}.`,
-  minimum: x => `Must not be less than ${x}.`,
-  exclusiveMinimum: x => `Must be more than ${x}.`,
-  maxLength: x => `Must be within ${x} characters.`,
-  minLength: x => `Must be at least ${x} characters.`,
-  pattern: x => {
+function matchesType(val, type) {
+  const mapping = {
+    array: v => _.isArray(v),
+    object: v => _.isObject(v) && !_.isArray(v),
+    integer: v => _.isNumber(v) && v % 1 == 0,
+    number: v => _.isNumber(v),
+    string: v => _.isString(v),
+    null: v => _.isNull(v),
+    boolean: v => _.isBoolean(v),
+    any: v => true,
+  };
+  return _.isString(type) ? mapping[type](val) :
+    _.isObject(type) ?
+      _.get(['anyOf'], type) ? _.some(tp => matchesType(val, tp))(type.anyOf) :
+      _.get(['oneOf'], type) ? _.some(tp => matchesType(val, tp))(type.oneOf) :
+      _.get(['allOf'], type) ? _.every(tp => matchesType(val, tp))(type.allOf) :
+      false :
+    false;
+    // throw new Error(`unrecognized type ${JSON.stringify(type)}!`);
+}
+
+export const val_errors = _.mapValues(_.curry)({
+  required: (x, v) => `This field is required.`,
+  maximum: (x, v) => `Must not be more than ${x}.`,
+  exclusiveMaximum: (x, v) => `Must be less than ${x}.`,
+  minimum: (x, v) => `Must not be less than ${x}.`,
+  exclusiveMinimum: (x, v) => `Must be more than ${x}.`,
+  maxLength: (x, v) => `Too many characters: ${_.get(['length'], v)}/${x}.`,
+  minLength: (x, v) => `Not enough characters: ${_.get(['length'], v)}/${x}.`,
+  pattern: (x, v) => {
     let patt = `^${x}$`;  //.replace(/\\/g, '\\\\')
     // return `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
     let str = `Must match the regular expression (regex) pattern /<a href="https://regex101.com/?regex=${patt}">${patt}</a>/.`;
     return str;
   },
-  maxItems: x => `Must have at most ${x} items.`,
-  minItems: x => `Must have at least ${x} items.`,
-  uniqueItems: x => `All items must be unique.`,
-  // uniqueKeys: x => `All keys must be unique.`,
-  // enum: x => `Must be one of the following values: ${JSON.stringify(x)}.`,
-  enum: x => {
+  maxItems: (x, v) => `Too many items: ${_.get(['length'], v)}/${x}.`,
+  minItems: (x, v) => `Not enough items: ${_.get(['length'], v)}/${x}.`,
+  uniqueItems: (x, v) => `All items must be unique.`,
+  // uniqueKeys: (x, v) => `All keys must be unique.`,
+  // enum: (x, v) => `Must be one of the following values: ${JSON.stringify(x)}.`,
+  enum: (x, v) => {
     let json = JSON.stringify(x);
     // return `Must be one of the following values: ${json}.`;
     let str = `Must be one of the following values: ${json}.`;
     return str;
   },
-  multipleOf: x => `Must be a multiple of ${x}.`,
-};
+  multipleOf: (x, v) => `Must be a multiple of ${x}.`,
+  type: (x, v) => `Should match type ${JSON.stringify(x)}.`,
+});
 
 export const val_keys = Object.keys(val_errors);
 

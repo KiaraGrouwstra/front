@@ -77,6 +77,6 @@ div(*ngIf=`of`)
     //- | {{vldtr}}: {{!showError(vldtr)}}
     li.error-item(
       *ngFor=`#vldtr of validator_keys`
-      '[innerHtml]'=`validator_msgs[vldtr]`
+      '[innerHtml]'=`validator_msgs[vldtr](ctrl.value)`
       '[hidden]'=`!showError(vldtr)`
     )

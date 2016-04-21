@@ -14,7 +14,9 @@ export class ControlObjectValue extends Control {
   setName(name) {
     let { val, vldtr } = key_spec(name, this.struct);
     if(this.validator != vldtr) {
-      if(vldtr(this)) {
+      let typeError = _.get(['type'], vldtr(this));
+      if(typeError) {
+        // value type-incompatible, replace it with a good default
         this.updateValue(val);
       }
       this.validator = vldtr;
