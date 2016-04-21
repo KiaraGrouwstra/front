@@ -77,7 +77,7 @@ div(*ngIf=`of`)
     //- | {{vldtr}}: {{!showError(vldtr)}}
     li.error-item(
       *ngFor=`#vldtr of validator_keys`
-      '[innerHtml]'=`validator_msgs[vldtr](ctrl.value)`
+      '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
       '[hidden]'=`!showError(vldtr)`
     )
 

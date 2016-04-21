@@ -21,6 +21,7 @@ export class ControlObjectValue extends Control {
       }
       this.validator = vldtr;
       this.updateValueAndValidity();
+      // TODO: find a way to bubble up an event to trigger component change detection from here...
     }
   }
 
