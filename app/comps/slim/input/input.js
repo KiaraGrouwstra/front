@@ -125,6 +125,8 @@ export let input_attrs = (path, spec) => {
     maxLength = 9007199254740991, //Math.pow(2, 53) - 1
     maxItems = 4294967295,  //Math.pow(2, 32) - 1
     minItems = 0,
+    maxProperties = 4294967295,  //Math.pow(2, 32) - 1
+    minProperties = 0,
     uniqueItems = false,
     exclusive = false,
     // enum: enum_options = null,
@@ -163,6 +165,8 @@ export let input_attrs = (path, spec) => {
       break;
     // case 'array':
     // parameters: items, collectionFormat:csv(/ssv/tsv/pipes/multi), maxItems, minItems, uniqueItems
+    // case 'object':
+    // parameters: maxProperties, minProperties
     //   break;
   }
   let AUTO_COMP = ['name', 'honorific-prefix', 'given-name', 'additional-name', 'family-name', 'honorific-suffix', 'nickname', 'email', 'username', 'new-password', 'current-password', 'organization-title', 'organization', 'street-address', 'address-line1', 'address-line2', 'address-line3', 'address-level4', 'address-level3', 'address-level2', 'address-level1', 'country', 'country-name', 'postal-code', 'cc-name', 'cc-given-name', 'cc-additional-name', 'cc-family-name', 'cc-number', 'cc-exp', 'cc-exp-month', 'cc-exp-year', 'cc-csc', 'cc-type', 'transaction-currency', 'transaction-amount', 'language', 'bday', 'bday-day', 'bday-month', 'bday-year', 'sex', 'tel', 'url', 'photo'];

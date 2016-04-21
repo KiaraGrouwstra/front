@@ -31,6 +31,8 @@ const val_conds = {
   pattern: (v, par) => (! new RegExp(`^${par}$`).test(v)),  //escape pattern backslashes? // alt: [Validators.pattern](https://github.com/angular/angular/commit/38cb526)
   maxItems: (v, par) => (v.length > par),
   minItems: (v, par) => (v.length < par),
+  maxProperties: (v, par) => (Object.keys(v).length > par),
+  minProperties: (v, par) => (Object.keys(v).length < par),
   uniqueItems: (v, par) => (par ? _.uniq(v).length < v.length : false),
   enum: (v, par) => (! par.includes(v)),
   multipleOf: (v, par) => (v % par != 0),
@@ -53,9 +55,8 @@ function matchesType(val, type) {
       _.get(['anyOf'], type) ? _.some(tp => matchesType(val, tp))(type.anyOf) :
       _.get(['oneOf'], type) ? _.some(tp => matchesType(val, tp))(type.oneOf) :
       _.get(['allOf'], type) ? _.every(tp => matchesType(val, tp))(type.allOf) :
-      false :
-    false;
-    // throw new Error(`unrecognized type ${JSON.stringify(type)}!`);
+      false : // throw `bad type (object): ${type}`
+    false; // throw `bad type (?): ${type}`
 }
 
 export const val_errors = _.mapValues(_.curry)({
@@ -74,6 +75,8 @@ export const val_errors = _.mapValues(_.curry)({
   },
   maxItems: (x, v) => `Too many items: ${_.get(['length'], v)}/${x}.`,
   minItems: (x, v) => `Not enough items: ${_.get(['length'], v)}/${x}.`,
+  maxProperties: (x, v) => `Too many properties: ${Object.keys(v).length}/${x}.`,
+  minProperties: (x, v) => `Not enough properties: ${Object.keys(v).length}/${x}.`,
   uniqueItems: (x, v) => `All items must be unique.`,
   // uniqueKeys: (x, v) => `All keys must be unique.`,
   // enum: (x, v) => `Must be one of the following values: ${JSON.stringify(x)}.`,
