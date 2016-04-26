@@ -17,8 +17,21 @@ export let scrape_spec = [
     description: 'the URL to scrape and extract',
   },
   {
-    // type: 'array',
-    // items: {
+    name: 'parselet',
+    description: 'json parselet',
+    type: 'object',
+    additionalProperties: {
+      type: 'string',
+      // format: 'json',
+      required: true,
+      name: 'floki selector',
+      description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its outer html",
+    },
+    minProperties: 1,
+  },
+  {
+    name: 'headers',
+    description: 'Request Headers',
     type: 'object',
     properties: {
       'Content-Type': {
@@ -28,21 +41,12 @@ export let scrape_spec = [
     },
     additionalProperties: {
       type: 'string',
-      // format: 'json',
-
       required: true,
-      name: 'floki selector',
-      description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its outer html",
-      // in: 'path',
+      name: 'header value',
+      description: 'any string',
     },
-    minItems: 1,
     'x-keys': {
       suggestions: headers,
     },
-
-    // required: true,
-    name: 'parselet',
-    description: 'json parselet',
-    // in: 'path',
   },
 ];

@@ -43,7 +43,7 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('name')`
-                '[spec]'=`{ name: 'name', type: 'string', required: true, pattern: '[\\\\w_][\\\\w_\\\\d\\\\-]*', enum: keyEnum, suggestions: keySugg }`
+                '[spec]'=`{ name: 'name', type: 'string', required: true, enum: keyEnum, suggestions: keySugg }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
             //- ("#key = 'val'")
