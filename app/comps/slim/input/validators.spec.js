@@ -27,39 +27,39 @@ describe('validators', () => {
 })
 
 let tests = {
-    required3: {
-        schema: {
-            type: "object",
-            properties: {
-                required: {
-                    type: "string",
-                    required: true
-                },
-                notrequired: {
-                    type: "string",
-                    required: false
-                },
-                defaultrequired: {
-                    type: "string"
-                }
-            }
-        },
-        valid: [
-            {
-                required: ""
-            },
-            {
-                required: "",
-                notrequired: "",
-                defaultrequired: ""
-            }
-        ],
-        invalid: [
-            {
-                notrequired: ""
-            }
-        ]
-    },
+    // required3: {
+    //     schema: {
+    //         type: "object",
+    //         properties: {
+    //             required: {
+    //                 type: "string",
+    //                 required: true
+    //             },
+    //             notrequired: {
+    //                 type: "string",
+    //                 required: false
+    //             },
+    //             defaultrequired: {
+    //                 type: "string"
+    //             }
+    //         }
+    //     },
+    //     valid: [
+    //         {
+    //             required: ""
+    //         },
+    //         {
+    //             required: "",
+    //             notrequired: "",
+    //             defaultrequired: ""
+    //         }
+    //     ],
+    //     invalid: [
+    //         {
+    //             notrequired: ""
+    //         }
+    //     ]
+    // },
     enum: {
         schema: {
             type: "string",
