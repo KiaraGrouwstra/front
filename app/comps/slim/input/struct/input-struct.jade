@@ -37,7 +37,7 @@
               td
                 //- p item: {{item}}, i: {{i}}
                 //- set spec's name: item
-                input-field(
+                input-value(
                   '[named]'=`true`
                   '[path]'=`path.concat(item)`
                   '[spec]'=`specFixed(item)`
@@ -81,7 +81,7 @@
                     '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
                   )
                 td
-                  input-field(
+                  input-value(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('val')`
                     '[spec]'=`specPatt(patt,i)`
@@ -129,7 +129,7 @@
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.name`
                   )
                 td
-                  input-field(
+                  input-value(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('val')`
                     '[spec]'=`isOneOf ? spec.additionalProperties.oneOf[opt] : spec.additionalProperties`

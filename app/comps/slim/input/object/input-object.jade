@@ -43,14 +43,14 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('name')`
-                '[spec]'=`{ name: 'name', type: 'string', required: true, pattern: '[\\\\w_][\\\\w_\\\\d\\\\-]*', enum: keyEnum, suggestions: keySugg }`
+                '[spec]'=`{ name: 'name', type: 'string', pattern: '[\\\\w_][\\\\w_\\\\d\\\\-]*', enum: keyEnum, suggestions: keySugg }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
             //- ("#key = 'val'")
             td
               //- '[name]'=`i`
               //- '[spec]'=`((spec?.properties && i) ? spec?.properties[ctrl.at(i).controls.name] : null) || spec.additionalProperties`
-              input-field(
+              input-value(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('val')`
                 '[spec]'=`resolveSpec(i)`

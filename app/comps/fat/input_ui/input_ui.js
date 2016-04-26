@@ -8,7 +8,7 @@ export let InputUiComp = ng2comp({
     selector: 'input-ui',
     inputs: ['spec', 'fn_path', 'token'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<input-form [inputs]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
+    template: `<input-form [spec]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
     directives: [
       // FormComp,
       forwardRef(() => FormComp),
@@ -38,8 +38,8 @@ export let InputUiComp = ng2comp({
     }
 
     combInputs = () => combine((spec, fn_path) => {
-      // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
-      let obj = method_pars(spec, fn_path);
+      // { spec: this.pars, desc: this.desc = '' } = method_pars(spec, fn_path);
+      let obj = method_pars(pars, fn_path);
       this.pars = obj.pars;
       this.desc = obj.desc || '';
     })(this.spec, this.fn_path);

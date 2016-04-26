@@ -189,10 +189,19 @@ export let method_pars = (spec, fn_path) => {
   // http://jsonpath.com/ -> $.paths./geographies/{geo-id}/media/recent.get.parameters
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => id_cleanse(x));
-  // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
-  let pars = (_.get(hops, spec) || []).map(input_specs(path));  //[scheme].concat()
+  // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
+  // let pars = (_.get(hops, spec) || []).map(input_specs(path));  //[scheme].concat()
+  let arr = _.get(hops, spec) || [];
+  let pars = specFromArr(pars);
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
   return { pars, desc };
+}
+
+// convert an array of specs to an object spec
+let specFromArr = (arr) => {
+  let names = arr.map(y => y.name);
+  let props = _.zipObject(names, arr);
+  return { type: 'object', properties: props, required: names };
 }
 
 // finds and returns an array of all json paths (as string arrays) of any tables (not within arrays)

@@ -36,6 +36,12 @@ export let InputValueComp = ng2comp({
     t: ViewChild(InputTableComp),
   },
   class: class InputValueComp {
+    ngOnInit() {
+      console.log('InputValueComp');
+      console.log('this.spec', this.spec);
+      console.log('this.ctrl', this.ctrl);
+      console.log('this.path', this.path);
+    }
     get spec() {
       return this._spec;
     }

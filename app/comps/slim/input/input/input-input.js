@@ -18,10 +18,13 @@ export let InputComp = ng2comp({
   class: class InputComp {
     // type: Observable<string>;
 
-    // ngOnInit() {
+    ngOnInit() {
+      console.log('InputComp');
+      console.log('this.ctrl', this.ctrl);
+      console.log('this.attrs', this.attrs);
       // this.attrs = input_attrs(this.path, this.spec);
-      // from field if block: hidden, type:input|?, id, label, ctrl, validator_keys, validators
-    // }
+      // // from field if block: hidden, type:input|?, id, label, ctrl, validator_keys, validators
+    }
 
   }
 })

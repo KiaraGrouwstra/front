@@ -33,9 +33,12 @@ export let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, output
 
 // create a component to test and return related stuff; run within `fakeAsync`.
 export let makeComp = (tcb, test_class) => {
+  console.log('tcb', tcb);
+  console.log('test_class', test_class);
   let fixture;
   tcb.createAsync(test_class).then(x => { fixture = x; });
   flushMicrotasks();
+  console.log('fixture', fixture);
   fixture.detectChanges();
   let test_cmp = fixture.componentInstance;
   let comp = test_cmp.comp;

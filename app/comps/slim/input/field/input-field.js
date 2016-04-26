@@ -32,6 +32,10 @@ export let FieldComp = ng2comp({
     option = null;
 
     ngOnInit() {
+      console.log('FieldComp');
+      console.log('this.spec', this.spec);
+      console.log('this.ctrl', this.ctrl);
+      console.log('this.path', this.path);
       // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
       let props = getPaths(this.path);
       ['id'].forEach(x => this[x] = props[x]);  //, 'k', 'model', 'variable'

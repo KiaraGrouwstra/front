@@ -4,6 +4,9 @@ import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testin
 import { test_comp, makeComp, setInput, myAsync } from '../../../test';
 import { input_control } from '../input'
 
+import { provide } from 'angular2/core';
+import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+
 import { FormComp } from './input-form';
 let cls = test_comp('input-form', FormComp);
 let desc = 'hi';
@@ -14,44 +17,65 @@ let scalar_spec = {
   "required": true,
   "type": "string"
 };
-let inputs = [
-  { path: ['foo'], spec: scalar_spec },
-  { path: ['bar'], spec: scalar_spec },
-];
+let spec = {
+  type: 'object',
+  required: ['foo','bar'],
+  properties: {
+    'foo': scalar_spec,
+    'bar': scalar_spec,
+  }
+};
 let obs_pars = () => _.cloneDeep({
-  inputs,
+  spec,
 });
 let pars = () => _.cloneDeep({
-  // inputs,
+  // spec,
   desc,
 });
-let arr_spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
-let arr_inputs = [
-  { path: ['foo'], spec: arr_spec },
-  { path: ['bar'], spec: arr_spec },
-];
+let spec_arr = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
+let arr_spec = {
+  type: 'object',
+  required: ['foo','bar'],
+  properties: {
+    'foo': spec_arr,
+    'bar': spec_arr,
+  }
+};
 let arr_pars = () => _.cloneDeep({
-  inputs: arr_inputs,
+  spec: arr_spec,
 });
 let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
-describe('FormComp', () => {
+fdescribe('FormComp', () => {
   let tcb;
 
-  beforeEach(inject([TestComponentBuilder], (builder) => {
+  beforeEach(inject([
+    TestComponentBuilder,
+    // provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
+  ], (builder) => {
     tcb = builder;
   }));
 
-  it('should do scalar inputs', fakeAsync(() => {
+  // how could I override a provider for one specific test instead?
+  // beforeEachProviders(() => [
+  //   provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
+  // ]);
+
+  it('should do scalar spec', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars(), pars())));
     // expect(el).toHaveText(desc + text + text + 'Submit');
-    expect(comp.items[0].ctrl.errors).toEqual({required: true});
+    // expect(comp.ctrl.controls['foo'].errors).toEqual({required: true});
+    expect(comp.ctrl.errors).toEqual(null);
+    expect(comp.ctrl.value).toEqual({ foo: '', bar: '' });
   }));
 
-  it('should do array inputs', fakeAsync(() => {
+  it('should do array spec', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
-    expect(comp.items[0].ctrl.errors).toEqual(null);
+    console.log('controls', comp.ctrl.controls);
+    // expect(comp.ctrl.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
+    expect(comp.ctrl.errors).toEqual(null);
+    expect(comp.ctrl.value).toEqual({});
   }));
 
 });

@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
+import { InputValueComp } from '../value/input-value';
 import { FieldComp } from '../field/input-field';
 import { arr2obj, ng2comp, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
@@ -16,6 +17,7 @@ export let InputStructComp = ng2comp({
     directives: [
       COMMON_DIRECTIVES, FORM_DIRECTIVES,
       forwardRef(() => FieldComp),
+      forwardRef(() => InputValueComp),
     ]
   },
   parameters: [],
@@ -28,6 +30,9 @@ export let InputStructComp = ng2comp({
     nameSpecFixedFiltered = [];
 
     ngOnInit() {
+      console.log('InputStructComp');
+      console.log('this.spec', this.spec);
+      console.log('this.ctrl', this.ctrl);
       let props = getPaths(this.path);
       ['k', 'id'].forEach(x => this[x] = props[x]);
     }

@@ -35,7 +35,7 @@ let validationSpec = {
 };
 let validationPars = () => ({ path, spec: validationSpec, ctrl: objectControl(validationSpec), named });  //input_control
 
-describe('InputObjectComp', () => {
+fdescribe('InputObjectComp', () => {
   let tcb;
 
   beforeEach(inject([TestComponentBuilder], (builder) => {

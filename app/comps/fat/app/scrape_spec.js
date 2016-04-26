@@ -8,41 +8,39 @@ let headers = standardHeaders.concat(chromeHeaders);
 let mimeTypes = ['application/json','application/x-www-form-urlencoded','multipart/form-data','text/html'];
 
 // TODO: update so as to incorporate nesting
-export let scrape_spec = [
-  {
-    name: 'url',
-    type: 'string',
-    format: 'url',
-    required: true,
-    description: 'the URL to scrape and extract',
-  },
-  {
-    // type: 'array',
-    // items: {
-    type: 'object',
-    properties: {
-      'Content-Type': {
-        type: 'string',
-        suggestions: mimeTypes,
-      },
-    },
-    additionalProperties: {
+export let scrape_spec = {
+  type: 'object',
+  required: ['url', 'headers'],
+  properties: {
+    'url': {
       type: 'string',
-      // format: 'json',
+      format: 'url',
+      description: 'the URL to scrape and extract',
+    },
+    'parselet': {
+      description: 'json parselet',
+      // type: 'array',
+      // items: {
+      type: 'object',
+      properties: {
+        'Content-Type': {
+          type: 'string',
+          suggestions: mimeTypes,
+        },
+      },
+      additionalProperties: {
+        type: 'string',
+        // format: 'json',
 
-      required: true,
-      name: 'floki selector',
-      description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its outer html",
+        name: 'floki selector',
+        description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its outer html",
+        // in: 'path',
+      },
+      minItems: 1,
+      'x-keys': {
+        suggestions: headers,
+      },
       // in: 'path',
     },
-    minItems: 1,
-    'x-keys': {
-      suggestions: headers,
-    },
-
-    // required: true,
-    name: 'parselet',
-    description: 'json parselet',
-    // in: 'path',
   },
-];
+};

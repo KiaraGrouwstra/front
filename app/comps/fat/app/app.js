@@ -21,7 +21,7 @@ import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG, Config } from '../../../config';
 import { WsService } from '../../services/ws/ws';
 import { RequestService } from '../../services/request/request';
-import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp, input_specs } from '../../lib/js.js';
+import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp } from '../../lib/js.js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../../comps';
 import { curl_spec } from './curl_spec';
@@ -91,8 +91,8 @@ export let App = ng2comp({
         if(name == api) $('#scope-list .collapsible-header').click();
       }));
 
-      this.curl = curl_spec.map(input_specs());
-      this.scrape_spec = scrape_spec.map(input_specs());
+      this.curl = curl_spec;
+      this.scrape_spec = scrape_spec;
 
       this.handle_implicit(window.location);
       this.load_ui(api);

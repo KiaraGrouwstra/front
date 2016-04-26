@@ -9,7 +9,7 @@ let _ = require('lodash/fp');
 export let FormComp = ng2comp({
     component: {
     selector: 'input-form',
-    inputs: ['inputs', 'desc'],  // {path, spec}?
+    inputs: ['spec', 'desc'],  // {path, spec}?
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./input-form.jade'),
     directives: [
@@ -25,24 +25,27 @@ export let FormComp = ng2comp({
     // type: Observable<string>;
     // form: ControlGroup;
     @Output() submit = new EventEmitter(false);
-    // ^ handle with `<input-form (submit)="callback()"></input-form>`
+    items = [];
 
     constructor(builder) {
       this.builder = builder;
-      this.items = [];
       this.form = this.builder.group({});
     }
 
-    set inputs(x) {
+    get spec() {
+      return this._spec;
+    }
+
+    set spec(x) {
       if(_.isUndefined(x)) return;
-      // console.log('REMAKING FORM');
-      this.items = x.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
-      // ^ inefficient to redo for old ones each time, switch to additive mutations
-      let params = _.fromPairs(this.items.map(x => [x.spec.name, x.ctrl]));
-      this.form = this.builder.group(params);
-      // shouldn't map like this, all controls' state will be ditched whenever I'd like to add a control upstream
-      // transitively wrap every object with `this.builder.group({})` with matching in-form `ngControlGroup`s.
-      // implied by new input value?
+      this._spec = x;
+      // this.ctrl = input_control(x);
+      // this.form = this.builder.group({ root: this.ctrl });
+      this.form = input_control(x);
+      console.log('spec', x);
+      // console.log('this.ctrl', this.ctrl);
+      console.log('this.form', this.form);
+      // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
     }
 
   }

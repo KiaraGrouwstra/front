@@ -259,7 +259,7 @@ export function getOptsNameSpecs(specLike) {
   let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], specLike) || []);
   let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], specLike) || []);
   let pattern = '[\\w_][\\w_\\d\\-]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
-  let nameSpec = { name: 'name', type: 'string', required: true, pattern };
+  let nameSpec = { name: 'name', type: 'string', pattern };
   let nameSpecFixed = _.assign(nameSpec, { enum: fixed });
   let nameSpecPatt = arr2obj(patts, patt => _.assign(nameSpec, { enum: pattEnum[patt], suggestions: pattSugg[patt] }));
   let nameSpecAdd = _.assign(nameSpec, { enum: addEnum, suggestions: addSugg, not: { anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed }) } });
