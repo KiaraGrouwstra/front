@@ -41,7 +41,7 @@ describe('FieldComp', () => {
 
   it('should hold appropriate error messages', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
-    expect(Object.keys(comp.validator_msgs)).toEqual(['required','type']);
+    expect(_.keys(comp.validator_msgs)).toEqual(['required','type']);
   }));
 
   // I can't test properly like this, hidden messages (`type` here) still show with `toHaveText`...

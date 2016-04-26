@@ -44,14 +44,14 @@ export let FnUiComp = ng2comp({
       if(this.tags) {
         misc_key = 'misc';
         this.tag_paths = _.assign(arr2obj(this.tags.map(y => y.name), tag =>
-            Object.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
+            _.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
           ),
-          { [misc_key]: Object.keys(paths).filter(path => _.isEmpty(_.get(['get', 'tags'], paths[path])) ) }
+          { [misc_key]: _.keys(paths).filter(path => _.isEmpty(_.get(['get', 'tags'], paths[path])) ) }
         );
       } else {
         this.tags = [];
         misc_key = 'functions';
-        this.tag_paths = {[misc_key]: Object.keys(paths)}
+        this.tag_paths = {[misc_key]: _.keys(paths)}
       }
       this.tags.push({ name: misc_key });
 

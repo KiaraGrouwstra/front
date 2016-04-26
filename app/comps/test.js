@@ -5,8 +5,8 @@ import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testin
 // a component template for testing other components, by just selector (easier than html)
 export let test_comp = (selector, cls) => (static_pars = {}, obs_pars = {}, outputs = {}, content = '') => {
   let obj = Object.assign({}, obs_pars, static_pars);
-  let in_str = Object.keys(obj).map(k => ` [${k}]='${k}'`).join('');
-  let out_str = Object.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
+  let in_str = _.keys(obj).map(k => ` [${k}]='${k}'`).join('');
+  let out_str = _.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
   let tmplt = `<${selector}${in_str}${out_str}>${content}</${selector}>`;
   return test_comp_html(tmplt, cls, obs_pars, static_pars, outputs);
 }

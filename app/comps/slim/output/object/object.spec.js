@@ -17,7 +17,7 @@ let obs_pars = {
   schema: {},
 };
 // let flat = _.flatten(_.toPairs(obj)).join('');
-let flat = _.flatten(Object.keys(obj).map(k => [k, obj[k]])).join('');
+let flat = _.flatten(_.keys(obj).map(k => [k, obj[k]])).join('');
 let nesto_pars = _.assign(obs_pars, { val: { one: { two: 'three' } } });
 let nestr_pars = _.assign(obs_pars, { val: { one: ['two', 'three'] } });
 let mashed = 'onetwothree';

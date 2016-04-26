@@ -54,7 +54,7 @@ export let FieldComp = ng2comp({
       this.hidden = spec.type == 'hidden';
       this.label = marked(`**${spec.name}:** ${spec.description || ''}`);
       // this.validator_msgs = get_validator(spec).val_msgs;
-      // this.validator_keys = Object.keys(this.validator_msgs);
+      // this.validator_keys = _.keys(this.validator_msgs);
       this.validator_keys = val_keys.filter(k => spec[k] != null);  // must filter, since validator_msgs without params are of no use
       // this.validator_msgs = mapBoth(val_errors, (fn, k) => fn(spec[k]));
       this.validator_msgs = arr2obj(this.validator_keys, k => val_errors[k](spec[k]));

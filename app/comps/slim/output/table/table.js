@@ -70,7 +70,7 @@ export let TableComp = ng2comp({
       if(!this.schema) this.schema = getSchema(x).items;
       this._val = x;
       this.col_keys = Array.from(x
-        .map(o => Object.keys(o))
+        .map(o => _.keys(o))
         .reduce(arrToSet, new Set)
       );
       this.combInputs();
@@ -116,7 +116,7 @@ export let TableComp = ng2comp({
       // console.log('set:sortColsDesc', x);
       if(_.isUndefined(x)) return;
       this._sortColsDesc = x;
-      this.sortedCols = Object.keys(x);
+      this.sortedCols = _.keys(x);
       this.sort();
     }
 
@@ -128,7 +128,7 @@ export let TableComp = ng2comp({
     set condFormat(x) {
       if(_.isUndefined(x)) return;
       this._condFormat = x;
-      this.condCols = Object.keys(x);
+      this.condCols = _.keys(x);
       this.condBoundaries = mapBoth(x, (colors, col) => {
         if(!colors) return [];
         let { min, max, isLog } = this.colMeta[col];
@@ -148,7 +148,7 @@ export let TableComp = ng2comp({
 
     get condCols() {
       let x = this._condCols;
-      if(_.isUndefined(x)) x = this.condCols = Object.keys(this.condFormat);
+      if(_.isUndefined(x)) x = this.condCols = _.keys(this.condFormat);
       return x;
     }
     set condCols(x) {
@@ -215,7 +215,7 @@ export let TableComp = ng2comp({
       // console.log('SET:filters', x);
       if(_.isUndefined(x)) return;
       this._filters = x;
-      this.filterKeys = Object.keys(x);
+      this.filterKeys = _.keys(x);
       this.filter();
     }
 
@@ -313,7 +313,7 @@ export let TableComp = ng2comp({
     sort() {
       // console.log('sort');
       let sort = this.sortColsDesc;
-      this.data = _.orderBy(Object.keys(sort).map(y => `cells.${y}.val`), Object.values(sort).map(y => y ? 'desc' : 'asc'), this.filtered);
+      this.data = _.orderBy(_.keys(sort).map(y => `cells.${y}.val`), Object.values(sort).map(y => y ? 'desc' : 'asc'), this.filtered);
     }
 
     @try_log()

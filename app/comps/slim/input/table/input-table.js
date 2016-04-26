@@ -27,7 +27,7 @@ export let InputTableComp = ng2comp({
       this.counter = 0;
       this.items = new Set([]);
       // [working example](http://plnkr.co/edit/mcfYMx?p=preview)
-      this.keys = Object.keys(this.spec.items.properties);
+      this.keys = _.keys(this.spec.items.properties);
     }
 
     get spec() {

@@ -41,14 +41,14 @@ export let InputStructComp = ng2comp({
       this._spec = x;
       let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
       this.isOneOf = _.has(['oneOf'], add);
-      this.patts = Object.keys(patts);
+      this.patts = _.keys(patts);
       [this.hasFixed, this.hasPatts, this.hasAdd] = [props, patts, add].map(x => _.size(x));
       // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSpecFixed: this.nameSpecFixed, nameSpecPatt: this.nameSpecPatt, nameSpecAdd: this.nameSpecAdd } = getOptsNameSpecs(x);
       // Object.assign(this, getOptsNameSpecs(x));
       _.forEach((v, k) => { this[k] = v; })(getOptsNameSpecs(x));
       this.nameCtrlFixed = input_control(this.nameSpecFixed);
-      // let prepopulated = _.intersection(Object.keys(props), req);
-      let prepopulated = Object.keys(props);
+      // let prepopulated = _.intersection(_.keys(props), req);
+      let prepopulated = _.keys(props);
       this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: new Set([]) };
       this.updateFixedList();
       })();
@@ -69,7 +69,7 @@ export let InputStructComp = ng2comp({
     addProperty(k) {
       this.ctrl.addProperty(k);
       this.indices.properties.add(k);
-      // if no intentions to add reordering I could've just iterated over `Object.keys(this.ctrl.controls.properties.controls)`
+      // if no intentions to add reordering I could've just iterated over `_.keys(this.ctrl.controls.properties.controls)`
       this.nameCtrlFixed.updateValue('');
       this.updateFixedList();
     }

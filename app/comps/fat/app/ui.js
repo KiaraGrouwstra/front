@@ -19,9 +19,9 @@ export let load_ui = tryLog(async function(name) {
   )
 
   let sec_defs = api.securityDefinitions;
-  let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', Object.keys(sec_defs));
+  let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', _.keys(sec_defs));
   let oauth_info = sec_defs[oauth_sec];
-  let scopes = Object.keys(oauth_info.scopes);
+  let scopes = _.keys(oauth_info.scopes);
 
   this.auth_ui_name = name;
   this.auth_ui_scopes = scopes;

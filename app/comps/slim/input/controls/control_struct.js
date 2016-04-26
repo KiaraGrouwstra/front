@@ -35,7 +35,7 @@ export class ControlStruct extends ControlGroup {
     };
 
     let validator = Validators.compose([
-      uniqueKeys(lens(y => y.value.name, Object.keys)),
+      uniqueKeys(lens(y => y.value.name, _.keys)),
       allUsed(allOf, lens(y => y.controls.val, Object.values)),
       vldtr,
     ]);

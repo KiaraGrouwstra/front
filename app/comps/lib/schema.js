@@ -21,7 +21,7 @@ export let getSchema = (v, settings = {}) => {
   } else if (_.isObject(v)) {
     schema.properties = _.mapValues(x => getSchema(x, settings), v);
     if (settings.verbose) {
-      let keys = Object.keys(v);
+      let keys = _.keys(v);
       let len = keys.length;
       Object.assign(schema, {
         maxProperties: len,

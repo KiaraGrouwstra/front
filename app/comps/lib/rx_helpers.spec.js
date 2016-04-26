@@ -18,7 +18,7 @@ describe('Rx Helpers', () => {
   let do_obs = (done, obs, test, not_done = false) => obs.subscribe(not_done ? _.flow(test, done) : test, _.flow(fail, done), done);
   // let obs_it = (desc, obs, test) => it(desc, (done) => obs.subscribe(test, fail(done), done));
   var people = [{"id":1,"name":"Brad"},{"id":2,"name":"Jules"},{"id":3,"name":"Jeff"}];
-  let keys = ["id","name"]; //Object.keys(people);
+  let keys = ["id","name"]; //_.keys(people);
   var obs, flat;
 
   beforeEach(() => {
@@ -58,7 +58,7 @@ describe('Rx Helpers', () => {
 
   it('elemToSet gradually merges items into a set', (d) => do_obs(d,
     flat
-      .map(e => Object.keys(e))
+      .map(e => _.keys(e))
       .mergeMap((x,i) => x)
       .scan(elemToSet, new Set)
       .last()
@@ -68,7 +68,7 @@ describe('Rx Helpers', () => {
 
   it('arrToSet gradually merges arrays into a set', (d) => do_obs(d,
     flat
-      .map(e => Object.keys(e))
+      .map(e => _.keys(e))
       .scan(arrToSet, new Set)
       .last()
       .map(s => Array.from(s)),
@@ -77,7 +77,7 @@ describe('Rx Helpers', () => {
 
   it('setToSet gradually merges sets into a set', (d) => do_obs(d,
     flat
-      .map(e => new Set(Object.keys(e)))
+      .map(e => new Set(_.keys(e)))
       .scan(setToSet, new Set)
       .last()
       .map(s => Array.from(s)),

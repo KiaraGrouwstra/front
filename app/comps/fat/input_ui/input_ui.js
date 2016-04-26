@@ -54,14 +54,14 @@ export let InputUiComp = ng2comp({
       let host = this.spec.hosts[0];
       let base = `${host.scheme}://${host.host}${host.basePath}`;  // OpenAPI
       let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
-        let good_keys = Object.keys(_.pickBy(y => y == x)(kind_map));
+        let good_keys = _.keys(_.pickBy(y => y == x)(kind_map));
         return arr2obj(good_keys, k => form_val[k]);
       });
       let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
-      let url = Object.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`) + (_.size(p_query) ? '?' : '')
+      let url = _.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`) + (_.size(p_query) ? '?' : '')
           + global.$.param(_.assign({ access_token: this.token }, p_query));
       // this.handler.emit(url);
-      let body_keys = Object.keys(p_body);
+      let body_keys = _.keys(p_body);
       if(body_keys.length > 1) throw "cannot have multiple body params!";
       let body = body_keys.length ? p_body[body_keys[0]] : _.join('&')(_.toPairs(p_form).map(_.join('=')));
       // if(_.size(p_form) && _.any(x => p_header['Content-Type'].includes(x))

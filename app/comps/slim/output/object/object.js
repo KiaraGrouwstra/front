@@ -64,7 +64,7 @@ export let ObjectComp = ng2comp({
 
   let getColl = (path, val, spec) => {
       let SCALARS = ['boolean', 'integer', 'number', 'string', 'null', 'scalar'];
-      let keys = Object.keys(val);
+      let keys = _.keys(val);
       return keys.map(k => {
         let new_spec = key_spec(k, spec);
         let path_k = path.concat(id_cleanse(k));

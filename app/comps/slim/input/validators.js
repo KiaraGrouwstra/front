@@ -25,13 +25,13 @@ const val_conds = {
   type: (v, par) => matchesType(v, par),
   not: (v, par) => !validate(v, par),
   items: (v, par) => _.isArray(par) ? _.every(([val, spec]) => _.some(_.isUndefined)([val, spec]) || validate(val, spec))(_.zip(v, par)) : _.every(x => validate(x, par))(v),
-  properties: (v, par) => _.every(k => validate(v[k], par[k]))(Object.keys(par)),
-  patternProperties: (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(Object.keys(v).filter(k => new RegExp(patt).test(k))))(Object.keys(par)),
+  properties: (v, par) => _.every(k => validate(v[k], par[k]))(_.keys(par)),
+  patternProperties: (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(_.keys(v).filter(k => new RegExp(patt).test(k))))(_.keys(par)),
   anyOf: (v, par) => _.some(x => validate(v, x))(par),
   allOf: (v, par) => _.every(x => validate(v, x))(par),
   oneOf: (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
   additionalItems: (v, par, spec) => _.every(val => _.isObject(par) ? validate(val, par) : par)(v.slice(spec.items.length)),
-  additionalProperties: (v, par, spec) => _.every(val => validate(val, par))(_.difference(Object.keys(v), _.flatMap(patt => Object.keys(v).filter(k => new RegExp(patt).test(k)))(Object.keys(spec.patternProperties)).concat(Object.keys(spec.properties)))),
+  additionalProperties: (v, par, spec) => _.every(val => validate(val, par))(_.difference(_.keys(v), _.flatMap(patt => _.keys(v).filter(k => new RegExp(patt).test(k)))(_.keys(spec.patternProperties)).concat(_.keys(spec.properties)))),
   format: (v, par) => validateFormat(v, par),
 };
 
@@ -90,14 +90,14 @@ let validateFormat = (val, format) => {
 export const validate = (v, spec) => _.every(k => {
   let fn = val_conds[k];
   return fn ? fn(v, spec[k], spec) : true;
-})(Object.keys(spec))
+})(_.keys(spec))
 // actually filter applicable keys by type: https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
 // this way can also add implicit type-specific validators, e.g. `uniqueKeys` for object.
 // should filter on value applied to; only works if the spec limits it to 1 `type`.
 // solution: both filter by spec-type and do run-time checks (pass if wrong type) in validators?
 
 const val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
-// ... Object.keys(val_conds).map((k) => ... val_conds[k] ...
+// ... _.keys(val_conds).map((k) => ... val_conds[k] ...
 // const ng_validators = _.assign(Validators, val_fns);
 
 function matchesType(val, type) {
@@ -168,7 +168,7 @@ export const val_errors = {
   format: x => v => `Should match format '${x}'.`,
 };
 
-export const val_keys = Object.keys(val_errors);
+export const val_keys = _.keys(val_errors);
 
 // prepare the form control validators
 export let get_validator = (spec) => {

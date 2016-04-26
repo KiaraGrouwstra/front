@@ -13,7 +13,7 @@ let obs_pars = {
   val,
   schema: {},
 };
-let flat = Object.keys(val[0]).concat(_.flatten(val.map(row => Object.keys(row).map(k => row[k])))).join('');
+let flat = _.keys(val[0]).concat(_.flatten(val.map(row => _.keys(row).map(k => row[k])))).join('');
 
 xdescribe('TableComp', () => {
   let tcb;

@@ -71,7 +71,7 @@ let toasts = {
 };
 let TOAST_LEVEL = toasts.success.val;
 let LOG_LEVEL = toasts.info.val;
-export let toast = arr2obj(Object.keys(toasts), (kind) => (msg, ms = 1000) => {
+export let toast = arr2obj(_.keys(toasts), (kind) => (msg, ms = 1000) => {
   let level = toasts[kind].val;
   if(level >= TOAST_LEVEL) Materialize.toast(msg, ms, toasts[kind].class);
   if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
@@ -93,7 +93,7 @@ export let getKV = (k) => new Promise((resolve, reject) => {
 // let yaml2json = _.flow(YAML.parse, JSON.stringify);
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
 export let mapBoth = (obj, fn) => {
-  let keys = Object.keys(obj);
+  let keys = _.keys(obj);
   // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
   return arr2obj(keys, k => fn(obj[k], k));
 }
@@ -202,7 +202,7 @@ export let findTables = (spec, path = []) => {
     return [path];
   } else {
     if (spec.type == 'object') {
-      let keys = Object.keys(spec.properties);
+      let keys = _.keys(spec.properties);
       return _.flatten(keys.map(k => findTables(spec.properties[k], path.concat(k))));
     }
   }
@@ -246,7 +246,7 @@ export let editValsOriginal = (fnObj) => (obj) => mapBoth(obj, (v, k) => {
 // export let editVals = (fnObj) => (obj) => _.reduce((acc, fn, k) => _.update(k, fn(acc[k]))(acc), obj)(fnObj);
 // ^ no k in FP
 // keep all original properties, map even over keys not in the original object
-export let editValsBoth = (fnObj) => (obj) => Object.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
+export let editValsBoth = (fnObj) => (obj) => _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
 
 // only keep properties in mapper object, map even over keys not in the original object
 export let editValsLambda = (fnObj) => (obj) => mapBoth(fnObj, (fn, k) => {
