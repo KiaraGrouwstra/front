@@ -65,17 +65,10 @@ describe('InputStructComp', () => {
   }));
 
   it('should validate fixed properties', fakeAsync(() => {
-    // first boilerplate, identical below, how do I factor this out while it's not the same above?
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
-    let btn = debugEl.query(By.css('a.btn'));
-    dispatchEvent(btn.nativeElement, 'click');
-    fixture.detectChanges();
-    let name = debugEl.query(By.css('#test-0-name'));
-    let val = debugEl.query(By.css('#test-0-val'));
-    let { name: n, val: v } = comp.ctrl.at(0).controls;
+    let val = debugEl.query(By.css('#test-fixed'));
+    let v = comp.ctrl.controls.properties.controls['fixed'];
 
-    setInput(name, 'fixed');
-    fixture.detectChanges();
     expect(v.errors).not.toEqual(null);
     setInput(val, 'fixed');
     expect(v.errors).toEqual(null);
@@ -85,19 +78,19 @@ describe('InputStructComp', () => {
 
   it('should validate additional properties', fakeAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
-    let btn = debugEl.query(By.css('a.btn'));
+    let btn = debugEl.query(By.css('a.add-add'));
     dispatchEvent(btn.nativeElement, 'click');
     fixture.detectChanges();
     let name = debugEl.query(By.css('#test-0-name'));
     let val = debugEl.query(By.css('#test-0-val'));
-    let { name: n, val: v } = comp.ctrl.at(0).controls;
+    let { name: n, val: v } = comp.ctrl.controls.additionalProperties.at(0).controls;
 
     setInput(name, 'foo');
     expect(v.errors).not.toEqual(null);
     setInput(val, 'additional');
     expect(v.errors).toEqual(null);
     setInput(name, 'fixed');
-    expect(v.errors).not.toEqual(null);
+    expect(n.errors).not.toEqual(null);
   }));
 
   // it('should switch val value/validator on name change', fakeAsync(() => {

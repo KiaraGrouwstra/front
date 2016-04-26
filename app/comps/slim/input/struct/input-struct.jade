@@ -16,7 +16,7 @@
             '[ctrl]'=`nameCtrlFixed`
           )
           //- '(click)'=`addProperty(newFixed.value); newFixed.value = '';`
-          a.btn.waves-effect.waves-light.green(
+          a.btn.waves-effect.waves-light.green.add-fixed(
             '(click)'=`addProperty(nameCtrlFixed.value)`
           )
             i.material-icons add
@@ -62,7 +62,7 @@
           //-   '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
           //- )
           //- '(click)'=`addPatternProperty(patt, newPatt.value); newPatt.value = '';`
-          a.btn.waves-effect.waves-light.green(
+          a.btn.waves-effect.waves-light.green.add-patt(
             '(click)'=`addPatternProperty(patt);`
           )
             i.material-icons add
@@ -110,7 +110,7 @@
           *ngIf=`!isOneOf || option`
         )
           //- '(click)'=`addAdditionalProperty(newAdd.value)`
-          a.btn.waves-effect.waves-light.green(
+          a.btn.waves-effect.waves-light.green.add-add(
             '(click)'=`addAdditionalProperty()`
           )
             i.material-icons add
