@@ -6,10 +6,13 @@ var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
 	'presets': [
-		'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
+		// 'es2015-native-modules',
+		'es2015-webpack', // leaves ES6 modules intact; still required, for `let { foo: bar, ...baz } = obj`.
+		// 'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
 		'stage-2',	// does this add something?
 		'stage-1', // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
 		'stage-0', // used for: async/await
+		// 'lodash',
 	],
 	'plugins': [
 		'syntax-async-functions', // async/await
@@ -114,9 +117,9 @@ module.exports = {
 	    'Hammer': 'hammerjs/hammer'
 		}),
 		//new webpack.optimize.UglifyJsPlugin(),
-    new webpack.ResolverPlugin(
-      new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
-    )
+    // new webpack.ResolverPlugin(
+    //   new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
+    // ),
   ],
 	stats: {
 	  colors: false,

@@ -1,14 +1,30 @@
+//- [separate labels](https://github.com/angular/angular/issues/4843)
+
+//- '[allow-clear]'=`true`
+//- '[disabled]'=`disabled`
+//- '[placeholder]'=`'No city selected'`
+//- ng2-select(
+//-   '[items]'=`spec.enum`
+//-   '(data)'=`print('(data)')`
+//-   '(selected)'=`print('(selected)')`
+//-   '(removed)'=`print('(removed)')`
+//-   '(typed)'=`print('(typed)')`
+//- )
+
 form
   //- '[autocomplete]'=`attrs.autocomplete`
   //- '[type]'=`attrs.type`
   //- '[title]'=`attrs.title`
+  //- '[(ngModel)]'=`ctrl.value`
+  //- '(ngModelChange)'=`ctrl.updateValue($event)`
+  //- '(input)'=`ctrl.updateValue($event.target.value)`
+  //- '[required]'=`attrs.required`
   .input-field
     select(
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
       '[ngFormControl]'=`ctrl`
-      '[(ngModel)]'=`ctrl.value`
+      '[ngModel]'=`ctrl.value`
       '[id]'=`attrs.id`
-      '[required]'=`attrs.required`
       '[attr.data-tooltip]'=`attrs.tooltip`
 
       '[attr.maxlength]'=`attrs.maxlength`

@@ -1,11 +1,12 @@
+
 form
+  //- '[required]'=`attrs.required`
   input(
     '[id]'=`attrs.id`
     '[attr.list]'=`attrs.id + '-datalist'`
     '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
-    '[required]'=`attrs.required`
     '[attr.data-tooltip]'=`attrs.tooltip`
 
     '[attr.maxlength]'=`attrs.maxlength`

@@ -37,11 +37,9 @@ export let ArrayComp = ng2comp({
     }
 
     get schema() {
-      // console.log('array:get:schema');
       return this._schema;
     }
     set schema(x) {
-      // console.log('array:set:schema', x);
       if(_.isUndefined(x)) return;
       this._schema = x;
       this.combInputs();
@@ -49,7 +47,7 @@ export let ArrayComp = ng2comp({
 
     combInputs = () => combine((val, spec) => {
       let first = this.first;
-      this.type = _.get(['items', 'type'], spec) || (_.isObject(first) && !_.isArray(first)) ? 'object' : 'other';
+      this.type = _.get(['items', 'type'], spec) || _.isPlainObject(first) ? 'object' : 'other';
     }, { spec: true })(this.val, this.schema);
 
   }

@@ -15,6 +15,13 @@ div(*ngIf=`of`)
           | {{opt.type}}
   //- script.
   //-   $('select').material_select();
+  //- ng2-select(
+  //-   '[items]'=`spec[of]`
+  //-   '(data)'=`print('(data)')`
+  //-   '(selected)'=`print('(selected)')`
+  //-   '(removed)'=`print('(removed)')`
+  //-   '(typed)'=`print('(typed)')`
+  //- )
 
   input-value(
     *ngIf=`option`
@@ -40,19 +47,19 @@ div(*ngIf=`of`)
         '[attrs]'=`attrs`
       )
     template('[ngSwitchWhen]'=`'range'`)
-      include ../range.jade
+      include ../misc/range.jade
     template('[ngSwitchWhen]'=`'switch'`)
-      include ../switch.jade
+      include ../misc/switch.jade
     template('[ngSwitchWhen]'=`'date'`)
-      include ../date.jade
+      include ../misc/date.jade
     template('[ngSwitchWhen]'=`'file'`)
-      include ../file.jade
+      include ../misc/file.jade
     template('[ngSwitchWhen]'=`'datalist'`)
-      include ../datalist.jade
+      include ../misc/datalist.jade
     template('[ngSwitchWhen]'=`'select'`)
-      include ../select.jade
+      include ../misc/select.jade
     template('[ngSwitchWhen]'=`'radio'`)
-      include ../radio.jade
+      include ../misc/radio.jade
     template(ngSwitchDefault)
       p UNIMPLEMENTED FIELD TYPE {{ type }}!
       
@@ -75,10 +82,14 @@ div(*ngIf=`of`)
   ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
     //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
     //- | {{vldtr}}: {{!showError(vldtr)}}
+    //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for spec ' + vldtr`
     li.error-item(
       *ngFor=`#vldtr of validator_keys`
       '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
       '[hidden]'=`!showError(vldtr)`
     )
 
+//- p ctrl.value: {{ctrl.value | json}}
 //- p ctrl.errors: {{ctrl.errors | json}}
+//- p validator_keys: {{validator_keys | json}}
+//- p ctrl.validator: {{ctrl._validator | json}}

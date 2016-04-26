@@ -34,6 +34,7 @@
 //   case typeof x === 'object': 'object'
 //   default: typeof x
 // }
+// // ^ alt: _.cond
 
 // // Error: Only methods are allowed in classes
 // syntax getter = function (ctx) {
@@ -166,6 +167,7 @@
 // // ends up as `[undefined, x]` instead of `[x]`
 
 // [pattern matching](https://github.com/natefaubion/sparkler)
+// what of _.cond + _.conforms?
 
 // need infix:
 // [pipe](https://gist.github.com/aaronpowell/d5ffaf78666f2b8fb033)

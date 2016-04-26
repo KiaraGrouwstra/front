@@ -13,11 +13,11 @@ form
   //- div(tabindex="0")
   //- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
   //- ^ this somehow doesn't actually sync well :(, gonna try through CSS instead...
+  //- '[required]'=`attrs.required`
   input.validate.tooltipped(
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
     '[id]'=`attrs.id`
-    '[required]'=`attrs.required`
     '[type]'=`attrs.type`
     '[attr.data-tooltip]'=`attrs.tooltip`
 

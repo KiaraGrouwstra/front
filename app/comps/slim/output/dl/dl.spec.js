@@ -34,7 +34,6 @@ describe('DLComp', () => {
   it('should display scalars', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars));
     expect(el).toHaveText(flat);
-    tick(1000);
   }));
 
 });

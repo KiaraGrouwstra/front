@@ -84,7 +84,7 @@ export let TableComp = ng2comp({
       // console.log('table:set:schema', x);
       if(_.isUndefined(x)) return;
       this._schema = x;
-      this.indexBased = Array.isArray(_.get(['items'], x));
+      this.indexBased = _.isArray(_.get(['items'], x));
       this.combInputs();
     }
 
@@ -92,7 +92,7 @@ export let TableComp = ng2comp({
       // console.log('get:colOrder');
       let x = this._colOrder;
       if(_.isUndefined(x)) x = this.colOrder = this.col_keys;
-      if(_.difference(x, this.col_keys).length > 0) x = this._colOrder = this.col_keys;
+      if(_.difference(x, this.col_keys).length) x = this._colOrder = this.col_keys;
       return x;
     }
     set colOrder(x) {

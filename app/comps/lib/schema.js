@@ -158,7 +158,7 @@ let mergers = {
   maxItems: max,
   minItems: min,
   additionalItems: checkAdditional,
-  uniqueItems: opts => _.every(x => x, opts) || undefined,
+  uniqueItems: opts => _.every(y => y)(opts) || undefined,
 
   // OBJECTS:
   maxProperties: max,

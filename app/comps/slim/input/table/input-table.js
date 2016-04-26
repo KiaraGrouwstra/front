@@ -36,7 +36,7 @@ export let InputTableComp = ng2comp({
     set spec(x) {
       if(_.isUndefined(x)) return;
       this._spec = x;
-      this.indexBased = Array.isArray(_.get(['items'], x));
+      this.indexBased = _.isArray(_.get(['items'], x));
     }
 
     getSpec(idx, col) {

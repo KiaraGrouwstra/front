@@ -1,10 +1,11 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from 'angular2/core';
 import { COMMON_DIRECTIVES } from 'angular2/common';
-import { FieldComp, InputArrayComp, InputObjectComp, InputTableComp } from '../../../comps';
+import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../../comps';
 // import { FieldComp } from '../field/input-field';
 // import { InputArrayComp } from '../array/input-array';
 // import { InputObjectComp } from '../object/input-object';
+// import { InputStructComp } from '../object/input-object';
 // import { InputTableComp } from '../table/input-table';
 import { ng2comp } from '../../../lib/js';
 
@@ -21,7 +22,8 @@ export let InputValueComp = ng2comp({
       COMMON_DIRECTIVES,
       forwardRef(() => FieldComp),
       forwardRef(() => InputArrayComp),
-      forwardRef(() => InputObjectComp),
+      // forwardRef(() => InputObjectComp),
+      forwardRef(() => InputStructComp),
       forwardRef(() => InputTableComp),
     ]
   },
@@ -29,7 +31,8 @@ export let InputValueComp = ng2comp({
   decorators: {
     f: ViewChild(FieldComp),
     a: ViewChild(InputArrayComp),
-    o: ViewChild(InputObjectComp),
+    // o: ViewChild(InputObjectComp),
+    o: ViewChild(InputStructComp),
     t: ViewChild(InputTableComp),
   },
   class: class InputValueComp {

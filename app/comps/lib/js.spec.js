@@ -1,27 +1,18 @@
 let _ = require('lodash/fp');
-import { RegExp_escape, handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables } from './js';
+import { handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables, key_spec, findIndexSet, editValsOriginal, editValsBoth, editValsLambda } from './js';
 import { getSchema } from './schema';
 
 describe('js', () => {
 
   let fail = (e) => expect(e).toBeUndefined();
-  let fn = (x) => {} //console.log(x)
   let do_prom = (done, prom, test) => prom.then(test, fail).then(done, done);
-  // let prom_it = (desc, promise, test) => it(desc, (done) => promise.then(test, fail).then(done, done));  // beforeEach fails
-  var prom;
 
-  beforeEach(() => {
-    prom = new Promise((res, rej) => res('prince'));
-    // console.log('initialized promise', prom)
-  })
+  // beforeEach(() => {
+  // })
 
   // it('should test', () => {
   //   throw "works"
   // })
-
-  it('RegExp_escape escapes regex characters with backslashes', () => {
-    expect(RegExp_escape('a+b[]')).toEqual('a\\+b\\[\\]')
-  })
 
   it('arr2obj maps an array to an object', () => {
     expect(arr2obj([1,2,3], y => y * 2)).toEqual({ 1: 2, 2: 4, 3: 6 })
@@ -74,7 +65,7 @@ describe('js', () => {
   describe('typed', () => {
 
     it('strLen', () => {
-      let strLen = y => y.length;
+      let strLen = s => s.length; //_.size;
       expect(strLen ('lol')).toEqual(3);
       expect(strLen (123)).toEqual(undefined);
       let strLen_ = typed([String], Number, strLen);
@@ -150,6 +141,38 @@ describe('js', () => {
     let spec = getSchema(data);
     expect(findTables(spec)).toEqual([['foo']]);
   })
+
+  describe('key_spec', () => {
+    it('does fixed', () => {
+      expect(key_spec('a', { properties: { a: 1 } })).toEqual(1);
+    })
+    it('does patts', () => {
+      expect(key_spec('c', { patternProperties: { '^c$': 3 } })).toEqual(3);
+    })
+    it('does additional', () => {
+      expect(key_spec('z', { additionalProperties: 5 })).toEqual(5);
+    })
+  })
+
+  it('findIndexSet', () => {
+    expect(findIndexSet('b', new Set(['a','b','c']))).toEqual(1);
+  })
+
+  describe('editVals', () => {
+
+    it('editValsOriginal', () => {
+      expect(editValsOriginal({ a: y => y * 2, b: y => y * y, d: y => y ? y : 'nope' })({ a: 3, b: 5, c: 7 })).toEqual({ a: 6, b: 25, c: 7 });
+    })
+
+    it('editValsBoth', () => {
+      expect(editValsBoth({ a: y => y * 2, b: y => y * y, d: y => y ? y : 'nope' })({ a: 3, b: 5, c: 7 })).toEqual({ a: 6, b: 25, c: 7, d: 'nope' });
+    })
+
+    it('editValsLambda', () => {
+      expect(editValsLambda({ a: y => y * 2, b: y => y * y, d: y => y ? y : 'nope' })({ a: 3, b: 5, c: 7 })).toEqual({ a: 6, b: 25, d: 'nope' });
+    })
+
+  });
 
   // it('', () => {
   //   expect().toEqual();

@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { ControlObjectValue } from './control_object_value';
 import { Subject } from 'rxjs';
-import { getValStruct } from './input';
+import { getValStruct } from '../input';
 
 describe('ControlObjectValue', () => {
   var v, name$;

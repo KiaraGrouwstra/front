@@ -1,6 +1,6 @@
 import { ControlGroup } from 'angular2/common';
 import { ControlObjectValue } from './control_object_value';
-import { input_control } from './input';
+import { input_control } from '../input';
 
 export class ControlObjectKvPair extends ControlGroup {
   constructor(valStruct) {

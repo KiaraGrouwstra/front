@@ -1,5 +1,5 @@
 import { Control } from 'angular2/common';
-import { key_spec } from '../../lib/js';
+import { key_spec } from '../../../lib/js';
 
 export class ControlObjectValue extends Control {
   constructor(name$, valStruct) {
@@ -14,8 +14,8 @@ export class ControlObjectValue extends Control {
   setName(name) {
     let { val, vldtr } = key_spec(name, this.struct);
     if(this.validator != vldtr) {
-      let typeError = _.get(['type'], vldtr(this));
-      if(typeError) {
+      let badType = _.has(['type'], vldtr(this));
+      if(badType) {
         console.warn('value type incompatible, replacing it with a valid default', val);
         this.updateValue(val);
       }

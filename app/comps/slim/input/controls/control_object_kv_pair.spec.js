@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 // import { Control } from 'angular2/common';
 import { dispatchEvent, fakeAsync, tick } from 'angular2/testing_internal';
 import { ControlObjectKvPair } from './control_object_kv_pair';
-import { getValStruct } from './input';
+import { getValStruct } from '../input';
 
 let spec = {
   properties: {

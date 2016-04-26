@@ -25,13 +25,11 @@ xdescribe('TableComp', () => {
   it('should work without header, spec or nesting using a table without holes', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(obs_pars));
     expect(el).toHaveText(flat);
-    tick(1000);
   }));
 
   it('should work with header', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
     expect(el).toHaveText('test' + flat);
-    tick(1000);
   }));
 
   // spec, nesting, holes

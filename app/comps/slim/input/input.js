@@ -1,11 +1,14 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { Control, ControlGroup, ControlArray } from 'angular2/common';
-import { ControlList } from './control_list';
-import { ControlObject } from './control_object';
+import { ControlList } from './controls/control_list';
+import { ControlVector } from './controls/control_vector';
+import { ControlObject } from './controls/control_object';
+import { ControlObjectKvPair } from './controls/control_object_kv_pair';
+import { ControlStruct } from './controls/control_struct';
 import { getPaths } from '../slim';
-import { get_validator } from './validators';
-import { ControlObjectKvPair } from './control_object_kv_pair';
+import { validate, get_validator } from './validators';
+import { arr2obj, editValsOriginal } from '../../lib/js';
 
 // get the default value for a value type
 let type_default = (type) => {
@@ -40,7 +43,7 @@ export let get_template = (spec, attrs) => {
   return _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
     // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
-    string: attrs.suggestions ? 'datalist' : spec.enum ? 'select' : null,
+    string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'select' : null,
     // ^ radio over select? alt. autocomplete over datalist?
     integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
     boolean: 'switch',
@@ -58,12 +61,28 @@ let vldtrDefPair = (spec) => ({
   vldtr: get_validator(spec),
 })
 
-// generature a default-validator pair structure from a spec
-export let getValStruct = (spec) => ({
-  properties: _.mapValues(vldtrDefPair)(spec.properties || {}),
-  patternProperties: _.mapValues(vldtrDefPair)(spec.patternProperties || {}),
-  additionalProperties: vldtrDefPair(spec.additionalProperties || {}),
+// map a spec's subspecs given a lambda
+// let mapSpec = (fn) => (spec) => ({
+//   properties: _.mapValues(fn)(spec.properties || {}),
+//   patternProperties: _.mapValues(fn)(spec.patternProperties || {}),
+//   additionalProperties: fn(spec.additionalProperties || {}),
+// });
+export let mapSpec = (fn) => editValsOriginal({
+  properties: _.mapValues(fn),
+  patternProperties: _.mapValues(fn),
+  additionalProperties: fn,
 });
+
+// get a struct of validator-default pairs of a spec
+export let getValStruct = mapSpec(vldtrDefPair);
+
+// `ControlObject` generator (kicked out of `input_control`)
+export let objectControl = (spec) => {
+  let allOf = _.get(['additionalProperties','allOf'], spec) || [];
+  let valStruct = getValStruct(spec);
+  let seed = () => new ControlObjectKvPair(valStruct);
+  return new ControlObject(seed, allOf);
+}
 
 // return initial key/value pair for the model
 export function input_control(spec = {}, asFactory = false) {
@@ -71,17 +90,28 @@ export function input_control(spec = {}, asFactory = false) {
   switch(spec.type) {
     case 'array':
       allOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
+      // only tablize predictable collections
       let props = _.get(['items','properties'], spec);
-      seed = props ?
-        () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
-        input_control(spec.items, true);
-      factory = () => new ControlList(seed, allOf);
+      if(_.isArray(spec.items)) {
+        let seeds = spec.items.map(x => input_control(x, true));
+        let add = spec.additionalItems;
+        let fallback = _.isPlainObject(add) ?
+            input_control(add, true) :
+            add == true ?
+                input_control({}, true) :
+                false;
+        factory = () => new ControlVector(seeds, fallback, allOf);
+      } else {
+        let seed = props ?
+            () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
+            input_control(spec.items, true);
+        factory = () => new ControlList(seed, allOf);
+      }
       break;
     case 'object':
       allOf = _.get(['additionalProperties','allOf'], spec) || [];
-      let valStruct = getValStruct(spec);
-      seed = () => new ControlObjectKvPair(valStruct);
-      factory = () => new ControlObject(seed, allOf);
+      let factStruct = mapSpec(x => input_control(x, true))(spec);
+      factory = () => new ControlStruct(factStruct, allOf, spec.required || []);
       break;
     default:
       let val = get_default(spec);
@@ -90,6 +120,8 @@ export function input_control(spec = {}, asFactory = false) {
   }
   return asFactory ? factory : factory();
 }
+
+const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 
 // get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
@@ -125,9 +157,9 @@ export let input_attrs = (path, spec) => {
     pattern = '.*',
     minLength = 0,
     maxLength = 9007199254740991, //Math.pow(2, 53) - 1
-    maxItems = 4294967295,  //Math.pow(2, 32) - 1
+    maxItems = MAX_ITEMS,
     minItems = 0,
-    maxProperties = 4294967295,  //Math.pow(2, 32) - 1
+    maxProperties = MAX_ITEMS,
     minProperties = 0,
     uniqueItems = false,
     // exclusive = false,
@@ -165,7 +197,7 @@ export let input_attrs = (path, spec) => {
               'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'];
       if(format == 'date-time') format = 'datetime';
       if(INPUT_TYPES.includes(format)) type = format;
-      // if(enum_options && !pattern) pattern = enum_options.map(s => RegExp_escape(s)).join('|');
+      // if(enum_options && !pattern) pattern = enum_options.map(_.escapeRegExp).join('|');
       break;
     // case 'array':
     // parameters: items, collectionFormat:csv(/ssv/tsv/pipes/multi), maxItems, minItems, uniqueItems
@@ -202,10 +234,42 @@ export let input_attrs = (path, spec) => {
   return attrs;
 }
 
-export let allUsed = (allOf, get_lens = y => y) => (ctrl) => {
-  let vals = ctrl.controls.map(x => get_lens(x.value));
+// ControlList validator for allOf
+export let allUsed = (allOf, val_lens) => (ctrl) => {
+  let vals = val_lens(ctrl);
   // ideally it should validate as long as all types are used even without values, but this may
   // require checking from input-array/-object by asking their `input-field`s through a QueryList...
-  let valid = _.every(spec => _.some(v => tv4.validate(v, spec, false, false, false))(vals))(allOf);
+  let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
   return valid ? null : {allOf: true};
+};
+
+// key uniqueness validator for ControlObject
+export let uniqueKeys = (name_lens) => (ctrl) => {
+  let names = name_lens(ctrl);
+  let valid = names.length == _.uniq(names).length;
+  return valid ? null : {uniqueKeys: true};
+};
+
+// calculate the different specs for key input controls, plus enum/suggestion options
+// any spec-like object will do for the param, since only keys are checked.
+export function getOptsNameSpecs(specLike) {
+  let { properties: props, patternProperties: patterns, additionalProperties: add } = specLike;
+  let [fixed, patts] = [props, patterns].map(_.keys);
+  let categorizer = categorizeKeys(patts, fixed);
+  let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], specLike) || []);
+  let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], specLike) || []);
+  let pattern = '[\\w_][\\w_\\d\\-]*'; // escaped cuz string; also, this gets used yet the one in object.jade is displayed in the error
+  let nameSpec = { name: 'name', type: 'string', required: true, pattern };
+  let nameSpecFixed = _.assign(nameSpec, { enum: fixed });
+  let nameSpecPatt = arr2obj(patts, patt => _.assign(nameSpec, { enum: pattEnum[patt], suggestions: pattSugg[patt] }));
+  let nameSpecAdd = _.assign(nameSpec, { enum: addEnum, suggestions: addSugg, not: { anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed }) } });
+  return { nameSpecFixed, nameSpecPatt, nameSpecAdd, addSugg, pattSugg, addEnum, pattEnum };
+};
+
+// categorize keys to a pattern or additional
+export let categorizeKeys = (patterns, blacklist = []) => (keys) => {
+  let r = _.difference(keys, blacklist);
+  let sorter = v => _.find(patt => new RegExp(patt).test(v))(patterns);
+  let { undefined: rest, ...patts } = _.groupBy(sorter)(r);
+  return { rest, patts };
 };

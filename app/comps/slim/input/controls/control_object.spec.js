@@ -1,13 +1,13 @@
 let _ = require('lodash/fp');
 import { Control } from 'angular2/common';
 import { ControlObject } from './control_object';
-import { input_control } from './input';
+import { objectControl } from '../input'  //input_control
 
 describe('ControlObject', () => {
   var obj;
 
   beforeEach(() => {
-    obj = input_control({type: 'object', additionalProperties: { type: 'number' } });
+    obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }); //input_control
   });
 
   // it('should test', () => {
@@ -18,7 +18,7 @@ describe('ControlObject', () => {
     obj.add();
     obj.controls[0].controls['name'].updateValue('foo');
     obj.controls[0].controls['val'].updateValue(1);
-    expect(obj._value).toEqual({foo: 1});
+    expect(obj.value).toEqual({foo: 1});
   });
 
   it('should error on duplicate keys', () => {

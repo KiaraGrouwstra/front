@@ -37,14 +37,12 @@ describe('InputValueComp', () => {
     let { comp, el } = makeComp(tcb, cls(pars(scalar)));
     // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
     expect(comp.ctrl.errors).toEqual({required: true});
-    tick(1000);
   }));
 
   it('should work with arrays', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars(array)));
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('testadd');
-    tick(1000);
   }));
 
 });

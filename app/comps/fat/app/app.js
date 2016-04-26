@@ -82,7 +82,7 @@ export let App = ng2comp({
     }
 
     ngOnInit() {
-      $('select').material_select();
+      // $('select').material_select();
       this.ws.connected$.subscribe(y => y ? toast.success('websocket connected!') : toast.warn('websocket disconnected!'));
       global.app = this;
       let api = this.apis[0];

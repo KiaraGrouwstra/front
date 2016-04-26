@@ -2,11 +2,11 @@ let _ = require('lodash/fp');
 import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
 import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
 import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-import { input_control, objectControl } from '../input'
+import { input_control } from '../input'
 import { By } from 'angular2/platform/browser';
 
-import { InputObjectComp } from './input-object';
-let cls = test_comp('input-object', InputObjectComp);
+import { InputStructComp } from './input-struct';
+let cls = test_comp('input-struct', InputStructComp);
 let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
@@ -16,7 +16,7 @@ let scalar = {
   "type": "string"
 };
 let spec = { type: "object", additionalProperties: scalar };
-let ctrl = objectControl(spec); //input_control
+let ctrl = input_control(spec);
 let named = false;
 let pars = () => _.cloneDeep({ path, spec, ctrl, named });
 
@@ -33,9 +33,9 @@ let validationSpec = {
     enum: ['additional'],
   },
 };
-let validationPars = () => ({ path, spec: validationSpec, ctrl: objectControl(validationSpec), named });  //input_control
+let validationPars = () => ({ path, spec: validationSpec, ctrl: input_control(validationSpec), named });
 
-describe('InputObjectComp', () => {
+describe('InputStructComp', () => {
   let tcb;
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
@@ -58,9 +58,9 @@ describe('InputObjectComp', () => {
 
   it('should validate key uniqueness', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
-    comp.add();
+    comp.addAdditionalProperty();
     expect(comp.ctrl.errors).toEqual(null);
-    comp.add();
+    comp.addAdditionalProperty();
     expect(comp.ctrl.errors).toEqual({ uniqueKeys: true });
   }));
 
@@ -101,7 +101,6 @@ describe('InputObjectComp', () => {
   }));
 
   // it('should switch val value/validator on name change', fakeAsync(() => {
-  //   tick();
   // }));
 
 });

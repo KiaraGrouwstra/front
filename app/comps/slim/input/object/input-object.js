@@ -40,18 +40,18 @@ export let InputObjectComp = ng2comp({
       if(_.isUndefined(x)) return;
       this._spec = x;
       let { properties, patternProperties, additionalProperties } = x;
-      this.isOneOf = _.get(['oneOf'], additionalProperties);  //: boolean
-      // this.keyEnum = _.uniq(Object.keys(properties || {}).concat(_.get(['x-keys', 'enum'], x)));
-      // this.keyExclusive = _.get(['x-keys', 'exclusive'], x) || (!_.size(patternProperties) && !_.size(additionalProperties));
-      let props = Object.keys(properties || {});
+      this.isOneOf = _.has(['oneOf'], additionalProperties);
+      // this.keyEnum = _.uniq(_.keys(properties).concat(_.get(['x-keys', 'enum'], x)));
+      // this.keyExclusive = _.get(['x-keys', 'exclusive'], x) || (_.isEmpty(patternProperties) && _.isEmpty(additionalProperties));
+      let props = _.keys(properties);
       let sugg = _.get(['x-keys', 'suggestions'], x) || [];
       let opts = _.get(['x-keys', 'enum'], x) || [];
-      let keyExcl = opts.length || (!_.size(patternProperties) && !_.size(additionalProperties)); //: boolean
+      let keyExcl = opts.length || (_.isEmpty(patternProperties) && _.isEmpty(additionalProperties)); //: boolean
       this.keySugg = keyExcl ? null : _.uniq(props.concat(sugg));
       this.keyEnum = keyExcl ? _.uniq(props.concat(opts).concat(sugg)) : null;
       // ^ enum and suggestions shouldn't actually co-occur, but concat both here in case
       // suggestions get cast to an exhaustive list due to no pattern/additional properties
-      window.setTimeout(() => $('select').material_select(), 300);
+      // window.setTimeout(() => $('select').material_select(), 300);
     }
 
     resolveSpec(i) {

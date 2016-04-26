@@ -24,19 +24,16 @@ describe('ULComp', () => {
   it('should work', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
     expect(comp.rows.map(y => y.val)).toEqual(['foo','bar','baz']);
-    tick(1000);
   }));
 
   it('should display scalars', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars));
     expect(el).toHaveText(val.join(''));
-    tick(1000);
   }));
 
   it('should allow named', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
     expect(el).toHaveText(path.concat(val).join(''));
-    tick(1000);
   }));
 
 });

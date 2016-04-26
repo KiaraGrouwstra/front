@@ -30,7 +30,7 @@ export class RequestService {
     let headers = _.fromPairs(found.map(x =>
       /-H '([^:]+): ([^']+)'/.exec(x).slice(1)
     ));
-    let n = Object.keys(headers).length + 2;  // current server implementation 'try without each + all/none'
+    let n = _.size(headers) + 2;  // current server implementation 'try without each + all/none'
     return this.ws.ask('/check', {urls: url, headers}, n); //.scan(elemToArr, []);
   }
 

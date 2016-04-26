@@ -46,7 +46,7 @@ export let FnUiComp = ng2comp({
         this.tag_paths = _.assign(arr2obj(this.tags.map(y => y.name), tag =>
             Object.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
           ),
-          { [misc_key]: Object.keys(paths).filter(path => ! (_.get(['get', 'tags'], paths[path]) || []).length ) }
+          { [misc_key]: Object.keys(paths).filter(path => _.isEmpty(_.get(['get', 'tags'], paths[path])) ) }
         );
       } else {
         this.tags = [];

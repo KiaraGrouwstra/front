@@ -46,14 +46,12 @@ describe('FormComp', () => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars(), pars())));
     // expect(el).toHaveText(desc + text + text + 'Submit');
     expect(comp.items[0].ctrl.errors).toEqual({required: true});
-    tick(1000);
   }));
 
   it('should do array inputs', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
     expect(comp.items[0].ctrl.errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
-    tick(1000);
   }));
 
 });

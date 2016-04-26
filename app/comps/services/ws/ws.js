@@ -2,6 +2,8 @@ var Phoenix = require('phoenix-js-derp');
 import { Subject, BehaviorSubject } from 'rxjs';
 import { Injectable } from 'angular2/core';
 
+// alt: [angular2-websocket](https://github.com/afrad/angular2-websocket)
+// related: [angular2-rest](https://github.com/Paldom/angular2-rest)
 @Injectable()
 export class WsService {
   requests = {};

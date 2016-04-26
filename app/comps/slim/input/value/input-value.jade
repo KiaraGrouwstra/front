@@ -15,7 +15,8 @@ div([ngSwitch]='type')
       '[ctrl]'=`ctrl`
     )
   template([ngSwitchWhen]=`'object'`)
-    input-object(
+    //- input-object(
+    input-struct(
       '[named]'=`named`
       '[path]'=`path`
       '[spec]'=`spec`

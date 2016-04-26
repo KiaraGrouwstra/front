@@ -7,7 +7,8 @@ import { ComponentMetadata } from 'angular2/core';
 require("materialize-css/dist/js/materialize.min");
 // let YAML = require('yamljs');
 
-export let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+// export let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+// obsolete: use _.escapeRegExp
 
 // wrap into lodash like here?
 // https://github.com/jonahkagan/schematic-ipsum/blob/master/src/underscoreExt.coffee
@@ -35,14 +36,12 @@ export let handle_auth = (url, fn) => {
   }
   let url_get_hash = (url) => ['search', 'hash'].map(x => url_bit(url, x))
   let [get, hash] = url_get_hash(url)
-  // console.log('get', get)
-  // console.log('hash', hash)
   if(get.callback) {
     // this.routeParams.get(foo): only available in router-instantiated components.
     fn(get, hash)
   } else {
     // ?: error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
-    if(get.error) console.log(get)
+    if(get.error) console.warn(get);
   }
 }
 
@@ -127,7 +126,7 @@ export let typed = (from, to, fn) => function() {
   for (var i = 0; i < from.length; i++) {
     let frm = from[i];
     let v = arguments[i];
-    if(frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)) return (new to).valueOf();
+    if(frm && (_.isNil(v) || v.constructor != frm)) return (new to).valueOf();
   }
   return fn.call(this, ...arguments);
 }
@@ -141,7 +140,7 @@ export let combine = (fn, allow_undef = {}) => function() {
     let name = names[i]
       .replace(/_\d+$/, '')   // fixes SweetJS suffixing all names with like _123. this will however break functions already named .*_\d+, e.g. foo_123
       // do not minify the code while uing this function, it will break -- functions wrapped in combine will no longer trigger.
-    if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNull(v)
+    if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNil(v)
   }
   fn.call(this, ...arguments);  //return
 }
@@ -152,7 +151,7 @@ export let fallback = (def, fn) => function() {
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log('an error occurred, falling back to default value:', e);
+    console.warn('an error occurred, falling back to default value:', e);
     return def;
   }
 }
@@ -163,7 +162,7 @@ export let tryLog = (fn) => function() {
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log('tryLog error:', e);
+    console.warn('tryLog error:', e);
   }
 }
 
@@ -173,7 +172,7 @@ export let ng2comp = (o) => {
   let cls = o.class;
   cls.annotations = [new ComponentMetadata(o.component || {})];
   cls.parameters = (o.parameters || []).map(x => x._desc ? x : [x]);
-  Object.keys(o.decorators || {}).forEach(k => {
+  _.keys(o.decorators).forEach(k => {
     Reflect.decorate([o.decorators[k]], cls.prototype, k);
   });
   // return ng.Component(o.component)(cls);
@@ -224,14 +223,37 @@ export let updateSpec = (specification) => {
 }
 
 // TODO: simplify the `_.find` part if with {cap:false} I can make lodash have it expose Object keys.
-// for a given object key get the appropriate openapi spec
+// for a given object key get the appropriate entry in the spec
 export let key_spec = (k, spec) => {
   return _.get(['properties', k], spec)
   || _.get(['patternProperties', _.find(p => new RegExp(p).test(k))(
-    Object.keys(_.get(['patternProperties'], spec) || {})
+    _.keys(_.get(['patternProperties'], spec))
   )], spec)
   || _.get(['additionalProperties'], spec);
 }
+
+// find the index of an item within a Set (indicating in what order the item was added).
+export let findIndexSet = (x, set) => _.findIndex(y => y == x)(Array.from(set));
+
+// editVals from elins; map values of an object using a mapper
+
+// only keep properties in original object
+export let editValsOriginal = (fnObj) => (obj) => mapBoth(obj, (v, k) => {
+  let fn = fnObj[k];
+  return fn ? fn(v) : v
+});
+
+// export let editVals = (fnObj) => (obj) => _.reduce((acc, fn, k) => _.update(k, fn(acc[k]))(acc), obj)(fnObj);
+// ^ no k in FP
+// keep all original properties, map even over keys not in the original object
+export let editValsBoth = (fnObj) => (obj) => Object.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
+
+// only keep properties in mapper object, map even over keys not in the original object
+export let editValsLambda = (fnObj) => (obj) => mapBoth(fnObj, (fn, k) => {
+  let v = obj[k];
+  return fn ? fn(v) : v
+});
+
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)

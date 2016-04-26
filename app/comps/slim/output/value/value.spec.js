@@ -34,25 +34,21 @@ describe('ValueComp', () => {
   it('should handle scalars', fakeAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(_.assign(obs_pars, { val: scalar })));
     expect(el).toHaveText(scalar);
-    tick(1000);
   }));
 
   it('should handle arrays', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: arr })));
     expect(el).toHaveText(arr.join(''));
-    tick(1000);
   }));
 
   it('should handle objects', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: obj })));
     expect(el).toHaveText('a1b2');
-    tick(1000);
   }));
 
   xit('should handle tables', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: table })));
     expect(el).toHaveText('ab12AB');
-    tick(1000);
   }));
 
 });

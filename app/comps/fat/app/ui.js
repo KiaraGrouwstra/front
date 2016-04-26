@@ -2,7 +2,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 let _ = require('lodash/fp');
-import { RegExp_escape, toast, tryLog, findTables } from '../../lib/js';
+import { toast, tryLog, findTables } from '../../lib/js';
 import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
 let $RefParser = require('json-schema-ref-parser');
@@ -44,7 +44,7 @@ export let load_ui = tryLog(async function(name) {
   //     this.http
   //     .get('./openapi/openapi.json')
   //     .map(x => {
-  //         let esc = RegExp_escape("http://json-schema.org/draft-04/schema");
+  //         let esc = _.escapeRegExp("http://json-schema.org/draft-04/schema");
   //         return x._body.replace(new RegExp(esc, 'g'), "/openapi/schema.json");
   //     })
   //     .map(x => JSON.parse(x))
@@ -66,7 +66,6 @@ export let pick_fn = tryLog(function(fn_path) {
 
 let submit_req = function(fn) {
   return tryLog(function(v) {
-    // console.log('submit_req', v);
     // if(v.constructor == Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
@@ -83,11 +82,11 @@ let submit_req = function(fn) {
       x => {
         console.log(next, x);
         // toast.info(next);
-        if(!Object.keys(this.spec).length) this.spec = getSchema(x);
+        if(_.isEmpty(this.spec)) this.spec = getSchema(x);
         if(!this.meat_opts) {
           this.meat_opts = findTables(this.spec);
           this.meat_str_opts = this.meat_opts.map(y => y.join('.'));
-          window.setTimeout(() => $('select').material_select(), 500);
+          // window.setTimeout(() => $('select').material_select(), 500);
         }
         if(this.auto_meat && !this.meat.length && this.meat_opts.length == 1) this.meat = this.meat_opts[0];
         // this.raw = x;

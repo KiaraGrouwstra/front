@@ -41,10 +41,10 @@ export class InputArrayComp {
   set spec(x) {
     if(_.isUndefined(x)) return;
     this._spec = x;
-    this.indexBased = Array.isArray(_.get(['items'], x));
-    this.inAdditional = _.get(['additionalItems', 'oneOf'], x); //: boolean
-    this.isOneOf = this.inAdditional || _.get(['items', 'oneOf'], x); //: boolean
-    window.setTimeout(() => $('select').material_select(), 300);
+    this.indexBased = _.isArray(_.get(['items'], x));
+    this.inAdditional = _.has(['additionalItems', 'oneOf'], x);
+    this.isOneOf = this.inAdditional || _.has(['items', 'oneOf'], x);
+    // window.setTimeout(() => $('select').material_select(), 300);
   }
 
   getSpec(idx) {

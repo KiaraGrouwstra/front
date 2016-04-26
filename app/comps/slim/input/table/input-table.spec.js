@@ -29,13 +29,11 @@ describe('InputTableComp', () => {
   it('should work', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(el).toHaveText('add');
-    tick(1000);
   }));
 
   it('should work named', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(pars(), {named: true})));
     expect(el).toHaveText('testadd');
-    tick(1000);
   }));
 
 });

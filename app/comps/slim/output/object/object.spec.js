@@ -37,19 +37,16 @@ describe('ObjectComp', () => {
   it('should work without header', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(obs_pars));
     expect(el).toHaveText(flat);
-    tick(1000);
   }));
 
   it('should work with headers', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
     expect(el).toHaveText('test' + flat);
-    tick(1000);
   }));
 
   it('should work with nested objects', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(nesto_pars));
     expect(el).toHaveText(mashed);
-    tick(1000);
   }));
 
   // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
@@ -57,7 +54,6 @@ describe('ObjectComp', () => {
   it('should work with nested arrays', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(nestr_pars));
     expect(el).toHaveText(mashed);
-    tick(1000);
   }));
 
 });

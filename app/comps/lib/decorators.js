@@ -1,12 +1,12 @@
 let _ = require('lodash/fp');
 import { decorate } from 'core-decorators/lib/private/utils';  //, metaFor
 
+// decorate a class method (non get/set)
 let decMethod = (
   k = 'value',
   wrapper = (fn) => fn.bind(this, ...arguments),
 ) => (target, key, descriptor, pars) => {
   const fn = descriptor.value;
-  // console.log('decMethod', key, pars, descriptor);
   if (typeof fn !== 'function') {
     throw new SyntaxError(`can only decorate methods, while ${key} is a ${typeof fn}!`);
   }
@@ -25,7 +25,7 @@ export let typed = (...args) => decorate(decMethod('value', (fn, [from, to]) => 
   for (var i = 0; i < from.length; i++) {
     let frm = from[i];
     let v = arguments[i];
-    if(frm && (_.isUndefined(v) || _.isNull(v) || v.constructor != frm)) return (new to).valueOf();
+    if(frm && (_.isNil(v) || v.constructor != frm)) return (new to).valueOf();
   }
   return fn.call(this, ...arguments);
 }), args);
@@ -36,7 +36,7 @@ export let fallback = (...args) => decorate(decMethod('value', (fn, [def], { tar
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log(`${key} fallback error:`, e);
+    console.warn(`${key} fallback error:`, e);
     return def;
   }
 }), args);
@@ -47,7 +47,7 @@ export let try_log = (...args) => decorate(decMethod('value', (fn, [], { target,
     return fn.call(this, ...arguments);
   }
   catch(e) {
-    console.log(`${key} try_log error:`, e);
+    console.warn(`${key} try_log error:`, e);
   }
 }), args);
 

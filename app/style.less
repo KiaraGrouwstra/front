@@ -186,6 +186,12 @@ pre {
 //   .wavy-btn;
 // }
 
+// Materialize kills selects...
+
+select {
+  display: inline-block;
+}
+
 // Materialize `.valid`/`.invalid` styles converted to `.ng-valid`/`.ng-invalid`, since thru `ngClass` it somehow doesn't sync well...
 
 input:not([type]).ng-valid, input:not([type]):focus.ng-valid,

@@ -53,7 +53,7 @@ export let ULComp = ng2comp({
       if(_.isUndefined(x)) return;
       this._schema = x;
       this.combInputs();
-      this.indexBased = Array.isArray(_.get(['items'], x));
+      this.indexBased = _.isArray(_.get(['items'], x));
     }
 
     combInputs = () => combine((path, val, spec) => {

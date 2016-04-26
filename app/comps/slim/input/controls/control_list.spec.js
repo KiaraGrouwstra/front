@@ -16,7 +16,7 @@ describe('ControlList', () => {
   it('should support pushing', () => {
     a.add();
     expect(a.length).toEqual(1);
-    expect(a.controls[0]._value).toEqual(1);  //can't use object equality for new instances
+    expect(a.at(0).value).toEqual(1);  //can't use object equality for new instances
   });
 
 });

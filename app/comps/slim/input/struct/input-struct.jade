@@ -1,0 +1,145 @@
+.card
+  .card-content('[id]'=`id`)
+    p.card-title(*ngIf='named') {{k}}
+    //- '[ngControlGroup]'=`ctrl`
+    //- '[ngControlGroup]'=`spec.name`
+    form
+      .fixed-props(*ngIf=`hasFixed`)
+        b Fixed Properties
+        .fixed-add(*ngIf=`nameSpecFixedFiltered.enum.length`)
+          //- #newFixed
+          //- '[spec]'=`nameSpecFixed`
+          input-field(
+            '[named]'=`false`
+            '[path]'=`path.concat('newFixed')`
+            '[spec]'=`nameSpecFixedFiltered`
+            '[ctrl]'=`nameCtrlFixed`
+          )
+          //- '(click)'=`addProperty(newFixed.value); newFixed.value = '';`
+          a.btn.waves-effect.waves-light.green(
+            '(click)'=`addProperty(nameCtrlFixed.value)`
+          )
+            i.material-icons add
+        table.bordered.highlight
+          //- thead
+          //-   th Name
+          //-   th Value
+          //-   th
+          tbody
+            tr(*ngFor="#item of indices.properties; #i = index")
+              //- td
+              //-   input-field(
+              //-     '[named]'=`false`
+              //-     '[path]'=`path.concat(item).concat('name')`
+              //-     '[spec]'=`nameSpecFixed`
+              //-     '[ctrl]'=`ctrl.controls.properties.controls[item].controls.name`
+              //-   )
+              td
+                //- p item: {{item}}, i: {{i}}
+                //- set spec's name: item
+                input-field(
+                  '[named]'=`true`
+                  '[path]'=`path.concat(item)`
+                  '[spec]'=`specFixed(item)`
+                  '[ctrl]'=`ctrl.controls.properties.controls[item]`
+                )
+              td(
+                *ngIf=`!spec?.required?.includes(item)`
+              )
+                button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removeProperty(item)`)
+                  | ×
+                
+      //- actually check object length
+      .pattern-props(*ngIf=`hasPatts`)
+        b Pattern Properties
+        .patt(*ngFor="#patt of patts")
+          emp {{patt}}
+          //- #newPatt
+          //- input-field(
+          //-   '[named]'=`false`
+          //-   '[path]'=`path.concat(item).concat('name')`
+          //-   '[spec]'=`nameSpecPatt[patt]`
+          //-   '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
+          //- )
+          //- '(click)'=`addPatternProperty(patt, newPatt.value); newPatt.value = '';`
+          a.btn.waves-effect.waves-light.green(
+            '(click)'=`addPatternProperty(patt);`
+          )
+            i.material-icons add
+          table.bordered.highlight
+            thead
+              th Name
+              th Value
+              th
+            tbody
+              tr(*ngFor="#item of indices.patternProperties[patt]; #i = index")
+                td
+                  input-field(
+                    '[named]'=`false`
+                    '[path]'=`path.concat(item).concat('name')`
+                    '[spec]'=`nameSpecPatt[patt]`
+                    '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
+                  )
+                td
+                  input-field(
+                    '[named]'=`false`
+                    '[path]'=`path.concat(item).concat('val')`
+                    '[spec]'=`specPatt(patt,i)`
+                    '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.val`
+                  )
+                td
+                  button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removePatternProperty(patt, item)`)
+                    | ×
+
+      .additional-props(*ngIf=`hasAdd`)
+        b Additional Properties
+        //- select.jade copy for oneOf
+        .input-field(
+          *ngIf=`isOneOf`
+        )
+          form
+            select(
+              '[(ngModel)]'=`option`
+            )
+              option(
+                *ngFor=`#opt of spec.additionalProperties.oneOf; #idx = index`
+                '[value]'=`idx`
+              )
+                | {{opt.type}}
+        div(
+          *ngIf=`!isOneOf || option`
+        )
+          //- '(click)'=`addAdditionalProperty(newAdd.value)`
+          a.btn.waves-effect.waves-light.green(
+            '(click)'=`addAdditionalProperty()`
+          )
+            i.material-icons add
+          table.bordered.highlight
+            thead
+              th Name
+              th Value
+              th
+            tbody
+              tr(*ngFor="#item of indices.additionalProperties; #i = index")
+                td
+                  input-field(
+                    '[named]'=`false`
+                    '[path]'=`path.concat(item).concat('name')`
+                    '[spec]'=`nameSpecAdd`
+                    '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.name`
+                  )
+                td
+                  input-field(
+                    '[named]'=`false`
+                    '[path]'=`path.concat(item).concat('val')`
+                    '[spec]'=`isOneOf ? spec.additionalProperties.oneOf[opt] : spec.additionalProperties`
+                    '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.val`
+                  )
+                td
+                  button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removeAdditionalProperty(item)`)
+                    | ×
+                  
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
+      | Keys must be unique.
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
+      | Must use and provide valid values for all types.

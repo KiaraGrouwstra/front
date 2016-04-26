@@ -7,11 +7,11 @@ form
     //- '[name]'=`attrs.id`
     //- '[(ngModel)]'=`ctrl.value`
     //- '[ngModel]'=`{checked: ctrl.value == $event.target.value}`
+    //- '[required]'=`attrs.required`
     input(
       type='radio'
       id=`{{attrs.id}}+'-'+{{opt}}`
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
-      '[required]'=`attrs.required`
       '[ngFormControl]'=`ctrl`
       '[value]'='opt'
       '[checked]'=`ctrl.value == $event.target.value`

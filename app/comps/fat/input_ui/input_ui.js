@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild } from 'angular2/core'; //, forwardRef
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, forwardRef } from 'angular2/core';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
 import { FormComp } from '../../comps';
@@ -10,7 +10,8 @@ export let InputUiComp = ng2comp({
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<input-form [inputs]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
     directives: [
-      FormComp,
+      // FormComp,
+      forwardRef(() => FormComp),
       COMMON_DIRECTIVES,
     ],
   },
@@ -45,7 +46,6 @@ export let InputUiComp = ng2comp({
 
     // submit param inputs for an API function
     submit(form_val) {
-      // console.log('form_val', form_val, JSON.stringify(form_val));
       if(form_val.constructor == Event) return;
       // why is the EventEmitter first yielding an Event?
       let kind_map = Object.assign(...this.pars.map(x => ({ [x.spec.name]: x.spec.in }) ));
@@ -58,13 +58,13 @@ export let InputUiComp = ng2comp({
         return arr2obj(good_keys, k => form_val[k]);
       });
       let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
-      let url = Object.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`) + (Object.keys(p_query).length ? '?' : '')
+      let url = Object.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`) + (_.size(p_query) ? '?' : '')
           + global.$.param(_.assign({ access_token: this.token }, p_query));
       // this.handler.emit(url);
       let body_keys = Object.keys(p_body);
       if(body_keys.length > 1) throw "cannot have multiple body params!";
       let body = body_keys.length ? p_body[body_keys[0]] : _.join('&')(_.toPairs(p_form).map(_.join('=')));
-      // if(Object.keys(p_form).length && _.any(x => p_header['Content-Type'].includes(x))
+      // if(_.size(p_form) && _.any(x => p_header['Content-Type'].includes(x))
       //   (['application/x-www-form-urlencoded', 'multipart/form-data']))
       //     throw "consider adding a form-appropriate header!";
       let verb = 'GET';

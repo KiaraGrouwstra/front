@@ -22,7 +22,6 @@ describe('Scalar', () => {
   it('should work', fakeAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars));
     expect(comp.html).toEqual('<em>foo</em>');
-    tick(1000);
   }));
 
 });

@@ -1,8 +1,8 @@
 // let jsonPath = require('JSONPath');
 let _ = require('lodash/fp');
-let tv4 = require('tv4');
 let marked = require('marked');
 let validUrl = require('valid-url');
+import { validate } from '../input/validators';
 
 // infer the type for a value lacking a spec
 export let infer_type = (v) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
@@ -11,8 +11,8 @@ export let infer_type = (v) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'obj
 // (which seems fair for `oneOf` but blatantly disregards `allOf` and to lesser extent `anyOf`)
 export let try_schema = (val, spec) => {
   let options = _.get(['oneOf'], spec) || _.get(['anyOf'], spec) || _.get(['allOf'], spec) || [];
-  let tp = _.find((schema, idx, arr) => tv4.validate(val, schema, false, false, false), options);
-  return _.get(['type'], tp) ? tp :
+  let tp = _.find((schema, idx, arr) => validate(val, schema), options);
+  return _.has(['type'], tp) ? tp :
     _.some(x => _.get([x], tp), ['oneOf','anyOf','allOf']) ?
     try_schema(val, tp) : null; //infer_type(val)
 }

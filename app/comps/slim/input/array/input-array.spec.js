@@ -56,7 +56,6 @@ describe('InputArrayComp', () => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('add');
-    tick(1000);
   }));
 
   it('should support `items` array and `additionalItems` distinction for validation', fakeAsync(() => {
@@ -80,7 +79,6 @@ describe('InputArrayComp', () => {
     expect(c3.errors).not.toEqual(null);
     setInput(i3, 'c');
     expect(c3.errors).toEqual(null);
-    tick(1000);
   }));
 
   // it('should work named', test(
