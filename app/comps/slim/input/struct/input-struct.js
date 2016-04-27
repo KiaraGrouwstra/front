@@ -25,7 +25,7 @@ export let InputStructComp = ng2comp({
     counter = 0;
     indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
     // keys = ['name', 'val'];
-    nameSpecFixedFiltered = [];
+    nameSpecFixedFiltered = {};
 
     ngOnInit() {
       let props = getPaths(this.path);
@@ -67,11 +67,15 @@ export let InputStructComp = ng2comp({
 
     @try_log()
     addProperty(k) {
-      this.ctrl.addProperty(k);
-      this.indices.properties.add(k);
-      // if no intentions to add reordering I could've just iterated over `_.keys(this.ctrl.controls.properties.controls)`
-      this.nameCtrlFixed.updateValue('');
-      this.updateFixedList();
+      if(this.nameSpecFixedFiltered.enum.includes(k)) {
+        this.ctrl.addProperty(k);
+        this.indices.properties.add(k);
+        // if no intentions to add reordering I could've just iterated over `_.keys(this.ctrl.controls.properties.controls)`
+        this.nameCtrlFixed.updateValue('');
+        this.updateFixedList();
+      } else {
+        console.warn(`invalid property: ${k}`);
+      }
     }
 
     @try_log()
@@ -113,6 +117,10 @@ export let InputStructComp = ng2comp({
       this.ctrl.removeAdditionalProperty(idx);
       set.delete(item);
     }
+
+    // print(v) {
+    //   console.log('print', v);
+    // }
 
   }
 })

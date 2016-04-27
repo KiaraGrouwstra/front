@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@angular2-material/core": "^2.0.0-alpha.3",
+    "@angular2-material/radio": "^2.0.0-alpha.3",
     "@polymer/polymer": "^1.2.5-npm-test.2",
+    "Angular2RadioButton": "github:angular2-school/angular2-radio-button",
     "JSONPath": "^0.10.0",
     "angular-animate": "latest",
     "angular-aria": "latest",

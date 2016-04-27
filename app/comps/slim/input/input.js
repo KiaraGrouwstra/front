@@ -44,6 +44,7 @@ export let get_template = (spec, attrs) => {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
     // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
     string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'select' : null,
+    // string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'radio' : null,
     // ^ radio over select? alt. autocomplete over datalist?
     integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
     boolean: 'switch',

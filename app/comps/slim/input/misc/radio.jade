@@ -1,3 +1,16 @@
+//- //- not properly setting the control yet
+//- //- somehow getting visually mixed into the error box
+//- //- selected, value, disabled
+//- md-radio-group(
+//-   '[(ngModel)]'=`ctrl.value`
+//- )
+//-   //- id, name, value, checked, disabled
+//-   md-radio-button(
+//-     *ngFor=`#opt of spec.enum`
+//-     '[value]'=`opt`
+//-   )
+//-     | {{opt}}
+
 form
   p(
     *ngFor='#opt of spec.enum'
@@ -5,19 +18,23 @@ form
     //- '[ngModel]'=`{checked: ctrl.value == me.value}`
     //- #me
     //- '[name]'=`attrs.id`
-    //- '[(ngModel)]'=`ctrl.value`
     //- '[ngModel]'=`{checked: ctrl.value == $event.target.value}`
     //- '[required]'=`attrs.required`
+    //- '[(ngModel)]'=`ctrl.value`
+    //- '(click)'=`ctrl.updateValue($event.target.value)`
+    //- '(click)'=`print($event.target.value)`
+    //- '[checked]'=`ctrl.value == opt`
+    //- '(change)'=`ctrl.updateValue($event.target.value)`
+    //- //- hacked in a functional '[(ngModel)]' using `radio_value_accessor`
     input(
       type='radio'
-      id=`{{attrs.id}}+'-'+{{opt}}`
+      id=`{{attrs.id}}-{{opt}}`
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
       '[ngFormControl]'=`ctrl`
-      '[value]'='opt'
-      '[checked]'=`ctrl.value == $event.target.value`
-      '(change)'=`ctrl.value = $event.target.value`
+      '[value]'=`opt`
+      '[(ngModel)]'=`ctrl.value`
     )
     label(
-      'attr.for'=`{{attrs.id}}+'-'+{{opt}}`
+      'attr.for'=`{{attrs.id}}-{{opt}}`
     )
       | {{opt}}

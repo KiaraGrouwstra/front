@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from 'angular2/core';
+import { Component, Input, Output, forwardRef, ChangeDetectionStrategy, ViewChild, EventEmitter } from 'angular2/core';
 import { COMMON_DIRECTIVES } from 'angular2/common';
 let marked = require('marked');
 import { input_attrs, get_template } from '../input';
@@ -9,6 +9,10 @@ import { InputComp } from '../input/input-input';
 import { arr2obj, ng2comp } from '../../../lib/js';
 import { getPaths } from '../../slim';
 // import { Select } from 'ng2-select';
+// import { RadioControlValueAccessor } from 'Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor';
+import { RadioControlValueAccessor } from './radio_value_accessor';
+import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
+import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
 
 export let FieldComp = ng2comp({
   component: {
@@ -21,7 +25,13 @@ export let FieldComp = ng2comp({
       forwardRef(() => InputValueComp),
       InputComp,
       // Select,
-    ]
+      RadioControlValueAccessor,
+      MdRadioGroup,
+      MdRadioButton,
+    ],
+    providers: [
+      MdRadioDispatcher,
+    ],
   },
   parameters: [],
   decorators: {
@@ -30,6 +40,7 @@ export let FieldComp = ng2comp({
   class: class FieldComp {
     // type: Observable<string>;
     option = null;
+    @Output() changes = new EventEmitter(false);
 
     ngOnInit() {
       // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
@@ -40,6 +51,8 @@ export let FieldComp = ng2comp({
       // this.ctrl: from controls[key];
       this.attrs = input_attrs(this.path, spec);
       this.type = get_template(spec, this.attrs);
+      // this.changes = this.ctrl.valueChanges;
+      this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });
     }
 
     get spec() {
@@ -67,6 +80,13 @@ export let FieldComp = ng2comp({
     resolveSpec() {
       return this.spec[this.of][this.option];
     }
+
+    // print(v) {
+    //   console.log('print', v);
+    //   console.log('this.ctrl.value', this.ctrl.value);
+    //   this.ctrl.updateValue(v);
+    //   console.log('this.ctrl.value', this.ctrl.value);
+    // }
 
   }
 })

@@ -9,16 +9,18 @@
         .fixed-add(*ngIf=`nameSpecFixedFiltered.enum.length`)
           //- #newFixed
           //- '[spec]'=`nameSpecFixed`
+          //- '(changes)'=`print($event)`
           input-field(
             '[named]'=`false`
             '[path]'=`path.concat('newFixed')`
             '[spec]'=`nameSpecFixedFiltered`
             '[ctrl]'=`nameCtrlFixed`
+            '(changes)'=`addProperty($event)`
           )
           //- '(click)'=`addProperty(newFixed.value); newFixed.value = '';`
-          a.btn.waves-effect.waves-light.green.add-fixed(
-            '(click)'=`addProperty(nameCtrlFixed.value)`
-          )
+          //- a.btn.waves-effect.waves-light.green.add-fixed(
+          //-   '(click)'=`addProperty(nameCtrlFixed.value)`
+          //- )
             i.material-icons add
         table.bordered.highlight
           //- thead
@@ -109,12 +111,9 @@
         div(
           *ngIf=`!isOneOf || option`
         )
-          //- '(click)'=`addAdditionalProperty(newAdd.value)`
-          a.btn.waves-effect.waves-light.green.add-add(
-            '(click)'=`addAdditionalProperty()`
+          table.bordered.highlight(
+            *ngIf=`indices.additionalProperties.length`
           )
-            i.material-icons add
-          table.bordered.highlight
             thead
               th Name
               th Value
@@ -138,6 +137,11 @@
                 td
                   button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removeAdditionalProperty(item)`)
                     | ×
+                    //- '(click)'=`addAdditionalProperty(newAdd.value)`
+          a.btn.waves-effect.waves-light.green.add-add(
+            '(click)'=`addAdditionalProperty()`
+          )
+            i.material-icons add
                   
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
       | Keys must be unique.
