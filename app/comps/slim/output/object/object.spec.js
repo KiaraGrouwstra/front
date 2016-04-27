@@ -34,24 +34,24 @@ describe('ObjectComp', () => {
     tcb = builder;
   }));
 
-  it('should work without header', fakeAsync(() => {
+  it('should work without header', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(obs_pars));
     expect(el).toHaveText(flat);
   }));
 
-  it('should work with headers', fakeAsync(() => {
+  it('should work with headers', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
     expect(el).toHaveText('test' + flat);
   }));
 
-  it('should work with nested objects', fakeAsync(() => {
+  it('should work with nested objects', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(nesto_pars));
     expect(el).toHaveText(mashed);
   }));
 
   // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
   // screwed up this test since value passes named=false, which forced me to work around it by adding 'named' to value...
-  it('should work with nested arrays', fakeAsync(() => {
+  it('should work with nested arrays', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(nestr_pars));
     expect(el).toHaveText(mashed);
   }));

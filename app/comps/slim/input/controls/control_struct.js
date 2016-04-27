@@ -7,6 +7,7 @@ import { mapBoth, editValsLambda } from '../../../lib/js';
 export class ControlStruct extends ControlGroup {
 
   constructor(factStruct, allOf = [], required = [], vldtr = null) {
+    mapping = {};
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
     // KvPair: ControlGroup<k,v>
     // this: ControlGroup< properties: ControlGroup<v>, patternProperties: ControlGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >
@@ -41,6 +42,7 @@ export class ControlStruct extends ControlGroup {
     ]);
     super(controls, {}, validator);
     this.factStruct = factStruct;
+    this.mapping = _.clone(controls.properties.controls);
   }
 
   _updateValue() {
@@ -54,30 +56,52 @@ export class ControlStruct extends ControlGroup {
     this.controls.properties.addControl(k, ctrl);
     this.controls.properties._updateValue();
     this._updateValue();
+    this.add(k, ctrl);
   }
 
   removeProperty(k) {
     this.controls.properties.removeControl(k);
     this.controls.properties._updateValue();
     this._updateValue();
+    this.remove(k);
   }
 
   addPatternProperty(patt, k) {
     let ctrl = this.controls.patternProperties.controls[patt].add();
     ctrl.controls.name.updateValue(k);
+    this.add(k, ctrl.controls.val);
   }
 
   removePatternProperty(patt, i) {
-    this.controls.patternProperties.controls[patt].removeAt(i);
+    let pattCtrl = this.controls.patternProperties.controls[patt];
+    let name = pattCtrl.at(i).controls.name.value;
+    pattCtrl.removeAt(i);
+    this.remove(name);
   }
 
   addAdditionalProperty(k) {
     let ctrl = this.controls.additionalProperties.add();
     ctrl.controls.name.updateValue(k);
+    this.add(k, ctrl.controls.val);
   }
 
   removeAdditionalProperty(i) {
-    this.controls.additionalProperties.removeAt(i);
+    let addCtrl = this.controls.additionalProperties;
+    let name = addCtrl.at(i).controls.name.value;
+    addCtrl.removeAt(i);
+    this.remove(name);
+  }
+
+  add(k, v) {
+    this.mapping = _.set([k], v)(this.mapping);
+  }
+
+  remove(k) {
+    this.mapping = _.omit([k])(this.mapping);
+  }
+
+  find(k) {
+    return this.mapping[k];
   }
 
   // add() { //: void

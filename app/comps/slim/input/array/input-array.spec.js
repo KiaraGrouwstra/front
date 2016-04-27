@@ -52,13 +52,13 @@ describe('InputArrayComp', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('add');
   }));
 
-  it('should support `items` array and `additionalItems` distinction for validation', fakeAsync(() => {
+  it('should support `items` array and `additionalItems` distinction for validation', myAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
     let btn = debugEl.query(By.css('a.btn'));
     dispatchEvent(btn.nativeElement, 'click');

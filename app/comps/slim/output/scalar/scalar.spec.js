@@ -19,7 +19,7 @@ describe('Scalar', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars));
     expect(comp.html).toEqual('<em>foo</em>');
   }));

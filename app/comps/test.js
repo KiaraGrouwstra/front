@@ -49,11 +49,11 @@ export let makeComp = (tcb, test_class) => {
   return { comp, el, fixture, debugEl };
 }
 
-// // failed hack to inject a tick into fakeAsync, since it appears usually needed...
-// export let myAsync = (fn) => fakeAsync(() => {
-//   fn();
-//   tick(1000);
-// })();
+// hack to inject a tick into fakeAsync, since it appears usually needed...
+export let myAsync = (fn) => fakeAsync(() => {
+  fn();
+  tick(1000);
+});
 
 // set the value of an input, and trigger the corresponding event. The input can be obtained using `debugEl.query(By.css(css))`.
 // trying to set a `select` element's value to something not contained in its option list sets it to '' instead...

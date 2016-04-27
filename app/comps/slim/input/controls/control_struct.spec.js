@@ -22,6 +22,11 @@ describe('ControlStruct', () => {
   //   throw 'works'
   // })
 
+  it('allow finding by key', () => {
+    expect(obj.find('foo').value).toEqual(0);
+    expect(obj.valid).toEqual(true);
+  });
+
   // prepopulate required
 
   // it('should prepopulate required keys', () => {
@@ -46,7 +51,8 @@ describe('ControlStruct', () => {
   //
   // it('removePatternProperty', () => {
   //   obj.addPatternProperty('^x-', 'x-hi');
-  //   obj.removePatternProperty('^x-', 'x-hi');
+  //   // obj.removePatternProperty('^x-', 'x-hi');
+  //   obj.removePatternProperty('^x-', 0);
   //   expect(obj.value).toEqual({ foo: 0 });
   // });
   //
@@ -57,7 +63,8 @@ describe('ControlStruct', () => {
   //
   // it('removeAdditionalProperty', () => {
   //   obj.addAdditionalProperty('cow');
-  //   obj.removeAdditionalProperty('cow');
+  //   // obj.removeAdditionalProperty('cow');
+  //   obj.removeAdditionalProperty(0);
   //   expect(obj.value).toEqual({ foo: 0 });
   // });
 
@@ -86,7 +93,8 @@ describe('ControlStruct', () => {
 
   it('removePatternProperty', () => {
     obj.addPatternProperty('^x-', 'x-hi');
-    obj.removePatternProperty('^x-', 'x-hi');
+    // obj.removePatternProperty('^x-', 'x-hi');
+    obj.removePatternProperty('^x-', 0);
     expect(obj.value).toEqual({ foo: 0, bar: 0 });
   });
 
@@ -97,7 +105,8 @@ describe('ControlStruct', () => {
 
   it('removeAdditionalProperty', () => {
     obj.addAdditionalProperty('cow');
-    obj.removeAdditionalProperty('cow');
+    // obj.removeAdditionalProperty('cow');
+    obj.removeAdditionalProperty(0);
     expect(obj.value).toEqual({ foo: 0, bar: 0 });
   });
 

@@ -31,22 +31,22 @@ describe('ValueComp', () => {
     tcb = builder;
   }));
 
-  it('should handle scalars', fakeAsync(() => {
+  it('should handle scalars', myAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(_.assign(obs_pars, { val: scalar })));
     expect(el).toHaveText(scalar);
   }));
 
-  it('should handle arrays', fakeAsync(() => {
+  it('should handle arrays', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: arr })));
     expect(el).toHaveText(arr.join(''));
   }));
 
-  it('should handle objects', fakeAsync(() => {
+  it('should handle objects', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: obj })));
     expect(el).toHaveText('a1b2');
   }));
 
-  xit('should handle tables', fakeAsync(() => {
+  xit('should handle tables', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: table })));
     expect(el).toHaveText('ab12AB');
   }));

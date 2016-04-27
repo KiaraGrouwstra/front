@@ -42,13 +42,13 @@ describe('FormComp', () => {
     tcb = builder;
   }));
 
-  it('should do scalar inputs', fakeAsync(() => {
+  it('should do scalar inputs', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars(), pars())));
     // expect(el).toHaveText(desc + text + text + 'Submit');
     expect(comp.items[0].ctrl.errors).toEqual({required: true});
   }));
 
-  it('should do array inputs', fakeAsync(() => {
+  it('should do array inputs', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
     expect(comp.items[0].ctrl.errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');

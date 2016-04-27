@@ -33,13 +33,13 @@ describe('InputValueComp', () => {
     tcb = builder;
   }));
 
-  it('should work with scalars', fakeAsync(() => {
+  it('should work with scalars', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars(scalar)));
     // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
     expect(comp.ctrl.errors).toEqual({required: true});
   }));
 
-  it('should work with arrays', fakeAsync(() => {
+  it('should work with arrays', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars(array)));
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('testadd');

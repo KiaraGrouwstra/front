@@ -30,18 +30,18 @@ describe('ArrayComp', () => {
     tcb = builder;
   }));
 
-  it('should work with truthy header value', fakeAsync(() => {
+  it('should work with truthy header value', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: 'lol' }, obs_pars)));
     expect(el).toHaveText(path.concat(val).join(''));
   }));
 
-  it('should work without falsy header value', fakeAsync(() => {
+  it('should work without falsy header value', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(obs_pars));
     expect(el).toHaveText(val.join(''));
   }));
 
   // before disabling JIT: [viewFactory_ArrayComp0 is not a function](https://github.com/angular/angular/issues/7037)
-  it('should work with nested arrays', fakeAsync(() => {
+  it('should work with nested arrays', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: false }, nest_pars)));
     expect(el).toHaveText('1234');
   }));

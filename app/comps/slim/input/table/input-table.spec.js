@@ -26,12 +26,12 @@ describe('InputTableComp', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(el).toHaveText('add');
   }));
 
-  it('should work named', fakeAsync(() => {
+  it('should work named', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign(pars(), {named: true})));
     expect(el).toHaveText('testadd');
   }));

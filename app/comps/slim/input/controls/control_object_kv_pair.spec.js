@@ -3,6 +3,7 @@ let _ = require('lodash/fp');
 import { dispatchEvent, fakeAsync, tick } from 'angular2/testing_internal';
 import { ControlObjectKvPair } from './control_object_kv_pair';
 import { getValStruct } from '../input';
+import { myAsync } from '../../../test';
 
 let spec = {
   properties: {
@@ -45,7 +46,7 @@ describe('ControlObjectKvPair', () => {
   //   }, 50);
   // });
 
-  it('should switch val value/validator on name change ASYNC', fakeAsync(() => {
+  it('should switch val value/validator on name change', myAsync(() => {
     let { name, val: v } = kv.controls;
     name.updateValue('fixed');
     tick();

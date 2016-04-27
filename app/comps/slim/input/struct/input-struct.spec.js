@@ -42,13 +42,13 @@ describe('InputStructComp', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('NameValueadd');
   }));
 
-  // it('should work named', fakeAsync(() => {
+  // it('should work named', myAsync(() => {
   //   let { comp, el } = makeComp(tcb, cls(_.assign(pars(), {named: true})));
   //   expect(el).toHaveText('testNameValueadd');
   //   // tick(1000);
@@ -56,7 +56,7 @@ describe('InputStructComp', () => {
 
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
-  it('should validate key uniqueness', fakeAsync(() => {
+  it('should validate key uniqueness', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     comp.addAdditionalProperty();
     expect(comp.ctrl.errors).toEqual(null);
@@ -64,7 +64,7 @@ describe('InputStructComp', () => {
     expect(comp.ctrl.errors).toEqual({ uniqueKeys: true });
   }));
 
-  it('should validate fixed properties', fakeAsync(() => {
+  it('should validate fixed properties', myAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
     let val = debugEl.query(By.css('#test-fixed'));
     let v = comp.ctrl.controls.properties.controls['fixed'];
@@ -76,7 +76,7 @@ describe('InputStructComp', () => {
     expect(v.errors).not.toEqual(null);
   }));
 
-  it('should validate additional properties', fakeAsync(() => {
+  it('should validate additional properties', myAsync(() => {
     let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
     let btn = debugEl.query(By.css('a.add-add'));
     dispatchEvent(btn.nativeElement, 'click');
@@ -93,7 +93,7 @@ describe('InputStructComp', () => {
     expect(n.errors).not.toEqual(null);
   }));
 
-  // it('should switch val value/validator on name change', fakeAsync(() => {
+  // it('should switch val value/validator on name change', myAsync(() => {
   // }));
 
 });

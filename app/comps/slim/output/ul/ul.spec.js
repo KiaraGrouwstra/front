@@ -21,17 +21,17 @@ describe('ULComp', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
     expect(comp.rows.map(y => y.val)).toEqual(['foo','bar','baz']);
   }));
 
-  it('should display scalars', fakeAsync(() => {
+  it('should display scalars', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars));
     expect(el).toHaveText(val.join(''));
   }));
 
-  it('should allow named', fakeAsync(() => {
+  it('should allow named', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
     expect(el).toHaveText(path.concat(val).join(''));
   }));

@@ -34,7 +34,7 @@ describe('InputComp', () => {
     tcb = builder;
   }));
 
-  it('should work', fakeAsync(() => {
+  it('should work', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(el).toHaveText('');
   }));

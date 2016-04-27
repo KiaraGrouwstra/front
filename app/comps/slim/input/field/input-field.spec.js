@@ -34,18 +34,18 @@ describe('FieldComp', () => {
     tcb = builder;
   }));
 
-  it('should validate', fakeAsync(() => {
+  it('should validate', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(comp.ctrl.errors).toEqual({required: true});
   }));
 
-  it('should hold appropriate error messages', fakeAsync(() => {
+  it('should hold appropriate error messages', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(_.keys(comp.validator_msgs)).toEqual(['required','type']);
   }));
 
   // I can't test properly like this, hidden messages (`type` here) still show with `toHaveText`...
-  xit('should show error messages', fakeAsync(() => {
+  xit('should show error messages', myAsync(() => {
     let { comp, el } = makeComp(tcb, cls(pars()));
     expect(el).toHaveText('geo-id: The geography ID.\n' + req);
   }));

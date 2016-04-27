@@ -112,7 +112,7 @@
           *ngIf=`!isOneOf || option`
         )
           table.bordered.highlight(
-            *ngIf=`indices.additionalProperties.length`
+            *ngIf=`hasAdd`
           )
             thead
               th Name
@@ -142,7 +142,7 @@
             '(click)'=`addAdditionalProperty()`
           )
             i.material-icons add
-                  
+
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
       | Keys must be unique.
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
