@@ -3,7 +3,7 @@
     ul.tabs
       //- div(tabindex="0")
       li.tab.tooltipped(
-        *ngFor=`#api of apis`
+        *ngFor=`let api of apis`
         '[attr.data-tooltip]'='auths[api]?.token ? "auth token: " + auths[api]?.token : "connect to " + api'
       )
         a(

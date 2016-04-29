@@ -34,7 +34,7 @@ form
       //- | {{opt}}
       //- ; #idx = index
       option(
-        *ngFor='#opt of spec.enum'
+        *ngFor='let opt of spec.enum'
         '[value]'='opt'
       )
         | {{opt}}

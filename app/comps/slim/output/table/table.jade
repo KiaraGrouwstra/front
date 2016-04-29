@@ -27,12 +27,13 @@
     table.bordered.highlight(id=`{{id}}`)
       thead
         //- https://github.com/angular/angular/issues/2451
-        //- *ngFor=`#col of cols`
+        //- *ngFor=`let col of cols`
         //- ; #col = cols[name]
-        //- *assign-local=`#col to cols[name]`
+        //- *assignLocal=`#col to cols[name]`
         //- *assignLocal=`#isDesc to sortColsDesc[name]`
+        //- '*assignLocal'=`{ col: cols[name] }`
         th.tbl-hdr.waves-effect(
-          *ngFor=`#name of colOrder; #idx = index`
+          '*ngFor'=`let name of colOrder; #idx = index`
           id=`{{cols[name].id}}`
           '[class.sort]'=`sortedCols.includes(name)`
           '[class.asc]'=`sortColsDesc[name] == false`
@@ -40,6 +41,7 @@
           '[ngClass]'=`{ 'waves-red': idx % 6 == 0, 'waves-orange': idx % 6 == 1, 'waves-yellow': idx % 6 == 2, 'waves-green': idx % 6 == 3, 'waves-teal': idx % 6 == 4, 'waves-purple': idx % 6 == 5 }`
           '(click)'=`sortClick(name)`
         )
+          //- | col: [{{col}}]
           | {{cols[name].k}}
           //- svg.icon.current(width='24', height='24')
           //-   use(xlink:href='#arrow')
@@ -90,7 +92,7 @@
       tbody
         tr
           th(
-            *ngFor=`#name of colOrder`
+            *ngFor=`let name of colOrder`
           )
             form
               //- .numFilter
@@ -133,15 +135,15 @@
                   //-   | {{cols[name].k}}
                   //-   //- | {{cols[name].k}}: {{_filters[name] | json}}
 
-        //- *ngFor=`#r of rows`
+        //- *ngFor=`let r of rows`
         tr(
-          *ngFor=`#r of data`
+          *ngFor=`let r of data`
           id=`{{r.id}}`
         )
-          //- *ngFor=`#c of r.cells`
+          //- *ngFor=`let c of r.cells`
           //- ; #c = r.cells[name]
           td(
-            *ngFor=`#name of colOrder; #idx = index`
+            *ngFor=`let name of colOrder; #idx = index`
             id=`{{r.cells[name].id}}`
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
@@ -153,7 +155,7 @@
               '[schema]'=`getSpec(idx)`
             )
           //- td(
-          //-   *ngFor=`#name of colOrder; #c = r.cells.get(name)`
+          //-   *ngFor=`let name of colOrder; #c = r.cells.get(name)`
           //-   id=`{{r.cells[name].id}}`
           //- )
           //-   value(

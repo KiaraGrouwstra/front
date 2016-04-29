@@ -16,8 +16,8 @@ form
   datalist(
     '[id]'=`attrs.id + '-datalist'`
   )
-    //- *ngFor='#opt of spec.enum'
+    //- *ngFor='let opt of spec.enum'
     option(
-      *ngFor='#opt of spec.suggestions'
+      *ngFor='let opt of spec.suggestions'
       '[value]'='opt'
     )

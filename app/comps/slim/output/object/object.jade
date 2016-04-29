@@ -7,7 +7,7 @@
       '[val]'=`scalar`
     )
     object(
-      *ngFor=`#x of (object)`
+      *ngFor=`let x of (object)`
       '[path]'=`x.path`
       '[val]'=`x.val`
       '[schema]'=`x.schema`
@@ -15,7 +15,7 @@
     )
     //- array
     value(
-      *ngFor=`#x of (array)`
+      *ngFor=`let x of (array)`
       '[path]'=`x.path`
       '[val]'=`x.val`
       '[schema]'=`x.schema`

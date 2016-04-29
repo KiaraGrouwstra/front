@@ -6,14 +6,14 @@
 //- )
 //-   //- id, name, value, checked, disabled
 //-   md-radio-button(
-//-     *ngFor=`#opt of spec.enum`
+//-     *ngFor=`let opt of spec.enum`
 //-     '[value]'=`opt`
 //-   )
 //-     | {{opt}}
 
 form
   p(
-    *ngFor='#opt of spec.enum'
+    *ngFor='let opt of spec.enum'
   )
     //- '[ngModel]'=`{checked: ctrl.value == me.value}`
     //- #me

@@ -9,7 +9,7 @@ div(*ngIf=`of`)
         '[(ngModel)]'=`option`
       )
         option(
-          *ngFor=`#opt of spec[of]; #idx = index`
+          *ngFor=`let opt of spec[of]; #idx = index`
           '[value]'=`idx`
         )
           | {{opt.type}}
@@ -84,7 +84,7 @@ div(*ngIf=`of`)
     //- | {{vldtr}}: {{!showError(vldtr)}}
     //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for spec ' + vldtr`
     li.error-item(
-      *ngFor=`#vldtr of validator_keys`
+      *ngFor=`let vldtr of validator_keys`
       '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
       '[hidden]'=`!showError(vldtr)`
     )

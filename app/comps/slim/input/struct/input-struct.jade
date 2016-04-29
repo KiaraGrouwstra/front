@@ -28,7 +28,7 @@
           //-   th Value
           //-   th
           tbody
-            tr(*ngFor="#item of indices.properties; #i = index")
+            tr(*ngFor=`let item of indices.properties; #i = index`)
               //- td
               //-   input-field(
               //-     '[named]'=`false`
@@ -54,7 +54,7 @@
       //- actually check object length
       .pattern-props(*ngIf=`hasPatts`)
         b Pattern Properties
-        .patt(*ngFor="#patt of patts")
+        .patt(*ngFor=`let patt of patts`)
           emp {{patt}}
           //- #newPatt
           //- input-field(
@@ -74,7 +74,7 @@
               th Value
               th
             tbody
-              tr(*ngFor="#item of indices.patternProperties[patt]; #i = index")
+              tr(*ngFor=`let item of indices.patternProperties[patt]; #i = index`)
                 td
                   input-field(
                     '[named]'=`false`
@@ -104,7 +104,7 @@
               '[(ngModel)]'=`option`
             )
               option(
-                *ngFor=`#opt of spec.additionalProperties.oneOf; #idx = index`
+                *ngFor=`let opt of spec.additionalProperties.oneOf; #idx = index`
                 '[value]'=`idx`
               )
                 | {{opt.type}}
@@ -119,7 +119,7 @@
               th Value
               th
             tbody
-              tr(*ngFor="#item of indices.additionalProperties; #i = index")
+              tr(*ngFor=`let item of indices.additionalProperties; #i = index`)
                 td
                   input-field(
                     '[named]'=`false`
