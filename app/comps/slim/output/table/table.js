@@ -1,12 +1,12 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from 'angular2/core'; //, ChangeDetectorRef
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core'; //, ChangeDetectorRef
 import { arr2obj, arr2map, ng2comp, combine, mapBoth, tryLog, key_spec } from '../../../lib/js';
 import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
 import { ValueComp } from '../../../comps';
 import { arrToSet } from '../../../lib/rx_helpers';
-// import { LocalVariable } from '../../../lib/directives';
+import { AssignLocal } from '../../../lib/directives';
 
 // schema in front cuz optional, this way combInputs only gets called once
 let inputs = ['schema', 'path', 'val', 'named', 'colOrder', 'sortColsDesc', 'filters', 'condFormat'];
@@ -20,7 +20,7 @@ export let TableComp = ng2comp({
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: require('./table.jade'),
     directives: [
-      // LocalVariable,
+      AssignLocal,
       forwardRef(() => ValueComp),
     ],
     styles: [
@@ -340,6 +340,22 @@ export let TableComp = ng2comp({
       let spec = this.schema;
       return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
       // _.get(['items', 'type'], spec) ? spec.items : try_schema(this.first, _.get(['items'], spec));
+    }
+
+    clearSorts() {
+      this.sortColsDesc = {};
+    }
+
+    clearHides() {
+      this.colOrder = this.col_keys;
+    }
+
+    clearFormats() {
+      this.condFormat = {};
+    }
+
+    clearFilters() {
+      this.filters = {};
     }
 
   }

@@ -1,15 +1,14 @@
-import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from "angular2/testing";
-import { Injector, provide } from 'angular2/core';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { ReflectiveInjector, provide } from '@angular/core';
 import { RequestService } from '../../services/request/request';
 import { WsService } from '../../services/ws/ws';
 import { requestServiceProvider } from '../../services/request/request.provider';
 import { wsServiceProvider } from '../../services/ws/ws.provider';
 import { CONFIG, APP_CONFIG } from '../../../config';
-import { ROUTER_PROVIDERS } from 'angular2/router';
-import { Router } from 'angular2/router'; //, RouteParams
-import { Http } from 'angular2/http'; //Headers
-import { HTTP_BINDINGS } from 'angular2/http';
-import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+import { ROUTER_PROVIDERS } from '@angular/router';
+import { Router } from '@angular/router'; //, RouteParams
+import { Http } from '@angular/http'; //Headers
+import { HTTP_BINDINGS } from '@angular/http';
 import { App } from './app';
 
 export let appProvider = provide(App, {
@@ -36,17 +35,16 @@ export let appProvider = provide(App, {
 });
 
 xdescribe('App', () => {
-  let injector: Injector;
+  let injector: ReflectiveInjector;
   var app;
 
   beforeEach(() => {
-    injector = Injector.resolveAndCreate([
+    injector = ReflectiveInjector.resolveAndCreate([
       appProvider,
       HTTP_BINDINGS, ROUTER_PROVIDERS,
       requestServiceProvider,
       wsServiceProvider,
       provide(APP_CONFIG, { useValue: CONFIG }),
-      provide(ChangeDetectorGenConfig, { useValue: new ChangeDetectorGenConfig(false, false, false) }),
     ]);
     app = injector.get(App);
   })

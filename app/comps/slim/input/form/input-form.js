@@ -1,6 +1,6 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChildren } from 'angular2/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
-import { FormBuilder } from 'angular2/common';  //, Control
+import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChildren } from '@angular/core';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
+import { FormBuilder } from '@angular/common';  //, Control
 import { InputValueComp } from '../value/input-value';
 import { input_control } from '../input';
 import { ng2comp } from '../../../lib/js';

@@ -28,7 +28,7 @@
           //-   th Value
           //-   th
           tbody
-            tr(*ngFor=`let item of indices.properties; #i = index`)
+            tr(*ngFor=`let item of indices.properties; let i = index`)
               //- td
               //-   input-field(
               //-     '[named]'=`false`
@@ -74,7 +74,7 @@
               th Value
               th
             tbody
-              tr(*ngFor=`let item of indices.patternProperties[patt]; #i = index`)
+              tr(*ngFor=`let item of indices.patternProperties[patt]; let i = index`)
                 td
                   input-field(
                     '[named]'=`false`
@@ -104,7 +104,7 @@
               '[(ngModel)]'=`option`
             )
               option(
-                *ngFor=`let opt of spec.additionalProperties.oneOf; #idx = index`
+                *ngFor=`let opt of spec.additionalProperties.oneOf; let idx = index`
                 '[value]'=`idx`
               )
                 | {{opt.type}}
@@ -119,7 +119,7 @@
               th Value
               th
             tbody
-              tr(*ngFor=`let item of indices.additionalProperties; #i = index`)
+              tr(*ngFor=`let item of indices.additionalProperties; let i = index`)
                 td
                   input-field(
                     '[named]'=`false`

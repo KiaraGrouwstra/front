@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { allUsed } from '../input';
-import { Validators, Control, ControlArray, AbstractControl } from 'angular2/common';
-import { ListWrapper } from 'angular2/src/facade/collection';
+import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
+import { ListWrapper } from '@angular/core/src/facade/collection';
 
 export class ControlVector extends ControlArray {
   // items: either a factory (homogeneous mode) or an array of factories (use `additionalItems` when all used)

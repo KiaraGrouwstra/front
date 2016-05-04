@@ -13,7 +13,7 @@
           '[(ngModel)]'=`option`
         )
           option(
-            *ngFor=`let opt of spec.additionalProperties.oneOf; #idx = index`
+            *ngFor=`let opt of spec.additionalProperties.oneOf; let idx = index`
             '[value]'=`idx`
           )
             | {{opt.type}}
@@ -34,7 +34,7 @@
           //- id=`{{?.id}}`
           //- presumes lengths of items and the ControlArray will stay in sync
           //- ; #path_i = path.concat(item); ctrl_i = ctrl.at(i);
-          tr(*ngFor="let item of items; #i = index")
+          tr(*ngFor="let item of items; let i = index")
             //- td(*ngFor=`let key of keys`)
             //- ("#key = 'name'")
             td

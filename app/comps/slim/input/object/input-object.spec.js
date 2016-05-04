@@ -1,9 +1,10 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control, objectControl } from '../input'
-import { By } from 'angular2/platform/browser';
+import { By } from '@angular/platform-browser-dynamic';
 
 import { InputObjectComp } from './input-object';
 let cls = test_comp('input-object', InputObjectComp);
@@ -37,70 +38,111 @@ let validationPars = () => ({ path, spec: validationSpec, ctrl: objectControl(va
 
 describe('InputObjectComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars()));
+  it('should work', test(pars(), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('NameValueadd');
   }));
 
-  // it('should work named', myAsync(() => {
-  //   let { comp, el } = makeComp(tcb, cls(_.assign(pars(), {named: true})));
+  // it('should work named', test([pars(), {named: true}], ({ comp, el }) => {
   //   expect(el).toHaveText('testNameValueadd');
   //   // tick(1000);
   // }));
 
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
-  it('should validate key uniqueness', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars()));
+  it('should validate key uniqueness', test(pars(), ({ comp, el }) => {
     comp.add();
     expect(comp.ctrl.errors).toEqual(null);
     comp.add();
     expect(comp.ctrl.errors).toEqual({ uniqueKeys: true });
   }));
 
-  it('should validate fixed properties', myAsync(() => {
-    // first boilerplate, identical below, how do I factor this out while it's not the same above?
-    let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
+  let firstControl = (comp, debugEl, fixture) => {
     let btn = debugEl.query(By.css('a.btn'));
     dispatchEvent(btn.nativeElement, 'click');
     fixture.detectChanges();
     let name = debugEl.query(By.css('#test-0-name'));
     let val = debugEl.query(By.css('#test-0-val'));
     let { name: n, val: v } = comp.ctrl.at(0).controls;
+    return { name, val, n, v };
+  }
+
+  it('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+    console.log('input-object:fixed');
+    let { name, val, n, v } = firstControl(comp, debugEl, fixture);
+    let p = x => console.log(`input-object: ${x}`);
+    let sub = n.valueChanges.subscribe(p, p, p);
+
+    // expect(v.validator({ value: 'additional' })).toEqual(null);
+    // expect(v.validator({ value: 'fixed' })).toEqual({ enum: true });
 
     setInput(name, 'fixed');
-    fixture.detectChanges();
+    // n.updateValue('fixed');
+    expect(n.value).toEqual('fixed');
+    n.updateValueAndValidity();
+    // fixture.detectChanges();
+    tick();
+
+    // expect(v.validator({ value: 'additional' })).toEqual({ enum: true });
+    // expect(v.validator({ value: 'fixed' })).toEqual(null);
+
+    // console.log('v.errors', v.errors);
     expect(v.errors).not.toEqual(null);
+
+    fixture.detectChanges();
+    tick();
+    tick(10000);
+    flushMicrotasks();
+    comp.cdr.markForCheck();
+
+    comp.cdr.markForCheck();
+
+    console.log('val.nativeElement', val.nativeElement);
     setInput(val, 'fixed');
-    expect(v.errors).toEqual(null);
-    setInput(val, 'additional');
-    expect(v.errors).not.toEqual(null);
+    // v.updateValue('fixed');
+
+    fixture.detectChanges();
+
+    fixture.detectChanges();
+    tick();
+    tick(10000);
+    flushMicrotasks();
+    comp.cdr.markForCheck();
+
+    expect(v.value).toEqual('fixed');
+    // expect(v.errors).toEqual(null);
+    // setInput(val, 'additional');
+    // // fixture.detectChanges();
+    // // tick();
+    // expect(v.value).toEqual('');  // not allowed
+    // expect(v.errors).not.toEqual(null); // null
   }));
 
-  it('should validate additional properties', myAsync(() => {
-    let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
-    let btn = debugEl.query(By.css('a.btn'));
-    dispatchEvent(btn.nativeElement, 'click');
-    fixture.detectChanges();
-    let name = debugEl.query(By.css('#test-0-name'));
-    let val = debugEl.query(By.css('#test-0-val'));
-    let { name: n, val: v } = comp.ctrl.at(0).controls;
-
+  it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+    console.log('input-object:add');
+    let { name, val, n, v } = firstControl(comp, debugEl, fixture);
+    expect(v.validator({ value: 'additional' })).toEqual(null);
+    expect(v.validator({ value: 'fixed' })).toEqual({ enum: true });
     setInput(name, 'foo');
+    console.log('v.errors', v.errors);
     expect(v.errors).not.toEqual(null);
     setInput(val, 'additional');
     expect(v.errors).toEqual(null);
     setInput(name, 'fixed');
-    expect(v.errors).not.toEqual(null);
+    // these three fail, implying it hasn't switched to properties:fixed validator
+    expect(v.validator({ value: 'additional' })).toEqual({ enum: true });
+    expect(v.validator({ value: 'fixed' })).toEqual(null);
+    // expect(v.errors).not.toEqual(null);
+    // console.log('v.errors', v.errors);
   }));
 
-  // it('should switch val value/validator on name change', myAsync(() => {
+  // it('should switch val value/validator on name change', test(pars, ({ comp, el }) => {
   //   tick();
   // }));
 

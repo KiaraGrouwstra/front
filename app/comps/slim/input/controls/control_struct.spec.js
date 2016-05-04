@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Control } from 'angular2/common';
+import { Control } from '@angular/common';
 import { ControlStruct } from './control_struct';
 import { input_control } from '../input'
 

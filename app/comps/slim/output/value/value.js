@@ -1,10 +1,10 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from 'angular2/core';
-import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from 'angular2/common';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, ScalarComp } from '../../../comps';
 import { infer_type, try_schema } from '../output'
-import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from 'angular2/router';
+import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from '@angular/router';
 import { ng2comp, combine } from '../../../lib/js';
 
 let inputs = ['path', 'val', 'schema', 'named'];

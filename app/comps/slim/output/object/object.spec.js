@@ -1,11 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-
-
-import { provide } from 'angular2/core';
-import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { ObjectComp } from './object';
 let cls = test_comp('object', ObjectComp);
@@ -24,35 +21,27 @@ let mashed = 'onetwothree';
 
 describe('ObjectComp', () => {
   let tcb;
-
-  // how could I override a provider for one specific test instead?
-  beforeEachProviders(() => [
-    provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
-  ]);
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work without header', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(obs_pars));
+  it('should work without header', test(obs_pars, ({ comp, el }) => {
     expect(el).toHaveText(flat);
   }));
 
-  it('should work with headers', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
+  it('should work with headers', test([obs_pars, { named: true }], ({ comp, el }) => {
     expect(el).toHaveText('test' + flat);
   }));
 
-  it('should work with nested objects', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(nesto_pars));
+  it('should work with nested objects', test(nesto_pars, ({ comp, el }) => {
     expect(el).toHaveText(mashed);
   }));
 
   // My workaround for [7084](https://github.com/angular/angular/issues/7084), which involved converting array to value,
   // screwed up this test since value passes named=false, which forced me to work around it by adding 'named' to value...
-  it('should work with nested arrays', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(nestr_pars));
+  it('should work with nested arrays', test(nestr_pars, ({ comp, el }) => {
     expect(el).toHaveText(mashed);
   }));
 

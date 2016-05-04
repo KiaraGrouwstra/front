@@ -1,4 +1,4 @@
-import { provide } from 'angular2/core';
+import { provide } from '@angular/core';
 import { RequestService } from './request';
 import { WsService } from '../ws/ws';
 

@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { ControlGroup, Validators } from 'angular2/common'; //, Control, ControlArray, AbstractControl
+import { ControlGroup, Validators } from '@angular/common'; //, Control, ControlArray, AbstractControl
 import { ControlObject } from './control_object';
 import { allUsed, uniqueKeys, input_control, getOptsNameSpecs } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';

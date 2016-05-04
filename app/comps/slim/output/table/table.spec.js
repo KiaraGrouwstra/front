@@ -1,8 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { TableComp } from './table';
 let cls = test_comp('mytable', TableComp);
@@ -17,18 +17,17 @@ let flat = _.keys(val[0]).concat(_.flatten(val.map(row => _.keys(row).map(k => r
 
 xdescribe('TableComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work without header, spec or nesting using a table without holes', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(obs_pars));
+  it('should work without header, spec or nesting using a table without holes', test(obs_pars, ({ comp, el }) => {
     expect(el).toHaveText(flat);
   }));
 
-  it('should work with header', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, obs_pars)));
+  it('should work with header', test([obs_pars, { named: true }], ({ comp, el }) => {
     expect(el).toHaveText('test' + flat);
   }));
 

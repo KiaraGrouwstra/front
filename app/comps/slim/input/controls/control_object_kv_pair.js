@@ -1,4 +1,4 @@
-import { ControlGroup } from 'angular2/common';
+import { ControlGroup } from '@angular/common';
 import { ControlObjectValue } from './control_object_value';
 import { input_control } from '../input';
 

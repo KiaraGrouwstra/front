@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Validators } from 'angular2/common';
+import { Validators } from '@angular/common';
 import { arr2obj, mapBoth } from '../../lib/js';
 
 // tv4: https://github.com/geraintluff/tv4
@@ -20,7 +20,7 @@ const val_conds = {
   maxProperties: (v, par) => (_.size(v) <= par),
   minProperties: (v, par) => (_.size(v) >= par),
   uniqueItems: (v, par) => (!par || _.uniq(v).length == v.length),
-  enum: (v, par) => par.includes(v),
+  enum: (v, par) => par.includes(v),  // actually different for array, which has to iterate, see ControlSet
   multipleOf: (v, par) => (v % par == 0),
   type: (v, par) => matchesType(v, par),
   not: (v, par) => !validate(v, par),

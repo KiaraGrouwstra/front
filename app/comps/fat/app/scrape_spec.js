@@ -7,6 +7,16 @@ let headers = standardHeaders.concat(chromeHeaders);
 // ^ okay for an auto-complete list of suggestions, maybe not for an enum error message...
 let mimeTypes = ['application/json','application/x-www-form-urlencoded','multipart/form-data','text/html'];
 
+// parselet values should have their `selector`, `type` and `attribute` serialized into a single string!
+
+let selector = {
+  type: 'string',
+  // format: 'json',
+  required: true,
+  name: 'floki selector',
+  description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its inner html, or a@@ to get its outer html.",
+};
+
 // TODO: update so as to incorporate nesting
 export let scrape_spec = [
   {
@@ -20,12 +30,33 @@ export let scrape_spec = [
     name: 'parselet',
     description: 'json parselet',
     type: 'object',
+    // additionalProperties: selector,
     additionalProperties: {
-      type: 'string',
-      // format: 'json',
-      required: true,
-      name: 'floki selector',
-      description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, or `a@` to get its outer html",
+      type: 'object',
+      properties: {
+        'selector': selector,
+        'type': {
+          type: 'string',
+          enum: [
+            'text',
+            'attribute',
+            'inner html',
+            'outer html',
+          ],
+          // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
+        },
+        'attribute': {
+          type: 'string',
+          'x-bindings': {
+            // styles: {},
+            // classes: {},
+            attributes: {
+              '[disabled]': `./type != 'attribute'`,
+            },
+          },
+        },
+      },
+      additionalProperties: false,
     },
     minProperties: 1,
   },

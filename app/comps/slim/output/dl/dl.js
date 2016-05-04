@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChildren } from 'angular2/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChildren } from '@angular/core';
 import { ng2comp } from '../../../lib/js';
 import { ValueComp } from '../../../comps';
 import { getPaths } from '../../slim';

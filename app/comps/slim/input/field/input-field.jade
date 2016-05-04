@@ -9,7 +9,7 @@ div(*ngIf=`of`)
         '[(ngModel)]'=`option`
       )
         option(
-          *ngFor=`let opt of spec[of]; #idx = index`
+          *ngFor=`let opt of spec[of]; let idx = index`
           '[value]'=`idx`
         )
           | {{opt.type}}
@@ -60,6 +60,8 @@ div(*ngIf=`of`)
       include ../misc/select.jade
     template('[ngSwitchWhen]'=`'radio'`)
       include ../misc/radio.jade
+    template('[ngSwitchWhen]'=`'checkboxes'`)
+      include ../misc/checkboxes.jade
     template(ngSwitchDefault)
       p UNIMPLEMENTED FIELD TYPE {{ type }}!
       

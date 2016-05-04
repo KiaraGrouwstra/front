@@ -1,6 +1,7 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
+import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { ng2comp } from '../../../lib/js';
+import { SetAttrs } from '../../../lib/directives';
 
 export let InputComp = ng2comp({
   component: {
@@ -11,6 +12,7 @@ export let InputComp = ng2comp({
     directives: [
       FORM_DIRECTIVES,  //COMMON_DIRECTIVES,
       // forwardRef(() => ArrayComp),
+      SetAttrs,
     ]
   },
   parameters: [],

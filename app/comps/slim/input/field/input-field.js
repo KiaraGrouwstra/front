@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Component, Input, Output, forwardRef, ChangeDetectionStrategy, ViewChild, EventEmitter } from 'angular2/core';
-import { COMMON_DIRECTIVES } from 'angular2/common';
+import { Component, Input, Output, forwardRef, ChangeDetectionStrategy, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { COMMON_DIRECTIVES } from '@angular/common';
 let marked = require('marked');
 import { input_attrs, get_template } from '../input';
 import { val_errors, val_keys } from '../validators';
@@ -13,6 +13,7 @@ import { getPaths } from '../../slim';
 import { RadioControlValueAccessor } from './radio_value_accessor';
 import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
 import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
+import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 
 export let FieldComp = ng2comp({
   component: {
@@ -33,7 +34,7 @@ export let FieldComp = ng2comp({
       MdRadioDispatcher,
     ],
   },
-  parameters: [],
+  parameters: [ChangeDetectorRef],
   decorators: {
     i: ViewChild(InputComp),
   },
@@ -41,6 +42,10 @@ export let FieldComp = ng2comp({
     // type: Observable<string>;
     option = null;
     @Output() changes = new EventEmitter(false);
+
+    constructor(cdr) {
+      this.cdr = cdr;
+    }
 
     ngOnInit() {
       // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp

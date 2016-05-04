@@ -3,7 +3,7 @@ table.bordered.highlight(id=`{{id}}`)
   thead(*ngIf=`named`)
     th {{k}}
   tbody
-    tr(*ngFor=`let r of rows; #idx = index`)
+    tr(*ngFor=`let r of rows; let idx = index`)
       td(
         id=`{{r.id}}`
       )

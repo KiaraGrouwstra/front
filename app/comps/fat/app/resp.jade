@@ -10,7 +10,7 @@
           '[(ngModel)]'=`meat`
         )
           option(
-            *ngFor='let opt of meat_opts; #idx = index'
+            *ngFor='let opt of meat_opts; let idx = index'
             '[value]'='opt'
           )
             | {{ meat_str_opts[idx] }}

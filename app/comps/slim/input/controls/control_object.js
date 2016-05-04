@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { allUsed, uniqueKeys } from '../input';
-import { Validators, AbstractControl } from 'angular2/common';
+import { Validators, AbstractControl } from '@angular/common';
 import { ControlList } from './control_list';
 
 export class ControlObject extends ControlList {

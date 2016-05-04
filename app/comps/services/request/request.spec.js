@@ -1,5 +1,5 @@
-import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from "angular2/testing";
-import { Injector, provide } from 'angular2/core';
+import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from '@angular/core/testing';
+import { ReflectiveInjector, provide } from '@angular/core';
 import { RequestService } from './request';
 import { requestServiceProvider } from './request.provider';
 import { WsService } from '../ws/ws';
@@ -7,11 +7,11 @@ import { wsServiceProvider } from '../ws/ws.provider';
 import { CONFIG, APP_CONFIG } from '../../../config';
 
 describe('RequestService', () => {
-  let injector: Injector;
+  let injector: ReflectiveInjector;
   var req;
 
   beforeEach(() => {
-    injector = Injector.resolveAndCreate([
+    injector = ReflectiveInjector.resolveAndCreate([
       requestServiceProvider,
       wsServiceProvider,
       provide(APP_CONFIG, { useValue: CONFIG }),

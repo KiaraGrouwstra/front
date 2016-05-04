@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
@@ -20,10 +20,14 @@ export let InputObjectComp = ng2comp({
       forwardRef(() => FieldComp),
     ]
   },
-  parameters: [],
+  parameters: [ChangeDetectorRef],
   // decorators: {},
   class: class InputObjectComp {
     option = null;
+
+    constructor(cdr) {
+      this.cdr = cdr;
+    }
 
     ngOnInit() {
       let props = getPaths(this.path);

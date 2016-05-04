@@ -1,6 +1,9 @@
 var Phoenix = require('phoenix-js-derp');
 import { Subject, BehaviorSubject } from 'rxjs';
-import { Injectable } from 'angular2/core';
+// ^ this is an old version of BehaviorSubject, and should be replaced with the following, it it can pass:
+// import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+// using the old version can result in `n timer(s) still in the queue` errors!
+import { Injectable } from '@angular/core';
 
 // alt: [angular2-websocket](https://github.com/afrad/angular2-websocket)
 // related: [angular2-rest](https://github.com/Paldom/angular2-rest)

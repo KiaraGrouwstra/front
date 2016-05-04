@@ -1,9 +1,10 @@
 let _ = require('lodash/fp');
 // import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+// import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import 'rxjs/add/operator/combineLatest';
 import 'rxjs/add/operator/startWith';
-// import { EventEmitter } from 'angular2/core';
+// import { EventEmitter } from '@angular/core';
 
 // // append to array:
 export let elemToArr = (arr, x) => arr.concat(x); // concatenates arrays rather than pushing them as a single item

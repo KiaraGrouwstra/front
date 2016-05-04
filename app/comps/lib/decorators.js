@@ -65,6 +65,8 @@ export let combine = (...args) => decorate(decMethod('value', (fn, [allow_undef 
   fn.call(this, ...arguments);  //return
 }), args);
 
+// doesn't work with `setter`, since both would start out as identically-named regular methods
 export let getter = (...args) => decorate(decMethod('get'), args);
 
+// doesn't work with `getter`, since both would start out as identically-named regular methods
 export let setter = (...args) => decorate(decMethod('set'), args);

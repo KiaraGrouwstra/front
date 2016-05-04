@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
+import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { ng2comp } from '../../../lib/js';
 import { getPaths } from '../../slim';

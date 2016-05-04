@@ -1,11 +1,12 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { Control, ControlGroup, ControlArray } from 'angular2/common';
+import { Control, ControlGroup, ControlArray } from '@angular/common';
 import { ControlList } from './controls/control_list';
 import { ControlVector } from './controls/control_vector';
 import { ControlObject } from './controls/control_object';
 import { ControlObjectKvPair } from './controls/control_object_kv_pair';
 import { ControlStruct } from './controls/control_struct';
+import { ControlSet } from './controls/control_set';
 import { getPaths } from '../slim';
 import { validate, get_validator } from './validators';
 import { arr2obj, editValsOriginal } from '../../lib/js';
@@ -47,11 +48,13 @@ export let get_template = (spec, attrs) => {
     // string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'radio' : null,
     // ^ radio over select? alt. autocomplete over datalist?
     integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
+    // number: null,
     boolean: 'switch',
     date: 'date',
     file: 'file',
-    // number: null,
-    // array: [checkboxes, array],
+    // array: spec.uniqueItems && _.size(spec.enum) ? 'checkboxes' : null,
+    // how to trigger, since only `input-field` runs by here?
+    // ^ I'll assume `enum` implies scalar (checking in the face of *Of may be hard); otherwise how could I visualize?
     // object: [fieldset],
   }) || 'input';
 }
@@ -102,6 +105,9 @@ export function input_control(spec = {}, asFactory = false) {
                 input_control({}, true) :
                 false;
         factory = () => new ControlVector(seeds, fallback, allOf);
+        // ^ ControlVector could also handle the simpler case below.
+      } else if(spec.uniqueItems && _.size(spec.enum)) {
+        factory = () => new ControlSet();
       } else {
         let seed = props ?
             () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
@@ -248,7 +254,7 @@ export let allUsed = (allOf, val_lens) => (ctrl) => {
 export let uniqueKeys = (name_lens) => (ctrl) => {
   let names = name_lens(ctrl);
   let valid = names.length == _.uniq(names).length;
-  return valid ? null : {uniqueKeys: true};
+  return valid ? null : { uniqueKeys: true };
 };
 
 // calculate the different specs for key input controls, plus enum/suggestion options

@@ -1,8 +1,8 @@
 let _ = require('lodash/fp');
 let $ = require('jquery');
-let ng = require('angular2/core');
+let ng = require('@angular/core');
 let marked = require('marked');
-import { ComponentMetadata } from 'angular2/core';
+import { ComponentMetadata } from '@angular/core';
 
 require("materialize-css/dist/js/materialize.min");
 // let YAML = require('yamljs');
@@ -20,12 +20,12 @@ export let arr2map = (arr, fn) => arr.reduce((map, k) => map.set(k, fn(k)), new 
 export let do_return = (fn) => (v) => {
   fn(v);
   return v;
-}
+};
 
 export let Prom_toast = function(msg) {
   // return this.do(_v => toast.success(msg), e => toast.error(e));
   return this.then(do_return(_v => toast.success(msg)), do_return(e => toast.error(e)));
-}
+};
 Promise.prototype.toast_result = Prom_toast;
 
 export let handle_auth = (url, fn) => {
@@ -43,7 +43,7 @@ export let handle_auth = (url, fn) => {
     // ?: error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
     if(get.error) console.warn(get);
   }
-}
+};
 
 export let popup = (popup_url, watch_url) => new Promise((resolve, reject) => {
   let win = window.open(popup_url);
@@ -113,7 +113,7 @@ export let prettyPrint = (o) => {
   .replace(/</g, '&lt;')
   .replace(/>/g, '&gt;')
   .replace(/^( *)("[\w]+": )?("[^"]*"|[\w.+-]*)?([,[{])?$/mg, replacer);
-}
+};
 
 // cleanse a string to use as an ID
 export let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
@@ -129,7 +129,7 @@ export let typed = (from, to, fn) => function() {
     if(frm && (_.isNil(v) || v.constructor != frm)) return (new to).valueOf();
   }
   return fn.call(this, ...arguments);
-}
+};
 
 // wrapper for setter methods, return if not all parameters are defined
 export let combine = (fn, allow_undef = {}) => function() {
@@ -143,7 +143,7 @@ export let combine = (fn, allow_undef = {}) => function() {
     if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNil(v)
   }
   fn.call(this, ...arguments);  //return
-}
+};
 
 // simpler guard, just a try-catch wrapper with default value
 export let fallback = (def, fn) => function() {
@@ -154,7 +154,7 @@ export let fallback = (def, fn) => function() {
     console.warn('an error occurred, falling back to default value:', e);
     return def;
   }
-}
+};
 
 // just log errors. only useful in contexts with silent crash.
 export let tryLog = (fn) => function() {
@@ -164,7 +164,7 @@ export let tryLog = (fn) => function() {
   catch(e) {
     console.warn('tryLog error:', e);
   }
-}
+};
 
 // create a Component, decorating the class with the provided metadata
 // export let FooComp = ng2comp({ component: {}, parameters: [], decorators: {}, class: class FooComp {} })
@@ -177,10 +177,10 @@ export let ng2comp = (o) => {
   });
   // return ng.Component(o.component)(cls);
   return cls;
-}
+};
 
 // use to map an array of input specs to a version with path added
-export let input_specs = (path = []) => (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v })
+export let input_specs = (path = []) => (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v });
 
 // pars to make a form for a given API function
 export let method_pars = (spec, fn_path) => {
@@ -193,7 +193,7 @@ export let method_pars = (spec, fn_path) => {
   let pars = (_.get(hops, spec) || []).map(input_specs(path));  //[scheme].concat()
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
   return { pars, desc };
-}
+};
 
 // finds and returns an array of all json paths (as string arrays) of any tables (not within arrays)
 // in a JSON schema as suggestions to use as the meat extractor for fetched JSON results.
@@ -206,7 +206,7 @@ export let findTables = (spec, path = []) => {
       return _.flatten(keys.map(k => findTables(spec.properties[k], path.concat(k))));
     }
   }
-}
+};
 
 export let updateSpec = (specification) => {
   let spec = _.cloneDeep(specification);
@@ -220,7 +220,7 @@ export let updateSpec = (specification) => {
   delete spec.host;
   delete spec.basePath;
   delete spec.schemes;
-}
+};
 
 // TODO: simplify the `_.find` part if with {cap:false} I can make lodash have it expose Object keys.
 // for a given object key get the appropriate entry in the spec
@@ -230,7 +230,7 @@ export let key_spec = (k, spec) => {
     _.keys(_.get(['patternProperties'], spec))
   )], spec)
   || _.get(['additionalProperties'], spec);
-}
+};
 
 // find the index of an item within a Set (indicating in what order the item was added).
 export let findIndexSet = (x, set) => _.findIndex(y => y == x)(Array.from(set));
@@ -253,6 +253,18 @@ export let editValsLambda = (fnObj) => (obj) => mapBoth(fnObj, (fn, k) => {
   let v = obj[k];
   return fn ? fn(v) : v
 });
+
+// split an object into its keys and values: `let [keys, vals] = splitObj(obj);`
+export let splitObj = (obj) => [_.keys(obj), _.values(obj)];
+
+// http://www.2ality.com/2012/04/eval-variables.html
+// evaluate an expression within a context (of the component)
+export let evalExpr = (vars) => (expr) => {
+  let [keys, vals] = splitObj(vars);
+  // Function(param1, ..., paramn, body)
+  let fn = Function.apply(null, keys.concat([`return ${expr}`]));
+  return fn.apply(null, vals);
+}
 
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

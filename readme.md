@@ -1,16 +1,27 @@
+[update node](https://nodejs.org/dist/latest/)
+```
+// update npm:
+Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+npm install --global --production npm-windows-upgrade
 npm-windows-upgrade
+// install global packages
+npm i -g gulp cnpm typings
+// install packages
+npm i
 npm i <pkg> --save
-npm i angular2@2.0.0-alpha.45 --save
 npm update
+// install type definitions
+typings install npm:@angular --save
+// ^ ?
+typings update
+```
 
-tsd install angular2/
-tsd update
 // patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
 - patch `babel-plugin-transform-runtime/lib/definitions.js`: comment `defineProperty: "object/define-property"`
 - patch materialize js: https://github.com/Dogfalo/materialize/issues/1537
 - patch karma-jasmine: make lib/adapter.js using /src/ version wrapped in wrapper: https://github.com/karma-runner/karma-jasmine/blob/master/tasks/build.js
-//- patch [toHaveText](https://github.com/angular/angular/blob/master/modules/angular2/src/testing/matchers.ts#L159-L169):
+//- patch [toHaveText](https://github.com/angular/angular/blob/master/modules/%40angular/core/testing/matchers.ts#L159-L169):
 //  - `var show = function(str) { return JSON.stringify(str.split('').map(x => x.charCodeAt(0))); }`
 //  - `get message() { return 'Expected ' + actualText + ' ' + show(actualText) + ' to be equal to ' + expectedText + ' ' + show(expectedText); }`
 - copy over materialize.css as .less, cuz Less never realized you might wanna import css from a Sass project.
@@ -32,8 +43,17 @@ karma start
 # http://127.0.0.1:8070/app/unit-tests.html
 http://127.0.0.1:8090/tests.html
 
+# Build angular2
+gulp build.js.cjs
+# Build the compiler
+./node_modules/.bin/tsc -p tools/compiler_cli/src
+# Run it on the test project
+node ./node_modules/@angular/compiler/dist/js/cjs/compiler_cli -p ./tsconfig.json
+`import {} from './foo.ngfactory'`
+
 # gulp index && webpack --watch
 # gulp index
+npm run-script index
 webpack --watch
 
 # cd dist

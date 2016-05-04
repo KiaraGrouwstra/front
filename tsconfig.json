@@ -1,16 +1,26 @@
 {
   "compilerOptions": {
 	  "target": "es6",
-    "module": "commonjs",
+    "module": "es2015",
+    "moduleResolution": "node",
     "declaration": false,
     "noImplicitAny": false,
     "removeComments": true,
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "listFiles": true,
+    "rootDirs": ["./app", "./codegen"],
     "outDir": "dist"
+  },
+  "exclude": [
+    "node_modules",
+    "typings/main",
+    "typings/main.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "./codegen"
   },
   "files": [
     "typings/tsd.d.ts",

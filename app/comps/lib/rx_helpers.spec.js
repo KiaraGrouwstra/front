@@ -1,6 +1,7 @@
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb } from './rx_helpers';  //, emitter
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+// import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/mergeMap';

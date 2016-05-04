@@ -4,6 +4,15 @@
 // https://github.com/mozilla/sweet.js/blob/master/doc/1.0/reference.adoc
 // https://github.com/tycho01/sweetjs-loader
 
+syntax print = function (ctx) {
+  let x = ctx.next().value.inner();
+  return #`console.log('${x}', ${x}.constructor.name, Object.keys(${x}))`;
+}
+// from:
+print(x)
+// to:
+// console.log('x', x.constructor.name, Object.keys(x))
+
 // // source: http://sweetjs.org/doc/1.0/tutorial.html
 // syntax cond = function (ctx) {
 //   let bodyCtx = ctx.next().value.inner();

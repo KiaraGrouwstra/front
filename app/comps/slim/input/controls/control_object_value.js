@@ -1,4 +1,4 @@
-import { Control } from 'angular2/common';
+import { Control } from '@angular/common';
 import { key_spec } from '../../../lib/js';
 
 export class ControlObjectValue extends Control {

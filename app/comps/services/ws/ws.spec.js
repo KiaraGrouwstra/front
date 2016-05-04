@@ -1,16 +1,16 @@
-import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from "angular2/testing";
-import { Injector, provide } from 'angular2/core';
+import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from '@angular/core/testing';
+import { ReflectiveInjector, provide } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WsService } from './ws';
 import { wsServiceProvider } from './ws.provider';
 import { CONFIG, APP_CONFIG } from '../../../config';
 
 describe('WebSocket', () => {
-  let injector: Injector;
+  let injector: ReflectiveInjector;
   var ws;
 
   beforeEach(() => {
-    injector = Injector.resolveAndCreate([
+    injector = ReflectiveInjector.resolveAndCreate([
       wsServiceProvider,
       provide(APP_CONFIG, { useValue: CONFIG }),
     ]);

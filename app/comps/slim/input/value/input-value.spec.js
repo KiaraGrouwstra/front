@@ -1,7 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
 
 import { InputValueComp } from './input-value';
@@ -28,19 +29,18 @@ let req = 'This field is required.';
 
 describe('InputValueComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work with scalars', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars(scalar)));
+  it('should work with scalars', test(pars(scalar), ({ comp, el }) => {
     // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
     expect(comp.ctrl.errors).toEqual({required: true});
   }));
 
-  it('should work with arrays', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars(array)));
+  it('should work with arrays', test(pars(array), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('testadd');
   }));

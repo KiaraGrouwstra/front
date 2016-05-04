@@ -5,22 +5,22 @@
     p.card-title(*ngIf='named') {{k}}
     a.btn.waves-effect.waves-light.clear-btn.yellow(
       '[ngClass]'=`{ 'disabled': !sortedCols.length }`
-      '(click)'=`sortColsDesc={}`
+      '(click)'=`clearSorts()`
     )
       | clear sort
     a.btn.waves-effect.waves-light.clear-btn.blue(
       '[ngClass]'=`{ 'disabled': colOrder.length==col_keys.length }`
-      '(click)'=`colOrder=col_keys`
+      '(click)'=`clearHides()`
     )
       | clear hide
     a.btn.waves-effect.waves-light.clear-btn.orange(
       '[ngClass]'=`{ 'disabled': !condCols.length }`
-      '(click)'=`condFormat={}`
+      '(click)'=`clearFormats()`
     )
       | clear formatting
     a.btn.waves-effect.waves-light.clear-btn.teal(
       '[ngClass]'=`{ 'disabled': !filterKeys.length }`
-      '(click)'=`filters={}`
+      '(click)'=`clearFilters()`
     )
       | clear filters
       
@@ -33,7 +33,8 @@
         //- *assignLocal=`#isDesc to sortColsDesc[name]`
         //- '*assignLocal'=`{ col: cols[name] }`
         th.tbl-hdr.waves-effect(
-          '*ngFor'=`let name of colOrder; #idx = index`
+          '*ngFor'=`let name of colOrder; let idx = index`
+          '*assignLocal'=`{ col: cols[name] }`
           id=`{{cols[name].id}}`
           '[class.sort]'=`sortedCols.includes(name)`
           '[class.asc]'=`sortColsDesc[name] == false`
@@ -59,7 +60,7 @@
               template(ngSwitchDefault)
                 i.material-icons import_export
                 //- sort_by_alpha
-
+          
           a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.blue(
             'data-tooltip'='hide'
             '(click)'=`$event.stopPropagation(); hideCol(name)`
@@ -143,7 +144,7 @@
           //- *ngFor=`let c of r.cells`
           //- ; #c = r.cells[name]
           td(
-            *ngFor=`let name of colOrder; #idx = index`
+            *ngFor=`let name of colOrder; let idx = index`
             id=`{{r.cells[name].id}}`
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`

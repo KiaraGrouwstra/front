@@ -14,6 +14,8 @@ form
   //- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
   //- ^ this somehow doesn't actually sync well :(, gonna try through CSS instead...
   //- '[required]'=`attrs.required`
+  //- '*setAttrs'=`attrs`
+  //- '*setDynamic'=`spec['x-bindings']?.attributes`
   input.validate.tooltipped(
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`

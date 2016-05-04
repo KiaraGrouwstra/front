@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables, key_spec, findIndexSet, editValsOriginal, editValsBoth, editValsLambda } from './js';
+import { handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables, key_spec, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
 import { getSchema } from './schema';
 
 describe('js', () => {
@@ -173,6 +173,10 @@ describe('js', () => {
     })
 
   });
+
+  it('evalExpr', () => {
+    expect(evalExpr({ a: 1 })('a')).toEqual(1);
+  })
 
   // it('', () => {
   //   expect().toEqual();

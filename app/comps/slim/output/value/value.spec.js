@@ -1,10 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-
-import { provide } from 'angular2/core';
-import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { ValueComp } from './value';
 let cls = test_comp('value', ValueComp);
@@ -21,33 +19,25 @@ let obs_pars = {
 
 describe('ValueComp', () => {
   let tcb;
-
-  // how could I override a provider for one specific test instead?
-  beforeEachProviders(() => [
-    provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
-  ]);
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should handle scalars', myAsync(() => {
-    let { comp, el, fixture, debugEl } = makeComp(tcb, cls(_.assign(obs_pars, { val: scalar })));
+  it('should handle scalars', test([obs_pars, { val: scalar }], ({ comp, el }) => {
     expect(el).toHaveText(scalar);
   }));
 
-  it('should handle arrays', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: arr })));
+  it('should handle arrays', test([obs_pars, { val: arr }], ({ comp, el }) => {
     expect(el).toHaveText(arr.join(''));
   }));
 
-  it('should handle objects', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: obj })));
+  it('should handle objects', test([obs_pars, { val: obj }], ({ comp, el }) => {
     expect(el).toHaveText('a1b2');
   }));
 
-  xit('should handle tables', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars, { val: table })));
+  xit('should handle tables', test([obs_pars, { val: table }], ({ comp, el }) => {
     expect(el).toHaveText('ab12AB');
   }));
 

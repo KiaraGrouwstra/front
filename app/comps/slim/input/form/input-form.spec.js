@@ -1,7 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
 
 import { FormComp } from './input-form';
@@ -37,19 +38,18 @@ let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
 describe('FormComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should do scalar inputs', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(obs_pars(), pars())));
+  it('should do scalar inputs', test([pars(), obs_pars()], ({ comp, el }) => {
     // expect(el).toHaveText(desc + text + text + 'Submit');
     expect(comp.items[0].ctrl.errors).toEqual({required: true});
   }));
 
-  it('should do array inputs', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
+  it('should do array inputs', test([pars(), arr_pars()], ({ comp, el }) => {
     expect(comp.items[0].ctrl.errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
   }));

@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { mapSpec, input_control, categorizeKeys } from './input';
-import { Control, ControlGroup } from 'angular2/common';
+import { Control, ControlGroup } from '@angular/common';
 import { ControlList } from './controls/control_list';
 import { ControlStruct } from './controls/control_struct';
 

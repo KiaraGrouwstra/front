@@ -1,0 +1,16 @@
+{
+  "name": "application-name",
+  "version": false,
+  "ambientDependencies": {
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
+    "jasmine": "registry:dt/jasmine#2.2.0+20160412134438",
+    "es6-promise": "github:DefinitelyTyped/DefinitelyTyped/es6-promise/es6-promise.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "rx": "github:DefinitelyTyped/DefinitelyTyped/rx/rx.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "rx-lite": "github:DefinitelyTyped/DefinitelyTyped/rx/rx-lite.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "angular2": "github:DefinitelyTyped/DefinitelyTyped/angular2/angular2.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "angular-material": "github:DefinitelyTyped/DefinitelyTyped/angular-material/angular-material.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d",
+    "http": "github:DefinitelyTyped/DefinitelyTyped/angular2/http.d.ts#32029fcb4e1a3ef8968711b545d77b584435729d"
+  }
+}

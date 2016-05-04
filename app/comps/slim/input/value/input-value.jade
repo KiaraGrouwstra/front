@@ -8,7 +8,15 @@ div([ngSwitch]='type')
       '[ctrl]'=`ctrl`
     )
   template([ngSwitchWhen]=`'array'`)
+    input-field(
+      *ngIf=`ctrl?.constructor?.name == 'ControlSet'`
+      '[named]'=`named`
+      '[path]'=`path`
+      '[spec]'=`spec`
+      '[ctrl]'=`ctrl`
+    )
     input-array(
+      *ngIf=`ctrl?.constructor?.name != 'ControlSet'`
       '[named]'=`named`
       '[path]'=`path`
       '[spec]'=`spec`

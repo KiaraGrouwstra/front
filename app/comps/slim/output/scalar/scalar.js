@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { parseScalar } from '../output';
 import { ng2comp, combine } from '../../../lib/js';
 

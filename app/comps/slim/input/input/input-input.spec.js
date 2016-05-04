@@ -1,9 +1,10 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
-import { Control } from 'angular2/common';
+import { Control } from '@angular/common';
 import { input_control, input_attrs } from '../input'
 
 import { InputComp } from './input-input';
@@ -29,13 +30,13 @@ let pars = () => _.cloneDeep({
 
 describe('InputComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars()));
+  it('should work', test(pars(), ({ comp, el }) => {
     expect(el).toHaveText('');
   }));
 

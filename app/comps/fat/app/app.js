@@ -1,8 +1,8 @@
 // import 'reflect-metadata';
-import { Component, ViewChild, ChangeDetectionStrategy, Inject, ViewEncapsulation } from 'angular2/core';
-import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm } from 'angular2/common';
-import { Router, ROUTER_DIRECTIVES, RouteConfig } from 'angular2/router'; //, RouteParams
-import { Http } from 'angular2/http'; //Headers
+import { Component, ViewChild, ChangeDetectionStrategy, Inject, ViewEncapsulation } from '@angular/core';
+import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm } from '@angular/common';
+import { Router, ROUTER_DIRECTIVES, RouteConfig } from '@angular/router'; //, RouteParams
+import { Http } from '@angular/http'; //Headers
 // import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 // import 'rxjs/add/operator/map';
@@ -12,7 +12,7 @@ import { Http } from 'angular2/http'; //Headers
 // import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
 // global.Rx = require('rxjs');
-// global.ng = require('angular2/core');
+// global.ng = require('@angular/core');
 let _ = require('lodash/fp');
 // let Immutable = require('immutable');
 global.Immutable = require('immutable');
@@ -51,6 +51,8 @@ export let App = ng2comp({
     auth_ui: ViewChild(AuthUiComp),
     fn_ui: ViewChild(FnUiComp),
     input_ui: ViewChild(InputUiComp),
+    curl_form: ViewChild('curl_form'),
+    scrape_form: ViewChild('scrape_form'),
   },
   class: class App {
     // @ViewChild('web') web_form; //: ElementRef

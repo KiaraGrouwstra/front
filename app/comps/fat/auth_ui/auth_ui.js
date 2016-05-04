@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 'angular2/core'; //, forwardRef
-import { COMMON_DIRECTIVES } from 'angular2/common';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'; //, forwardRef
+import { COMMON_DIRECTIVES } from '@angular/common';
 import { arr2obj, popup, ng2comp, combine } from '../../lib/js';  //, Prom_finally
 let _ = require('lodash/fp');
 

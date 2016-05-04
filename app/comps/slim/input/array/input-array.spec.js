@@ -1,9 +1,10 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
-import { By } from 'angular2/platform/browser';
+import { By } from '@angular/platform-browser-dynamic';
 
 import { InputArrayComp } from './input-array';
 let cls = test_comp('input-array', InputArrayComp);
@@ -47,19 +48,31 @@ let validationPars = () => _.cloneDeep({ path, spec: validationSpec, ctrl: valid
 
 describe('InputArrayComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars()));
+  it('should work', test(pars(), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
     // expect(el).toHaveText('add');
   }));
 
-  it('should support `items` array and `additionalItems` distinction for validation', myAsync(() => {
-    let { comp, el, fixture, debugEl } = makeComp(tcb, cls(validationPars()));
+  it('should add items programmatically', test(pars(), ({ comp }) => {
+    expect(comp.ctrl.length).toEqual(0);
+    comp.add();
+    expect(comp.ctrl.length).toEqual(1);
+  }));
+
+  it('should add items through the UI', test(pars(), ({ comp, debugEl }) => {
+    expect(comp.ctrl.length).toEqual(0);
+    let btn = debugEl.query(By.css('a.btn'));
+    dispatchEvent(btn.nativeElement, 'click');
+    expect(comp.ctrl.length).toEqual(1);
+  }));
+
+  it('should support `items` array and `additionalItems` distinction for validation', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     let btn = debugEl.query(By.css('a.btn'));
     dispatchEvent(btn.nativeElement, 'click');
     dispatchEvent(btn.nativeElement, 'click');

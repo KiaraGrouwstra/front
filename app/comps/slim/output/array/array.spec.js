@@ -1,11 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-
-
-import { provide } from 'angular2/core';
-import { ChangeDetectorGenConfig } from 'angular2/src/core/change_detection/change_detection';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { ArrayComp } from './array';
 let cls = test_comp('array', ArrayComp);
@@ -20,29 +17,22 @@ let nest_pars = _.assign(obs_pars, { val: [1, [2, 3], 4] });
 
 describe('ArrayComp', () => {
   let tcb;
-
-  // how could I override a provider for one specific test instead?
-  beforeEachProviders(() => [
-    provide(ChangeDetectorGenConfig, {useValue: new ChangeDetectorGenConfig(false, false, false)}),
-  ]);
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work with truthy header value', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: 'lol' }, obs_pars)));
+  it('should work with truthy header value', test([obs_pars, { named: 'lol' }], ({ comp, el }) => {
     expect(el).toHaveText(path.concat(val).join(''));
   }));
 
-  it('should work without falsy header value', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(obs_pars));
+  it('should work without falsy header value', test(obs_pars, ({ comp, el }) => {
     expect(el).toHaveText(val.join(''));
   }));
 
   // before disabling JIT: [viewFactory_ArrayComp0 is not a function](https://github.com/angular/angular/issues/7037)
-  it('should work with nested arrays', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: false }, nest_pars)));
+  it('should work with nested arrays', test([nest_pars, { named: false }], ({ comp, el }) => {
     expect(el).toHaveText('1234');
   }));
 

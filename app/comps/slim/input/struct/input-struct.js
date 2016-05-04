@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from 'angular2/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from 'angular2/common';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { arr2obj, ng2comp, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
@@ -18,7 +18,7 @@ export let InputStructComp = ng2comp({
       forwardRef(() => FieldComp),
     ]
   },
-  parameters: [],
+  parameters: [ChangeDetectorRef],
   // decorators: {},
   class: class InputStructComp {
     option = null;
@@ -26,6 +26,10 @@ export let InputStructComp = ng2comp({
     indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
     // keys = ['name', 'val'];
     nameSpecFixedFiltered = {};
+
+    constructor(cdr) {
+      this.cdr = cdr;
+    }
 
     ngOnInit() {
       let props = getPaths(this.path);
@@ -106,6 +110,7 @@ export let InputStructComp = ng2comp({
 
     @try_log()
     addAdditionalProperty(k = '') {
+      // console.log('addAdditionalProperty', k);
       this.ctrl.addAdditionalProperty(k);
       this.indices.additionalProperties.add(this.counter++);
     }

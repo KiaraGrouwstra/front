@@ -1,8 +1,7 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from "angular2/testing";
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from 'angular2/testing_internal';
-import { test_comp, makeComp, setInput, myAsync } from '../../../test';
-
+import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { ULComp } from './ul';
 let cls = test_comp('myul', ULComp);
@@ -16,23 +15,21 @@ let pars = {
 
 describe('ULComp', () => {
   let tcb;
+  let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
-  it('should work', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
+  it('should work', test([pars, { named: true }], ({ comp, el }) => {
     expect(comp.rows.map(y => y.val)).toEqual(['foo','bar','baz']);
   }));
 
-  it('should display scalars', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(pars));
+  it('should display scalars', test(pars, ({ comp, el }) => {
     expect(el).toHaveText(val.join(''));
   }));
 
-  it('should allow named', myAsync(() => {
-    let { comp, el } = makeComp(tcb, cls(_.assign({ named: true }, pars)));
+  it('should allow named', test([pars, { named: true }], ({ comp, el }) => {
     expect(el).toHaveText(path.concat(val).join(''));
   }));
 
