@@ -1,11 +1,13 @@
 let _ = require('lodash/fp');
 import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
 import { TestComponentBuilder } from '@angular/compiler/testing';
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing';
 import { COMMON_DIRECTIVES } from '@angular/common';
 import { test_comp, asyncTest, setInput, sendEvent, genClass } from '../test';
-import { SetDynamic, SetAttrs, AssignLocal } from './directives';
-import { ng2comp } from './js';
+import { SetAttrs, DynamicAttrs, DynamicStyle, DynamicClass, AssignLocal } from './directives';
+import { ng2comp, print } from './js';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 describe('directives', () => {
   let tcb;
@@ -17,7 +19,7 @@ describe('directives', () => {
 
   let component = {
     selector: 'test-cmp',
-    directives: [COMMON_DIRECTIVES, SetDynamic, SetAttrs, AssignLocal],
+    directives: [COMMON_DIRECTIVES, DynamicAttrs, SetAttrs, AssignLocal, DynamicStyle, DynamicClass],
     template: '',
   };
 
@@ -26,100 +28,118 @@ describe('directives', () => {
     color: string = 'red';
     baz: string = 'color';
     condition: boolean = true;
+    condExpr: string = 'condition';
     // items: any[];
     strExpr = 'foo';
-    // arrExpr: string[] = ['foo'];
+    arrExpr: string[] = ['foo','bar','baz'];
     // objExpr = {'foo': true, 'bar': false};
     // setExpr: Set<string> = new Set<string>();
-    // constructor() { this.setExpr.add('foo'); }
+    constructor(
+      cdr: ChangeDetectorRef
+    ) {
+      // console.log('ctor');
+      // this.setExpr.add('foo');
+      this.cdr = cdr;
+    }
   }
 
-  let tmplt = (str) => ({ component: _.set('template', str)(component), class: TestComponent });
-
-  // it('control group directive:set', test(tmplt(`<div [ngClass]="{ foo: true }"></div>`), ({ comp, debugEl: el, fixture }) => {
-  //   expect(el.nativeElement).toEqual('foo');
-  // }));
-
-  it('AssignLocal', test(tmplt(`<div [assignLocal]="{ hello: strExpr }" [id]="hello">{{ hello }}</div>`), ({ comp, debugEl: el, fixture }) => {
-    expect(el).toHaveText('foo');
-    // Object.keys()
-    // JSON.stringify()
-    // expect(el.nativeElement).toEqual('foo');
-  }));
+  let tmplt = (str) => ({ component: _.set('template', str)(component), class: TestComponent, parameters: [ChangeDetectorRef] });
 
   describe('SetAttrs', () => {
 
-    // // uh, ngStyle already allows setting multiple of these
-    // it('sets styles', test(tmplt(`<div [setAttrs]="{ 'style.color': color }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(el).toEqual('red');
-    //   // .style
-    // }));
-
-    // // uh, ngClass already allows setting multiple of these
-    // it('sets classes', test(tmplt(`<div [setAttrs]="{ class: strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(el).toEqual('foo');
-    //   // .class
-    // }));
-
-    it('sets properties', test(tmplt(`<div [setAttrs]="{ id: strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-      console.log('fixture.elementRef', fixture.elementRef.constructor.name, fixture.elementRef, Object.keys(fixture.elementRef));
-      console.log('el.nativeElement', el.nativeElement.constructor.name, el.nativeElement, Object.keys(el.nativeElement), el.nativeElement.id);
-      expect(el.nativeElement.id).toEqual('foo'); // .properties
+    it('sets properties', test(tmplt(`<div [setAttrs]="{ id: strExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.id).toEqual('foo');
     }));
 
     // syntax the same as for properties, no `attr.` needed :)
-    it('sets attributes', test(tmplt(`<div [setAttrs]="{ 'pattern': strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-      expect(el.nativeElement.attributes.pattern).toEqual('foo');
+    it('sets attributes', test(tmplt(`<div [setAttrs]="{ 'pattern': strExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.attributes.getNamedItem('pattern').value).toEqual('foo');
     }));
-
-    // // uh, should be split off anyway, but I don't think there is a `setElementDirective()`...
-    // it('sets directives', test(tmplt(`<div [setAttrs]="{ ngClass: { strExpr: condition } }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(el).toEqual('foo');
-    //   // .class
-    // }));
 
   })
 
-  xdescribe('SetDynamic', () => {
+  describe('DynamicAttrs', () => {
 
-    // // better if I could split this off, or dynamically bind to ngStyle...
-    // it('sets styles', test(tmplt(`<div [setDynamic]="{ 'style.color': baz }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(
-    //     // Object.keys(el)
-    //     el.nativeElement
-    //     // JSON.stringify(
-    //       // el.properties
-    //       // el.attributes
-    //     // )
-    //   ).toEqual('red');
-    //   // .style
-    // }));
-
-    // // clunky syntax, and better if I could split this off, or dynamically bind to ngClass...
-    // it('sets classes', test(tmplt(`<div [setDynamic]="{ class: strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(el).toEqual('bar');
-    //   // .class
-    // }));
-
-    it('sets properties', test(tmplt(`<div [setDynamic]="{ id: strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-      expect(el).toEqual('bar');
-      // .id
+    it('sets properties', test(tmplt(`<div [dynamicAttrs]="{ id: strExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.id).toEqual('bar');
     }));
 
-    it('sets attributes', test(tmplt(`<div [setDynamic]="{ 'pattern': strExpr }"></div>`), ({ comp, debugEl: el, fixture }) => {
-      expect(el).toEqual('bar');
-      // .pattern
+    it('sets attributes', test(tmplt(`<div [dynamicAttrs]="{ 'pattern': strExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.attributes.getNamedItem('pattern').value).toEqual('bar');
     }));
-
-    // should be split off anyway, cuz I can't introspect available directives, but I don't think there is a `setElementDirective()`...
-    // it('sets directives', test(tmplt(`<div [setDynamic]="{ ngClass: { strExpr: condition } }"></div>`), ({ comp, debugEl: el, fixture }) => {
-    //   expect(el).toEqual('bar');
-    //   // .class
-    // }));
 
   })
 
-  // it('', test({ component, class: TestComponent }, ({ comp, debugEl: el, fixture }) => {
+  describe('DynamicStyle', () => {
+
+    it('sets styles', test(tmplt(`<div [dynamicStyle]="{ color: baz }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.style.color).toEqual('red');
+    }));
+
+  })
+
+  describe('DynamicClass', () => {
+
+    it('sets classes', test(tmplt(`<div [dynamicClass]="{ foo: condExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.attributes.getNamedItem('class').value).toEqual('foo');
+    }));
+
+  })
+
+  // // I don't think there is a `setElementDirective()`...
+  // it('SetDirectives', test(tmplt(`<div [setAttrs]="{ ngClass: { strExpr: condition } }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+  //   expect(el).toEqual('foo');
+  // }));
+  // it('DynamicDirectives', test(tmplt(`<div [dynamicAttrs]="{ ngClass: { strExpr: condition } }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+  //   expect(el).toEqual('bar');
+  // }));
+
+  describe('AssignLocal', () => {
+
+    it('should save a value and reuse it', test(
+      tmplt(`<div
+                [assignLocal]="{ hello: strExpr }"
+                [id]="hello"
+              >{{ hello }}</div>`),
+      ({ test_cmp: comp, debugEl, fixture }) => {
+        let el = debugEl.nativeElement.firstElementChild;
+        expect(el).toHaveText('foo');
+    }));
+
+    xit('should work even in loops', test(
+      tmplt(`<div
+                *ngFor="let item of arrExpr; let idx = index"
+                [assignLocal]="{ hello: item }"
+                [id]="hello"
+              >{{ idx }}: <!-- {{ item }} -->{{ hello }}</div>`),
+      ({ test_cmp: comp, debugEl, fixture }) => {
+        let el = debugEl.nativeElement.firstElementChild;
+        console.log('TEST');
+        print('comp', comp);
+        print('el', el);
+        print('fixture', fixture);
+        print('comp.cdr', comp.cdr);
+        print('comp.cdr._view', comp.cdr._view);
+        print('fixture.elementRef', fixture.elementRef);
+        print('fixture.componentRef', fixture.componentRef);
+        print('fixture.componentRef._hostElement', fixture.componentRef._hostElement);
+        print('comp.cdr._view.ref', comp.cdr._view.ref);
+        print('comp.cdr._view.context', comp.cdr._view.context);
+        print('comp.cdr._view._currentDebugContext', comp.cdr._view._currentDebugContext);
+        print('comp.cdr._view._NgFor_0_6', comp.cdr._view._NgFor_0_6);
+        print('comp.cdr._view._NgFor_0_6._ngForOf', comp.cdr._view._NgFor_0_6._ngForOf);
+        expect(el).toHaveText('foobarbaz');
+    }));
+
+  });
+
+  // it('', test({ component, class: TestComponent }, ({ test_cmp: comp, debugEl, fixture }) => {
   //   expect().toEqual();
   // }));
 

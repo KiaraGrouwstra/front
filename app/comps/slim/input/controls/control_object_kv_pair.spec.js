@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 // import { Control } from '@angular/common';
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing';
 import { ControlObjectKvPair } from './control_object_kv_pair';
 import { getValStruct } from '../input';
 import { myAsync } from '../../../test';

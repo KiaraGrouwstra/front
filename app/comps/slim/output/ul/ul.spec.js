@@ -1,6 +1,8 @@
 let _ = require('lodash/fp');
-import { TestComponentBuilder, ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { TestComponentBuilder } from '@angular/compiler/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 
 import { ULComp } from './ul';

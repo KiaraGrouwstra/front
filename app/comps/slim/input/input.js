@@ -47,7 +47,7 @@ export let get_template = (spec, attrs) => {
     string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'select' : null,
     // string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'radio' : null,
     // ^ radio over select? alt. autocomplete over datalist?
-    integer: (attrs.max > attrs.min && attrs.min > Number.MIN_VALUE && attrs.max > Number.MAX_VALUE) ? 'range' : null,
+    integer: (attrs.max && attrs.min && attrs.max > attrs.min) ? 'range' : null,
     // number: null,
     boolean: 'switch',
     date: 'date',
@@ -134,53 +134,54 @@ const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 // http://swagger.io/specification/#parameterObject
 export let input_attrs = (path, spec) => {
   // general parameters
-  // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
-  let kind = spec.in || '';
-  let desc = spec.description || '';
-  let req = spec.required || false;
-  let allow_empty = spec.allowEmptyValue || false;
-  let def = spec.default || null;
-  let inc_max = spec.maximum || Number.MAX_VALUE;
-  let ex_max = spec.exclusiveMaximum || false;
-  let inc_min = spec.minimum || Number.MIN_VALUE;
-  let ex_min = spec.exclusiveMinimum || false;
-  let enum_options = spec.enum || null;
-  let {
-    name = '',
-    // in: kind = '',
-    // description: desc = '',
-    // required: req = false,
-    schema = {},
-    type = 'string',
-    format = '',
-    // allowEmptyValue: allow_empty = false,
-    items = {},
-    collectionFormat = 'csv',
-    // default: def = null,
-    // maximum: inc_max = Number.MAX_VALUE,
-    // exclusiveMaximum: ex_max = false,
-    // minimum: inc_min = Number.MIN_VALUE,
-    // exclusiveMinimum: ex_min = false,
-    pattern = '.*',
-    minLength = 0,
-    maxLength = 9007199254740991, //Math.pow(2, 53) - 1
-    maxItems = MAX_ITEMS,
-    minItems = 0,
-    maxProperties = MAX_ITEMS,
-    minProperties = 0,
-    uniqueItems = false,
-    // exclusive = false,
-    suggestions = [],
-    // enum: enum_options = null,
-    multipleOf = 1,
-  } = spec;
+  // // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
+  // let kind = spec.in || '';
+  // let desc = spec.description || '';
+  // let req = spec.required || false;
+  // let allow_empty = spec.allowEmptyValue || false;
+  // let def = spec.default || null;
+  // let inc_max = spec.maximum || Number.MAX_VALUE;
+  // let ex_max = spec.exclusiveMaximum || false;
+  // let inc_min = spec.minimum || Number.MIN_VALUE;
+  // let ex_min = spec.exclusiveMinimum || false;
+  // let enum_options = spec.enum || null;
+  // let {
+  //   name = '',
+  //   // in: kind = '',
+  //   // description: desc = '',
+  //   // required: req = false,
+  //   schema = {},
+  //   type = 'string',
+  //   format = '',
+  //   // allowEmptyValue: allow_empty = false,
+  //   items = {},
+  //   collectionFormat = 'csv',
+  //   // default: def = null,
+  //   // maximum: inc_max = Number.MAX_VALUE,
+  //   // exclusiveMaximum: ex_max = false,
+  //   // minimum: inc_min = Number.MIN_VALUE,
+  //   // exclusiveMinimum: ex_min = false,
+  //   pattern = '.*',
+  //   minLength = 0,
+  //   maxLength = 9007199254740991, //Math.pow(2, 53) - 1
+  //   maxItems = MAX_ITEMS,
+  //   minItems = 0,
+  //   maxProperties = MAX_ITEMS,
+  //   minProperties = 0,
+  //   uniqueItems = false,
+  //   // exclusive = false,
+  //   suggestions = [],
+  //   // enum: enum_options = null,
+  //   multipleOf = 1,
+  // } = spec;
+  let { name, in: kind, description: desc, required: req, schema, type, format, allowEmptyValue: allow_empty, items, collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, pattern, minLength, maxLength, maxItems, minItems, maxProperties, minProperties, uniqueItems, exclusive, suggestions, enum: enum_options, multipleOf, } = spec;
   desc = marked(desc || '') //.stripOuter();
   let { id } = getPaths(path);  //, k, variable, model: elvis
   let key = name;  // variable
   let model = `form.controls.${key}`;
   let attrs = {
-    '[(ngModel)]': `${model}.value`,
-    ngControl: key,
+    // '[(ngModel)]': `${model}.value`,
+    // ngControl: key,
     id,
     required: req,
     // exclusive, // used in input-object's `x-keys`
@@ -238,7 +239,7 @@ export let input_attrs = (path, spec) => {
   let extra = _.get([type], type_params) || {};
   Object.assign(attrs, extra);
   attrs.type = input_type(type);
-  return attrs;
+  return _.pickBy(_.negate(_.isNil))(attrs);
 }
 
 // ControlList validator for allOf

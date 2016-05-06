@@ -12,26 +12,16 @@
 //- )
 
 form
-  //- '[autocomplete]'=`attrs.autocomplete`
-  //- '[type]'=`attrs.type`
-  //- '[title]'=`attrs.title`
   //- '[(ngModel)]'=`ctrl.value`
   //- '(ngModelChange)'=`ctrl.updateValue($event)`
   //- '(input)'=`ctrl.updateValue($event.target.value)`
-  //- '[required]'=`attrs.required`
   .input-field
     select(
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
       '[ngFormControl]'=`ctrl`
       '[ngModel]'=`ctrl.value`
-      '[id]'=`attrs.id`
-      '[attr.data-tooltip]'=`attrs.tooltip`
-
-      '[attr.maxlength]'=`attrs.maxlength`
-      '[attr.minlength]'=`attrs.minlength`
-      '[attr.pattern]'=`attrs.pattern`
+      '[setAttrs]'=`attrs`
     )
-      //- | {{opt}}
       //- ; let idx = index
       option(
         *ngFor='let opt of spec.enum'

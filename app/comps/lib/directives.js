@@ -1,6 +1,8 @@
+let _ = require('lodash/fp');
+// let lodash = require('lodash');
 import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, ViewRef, TemplateRef } from '@angular/core'; //, Input
-import { DomElementSchemaRegistry } from '@angular/compiler';
-import { evalExpr } from './js';
+import { DomElementSchemaRegistry } from '@angular/compiler/src/schema/dom_element_schema_registry';
+import { evalExpr, print } from './js';
 
 // [HTML attribute vs. DOM property](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#html-attribute-vs-dom-property)
 // [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
@@ -22,183 +24,156 @@ const setMethod = {
 // setText, invokeElementMethod, listen, listenGlobal
 // this.el.style.backgroundColor = color;
 
+let keyMethod = (registry, elName, k) => setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
+
 // set multiple properties/attributes from an object without knowing which is which.
 // TODO: use `Differ`s to improve performance; see [NgClass](https://github.com/angular/angular/blob/master/modules/%40angular/common/src/directives/ng_class.ts)
 // named after attributes rather than properties so my json-schema could go with
 // that without causing confusing with its existing `properties` attribute.
 @Directive({
   selector: '[setAttrs]',
-  inputs: [
-    'attributes: setAttrs',
-  ],
+  inputs: ['attributes: setAttrs'],
 })
 export class SetAttrs {
-  // private el: HTMLElement;
-  // @Input('setAttrs') attributes; // Object of any
-  constructor(el: ElementRef, viewContainer: ViewContainerRef, renderer: Renderer, schemaRegistry: DomElementSchemaRegistry) {
-    // console.log('setAttrs:ctor');
-    this.el = el;
-    this.viewContainer = viewContainer;
+  constructor(el: ElementRef, renderer: Renderer, schemaRegistry: DomElementSchemaRegistry) {
+    this.el = el.nativeElement;
     this.renderer = renderer;
     this.schemaRegistry = schemaRegistry;
-    // console.log('schemaRegistry', schemaRegistry);
   }
   set attributes(obj) {
-    // console.log('setAttrs', obj);
-    // console.log('this.el', this.el);
-    // console.log('obj', obj);
-    // console.log('this.el', this.el, Object.keys(this.el));
-    // console.log('this.el.nativeElement', this.el.nativeElement, Object.keys(this.el.nativeElement));
-    // let elName = this.el.parentElement.tagName;
-    let elName = this.el.nativeElement.tagName;
-    // console.log('elName', elName);
+    let elName = this.el.tagName;
     _.each((v, k) => {
-      // console.log(k, v);
-      let hasIt = this.schemaRegistry.hasProperty(elName, k);
-      // console.log('hasIt', hasIt);
-      let method = setMethod[hasIt ? 'property' : 'attribute'];
-      // console.log('method', method);
-      // console.log('this.el', this.el);
+      let method = keyMethod(this.schemaRegistry, elName, k);
       this.renderer[method](this.el, k, v);
-      console.log('this.el', this.el);
     })(obj);
   }
 }
 SetAttrs.parameters = [
   [ElementRef],
-  [ViewContainerRef],
   [Renderer],
   [DomElementSchemaRegistry],
 ];
 
+let evalInView = (str: string, view: ViewContainer) => evalExpr(view._element.parentView.context)(str);
+
 // dynamically bind things: properties, attributes //, styles, classes, directives
-// intended as a `[[prop]]="evalStr"`, if now `[setDynamic]="{ prop: evalStr }"`
+// intended as a `[[prop]]="evalStr"`, if now `[dynamicAttrs]="{ prop: evalStr }"`
 // hint toward original: `bindAndWriteToRenderer` @ `compiler/view_compiler/property_binder.ts`.
 // alternative: `[prop]="eval(evalStr)"` for `eval = evalExpr(this)` on class.
 // ^ try that for directives! but can't dynamically bind to different things like this.
 // challenge: even if I extract rules from JSON, how do I generate these bindings?...
-// unless I could dynamically bind to directives, that was the problem, so use this.
+// unless I could dynamically bind to directives, which was the problem, so use this.
 // TODO: use `Differ`s to improve performance; more challenging cuz double...
 @Directive({
-  selector: '[setDynamic]',
-  inputs: [
-    'attributes: setDynamic',
-  ],
+  selector: '[dynamicAttrs]',
+  inputs: ['attributes: dynamicAttrs'],
 })
-export class SetDynamic {
-  // @Input('setDynamic') attributes; // Object of any
-  constructor(el: ElementRef, viewContainer: ViewContainerRef, renderer: Renderer, schemaRegistry: DomElementSchemaRegistry) {
+export class DynamicAttrs {
+  constructor(el: ElementRef, renderer: Renderer, schemaRegistry: DomElementSchemaRegistry, viewContainer: ViewContainerRef) {
     this.el = el.nativeElement;
-    this.viewContainer = viewContainer;
     this.renderer = renderer;
     this.schemaRegistry = schemaRegistry;
+    this.viewContainer = viewContainer;
   }
   set attributes(obj) {
+    let elName = this.el.tagName;
     _.each((evalStr, k) => {
-      // console.log(`setting ${k} to ${evalStr}.`);
-      let context = this.viewContainerRef._element.parentView.context;
-      let v = evalExpr(context)(evalStr);
-      let hasIt = this.schemaRegistry.hasProperty(elName, k);
-      let method = setMethod[hasIt ? 'property' : 'attribute'];
+      let method = keyMethod(this.schemaRegistry, elName, k);
+      let v = evalInView(evalStr, this.viewContainer);
       this.renderer[method](this.el, k, v);
       // what of style, class, directive?
     })(obj);
   }
 }
-SetDynamic.parameters = [
+DynamicAttrs.parameters = [
   [ElementRef],
-  [ViewContainerRef],
   [Renderer],
   [DomElementSchemaRegistry],
+  [ViewContainerRef],
+];
+
+@Directive({
+  selector: '[dynamicStyle]',
+  inputs: ['attributes: dynamicStyle'],
+})
+export class DynamicStyle {
+  constructor(el: ElementRef, renderer: Renderer, viewContainer: ViewContainerRef) {
+    this.el = el.nativeElement;
+    this.renderer = renderer;
+    this.viewContainer = viewContainer;
+  }
+  set attributes(obj) {
+    _.each((evalStr, k) => {
+      let v = evalInView(evalStr, this.viewContainer);
+      this.renderer.setElementStyle(this.el, k, v);
+    })(obj);
+  }
+}
+DynamicStyle.parameters = [
+  [ElementRef],
+  [Renderer],
+  [ViewContainerRef],
+];
+
+@Directive({
+  selector: '[dynamicClass]',
+  inputs: ['attributes: dynamicClass'],
+})
+export class DynamicClass {
+  constructor(el: ElementRef, renderer: Renderer, viewContainer: ViewContainerRef) {
+    this.el = el.nativeElement;
+    this.renderer = renderer;
+    this.viewContainer = viewContainer;
+  }
+  set attributes(obj) {
+    _.each((evalStr, k) => {
+      let v = evalInView(evalStr, this.viewContainer);
+      this.renderer.setElementClass(this.el, k, v);
+    })(obj);
+  }
+}
+DynamicClass.parameters = [
+  [ElementRef],
+  [Renderer],
+  [ViewContainerRef],
 ];
 
 // set local template variables from an object.
-// see https://github.com/angular/angular/issues/2451
-// not working yet, but must refactor `setLocal` to `createEmbeddedView` after this lands anyway!
-// https://github.com/angular/angular/commit/cacdead96dcfbb80dff899b5f5143b7c28c4d6dd
 @Directive({
   selector: '[assignLocal]',
-  inputs: [
-    'localVariable: assignLocal',
-  ],
+  inputs: ['localVariable: assignLocal'],
 })
 export class AssignLocal {
-  // private el: HTMLElement;
-  // @Input('assignLocal') localVariable; // Object of any
-  constructor(elementRef: ElementRef, viewContainer: ViewContainerRef, renderer: Renderer) {
-    // console.log('assignLocal:ctor');
-    // , embeddedViewRef: EmbeddedViewRef, viewRef: ViewRef
-    this.elementRef = elementRef;
-    this.el = elementRef.nativeElement;
+  constructor(viewContainer: ViewContainerRef) {
     this.viewContainer = viewContainer;
-    this.renderer = renderer;
-    // viewContainer: temp1._element.parentView.detectChangesInternal  // <-- internal
-    // this.templateRef = templateRef;
-    // this.embeddedViewRef = EmbeddedViewRef;
-    // this.viewRef = viewRef;
   }
   set localVariable(obj) {
-    // console.log('assignLocal', obj);
-    // console.log('set:this.el', this.el);
-    // console.log('obj', obj);
+    // let [k, v] = obj;
     _.each((v, k) => {
-      // console.log(v, k);
-      // this.view.internalView.setLocal(k, v);
-      // console.log('this.viewContainer._element.parentView', this.viewContainer._element.parentView);
-      // console.log('this.el', this.el);
-      // this.viewContainer._element.parentView.setLocal(k, v);
-      console.log('this.viewContainer', this.viewContainer.constructor.name, Object.keys(this.viewContainer), this.viewContainer);
-      console.log('this.viewContainer._element', this.viewContainer._element.constructor.name, Object.keys(this.viewContainer._element), this.viewContainer._element);
-      // console.log('this.viewContainer._element.parentView', this.viewContainer._element.parentView.constructor.name, Object.keys(this.viewContainer._element.parentView));
-      console.log('this.viewContainer._element.parentView.locals', this.viewContainer._element.parentView.locals);
-      // console.log('this.viewContainer._element.parentView.references', this.viewContainer._element.parentView.references);
-      // console.log('this.viewContainer._element.parentView.context', this.viewContainer._element.parentView.context);
-      // this.viewContainer._element.parentView.context[k] = v;
-      this.viewContainer._element.parentView.locals[k] = v;
-      // console.log('this.viewContainer._element.parentView.context', this.viewContainer._element.parentView.context);
-      console.log('this.viewContainer._element.parentView.locals', this.viewContainer._element.parentView.locals);
-      // this.el
-      // this.view = this.viewContainer.create(this.EmbeddedViewRef);
-      // this.view.internalView.setLocal('$implicit', exp);
+      // console.log('references', this.viewContainer._element.parentView.references);
+      let context = this.viewContainer._element.parentView.context;
+      // print('this.viewContainer', this.viewContainer);
+      // print('this.viewContainer._element', this.viewContainer._element);
+      // print('this.viewContainer._element.parentView', this.viewContainer._element.parentView);
+      // print('this.viewContainer._element.parentView.context', this.viewContainer._element.parentView.context);
+      // console.log(k, v);
+      context[k] = v;
+      // Object.assign(context, { [k]: v });
+      // _.set(k, v)(context);
+      // console.log('k', k);
+      // console.log('v', v);
+      // console.log('context', context);
+      // console.log('context', _.keys(context));
+      // lodash.set(context, k, v);
+      // console.log('context', context);
+      // console.log('context', _.keys(context));
+      // console.log('temp', context.temp);
     })(obj);
-    // this.viewContainer.createEmbeddedView(this.templateRef, exp); // what `this.templateRef`?
-    // ^ wait, does this really give me my local variables in the old view?
   }
 }
 AssignLocal.parameters = [
-  [ElementRef],
   [ViewContainerRef],
-  // [EmbeddedViewRef],
-  // [ViewRef],
 ];
-
-// // see https://github.com/angular/angular/issues/2451
-// // can't get this to work
-// @Directive({
-//   selector: '[assignLocal]',
-//   properties: ['localVariable: assignLocalTo'],
-// })
-// export class LocalVariable {
-//   viewContainer: ViewContainerRef;
-//   EmbeddedViewRef: EmbeddedViewRef;
-//   view: any;
-//
-//   constructor(viewContainer: ViewContainerRef, EmbeddedViewRef: EmbeddedViewRef) {
-//     this.viewContainer = viewContainer;
-//     this.EmbeddedViewRef = EmbeddedViewRef;
-//   }
-//
-//   set localVariable(exp) {
-//     if (!this.viewContainer.length) {
-//       this.view = this.viewContainer.create(this.EmbeddedViewRef);
-//     }
-//     this.view.setLocal(assignLocalTo || '$implicit', exp);
-//   }
-// }
-// LocalVariable.parameters = [
-//   [ViewContainerRef],
-//   [EmbeddedViewRef],
-// ];
 
 // binding to [multiple events](https://github.com/angular/angular/issues/6675)
 // https://developer.mozilla.org/en-US/docs/Web/Events

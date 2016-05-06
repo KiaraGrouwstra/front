@@ -11,7 +11,6 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "listFiles": true,
-    "rootDirs": ["./app", "./codegen"],
     "outDir": "dist"
   },
   "exclude": [

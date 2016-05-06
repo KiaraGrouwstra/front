@@ -51,7 +51,7 @@ export let scrape_spec = [
             // styles: {},
             // classes: {},
             attributes: {
-              '[disabled]': `./type != 'attribute'`,
+              disabled: `./type != 'attribute'`,
             },
           },
         },

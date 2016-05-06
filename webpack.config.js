@@ -104,8 +104,8 @@ module.exports = {
 			// you can now require('file') instead of require('file.coffee')
 			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss', '.html'
 		],
-		// root: ['node_modules', 'bower_components', 'app'].map((folder) => path.join(__dirname, folder))
-		modulesDirectories: ['node_modules', 'bower_components', 'app'],
+		// root: ['node_modules', 'app'].map((folder) => path.join(__dirname, folder))
+		modulesDirectories: ['node_modules', 'app'],
 		root: __dirname
 	},
   plugins: [
@@ -117,9 +117,6 @@ module.exports = {
 	    'Hammer': 'hammerjs/hammer'
 		}),
 		//new webpack.optimize.UglifyJsPlugin(),
-    // new webpack.ResolverPlugin(
-    //   new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
-    // ),
   ],
 	stats: {
 	  colors: false,

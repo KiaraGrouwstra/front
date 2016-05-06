@@ -1,10 +1,11 @@
 let _ = require('lodash/fp');
 import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
 import { TestComponentBuilder } from '@angular/compiler/testing';
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
-import { By } from '@angular/platform-browser-dynamic';
+import { By } from '@angular/platform-browser';
 
 import { InputStructComp } from './input-struct';
 let cls = test_comp('input-struct', InputStructComp);
@@ -89,9 +90,9 @@ describe('InputStructComp', () => {
   it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     console.log('input-struct');
 
-    // let btn = debugEl.query(By.css('a.add-add'));
-    // dispatchEvent(btn.nativeElement, 'click');
-    comp.addAdditionalProperty();
+    let btn = debugEl.query(By.css('a.add-add'));
+    dispatchEvent(btn.nativeElement, 'click');
+    // comp.addAdditionalProperty();
 
     fixture.detectChanges();
     comp.cdr.markForCheck();

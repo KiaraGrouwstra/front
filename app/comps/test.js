@@ -1,7 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import { BehaviorSubject } from 'rxjs';
-import { dispatchEvent, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing';
 
 // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
 // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
@@ -64,7 +65,7 @@ export async function getComp(tcb, test_class) {
     fixture.detectChanges();
     let debugEl = fixture.debugElement;
     let el = debugEl.childNodes[0].nativeElement;
-    return { comp, el, fixture, debugEl };
+    return { comp, el, fixture, debugEl, test_cmp };
   }
   catch(e) {
     throw e;

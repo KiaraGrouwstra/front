@@ -266,6 +266,12 @@ export let evalExpr = (vars) => (expr) => {
   return fn.apply(null, vals);
 }
 
+// print a complex object for debugging -- regular log sucks cuz it elides values, JSON.stringify errors on cyclical structures.
+export function print(k, v) {
+  let cname = v => v ? v.constructor.name : null;
+  let cnames = _.mapValues(cname);
+  console.log(k, cname(v), cnames(v));
+};
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)

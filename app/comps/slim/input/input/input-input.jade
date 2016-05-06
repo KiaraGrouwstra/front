@@ -1,36 +1,17 @@
 form
   //- {ctrl, attrs: {[(ngModel)], ngControl, id, type, required, placeholder?, `#${ngControl}`: "ngForm"}}
-  //- which of these are like [attr.aria-label], [class.special] and [style.color]? phew, without adding attr where needed it'll just error, so fortunately it'll just tell me.
-  //- string
-  //- number/integer
   //- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
   //- '[ngControl]'=`name`
   //- '[ngControl]'=`spec.name`
   //- '[ngControl]'=`ctrl`
-  //- '[title]'=`attrs.title`
-  //- used in browser's native (ugly) tooltip and 'required' popup
-  //- '#frm'='ngForm'
-  //- div(tabindex="0")
   //- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
   //- ^ this somehow doesn't actually sync well :(, gonna try through CSS instead...
-  //- '[required]'=`attrs.required`
-  //- '*setAttrs'=`attrs`
-  //- '*setDynamic'=`spec['x-bindings']?.attributes`
+
   input.validate.tooltipped(
+    '[setAttrs]'=`attrs`
     '[ngFormControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
-    '[id]'=`attrs.id`
-    '[type]'=`attrs.type`
-    '[attr.data-tooltip]'=`attrs.tooltip`
-
-    '[attr.maxlength]'=`attrs.maxlength`
-    '[attr.minlength]'=`attrs.minlength`
-    '[attr.pattern]'=`attrs.pattern`
-    '[autocomplete]'=`attrs.autocomplete`
-
-    '[max]'=`attrs.max`
-    '[min]'=`attrs.min`
-    '[step]'=`attrs.step`
+    '[dynamicAttrs]'=`spec['x-bindings']?.attributes`
   )
   //- paper-tooltip {{ attrs.tooltip }}
   //- TODO: leave out attributes with undefined values?

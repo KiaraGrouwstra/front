@@ -8,6 +8,7 @@ import { InputValueComp } from '../value/input-value';
 import { InputComp } from '../input/input-input';
 import { arr2obj, ng2comp } from '../../../lib/js';
 import { getPaths } from '../../slim';
+import { SetAttrs } from '../../../lib/directives';
 // import { Select } from 'ng2-select';
 // import { RadioControlValueAccessor } from 'Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor';
 import { RadioControlValueAccessor } from './radio_value_accessor';
@@ -29,6 +30,7 @@ export let FieldComp = ng2comp({
       RadioControlValueAccessor,
       MdRadioGroup,
       MdRadioButton,
+      SetAttrs,
     ],
     providers: [
       MdRadioDispatcher,

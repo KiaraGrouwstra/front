@@ -21,7 +21,7 @@ import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG, Config } from '../../../config';
 import { WsService } from '../../services/ws/ws';
 import { RequestService } from '../../services/request/request';
-import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp, input_specs } from '../../lib/js.js';
+import { handle_auth, toast, setKV, getKV, prettyPrint, ng2comp, input_specs } from '../../lib/js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../../comps';
 import { curl_spec } from './curl_spec';

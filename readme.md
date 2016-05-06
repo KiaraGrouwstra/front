@@ -16,6 +16,9 @@ typings install npm:@angular --save
 typings update
 ```
 
+// `tsconfig.json` after upgrading to TypeScript 2.0:
+// "rootDirs": ["./app", "./codegen"],
+
 // patch `./node_modules/angular2/typings/node/node.d.ts`: types of global/module/require -> `: any` to prevent clash with `./typings/webpack.d.ts`.
 
 - patch `babel-plugin-transform-runtime/lib/definitions.js`: comment `defineProperty: "object/define-property"`

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 # This should get you from a fresh git clone of the repo to a running app from nothing else.
 
 # Requirements
@@ -10,8 +8,6 @@
 # - node (and npm)
 #
 # In addition declared dependencies in package.json and bower.json, the following requirements will be installed by this script if not already installed:
-# - bower
-# - gulp
 # - TypeScript transpiler
 # - tsd and various TypeScript definitions declared in tsd.json
 
@@ -27,28 +23,16 @@ echo "Installing npm packages declared in package.json..."
 npm install
 echo "Installing npm packages complete."
 
-echo "Checking for bower..."
-command -v bower > /dev/null || { echo "Bower not installed. installing..."; npm install -g bower; }
-echo "Checking / installing bower complete."
-
-# bower: Ensure bower depdnencies are installed.
-#  Installs client-side JavaScript dependencies.
-#  Actual dependencies are declared in bower.json
-echo "Installing bower packages declared in bower.json..."
-bower install
-echo "Installing bower packages complete."
-
 # tsd: NOTE: Installing TypeScript definition files not really needed. Generally those are to be committed to the source repo.
-echo "Checking for tsd..."
-command -v tsd > /dev/null || { echo "tsd not installed. installing..."; npm install -g tsd; }
+echo "Checking for typings..."
+command -v typings > /dev/null || { echo "typings not installed. installing..."; npm install -g typings; }
 echo "Checking / installing tsd complete."
-# tsd install angular2 es6-promise rx rx-lite -sor
-tsd update
+# typings install angular2 es6-promise rx rx-lite -sor
+typings update
 
-echo "Checking for gulp..."
-command -v gulp > /dev/null || { echo "gulp not installed. installing..."; npm install -g gulp-cli; }
-echo "Checking / installing gulp complete."
-
-
-# gulp: gulp is the build tool that runs the build script gulpfile.coffee and the with no arguments the default task registered therein.
-gulp
+# echo "Checking for gulp..."
+# command -v gulp > /dev/null || { echo "gulp not installed. installing..."; npm install -g gulp-cli; }
+# echo "Checking / installing gulp complete."
+#
+# # gulp: gulp is the build tool that runs the build script gulpfile.coffee and the with no arguments the default task registered therein.
+# gulp
