@@ -275,10 +275,10 @@ export let TableComp = ng2comp({
         let hasText = isText || _.some(y => y == 'string')(anyOf);
         if(hasNum) {
           let vals = val.map(y => y[col]);
-          var min = _.min(vals);
-          var max = _.max(vals);
-          var isLog = false;
-          // var boundaries = [min, max];
+          let min = _.min(vals);
+          let max = _.max(vals);
+          let isLog = false;
+          // let boundaries = [min, max];
         }
         return { isNum, hasNum, isText, hasText, min, max, isLog }; //spec, boundaries
       });

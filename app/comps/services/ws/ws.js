@@ -1,4 +1,4 @@
-var Phoenix = require('phoenix-js-derp');
+let Phoenix = require('phoenix-js-derp');
 import { Subject, BehaviorSubject } from 'rxjs';
 // ^ this is an old version of BehaviorSubject, and should be replaced with the following, it it can pass:
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';

@@ -4,7 +4,7 @@ import { ControlObject } from './control_object';
 import { objectControl } from '../input'  //input_control
 
 describe('ControlObject', () => {
-  var obj;
+  let obj;
 
   beforeEach(() => {
     obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }); //input_control

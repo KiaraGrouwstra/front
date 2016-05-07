@@ -22,7 +22,7 @@ let spec = {
 let valStruct = getValStruct(spec);
 
 describe('ControlObjectKvPair', () => {
-  var kv;
+  let kv;
 
   beforeEach(() => {
     kv = new ControlObjectKvPair(valStruct);

@@ -2,7 +2,7 @@ import { Control } from '@angular/common';
 import { ControlList } from './control_list';
 
 describe('ControlList', () => {
-  var a, fact;
+  let a, fact;
 
   beforeEach(() => {
     fact = () => new Control(1);

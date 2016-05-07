@@ -123,7 +123,7 @@ export let id_cleanse = (s) => s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '
 // intercepts bad input values for a function so as to return a default output value
 // ... this might hurt when switching to like Immutable.js though.
 export let typed = (from, to, fn) => function() {
-  for (var i = 0; i < from.length; i++) {
+  for (let i = 0; i < from.length; i++) {
     let frm = from[i];
     let v = arguments[i];
     if(frm && (_.isNil(v) || v.constructor != frm)) return (new to).valueOf();
@@ -135,7 +135,7 @@ export let typed = (from, to, fn) => function() {
 export let combine = (fn, allow_undef = {}) => function() {
   // let names = /([^\(]+)(?=\))'/.exec(fn.toString()).split(',').slice(1);
   let names = fn.toString().split('(')[1].split(')')[0].split(/[,\s]+/);
-  for (var i = 0; i < arguments.length; i++) {
+  for (let i = 0; i < arguments.length; i++) {
     let v = arguments[i];
     let name = names[i]
       .replace(/_\d+$/, '')   // fixes SweetJS suffixing all names with like _123. this will however break functions already named .*_\d+, e.g. foo_123

@@ -8,7 +8,7 @@ describe('validators', () => {
   //   expect(validate({}, { type: 'object', properties: { a: {} }, required: ['a'] })).toEqual(false);
   // })
 
-  for (var k in tests) {
+  for (let k in tests) {
     let { schema, valid, invalid } = tests[k];
     it(k, () => {
       valid.forEach(v => {

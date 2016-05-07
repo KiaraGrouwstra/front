@@ -7,7 +7,7 @@ import { CONFIG, APP_CONFIG } from '../../../config';
 
 describe('WebSocket', () => {
   let injector: ReflectiveInjector;
-  var ws;
+  let ws;
 
   beforeEach(() => {
     injector = ReflectiveInjector.resolveAndCreate([

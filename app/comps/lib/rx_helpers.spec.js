@@ -18,9 +18,9 @@ describe('Rx Helpers', () => {
 
   let do_obs = (done, obs, test, not_done = false) => obs.subscribe(not_done ? _.flow(test, done) : test, _.flow(fail, done), done);
   // let obs_it = (desc, obs, test) => it(desc, (done) => obs.subscribe(test, fail(done), done));
-  var people = [{"id":1,"name":"Brad"},{"id":2,"name":"Jules"},{"id":3,"name":"Jeff"}];
+  let people = [{"id":1,"name":"Brad"},{"id":2,"name":"Jules"},{"id":3,"name":"Jeff"}];
   let keys = ["id","name"]; //_.keys(people);
-  var obs, flat;
+  let obs, flat;
 
   beforeEach(() => {
     // obs = http.get(`api/people.json`).map(y => y.json())

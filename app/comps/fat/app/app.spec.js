@@ -36,7 +36,7 @@ export let appProvider = provide(App, {
 
 xdescribe('App', () => {
   let injector: ReflectiveInjector;
-  var app;
+  let app;
 
   beforeEach(() => {
     injector = ReflectiveInjector.resolveAndCreate([

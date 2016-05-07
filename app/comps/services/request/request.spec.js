@@ -8,7 +8,7 @@ import { CONFIG, APP_CONFIG } from '../../../config';
 
 describe('RequestService', () => {
   let injector: ReflectiveInjector;
-  var req;
+  let req;
 
   beforeEach(() => {
     injector = ReflectiveInjector.resolveAndCreate([

@@ -4,7 +4,7 @@ import { ControlStruct } from './control_struct';
 import { input_control } from '../input'
 
 describe('ControlStruct', () => {
-  var obj;
+  let obj;
 
   beforeEach(() => {
     let num = { type: 'number' };

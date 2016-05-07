@@ -2,7 +2,7 @@ import { Control } from '@angular/common';
 import { ControlVector } from './control_vector';
 
 describe('ControlVector', () => {
-  var a;
+  let a;
 
   beforeEach(() => {
     let items = [

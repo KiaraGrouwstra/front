@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { getValStruct } from '../input';
 
 describe('ControlObjectValue', () => {
-  var v, name$;
+  let v, name$;
 
   beforeEach(() => {
     let spec = {
