@@ -72,7 +72,7 @@ module.exports = function(config) {
       'karma-jasmine',
       'karma-sourcemap-loader',
       'karma-chrome-launcher',
-      'karma-phantomjs-launcher',
+      // 'karma-phantomjs-launcher',
       'karma-requirejs',
       'karma-webpack',
       'karma-babel-preprocessor',
