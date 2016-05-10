@@ -1,17 +1,13 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
-
-// ctrl is expected to be a ControlObject seeded with a ControlGroup consisting
-// of a wrapped seed Control: {name: {name: 'name', type: 'string'}, val: Control}.
-// note that input type object falls outside of the scope of the Swagger spec though.
+import { ControlObject } from '../controls/control_object';
 
 @Component({
   selector: 'input-object',
-  inputs: ['named', 'path', 'spec', 'ctrl'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-object.jade'),
   directives: [
@@ -20,12 +16,23 @@ import { getPaths } from '../../slim';
   ]
 })
 export class InputObjectComp {
+  @Input() named: boolean;
+  @Input() path: Front.Path;
+  @Input() spec: Front.Spec;
+  @Input() ctrl: ControlObject<ControlGroup>; // { name, val }
+  _named: boolean;
+  _path: Front.Path;
+  _spec: Front.Spec;
+  _ctrl: ControlObject<ControlGroup>; // { name, val }
   option = null;
   k: string;
   id: string;
   counter: number = 0;
   items = new Set([]);
   keys: Array<string> = ['name', 'val'];
+  isOneOf: boolean;
+  keySugg: string[];
+  keyEnum: string[];
 
   constructor(
     public cdr: ChangeDetectorRef,
@@ -36,10 +43,10 @@ export class InputObjectComp {
     ['k', 'id'].forEach(x => this[x] = props[x]);
   }
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     let { properties, patternProperties, additionalProperties } = x;
@@ -57,7 +64,7 @@ export class InputObjectComp {
     // window.setTimeout(() => $('select').material_select(), 300);
   }
 
-  resolveSpec(i) {
+  resolveSpec(i: number): Front.Spec {
     let opt = this.option;
     let ctrl = this.ctrl;
     let spec = this.spec;
@@ -67,12 +74,12 @@ export class InputObjectComp {
     return (this.isOneOf && ret == spec.additionalProperties) ? ret.oneOf[opt] : ret;
   }
 
-  add() {
+  add(): void {
     this.items.add(this.counter++);
     this.ctrl.add();
   }
 
-  remove(item) {
+  remove(item: string): void {
     let idx = _.findIndex(y => y == item)(Array.from(this.items));
     this.ctrl.removeAt(idx);
     this.items.delete(item);

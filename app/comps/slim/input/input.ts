@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { Control, ControlGroup, ControlArray } from '@angular/common';
+import { Control, ControlGroup, ControlArray, AbstractControl } from '@angular/common';
 import { ControlList } from './controls/control_list';
 import { ControlVector } from './controls/control_vector';
 import { ControlObject } from './controls/control_object';
@@ -10,9 +10,10 @@ import { ControlSet } from './controls/control_set';
 import { getPaths } from '../slim';
 import { validate, get_validator } from './validators';
 import { arr2obj, editValsOriginal } from '../../lib/js';
+import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
 // get the default value for a value type
-let type_default = (type) => {
+function type_default(type: string): any {
   let def_vals = {
     string: '',
     number: 0,
@@ -25,13 +26,13 @@ let type_default = (type) => {
   return _.get([type], def_vals)
 }
 
-let get_default = (spec) => {
+function get_default(spec: Front.Spec): any {
   let def = spec.default;
   return (!_.isUndefined(def)) ? def : type_default(spec.type);
 }
 
 // get the input type for a value type
-let input_type = (type) => _.get([type], {
+let input_type = (type: string) => _.get([type], {
   string: 'text',
   number: 'number',
   integer: 'number',
@@ -40,7 +41,7 @@ let input_type = (type) => _.get([type], {
 }) || type;
 
 // pick a Jade template
-export let get_template = (spec, attrs) => {
+export function get_template(spec: Front.Spec, attrs: Front.IAttributes): string|void {
   return _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
     // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
@@ -60,40 +61,40 @@ export let get_template = (spec, attrs) => {
 }
 
 // return the default value + validator for a spec
-let vldtrDefPair = (spec) => ({
-  val: get_default(spec),
-  vldtr: get_validator(spec),
-})
+function vldtrDefPair(spec: Front.Spec): Front.IVldtrDef {
+  return {
+    val: get_default(spec),
+    vldtr: get_validator(spec),
+  };
+}
 
 // map a spec's subspecs given a lambda
-// let mapSpec = (fn) => (spec) => ({
-//   properties: _.mapValues(fn)(spec.properties || {}),
-//   patternProperties: _.mapValues(fn)(spec.patternProperties || {}),
-//   additionalProperties: fn(spec.additionalProperties || {}),
-// });
-export let mapSpec = (fn) => editValsOriginal({
-  properties: _.mapValues(fn),
-  patternProperties: _.mapValues(fn),
-  additionalProperties: fn,
-});
+export function mapSpec<T,U>(fn: (T) => U): Front.IObjectSpec<(T) => U> {
+  return editValsOriginal({
+    properties: _.mapValues(fn),
+    patternProperties: _.mapValues(fn),
+    additionalProperties: fn,
+  });
+}
 
 // get a struct of validator-default pairs of a spec
+// : Front.IObjectSpec<(Front.Spec) => Front.IVldtrDef>
 export let getValStruct = mapSpec(vldtrDefPair);
 
 // `ControlObject` generator (kicked out of `input_control`)
-export let objectControl = (spec) => {
-  let allOf = _.get(['additionalProperties','allOf'], spec) || [];
+export function objectControl(spec: Front.Spec): ControlObject {
+  // let allOf = _.get(['additionalProperties','allOf'], spec) || [];
   let valStruct = getValStruct(spec);
   let seed = () => new ControlObjectKvPair(valStruct);
-  return new ControlObject(seed, allOf);
+  return new ControlObject(seed); //, allOf
 }
 
 // return initial key/value pair for the model
-export function input_control(spec = {}, asFactory = false) {
-  let factory, allOf, seed;
+export function input_control(spec: Front.Spec = {}, asFactory = false): AbstractControl | Front.CtrlFactory {
+  let factory, seed;  //, allOf
   switch(spec.type) {
     case 'array':
-      allOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
+      // allOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
       // only tablize predictable collections
       let props = _.get(['items','properties'], spec);
       if(_.isArray(spec.items)) {
@@ -104,7 +105,7 @@ export function input_control(spec = {}, asFactory = false) {
             add == true ?
                 input_control({}, true) :
                 false;
-        factory = () => new ControlVector(seeds, fallback, allOf);
+        factory = () => new ControlVector(seeds, fallback); //, allOf
         // ^ ControlVector could also handle the simpler case below.
       } else if(spec.uniqueItems && _.size(spec.enum)) {
         factory = () => new ControlSet();
@@ -112,13 +113,13 @@ export function input_control(spec = {}, asFactory = false) {
         let seed = props ?
             () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
             input_control(spec.items, true);
-        factory = () => new ControlList(seed, allOf);
+        factory = () => new ControlList(seed);  //, allOf
       }
       break;
     case 'object':
-      allOf = _.get(['additionalProperties','allOf'], spec) || [];
+      // allOf = _.get(['additionalProperties','allOf'], spec) || [];
       let factStruct = mapSpec(x => input_control(x, true))(spec);
-      factory = () => new ControlStruct(factStruct, allOf, spec.required || []);
+      factory = () => new ControlStruct(factStruct, spec.required || []);   //, allOf
       break;
     default:
       let val = get_default(spec);
@@ -132,7 +133,7 @@ const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 
 // get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
-export let input_attrs = (path, spec) => {
+export function input_attrs(path: Front.Path, spec: Front.Spec): Front.IAttributes {
   // general parameters
   // // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
   // let kind = spec.in || '';
@@ -243,24 +244,28 @@ export let input_attrs = (path, spec) => {
 }
 
 // ControlList validator for allOf
-export let allUsed = (allOf, val_lens) => (ctrl) => {
-  let vals = val_lens(ctrl);
-  // ideally it should validate as long as all types are used even without values, but this may
-  // require checking from input-array/-object by asking their `input-field`s through a QueryList...
-  let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
-  return valid ? null : {allOf: true};
+export function allUsed(allOf: null, val_lens: (AbstractControl) => any[]): ValidatorFn {
+  return (ctrl: AbstractControl) => {
+    let vals = val_lens(ctrl);
+    // ideally it should validate as long as all types are used even without values, but this may
+    // require checking from input-array/-object by asking their `input-field`s through a QueryList...
+    let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
+    return valid ? null : {allOf: true};
+  }
 };
 
 // key uniqueness validator for ControlObject
-export let uniqueKeys = (name_lens) => (ctrl) => {
-  let names = name_lens(ctrl);
-  let valid = names.length == _.uniq(names).length;
-  return valid ? null : { uniqueKeys: true };
-};
+export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn {
+  return (ctrl: AbstractControl) => {
+    let names = name_lens(ctrl);
+    let valid = names.length == _.uniq(names).length;
+    return valid ? null : { uniqueKeys: true };
+  };
+}
 
 // calculate the different specs for key input controls, plus enum/suggestion options
 // any spec-like object will do for the param, since only keys are checked.
-export function getOptsNameSpecs(specLike) {
+export function getOptsNameSpecs(specLike: Front.IObjectSpec<any>): Object {
   let { properties: props, patternProperties: patterns, additionalProperties: add } = specLike;
   let [fixed, patts] = [props, patterns].map(_.keys);
   let categorizer = categorizeKeys(patts, fixed);
@@ -275,12 +280,14 @@ export function getOptsNameSpecs(specLike) {
 };
 
 // categorize keys to a pattern or additional
-export let categorizeKeys = (patterns, blacklist = []) => (keys) => {
-  let r = _.difference(keys, blacklist);
-  let sorter = v => _.find(patt => new RegExp(patt).test(v))(patterns);
-  // let { undefined: rest, ...patts } = _.groupBy(sorter)(r); // without TS
-  let grouped = _.groupBy(sorter)(r);
-  let rest = grouped.undefined;
-  let patts = _.omit('undefined')(grouped);
-  return { rest, patts };
-};
+export function categorizeKeys(patterns, blacklist = []): (keys: string[]) => { rest: string, patts: {[key: string]: string} } {
+  return (keys: string[]) => {
+    let r = _.difference(keys, blacklist);
+    let sorter = v => _.find(patt => new RegExp(patt).test(v))(patterns);
+    // let { undefined: rest, ...patts } = _.groupBy(sorter)(r); // without TS
+    let grouped = _.groupBy(sorter)(r);
+    let rest = grouped.undefined;
+    let patts = _.omit('undefined')(grouped);
+    return { rest, patts };
+  };
+}

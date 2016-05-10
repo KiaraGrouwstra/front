@@ -1,5 +1,5 @@
 let Phoenix = require('phoenix-js-derp');
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
 // ^ this is an old version of BehaviorSubject, and should be replaced with the following, it it can pass:
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 // using the old version can result in `n timer(s) still in the queue` errors!
@@ -21,7 +21,7 @@ export class WsService {
     public chan_name: string,
   ) {}
 
-  connect() {
+  connect(): void {
     let logger = (kind, msg, data) => {}; // console.log(`${kind}: ${msg}`, data)
     // this.ws = new Phoenix.Socket(this.url, {logger});
     let Socket = Phoenix.Socket;
@@ -36,8 +36,7 @@ export class WsService {
     this.chan.on('msg', e => this.out.next(e));
   }
 
-  //url: string, pars: {}
-  ask_many(url, pars = {}) {
+  ask_many(url: string, pars = {}): Observable {
     let id = this.id++;
     this.chan.push(url, {body: pars, id});
     return this.out
@@ -51,7 +50,7 @@ export class WsService {
   // (trying this server-sided would suck too due to having to guarantee order of client reception.)
 
   // request that completes after n responses
-  ask(url, pars = {}, n = 1) {
+  ask(url: string, pars = {}, n = 1): Observable {
     return this.ask_many(url, pars).take(n);
   }
 

@@ -7,7 +7,7 @@ import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
 let $RefParser = require('json-schema-ref-parser');
 
-export let load_ui = tryLog(async function(name) {
+export let load_ui = tryLog(async function(name: string) {
   this.api = name;
 
   let api = await (
@@ -57,15 +57,15 @@ export let load_ui = tryLog(async function(name) {
 })
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
-export let pick_fn = tryLog(function(fn_path) {
+export let pick_fn = tryLog(function(fn_path: string) {
   this.raw = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
   this.path = ['paths', fn_path, 'get', 'responses', '200'];
 });
 
-let submit_req = function(fn) {
-  return tryLog(function(v) {
+function submit_req(fn: Front.Submitter): Front.Submitter {
+  return tryLog(function(v: any) {
     // if(v.constructor == Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
@@ -104,7 +104,7 @@ let submit_req = function(fn) {
 }
 
 // handle emit api input_ui
-export let req_url = submit_req(function(v) {
+export let req_url: Front.Submitter = submit_req(function(v: any) {
   let { urls } = v;
   return {
     obs: this._req.addUrl(v).map(x => JSON.parse(x)),
@@ -116,7 +116,7 @@ export let req_url = submit_req(function(v) {
 });
 
 // handle scrape form submit
-export let extract_url = submit_req(function(v) {
+export let extract_url: Front.Submitter = submit_req(function(v: any) {
   let json = JSON.stringify(v.parselet);
   let { urls } = v;
   return {
@@ -128,7 +128,7 @@ export let extract_url = submit_req(function(v) {
 });
 
 // handle curl form submit
-export let doCurl = submit_req(function(v) {
+export let doCurl: Front.Submitter = submit_req(function(v: any) {
   let { curl } = v;
   return {
     obs: this._req.toCurl(curl),

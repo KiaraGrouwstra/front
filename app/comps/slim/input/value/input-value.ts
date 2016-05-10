@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, AbstractControl } from '@angular/common';
 import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../../comps';
 // import { FieldComp } from '../field/input-field';
 // import { InputArrayComp } from '../array/input-array';
@@ -13,7 +13,6 @@ const ofs = ['anyOf','oneOf','allOf'];
 
 @Component({
   selector: 'input-value',
-  inputs: ['path', 'spec', 'named', 'ctrl'],  //, 'name'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-value.jade'),
   directives: [
@@ -26,20 +25,31 @@ const ofs = ['anyOf','oneOf','allOf'];
   ]
 })
 export class InputValueComp {
+  @Input() path: Front.Path;
+  @Input() spec: Front.Spec;
+  @Input() named: boolean;
+  @Input() ctrl: AbstractControl;
+  _path: Front.Path;
+  _spec: Front.Spec;
+  _named: boolean;
+  _ctrl: AbstractControl;
+  type: string;
+
+  // @Input() name: string;
   @ViewChild(FieldComp) f: FieldComp;
   @ViewChild(InputArrayComp) a: InputArrayComp;
   // @ViewChild(InputObjectComp) o: InputObjectComp;
-  @ViewChild(InputStructComp) o: InputStructCompInputStructComp;
+  @ViewChild(InputStructComp) o: InputStructComp;
   @ViewChild(InputTableComp) t: InputTableComp;
 
   constructor(
     public cdr: ChangeDetectorRef,
   ) {}
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.type = x.type;

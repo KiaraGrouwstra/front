@@ -1,24 +1,25 @@
 let _ = require('lodash/fp');
 import { allUsed, uniqueKeys } from '../input';
 import { Validators, AbstractControl } from '@angular/common';
+import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlList } from './control_list';
 
-export class ControlObject extends ControlList {
+export class ControlObject<T extends AbstractControl> extends ControlList<T> {
   constructor(
-    factory,
-    allOf = [],
-    vldtr = null,
+    factory: () => T, //Front.CtrlFactory
+    // allOf: null = [],
+    vldtr: ValidatorFn = null,
   ) { //: AbstractControl, : AbstractControl[]
     let lens = (fn) => y => y.controls.map(fn);
     let validator = Validators.compose([
       uniqueKeys(    lens(y => y.value.name)),
-      allUsed(allOf, lens(y => y.controls.val)),
+      // allUsed(allOf, lens(y => y.controls.val)),
       vldtr,
     ]);
-    super(factory, allOf, validator);
+    super(factory, validator);  //, allOf
   }
 
-  _updateValue() {
+  _updateValue(): void {
     this._value = _.fromPairs(this.controls.map(c => [c.value.name, c.value.val]));
   }
 

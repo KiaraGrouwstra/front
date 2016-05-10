@@ -1,3 +1,4 @@
+let _ = require('lodash/fp');
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, forwardRef } from '@angular/core';
 import { COMMON_DIRECTIVES } from '@angular/common';
 import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
@@ -5,7 +6,6 @@ import { FormComp } from '../../comps';
 
 @Component({
   selector: 'input-ui',
-  inputs: ['spec', 'fn_path', 'token'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<input-form [inputs]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
   directives: [
@@ -16,24 +16,35 @@ import { FormComp } from '../../comps';
 })
 export class InputUiComp {
   @Output() handler = new EventEmitter(false);
+  @Input() spec: Front.Spec;
+  @Input() fn_path: string;
+  @Input() token: string;
+  _spec: Front.Spec;
+  _fn_path: string;
+  _token: string;
   @ViewChild(FormComp) form: FormComp;
   desc = '';
+  pars: Front.IPathSpec[];
 
-  get spec() { return this._spec; }
-  set spec(x) {
+  get spec(): Front.Spec {
+    return this._spec;
+  }
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.combInputs();
   }
 
-  get fn_path() { return this._fn_path; }
-  set fn_path(x) {
+  get fn_path(): string {
+    return this._fn_path;
+  }
+  set fn_path(x: string) {
     if(_.isUndefined(x)) return;
     this._fn_path = x;
     this.combInputs();
   }
 
-  combInputs = () => combine((spec, fn_path) => {
+  combInputs = () => combine((spec: Front.Spec, fn_path: string) => {
     // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
     let obj = method_pars(spec, fn_path);
     this.pars = obj.pars;
@@ -41,7 +52,7 @@ export class InputUiComp {
   })(this.spec, this.fn_path);
 
   // submit param inputs for an API function
-  submit(form_val) {
+  submit(form_val: {}): void {
     if(form_val.constructor == Event) return;
     // why is the EventEmitter first yielding an Event?
     let kind_map = Object.assign(...this.pars.map(x => ({ [x.spec.name]: x.spec.in }) ));

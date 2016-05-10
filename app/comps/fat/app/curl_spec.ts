@@ -1,4 +1,4 @@
-export let curl_spec = [{
+export let curl_spec: Front.Spec[] = [{
   name: 'curl',
   type: 'string',
   required: true,

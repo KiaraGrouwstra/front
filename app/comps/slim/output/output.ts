@@ -5,11 +5,11 @@ let validUrl = require('valid-url');
 import { validate } from '../input/validators';
 
 // infer the type for a value lacking a spec
-export let infer_type = (v) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
+export let infer_type = (v: any) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
 
 // for a spec using `*Of` try its different options to see if any one is valid for the given data
 // (which seems fair for `oneOf` but blatantly disregards `allOf` and to lesser extent `anyOf`)
-export let try_schema = (val, spec) => {
+export let try_schema = (val: any, spec: Front.Spec) => {
   let options = _.get(['oneOf'], spec) || _.get(['anyOf'], spec) || _.get(['allOf'], spec) || [];
   let tp = _.find((schema, idx, arr) => validate(val, schema), options);
   return _.has(['type'], tp) ? tp :
@@ -18,7 +18,7 @@ export let try_schema = (val, spec) => {
 }
 
 // meant to use without makeTemplate
-export function parseScalar(path, api_spec, schema) {
+export function parseScalar(path: Front.Path, api_spec: {}, schema: Front.Spec): string {
   let val = `${api_spec}`;
   // if(Array_last(path) == "description") {
   let last = path[path.length-1];   // [] breaks .path...

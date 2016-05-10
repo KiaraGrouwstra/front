@@ -1,17 +1,15 @@
 let _ = require('lodash/fp');
-import { ControlGroup, Validators } from '@angular/common'; //, Control, ControlArray, AbstractControl
+import { ControlGroup, Validators, AbstractControl } from '@angular/common';
+import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlObject } from './control_object';
 import { allUsed, uniqueKeys, input_control, getOptsNameSpecs } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
 export class ControlStruct extends ControlGroup {
+  factStruct: Front.IObjectSpec<number>;
+  mapping: {[key: string]: AbstractControl};
 
-  constructor(
-    factStruct, //public
-    allOf = [],
-    required = [],
-    vldtr = null,
-  ) {
+  constructor(factStruct: Front.IObjectSpec<number>, required: string[] = [], vldtr: ValidatorFn = null) {
     mapping = {};
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
     // KvPair: ControlGroup<k,v>
@@ -42,7 +40,7 @@ export class ControlStruct extends ControlGroup {
 
     let validator = Validators.compose([
       uniqueKeys(lens(y => y.value.name, _.keys)),
-      allUsed(allOf, lens(y => y.controls.val, Object.values)),
+      // allUsed(allOf, lens(y => y.controls.val, Object.values)),
       vldtr,
     ]);
     super(controls, {}, validator);
@@ -50,13 +48,13 @@ export class ControlStruct extends ControlGroup {
     this.mapping = _.clone(controls.properties.controls);
   }
 
-  _updateValue() {
+  _updateValue(): void {
     let { properties: prop, patternProperties: patt, additionalProperties: add } = this.controls;
     // this._value = _.assign(prop.value, ...Object.values(patt.value), add.value); // FP only does two args
     this._value = Object.assign({}, prop.value, ...Object.values(patt.value), add.value);
   }
 
-  addProperty(k) {
+  addProperty(k: string): void {
     let ctrl = this.factStruct.properties[k]();
     this.controls.properties.addControl(k, ctrl);
     this.controls.properties._updateValue();
@@ -64,48 +62,48 @@ export class ControlStruct extends ControlGroup {
     this.add(k, ctrl);
   }
 
-  removeProperty(k) {
+  removeProperty(k: string): void {
     this.controls.properties.removeControl(k);
     this.controls.properties._updateValue();
     this._updateValue();
     this.remove(k);
   }
 
-  addPatternProperty(patt, k) {
+  addPatternProperty(patt: string, k: string): void {
     let ctrl = this.controls.patternProperties.controls[patt].add();
     ctrl.controls.name.updateValue(k);
     this.add(k, ctrl.controls.val);
   }
 
-  removePatternProperty(patt, i) {
+  removePatternProperty(patt: string, i: number): void {
     let pattCtrl = this.controls.patternProperties.controls[patt];
     let name = pattCtrl.at(i).controls.name.value;
     pattCtrl.removeAt(i);
     this.remove(name);
   }
 
-  addAdditionalProperty(k) {
+  addAdditionalProperty(k: string): void {
     let ctrl = this.controls.additionalProperties.add();
     ctrl.controls.name.updateValue(k);
     this.add(k, ctrl.controls.val);
   }
 
-  removeAdditionalProperty(i) {
+  removeAdditionalProperty(i: number): void {
     let addCtrl = this.controls.additionalProperties;
     let name = addCtrl.at(i).controls.name.value;
     addCtrl.removeAt(i);
     this.remove(name);
   }
 
-  add(k, v) {
+  add(k: string, v: any): void {
     this.mapping = _.set([k], v)(this.mapping);
   }
 
-  remove(k) {
+  remove(k: string): void {
     this.mapping = _.omit([k])(this.mapping);
   }
 
-  find(k) {
+  find(k: string): void {
     return this.mapping[k];
   }
 

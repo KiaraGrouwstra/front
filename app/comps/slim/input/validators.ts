@@ -1,10 +1,11 @@
 let _ = require('lodash/fp');
 import { Validators } from '@angular/common';
+import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { arr2obj, mapBoth } from '../../lib/js';
 
 // tv4: https://github.com/geraintluff/tv4
 // json-editor: https://github.com/jdorn/json-editor/blob/master/src/validator.js
-const val_conds = {
+const val_conds: {[key: string]: (v: any, par: any) => boolean} = {
   // schema: (v, par) => (v, par),
   // collectionFormat: (v, par) => (v, par),
   required: (v, par) => v.length, // assumes string?
@@ -35,13 +36,13 @@ const val_conds = {
   format: (v, par) => validateFormat(v, par),
 };
 
-function isNBit(n) {
+function isNBit(n: number): boolean {
   let x = Math.pow(2,n-1);
   return _.inRange(-x, x-1);
 }
 
 // [ajv](https://github.com/epoberezkin/ajv/blob/master/lib/compile/formats.js)
-let validateFormat = (val, format) => {
+let validateFormat = (val: any, format: string) => {
   const formatMap = {
     // [json-schema](https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-7)
     'date-time': v => !isNaN(Date.parse(v)),
@@ -86,8 +87,7 @@ let validateFormat = (val, format) => {
   //        'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'
 }
 
-
-export const validate = (v, spec) => _.every(k => {
+export const validate = (v: any, spec: Front.Spec): boolean => _.every(k => {
   let fn = val_conds[k];
   return fn ? fn(v, spec[k], spec) : true;
 })(_.keys(spec))
@@ -96,11 +96,12 @@ export const validate = (v, spec) => _.every(k => {
 // should filter on value applied to; only works if the spec limits it to 1 `type`.
 // solution: both filter by spec-type and do run-time checks (pass if wrong type) in validators?
 
-const val_fns = mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
+const val_fns: {[key: string]: (par: any) => ValidatorFn} =
+  mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
 // ... _.keys(val_conds).map((k) => ... val_conds[k] ...
 // const ng_validators = _.assign(Validators, val_fns);
 
-function matchesType(val, type) {
+function matchesType(val: any, type: string): boolean {
   const mapping = {
     array: _.isArray,
     object: _.isPlainObject,
@@ -127,7 +128,7 @@ function matchesType(val, type) {
 // [tests](https://github.com/jdorn/json-editor/blob/master/tests/validation.html)
 // includes: dependencies, definitions, $ref, custom
 // [z-schema](https://github.com/zaggino/z-schema/blob/master/src/Errors.js)
-export const val_errors = {
+export const val_errors: {[key: string]: (x: any) => (v: any) => string} = {
   required: x => v => `This field is required.`,
   maximum: x => v => `Must not be more than ${x}.`,
   exclusiveMaximum: x => v => `Must be less than ${x}.`,
@@ -168,10 +169,10 @@ export const val_errors = {
   format: x => v => `Should match format '${x}'.`,
 };
 
-export const val_keys = _.keys(val_errors);
+export const val_keys: string[] = _.keys(val_errors);
 
 // prepare the form control validators
-export let get_validator = (spec) => {
+export function get_validator(spec: Front.Spec): ValidatorFn {
   const ofs = ['anyOf','oneOf','allOf'];
   let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validator(opt));
   let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));

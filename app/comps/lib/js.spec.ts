@@ -109,8 +109,12 @@ describe('js', () => {
     let cls = class tmp {
       get a() { return this._a; }
       get b() { return this._b; }
-      set a(x) { this._a = x; this.combInputs(); }
-      set b(x) { this._b = x; this.combInputs(); }
+      set a(x) {
+        this._a = x; this.combInputs();
+      }
+      set b(x) {
+        this._b = x; this.combInputs();
+      }
       combInputs = () => combine((a, b) => {
         this.c = a + b;
       })(this.a, this.b);
@@ -125,8 +129,12 @@ describe('js', () => {
     let cls = class tmp {
       get a() { return this._a; }
       get b() { return this._b; }
-      set a(x) { this._a = x; this.combInputs(); }
-      set b(x) { this._b = x; this.combInputs(); }
+      set a(x) {
+        this._a = x; this.combInputs();
+      }
+      set b(x) {
+        this._b = x; this.combInputs();
+      }
       combInputs = () => combine((a, b) => {
         this.c = a + b;
       }, { b: true })(this.a, this.b);

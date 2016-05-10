@@ -1,13 +1,12 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
-
+import { ControlList } from '../controls/control_list';
 
 @Component({
   selector: 'input-array',
-  inputs: ['named', 'path', 'spec', 'ctrl'],  //ctrl is expected to be a ControlList seeded with a Control
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-array.jade'),
   directives: [
@@ -16,11 +15,22 @@ import { getPaths } from '../../slim';
   ]
 })
 export class InputArrayComp {
+  @Input() named: boolean;
+  @Input() path: Front.Path;
+  @Input() spec: Front.Spec;
+  @Input() ctrl: ControlList<Control>;
+  _named: boolean;
+  _path: Front.Path;
+  _spec: Front.Spec;
+  _ctrl: ControlList<Control>;
   option = null;
   k: string;
   id: string;
   counter = 0;
   items = new Set([]);
+  indexBased: boolean;
+  inAdditional: boolean;
+  isOneOf: boolean;
 
   ngOnInit() {
     let props = getPaths(this.path);
@@ -30,10 +40,10 @@ export class InputArrayComp {
     // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
   }
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.indexBased = _.isArray(_.get(['items'], x));
@@ -42,23 +52,23 @@ export class InputArrayComp {
     // window.setTimeout(() => $('select').material_select(), 300);
   }
 
-  getSpec(idx) {
+  getSpec(idx: number): Front.Spec {
     let spec = this.spec;
     return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
   }
 
-  resolveSpec(idx) {
+  resolveSpec(idx: number): Front.Spec {
     let opt = this.option;
     let spec = this.getSpec(idx);
     return !this.isOneOf ? spec : spec.oneOf[opt];
   }
 
-  add() {
+  add(): void {
     this.items.add(this.counter++);
     this.ctrl.add();
   }
 
-  remove(item, i) {
+  remove(item: string, i: number): void {
     let idx = _.findIndex(y => y == item)(Array.from(this.items));
     this.ctrl.removeAt(idx);
     this.items.delete(item);

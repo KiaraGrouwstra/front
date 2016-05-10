@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Component, Input, Output, forwardRef, ChangeDetectionStrategy, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, Control } from '@angular/common';
 let marked = require('marked');
 import { input_attrs, get_template } from '../input';
 import { val_errors, val_keys } from '../validators';
@@ -18,7 +18,6 @@ import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 
 @Component({
   selector: 'input-field',
-  inputs: ['named', 'path', 'spec', 'ctrl'],  //, 'name'
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-field.jade'),
   directives: [
@@ -39,11 +38,24 @@ export class FieldComp {
   // type: Observable<string>;
   option = null;
   @Output() changes = new EventEmitter(false);
+  @Input() named: boolean;
+  @Input() path: Front.Path;
+  @Input() spec: Front.Spec;
+  @Input() ctrl: Control;
+  _named: boolean;
+  _path: Front.Path;
+  _spec: Front.Spec;
+  _ctrl: Control;
   @ViewChild(InputComp) i: InputComp;
   k: string;
   id: string;
-  attrs;
-  type;
+  attrs: Front.IAttributes;
+  type: string;
+  of: string; // that enum?
+  hidden: boolean;
+  label: string;
+  validator_keys: string[];
+  validator_msgs: {[key: string]: (any) => string};
 
   constructor(
     public cdr: ChangeDetectorRef,
@@ -62,10 +74,10 @@ export class FieldComp {
     this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });
   }
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     const ofs = ['anyOf','oneOf','allOf'];
@@ -80,11 +92,11 @@ export class FieldComp {
     this.validator_msgs = arr2obj(this.validator_keys, k => val_errors[k](spec[k]));
   }
 
-  showError(vldtr) {
+  showError(vldtr: string): string {
     return (this.ctrl.errors||{})[vldtr];
   }
 
-  resolveSpec() {
+  resolveSpec(): Front.Spec {
     return this.spec[this.of][this.option];
   }
 

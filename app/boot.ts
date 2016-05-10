@@ -1,3 +1,6 @@
+/// <reference path='../typings.d.ts'/>
+/// <reference path='../typings/tsd.d.ts'/>
+
 require('./styles');
 import 'babel-core/register';
 import 'babel-polyfill';

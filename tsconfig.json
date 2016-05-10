@@ -22,7 +22,27 @@
     "genDir": "./codegen"
   },
   "files": [
+    "typings/node.es6imports.d.ts",
+    "typings/webpack.d.ts",
+    "typings/browser.d.ts",
+    "typings/main.d.ts",
+    "typings/main/definitions/lodash/index.d.ts",
+    "typings/browser/definitions/lodash/index.d.ts",
+    "typings/es6-promise/es6-promise.d.ts",
+    "typings/jasmine/jasmine.d.ts",
+    "typings/jquery/jquery.d.ts",
+    "typings/rx/rx-lite.d.ts",
+    "typings/rx/rx.d.ts",
+    "typings/angular2/angular2.d.ts",
+    "typings/angular2/http-2.0.0-alpha.39.d.ts",
+    "typings/angular2/router-2.0.0-alpha.39.d.ts",
+    "typings/angular2/test_lib-2.0.0-alpha.39.d.ts",
+    "typings/schema.d.ts",
+    "typings/hyper-schema.d.ts",
+    "typings/openapi.d.ts",
+    "typings/ng2.d.ts",
     "typings/tsd.d.ts",
+    "./typings.d.ts",
     "./app/boot.ts"
   ]
 }

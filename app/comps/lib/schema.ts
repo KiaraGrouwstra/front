@@ -1,10 +1,15 @@
 let _ = require('lodash/fp');
 import { arr2obj, mapBoth } from './js';
 
-// generate a schema for a given value
-export let getRootSchema = (v, settings = {}) => _.assign(getSchema(v, settings), { '$schema': 'http://json-schema.org/draft-04/schema#' });
+// generate a schema for a given value, with root stuff added
+export function getRootSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Spec {
+  return _.assign(getSchema(v, settings), {
+    '$schema': 'http://json-schema.org/draft-04/schema#',
+  });
+}
 
-export let getSchema = (v, settings = {}) => {
+// generate a schema for a given value
+export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Spec {
   let type = getType(v);
   let schema = { type };
   if (_.isArray(v)) {
@@ -55,19 +60,31 @@ export let getSchema = (v, settings = {}) => {
   return schema;
 };
 
-let getType = (v) => _.isArray(v) ? 'array' : _.isObject(v) ? 'object' : _.isNumber(v) ? (_.isInteger(v) ? 'integer' : 'number') : _.isString(v) ? 'string' : _.isNull(v) ? 'null' : _.isBoolean(v) ? 'boolean' : 'any';
+// enum JSON_SCHEMA_TYPES {};
 
-let checkSym = (lambda, fallback = ([a,b]) => undefined) => ([a, b], [acc, val]) => {
-  let symm;
-  symm = lambda([a, b], [acc, val]);
-  if (!_.isUndefined(symm)) return symm;
-  symm = lambda([b, a], [val, acc]);
-  if (!_.isUndefined(symm)) return symm;
-  let def = fallback([a, b], [acc, val]);
-  return def;
-};
+// get a json-schema string representation of the type of a value
+function getType(v: any): string {
+  return _.isArray(v) ? 'array' : _.isObject(v) ? 'object' : _.isNumber(v) ? (_.isInteger(v) ? 'integer' : 'number') : _.isString(v) ? 'string' : _.isNull(v) ? 'null' : _.isBoolean(v) ? 'boolean' : 'any';
+}
 
-let checkAdditional = checkSym(
+// check a symmetric condition to merge two specs, with an asymmetric tie-breaker as fallback.
+function checkSym(
+  lambda: Front.ValSpecMergeFn,
+  fallback: Front.ValSpecMergeFn = ([a,b]) => undefined,
+): Front.ValSpecMergeFn {
+  return ([a, b], [acc, val]) => {
+    let symm;
+    symm = lambda([a, b], [acc, val]);
+    if (!_.isUndefined(symm)) return symm;
+    symm = lambda([b, a], [val, acc]);
+    if (!_.isUndefined(symm)) return symm;
+    let def = fallback([a, b], [acc, val]);
+    return def;
+  };
+}
+
+// merge `additionalProperties` of two specs
+let checkAdditional: Front.ValSpecMergeFn = checkSym(
   ([x, y]) => {
     if (x == true) return true;
     if (x == false) return y;
@@ -75,11 +92,18 @@ let checkAdditional = checkSym(
   }
 );
 
-let min = ([a,b]) => (a && b) ? _.min([a,b]) : undefined;
+// take the less strict (lower) maximum value out of two
+function min([a, b]: number[]): number {
+  return (a && b) ? _.min([a,b]) : undefined;
+}
 
-let max = ([a,b]) => (a && b) ? _.max([a,b]) : undefined;
+// take the less strict (higher) minimum value out of two
+function max([a, b]: number[]): number {
+  return (a && b) ? _.max([a,b]) : undefined;
+}
 
-let checkProperties = ([a,b]) => {
+// merge all keys of two specs (for `properties` and `patternProperties`)
+function checkProperties([a, b]: Front.Spec[]): Front.Spec {
   if (a && b) {
     let keys = _.uniq([..._.keys(a), ..._.keys(a)]);
     let pairs = arr2obj(keys, k => [a[k], b[k]]);
@@ -90,9 +114,10 @@ let checkProperties = ([a,b]) => {
   }
 }
 
-let typeSpec = (type, obj) => {
+// get the applicable specifications for a given type from a schema
+function typeSpec(type: string, obj: Front.Spec): Front.Spec {
   let schema = { type };
-  let props = {
+  const props = {
     integer:
       ['maximum','minimum','exclusiveMaximum','exclusiveMinimum'], //'multipleOf',
     number:
@@ -114,7 +139,8 @@ let typeSpec = (type, obj) => {
   return schema;
 };
 
-export let mergeSchemas = (acc, val) => {
+// merge two schemas into one, i.e. for each key go with the less strict spec.
+export function mergeSchemas(acc: Front.Spec, val: Front.Spec): Front.Spec {
   if(!val) return acc;
   if(!acc) return val;
   // let mapped = mapBoth(mergers, (fn, k) => fn([acc[k], val[k]], [acc, val]));
@@ -126,7 +152,8 @@ export let mergeSchemas = (acc, val) => {
 // let gcd = (a, b) => !b ? a : gcd(b, a % b);
 // let gcd = (a, b) => !a ? a : !b ? b : gcd(b, a % b);
 
-let mergers = {
+// for each key in a schema specify how to merge specs, i.e. how to select the less strict spec.
+const mergers = {
   // NUMBERS:
   // multipleOf: ([a, b]) => gcd(a, b),
   maximum: max,
@@ -214,10 +241,11 @@ let mergers = {
   ),
 };
 
-let max_num = Number.MAX_VALUE;
-let min_num = Number.MIN_VALUE;
+const max_num = Number.MAX_VALUE;
+const min_num = Number.MIN_VALUE;
 
-let strictest = {
+// for each key in a schema specify the strictest value, i.e. the defaults to start from
+const strictest = {
   // NUMBERS:
   // multipleOf: max_num,
   maximum: min_num,

@@ -4,7 +4,7 @@
   .card-content
     p.card-title(*ngIf='named') {{k}}
     a.btn.waves-effect.waves-light.clear-btn.yellow(
-      '[ngClass]'=`{ 'disabled': !sortedCols.length }`
+      '[ngClass]'=`{ 'disabled': !sortedCols?.length }`
       '(click)'=`clearSorts()`
     )
       | clear sort
@@ -19,7 +19,7 @@
     )
       | clear formatting
     a.btn.waves-effect.waves-light.clear-btn.teal(
-      '[ngClass]'=`{ 'disabled': !filterKeys.length }`
+      '[ngClass]'=`{ 'disabled': !filterKeys?.length }`
       '(click)'=`clearFilters()`
     )
       | clear filters

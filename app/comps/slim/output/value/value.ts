@@ -7,12 +7,10 @@ import { infer_type, try_schema } from '../output'
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from '@angular/router';
 import { combine } from '../../../lib/js';
 
-let inputs = ['path', 'val', 'schema', 'named'];
-// 'named' provided solely because of work-around to [7084](https://github.com/angular/angular/issues/7084) in Object
+type Val = Array<Object>;
 
 @Component({
   selector: 'value',
-  inputs,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./value.jade'),
   // template: `<router-outlet></router-outlet>`,
@@ -31,34 +29,51 @@ let inputs = ['path', 'val', 'schema', 'named'];
 //   {path:'/:id', name: 'CrisisDetail', component: CrisisDetailComponent}
 // ])
 export class ValueComp {
+  @Input() path: Front.Path;
+  @Input() val: Val;
+  @Input() schema: Front.Spec;
+  @Input() named: boolean;
+  _path: Front.Path;
+  _val: Val;
+  _schema: Front.Spec;
+  _named: boolean;
+  // 'named' provided solely because of work-around to [7084](https://github.com/angular/angular/issues/7084) in Object
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
   @ViewChild(ScalarComp) scalar: ScalarComp;
+  new_spec: Front.Spec;
+  type: string;
 
   // type: Observable<string>;
   // new_spec$: Observable<any>;
 
-  // get path() { return this._path; }
-  // set path(x) {
+  // get path(): Front.Path {
+  //   return this._path;
+  // }
+  // set path(x: Front.Path) {
   //   this._path = x;
   //   this.combInputs();
   // }
 
-  get val() { return this._val; }
-  set val(x) {
+  get val(): Val {
+    return this._val;
+  }
+  set val(x: Val) {
     if(_.isUndefined(x)) return;
     this._val = x;
     this.combInputs();
   }
 
-  get schema() { return this._schema; }
-  set schema(x) {
+  get schema(): Front.Spec {
+    return this._schema;
+  }
+  set schema(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._schema = x;
     this.combInputs();
   }
 
-  combInputs = () => combine((val, schema) => {
+  combInputs = () => combine((val: any, schema: Front.Spec) => {
     this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
     this.type = _.get(['type'], schema) || infer_type(val);
     // ^ handles anyOf/oneOf/allOf as well; good.

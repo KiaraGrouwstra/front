@@ -1,7 +1,7 @@
 #index-banner.section.no-pad-bot
   .container(style='width: 90%;')
     #floating-buttons
-      - bool = { val: '(ws.connected$ | async)', ok: 'connected', ng: 'connecting...' }
+      - bool = { val: '(_ws.connected$ | async)', ok: 'connected', ng: 'connecting...' }
       include ./bool.jade
 
     .row

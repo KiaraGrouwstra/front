@@ -18,7 +18,7 @@ let selector = {
 };
 
 // TODO: update so as to incorporate nesting
-export let scrape_spec = [
+export let scrape_spec: Front.Spec[] = [
   {
     name: 'url',
     type: 'string',

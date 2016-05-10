@@ -17,7 +17,7 @@ describe('RequestService', () => {
       provide(APP_CONFIG, { useValue: CONFIG }),
     ]);
     req = injector.get(RequestService);
-    spyOn(req.ws.chan, 'push');
+    spyOn(req._ws.chan, 'push');
   })
 
   // it('should test', () => {
@@ -29,7 +29,7 @@ describe('RequestService', () => {
   });
 
   it('should not call functions by itself', () => {
-    expect(req.ws.chan.push).not.toHaveBeenCalled();
+    expect(req._ws.chan.push).not.toHaveBeenCalled();
   })
 
   it('addUrl', () => {
@@ -38,14 +38,14 @@ describe('RequestService', () => {
     let headers = [];
     let body = {};
     req.addUrl({ urls, headers, verb, body });
-    expect(req.ws.chan.push).toHaveBeenCalledWith('/urls', { body: { urls, headers, verb, body }, id: 0 });
+    expect(req._ws.chan.push).toHaveBeenCalledWith('/urls', { body: { urls, headers, verb, body }, id: 0 });
   })
 
   it('parsley', () => {
     let urls = 'https://baidu.com/';
     let parselet = '{}';
     req.parsley(urls, parselet);
-    expect(req.ws.chan.push).toHaveBeenCalledWith('/parse', { body: {urls, parselet}, id: 0 });
+    expect(req._ws.chan.push).toHaveBeenCalledWith('/parse', { body: {urls, parselet}, id: 0 });
   })
 
   it('toCurl', () => {
@@ -53,7 +53,7 @@ describe('RequestService', () => {
     req.toCurl(curl);
     let urls = 'url';
     let headers = { a: 'b' };
-    expect(req.ws.chan.push).toHaveBeenCalledWith('/check', { body: {urls, headers}, id: 0 });
+    expect(req._ws.chan.push).toHaveBeenCalledWith('/check', { body: {urls, headers}, id: 0 });
   })
 
 })

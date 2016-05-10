@@ -1,3 +1,4 @@
+let _ = require('lodash/fp');
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'; //, forwardRef
 import { COMMON_DIRECTIVES } from '@angular/common';
 import { arr2obj, combine } from '../../lib/js';
@@ -5,36 +6,53 @@ let marked = require('marked');
 
 @Component({
   selector: 'fn-ui',
-  inputs: ['spec', 'oauth_sec', 'have'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./fn_ui.jade'),
   directives: [COMMON_DIRECTIVES],
 })
 export class FnUiComp {
   @Output() handler = new EventEmitter(false);
+  @Input() spec: Front.Spec;
+  @Input() oauth_sec: string;
+  @Input() have: string[];
+  _spec: Front.Spec;
+  _oauth_sec: string;
+  _have: string[];
+  tags: swagger_io.v2.Schemajson.tags;
+  tag_paths: {[key: string]: string[]};
+  descs: string[];
+  have_scopes: {[key: string]: boolean};
+  path_tooltips: {[key: string]: string};
+  has_usable: {[key: string]: boolean};
 
-  get spec() { return this._spec; }
-  set spec(x) {
+  get spec(): Front.Spec {
+    return this._spec;
+  }
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.combInputs();
   }
 
-  get oauth_sec() { return this._oauth_sec; }
-  set oauth_sec(x) {
+  get oauth_sec(): string {
+    return this._oauth_sec;
+  }
+  set oauth_sec(x: string) {
     if(_.isUndefined(x)) return;
     this._oauth_sec = x;
     this.combInputs();
   }
 
-  get have() { return this._have; }
-  set have(x) {
+  get have(): string[] {
+    return this._have;
+  }
+  set have(x: string[]) {
     if(_.isUndefined(x)) return;
     this._have = x;
     this.combInputs();
   }
 
-  combInputs = () => combine((spec, oauth_sec, have) => {
+  combInputs = () => combine((spec: Front.Spec, oauth_sec: string, have: string[]) => {
     this.tags = _.get(['tags'], spec) || [];
     let paths = _.get(['paths'], spec) || {};
     let misc_key;
@@ -48,7 +66,7 @@ export class FnUiComp {
     } else {
       this.tags = [];
       misc_key = 'functions';
-      this.tag_paths = {[misc_key]: _.keys(paths)}
+      this.tag_paths = {[misc_key]: _.keys(paths)};
     }
     this.tags.push({ name: misc_key });
 

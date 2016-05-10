@@ -24,7 +24,10 @@ const setMethod = {
 // setText, invokeElementMethod, listen, listenGlobal
 // this._el.style.backgroundColor = color;
 
-let keyMethod = (registry, elName, k) => setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
+// return a string key of the method to set the given key for the element in question
+function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string): string {
+  return setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
+}
 
 // set multiple properties/attributes from an object without knowing which is which.
 // TODO: use `Differ`s to improve performance; see [NgClass](https://github.com/angular/angular/blob/master/modules/%40angular/common/src/directives/ng_class.ts)
@@ -35,6 +38,7 @@ let keyMethod = (registry, elName, k) => setMethod[registry.hasProperty(elName, 
   inputs: ['attributes: setAttrs'],
 })
 export class SetAttrs {
+  _el: HTMLElement;
   constructor(
     private _elRef: ElementRef,
     private _renderer: Renderer,
@@ -51,7 +55,10 @@ export class SetAttrs {
   }
 }
 
-let evalInView = (str: string, view: ViewContainer) => evalExpr(view._element.parentView.context)(str);
+// eval an expression within the context of a ViewContainer
+function evalInView(str: string, view: ViewContainerRef): any {
+  return evalExpr(view._element.parentView.context)(str);
+}
 
 // dynamically bind things: properties, attributes //, styles, classes, directives
 // intended as a `[[prop]]="evalStr"`, if now `[dynamicAttrs]="{ prop: evalStr }"`
@@ -66,6 +73,7 @@ let evalInView = (str: string, view: ViewContainer) => evalExpr(view._element.pa
   inputs: ['attributes: dynamicAttrs'],
 })
 export class DynamicAttrs {
+  _el: HTMLElement;
   constructor(
     private _elRef: ElementRef,
     private _renderer: Renderer,
@@ -90,6 +98,7 @@ export class DynamicAttrs {
   inputs: ['attributes: dynamicStyle'],
 })
 export class DynamicStyle {
+  _el: HTMLElement;
   constructor(
     private _elRef: ElementRef,
     private _renderer: Renderer,
@@ -110,6 +119,7 @@ export class DynamicStyle {
   inputs: ['attributes: dynamicClass'],
 })
 export class DynamicClass {
+  _el: HTMLElement;
   constructor(
     private _elRef: ElementRef,
     private _renderer: Renderer,
@@ -131,6 +141,7 @@ export class DynamicClass {
   inputs: ['localVariable: assignLocal'],
 })
 export class AssignLocal {
+  _el: HTMLElement;
   constructor(
     private _viewContainer: ViewContainerRef,
   ) {}

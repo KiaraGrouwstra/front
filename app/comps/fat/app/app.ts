@@ -15,13 +15,13 @@ import { Http } from '@angular/http'; //Headers
 // global.ng = require('@angular/core');
 let _ = require('lodash/fp');
 // let Immutable = require('immutable');
-global.Immutable = require('immutable');
+// global.Immutable = require('immutable');
 // import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { MarkedPipe } from '../../lib/pipes';
-import { APP_CONFIG, Config } from '../../../config';
+import { APP_CONFIG } from '../../../config';
 import { WsService } from '../../services/ws/ws';
 import { RequestService } from '../../services/request/request';
-import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
+import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs, Front.IPathSpec } from '../../lib/js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../../comps';
 import { curl_spec } from './curl_spec';
@@ -45,30 +45,38 @@ export class App {
   @ViewChild(InputUiComp) input_ui: InputUiComp;
   @ViewChild('curl_form') curl_form: FormComp;
   @ViewChild('scrape_form') scrape_form: FormComp;
-
   // @ViewChild('web') web_form; //: ElementRef
   // @ViewChild('curl') curl_form; //: ElementRef
   auto_meat = true;
   keep_metadata = false;
   meat_opts = [];
   meat_str_opts = [];
+  _meat: string[];
   meat = [];
   auths = {};
+  _data: Front.Data[];
+  _raw: Front.Data[];
   raw = { test: 'lol' };
   apis = ['instagram', 'github', 'ganalytics'];
+  _spec: Front.Spec;
   spec = {};
+  _path: Front.Path;
   path = ['test'];
-  curl;
-  scrape_spec;
+  curl: Array<Front.IPathSpec>;
+  scrape_spec: Array<Front.IPathSpec>;
+  raw_str: string;
+  colored: string;
+  zoomed_spec: Front.Spec;
 
-  //routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
   constructor(
     // public router: Router,
     private _http: Http,
     private _req: RequestService,
     private _ws: WsService,
-    private _config: Config,
+    @Inject(APP_CONFIG) private _config: Front.Config,
+    //private _routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
   ) {}
+
 
   ngOnInit() {
     // $('select').material_select();
@@ -87,41 +95,41 @@ export class App {
     this.load_ui(api);
   };
 
-  get raw() {
+  get raw(): Front.Data[] {
     return this._raw;
   }
-  set raw(x) {
+  set raw(x: Front.Data) {
     if(_.isUndefined(x)) return;
     this._raw = x;
     this.data = x;
   }
-  addData(x) {
+  addData(x: Front.Data): void {
     this._raw = this._raw.concat(x);
     this.data = this.data.concat(_.get(this.meat)(x));
   }
 
-  get data() {
+  get data(): Front.Data[] {
     return this._data;
   }
-  set data(x) {
+  set data(x: Front.Data) {
     this._data = x;
     this.raw_str = JSON.stringify(x);
     this.colored = prettyPrint(x);
   }
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.spec_meat();
   }
 
-  get meat() {
+  get meat(): string[] {
     return this._meat;
   }
-  set meat(x) {
+  set meat(x: string[]) {
     if(_.isUndefined(x)) return;
     this._meat = x;
     if(this.raw) {
@@ -131,19 +139,18 @@ export class App {
     this.spec_meat();
   }
 
-  spec_meat() {
+  spec_meat(): Front.Spec {
     let spec_path = _.flatten(this.meat.map(str => ['properties', str]));
     this.zoomed_spec = _.get(spec_path)(this.spec);
   }
 
   // sets and saves the auth token + scopes from the given get/hash
-  handle_implicit = (url) => handle_auth(url, (get, hash) => {
+  handle_implicit = (url: string) => handle_auth(url, (get: number, hash: number) => {
     let name = get.callback;
-    let delim = _.get([name, 'scope_delimiter'], this.oauth_misc) || ' ';
     let auth = {
       name,
       token: hash.access_token,
-      scopes_have: get.scope.replace(/\+/g, ' ').split(delim),
+      scopes_have: get.scope.replace(/\+/g, ' ').split(' '),
     };
     this.auths[name] = auth;
     //localStorage.setItem(name, JSON.stringify(auth));
@@ -155,7 +162,6 @@ export class App {
   pick_fn = pick_fn;
   extract_url = extract_url;
   doCurl = doCurl;
-
 }
 
 // @RouteConfig([

@@ -3,11 +3,10 @@ import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChildren, Qu
 import { ValueComp } from '../../../comps';
 import { getPaths } from '../../slim';
 
-let inputs = ['path', 'val']; //, 'schema'
+type Val = Object;
 
 @Component({
   selector: 'mydl',
-  inputs,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./dl.jade'),
   directives: [
@@ -15,20 +14,26 @@ let inputs = ['path', 'val']; //, 'schema'
   ]
 })
 export class DLComp {
+  @Input() path: Front.Path;
+  @Input() val: Val;
+  _path: Front.Path;
+  _val: Val;
+  // @Input() schema: Front.Spec;
   @ViewChildren(ValueComp) v: QueryList<ValueComp>;
   //k: Observable<string>;
   //id: Observable<string>;
   // rows: Observable<Array<any>>; //[{id, path, val, schema}]
+  rows: null;
 
-  // get path() { return this._path; }
-  // set path(x) {
+  // get path(): Front.Path { return this._path; }
+  // set path(x: Front.Path) {
   //   this._path = x;
   //   // let props = getPaths(x);
   //   // ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
   // }
 
-  // get val() { return this._val; }
-  set val(x) {
+  // get val(): Val { return this._val; }
+  set val(x: Val) {
     if(_.isUndefined(x)) return;
     // this._val = x;
     this.rows = x.map(obj => _.assign(obj, getPaths(obj.path)));

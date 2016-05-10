@@ -1,15 +1,15 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES, AbstractControl } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
 import { input_control, getOptsNameSpecs } from '../input';
+import { ControlStruct } from '../controls/control_struct';
 
 @Component({
   selector: 'input-struct',
-  inputs: ['named', 'path', 'spec', 'ctrl'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-struct.jade'),
   directives: [
@@ -18,13 +18,28 @@ import { input_control, getOptsNameSpecs } from '../input';
   ]
 })
 export class InputStructComp {
+  @Input() named: boolean;
+  @Input() path: Front.Path;
+  @Input() spec: Front.Spec;
+  @Input() ctrl: ControlStruct;
+  _named: boolean;
+  _path: Front.Path;
+  _spec: Front.Spec;
+  _ctrl: ControlStruct;
   option = null;
   counter = 0;
   indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
   // keys = ['name', 'val'];
-  nameSpecFixedFiltered = {};
+  nameSpecFixed: Front.Spec;
+  nameSpecFixedFiltered: Front.Spec = {};
   k: string;
   id: string;
+  isOneOf: boolean;
+  patts: string[];
+  hasFixed: boolean;
+  hasPatts: boolean;
+  hasAdd: boolean;
+  nameCtrlFixed: AbstractControl;
 
   constructor(
     public cdr: ChangeDetectorRef,
@@ -35,10 +50,10 @@ export class InputStructComp {
     ['k', 'id'].forEach(x => this[x] = props[x]);
   }
 
-  get spec() {
+  get spec(): Front.Spec {
     return this._spec;
   }
-  set spec(x) {
+  set spec(x: Front.Spec) {
     tryLog(() => {
     if(_.isUndefined(x)) return;
     this._spec = x;
@@ -58,18 +73,18 @@ export class InputStructComp {
   }
 
   @fallback({})
-  specFixed(item) {
+  specFixed(item: string): Front.Spec {
     return _.set(['name'], item)(this.spec.properties[item]);
   }
 
   @fallback({})
-  specPatt(patt, i) {
+  specPatt(patt: string, i: number): Front.Spec {
     let name = ctrl.patternProperties.controls[patt].at(i).controls.name.value;
     return _.set(['name'], name)(this.spec.patternProperties[patt]);
   }
 
   @try_log()
-  addProperty(k) {
+  addProperty(k: string): void {
     if(this.nameSpecFixedFiltered.enum.includes(k)) {
       this.ctrl.addProperty(k);
       this.indices.properties.add(k);
@@ -82,25 +97,25 @@ export class InputStructComp {
   }
 
   @try_log()
-  removeProperty(k) {
+  removeProperty(k: string): void {
     this.indices.properties.delete(k);
     this.ctrl.removeProperty(k);
     this.updateFixedList();
   }
 
   @try_log()
-  updateFixedList() {
+  updateFixedList(): void {
     this.nameSpecFixedFiltered = _.update('enum', arr => _.difference(arr, Array.from(this.indices.properties)))(this.nameSpecFixed);
   }
 
   @try_log()
-  addPatternProperty(patt, k = '') {
+  addPatternProperty(patt: string, k = ''): void {
     this.ctrl.addPatternProperty(patt, k);
     this.indices.patternProperties[patt].add(this.counter++);
   }
 
   @try_log()
-  removePatternProperty(patt, item) {
+  removePatternProperty(patt: string, item: string): void {
     let set = this.indices.patternProperties[patt];
     let idx = findIndexSet(item, set);
     this.ctrl.removePatternProperty(patt, idx);
@@ -108,14 +123,14 @@ export class InputStructComp {
   }
 
   @try_log()
-  addAdditionalProperty(k = '') {
+  addAdditionalProperty(k = ''): void {
     // console.log('addAdditionalProperty', k);
     this.ctrl.addAdditionalProperty(k);
     this.indices.additionalProperties.add(this.counter++);
   }
 
   @try_log()
-  removeAdditionalProperty(item) {
+  removeAdditionalProperty(item: string): void {
     let set = this.indices.additionalProperties;
     let idx = findIndexSet(item, set);
     this.ctrl.removeAdditionalProperty(idx);

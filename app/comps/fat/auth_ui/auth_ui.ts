@@ -5,23 +5,37 @@ let _ = require('lodash/fp');
 
 @Component({
   selector: 'auth-ui',
-  inputs: ['name', 'scopes', 'oauth_info', 'have'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./auth_ui.jade'),
   directives: [COMMON_DIRECTIVES],
 })
 export class AuthUiComp {
   @Output() handler = new EventEmitter(false);
+  @Input() name: string;
+  @Input() scopes: string[];
+  @Input() oauth_info: swagger_io.v2.Oauth2ImplicitSecurity;
+  @Input() have: string[];
+  _name: string;
+  _scopes: string[];
+  _oauth_info: swagger_io.v2.Oauth2ImplicitSecurity;
+  _have: string[];
+  scope_descs: swagger_io.v2.Oauth2Scopes;
+  want_scope: {[key: string]: boolean};
+  have_scope: {[key: string]: boolean};
 
-  get oauth_info() { return this._oauth_info; }
-  set oauth_info(x) {
+  get oauth_info(): swagger_io.v2.Oauth2ImplicitSecurity {
+    return this._oauth_info;
+  }
+  set oauth_info(x: swagger_io.v2.Oauth2ImplicitSecurity) {
     if(_.isUndefined(x)) return;
     this._oauth_info = x;
     this.scope_descs = x.scopes;
   }
 
-  get scopes() { return this._scopes; }
-  set scopes(x) {
+  get scopes(): string[] {
+    return this._scopes;
+  }
+  set scopes(x: string[]) {
     if(_.isUndefined(x)) return;
     this._scopes = x;
     this.want_scope = arr2obj(x, s => true);
@@ -29,19 +43,21 @@ export class AuthUiComp {
     this.combInputs();
   }
 
-  get have() { return this._have; }
-  set have(x) {
+  get have(): string[] {
+    return this._have;
+  }
+  set have(x: string[]) {
     if(_.isUndefined(x)) return;
     this._have = x;
     this.scope_descs = x.scopes;
     this.combInputs();
   }
 
-  combInputs = () => combine((scopes, have) => {
+  combInputs = () => combine((scopes: string[], have: string[]) => {
     this.have_scope = arr2obj(scopes, s => have.includes(s));
   })(this.scopes, this.have);
 
-  onSubmit() {
+  onSubmit(): void {
     let scope = this.scopes.filter(s => this.want_scope[s]).join(' ');
     //let redirect_uri = `http://127.0.0.1:8090/callback/${this.name}/?` + global.$.param({scope});
     let redirect_uri = `http://127.0.0.1:8090/?` + global.$.param({scope, callback: this.name});

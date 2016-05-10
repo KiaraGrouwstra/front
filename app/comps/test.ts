@@ -8,7 +8,7 @@ import { dispatchEvent } from '@angular/platform-browser/testing';
 // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
 
 // a component template for testing other components, by just selector (easier than html)
-export let test_comp = (selector, cls) => (static_pars = {}, obs_pars = {}, outputs = {}, content = '') => {
+export let test_comp = (selector: string, cls: number) => (static_pars = {}, obs_pars = {}, outputs = {}, content = '') => {
   let objectify = (par) => _.isArray(par) ? Object.assign({}, ...par) : par;
   let static_obj = objectify(static_pars);
   let obs_obj = objectify(obs_pars);
@@ -20,7 +20,7 @@ export let test_comp = (selector, cls) => (static_pars = {}, obs_pars = {}, outp
 }
 
 // a component template for testing other components, by full html template
-export let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, outputs = {}) => {
+export let test_comp_html = (tmplt: string, cls: number, obs_pars = {}, static_pars = {}, outputs = {}) => {
   let cmp = class {
     //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders
     // @ViewChild(cls) comp;
@@ -40,23 +40,18 @@ export let test_comp_html = (tmplt, cls, obs_pars = {}, static_pars = {}, output
 }
 
 // // create a component to test and return related stuff; run within `fakeAsync`.
-// export let makeComp = (tcb, test_class) => {
+// export let makeComp = (tcb: TestComponentBuilder, test_class: number): Front.ICompTest => {
 //   let fixture;
 //   // this recently started running only after the function already continued...
 //   tcb.createAsync(test_class).then(x => { fixture = x; }, e => { throw e; });
 //   flushMicrotasks();
 //   tick(10000);
-//   fixture.detectChanges();
-//   let test_cmp = fixture.componentInstance;
-//   let comp = test_cmp.comp;
-//   fixture.detectChanges();
-//   let debugEl = fixture.debugElement;
-//   let el = debugEl.childNodes[0].nativeElement;
-//   return { comp, el, fixture, debugEl };
+//   ...
 // }
 
 // create a component to test and return related stuff; must await result within an `async function` (not `fakeAsync`).
-export async function getComp(tcb, test_class) {
+// : Front.ICompTest
+export async function getComp(tcb: TestComponentBuilder, test_class: number) {
   try {
     let fixture = await tcb.createAsync(test_class);
     fixture.detectChanges();
@@ -73,14 +68,14 @@ export async function getComp(tcb, test_class) {
 }
 
 // hack to inject a tick into fakeAsync, since it appears usually needed...
-export let myAsync = (fn) => fakeAsync(() => {
+export let myAsync = (fn: () => void) => fakeAsync(() => {
   fn();
   tick(1000);
 });
 
 // taken from ng2 DOM's `dispatchEvent`, cuz the DOM script errors for me with `el.dispatchEvent is not a function`.
 // for convenience I could incorporate `.nativeElement` here, though that makes it incompatible with the original...
-export function sendEvent(el, eventType): void {
+export function sendEvent(el: Element, eventType: string): void {
   let event = document.createEvent('Event')
   event.initEvent(eventType, true, true);
   el.dispatchEvent(event);  //.nativeElement
@@ -88,7 +83,7 @@ export function sendEvent(el, eventType): void {
 
 // set the value of an input, and trigger the corresponding event. The input can be obtained using `debugEl.query(By.css(css))`.
 // trying to set a `select` element's value to something not contained in its option list sets it to '' instead...
-export function setInput(input, val) {
+export function setInput(input: number, val: any): void {
   let el = input.nativeElement;
   el.value = val;
   // expect(el.value).toEqual(val);
@@ -105,7 +100,8 @@ export function setInput(input, val) {
 // it('should work', test(pars, ({ comp, el }) => {
 //   expect(comp).not.toEqual(undefined);
 // }));
-export let asyncTest = (builder, comp_cls) => (props, fn) => async function(done) {
+// : (Front.ICompTest) => number
+export let asyncTest = (builder: TestComponentBuilder, comp_cls: number) => (props: {}, fn) => async function(done) {
   try {
     let par = await getComp(builder, comp_cls(props));
     // fn(par);
@@ -119,7 +115,7 @@ export let asyncTest = (builder, comp_cls) => (props, fn) => async function(done
 };
 
 // a generic component class
-export let genClass = (pars) => class {
+export let genClass = (pars: {}) => class {
   constructor() {
     for (let k in pars) this[k] = pars[k];
   }

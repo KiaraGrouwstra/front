@@ -1,5 +1,5 @@
 import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
 import { FormBuilder } from '@angular/common';  //, Control
 import { InputValueComp } from '../value/input-value';
 import { input_control } from '../input';
@@ -7,7 +7,6 @@ let _ = require('lodash/fp');
 
 @Component({
   selector: 'input-form',
-  inputs: ['inputs', 'desc'],  // {path, spec}?
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-form.jade'),
   directives: [
@@ -16,18 +15,23 @@ let _ = require('lodash/fp');
   ]
 })
 export class FormComp {
-  items = [];
+  items: Front.IInput[] = [];
   form: ControlGroup = this._builder.group({});
   // type: Observable<string>;
   @Output() submit = new EventEmitter(false);
-  // ^ handle with `<input-form (submit)="callback()"></input-form>`
+  @Input() inputs: Array<Front.IPathSpec>;
+  @Input() desc: string;
+  _inputs: Array<Front.IPathSpec>;
+  _desc: string;
+  // @Input() path: Front.Path;
+  // @Input() spec: Front.Spec;
   @ViewChildren(InputValueComp) vals: QueryList<InputValueComp>;
 
   constructor(
     private _builder: FormBuilder,
   ) {}
 
-  set inputs(x) {
+  set inputs(x: Front.IInput) {
     if(_.isUndefined(x)) return;
     // console.log('REMAKING FORM');
     this.items = x.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
