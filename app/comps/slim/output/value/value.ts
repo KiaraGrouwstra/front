@@ -36,8 +36,6 @@ export class ValueComp {
   _path: Front.Path;
   _val: Val;
   _schema: Front.Spec;
-  _named: boolean;
-  // 'named' provided solely because of work-around to [7084](https://github.com/angular/angular/issues/7084) in Object
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
   @ViewChild(ScalarComp) scalar: ScalarComp;

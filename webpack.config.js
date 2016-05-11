@@ -134,7 +134,7 @@ module.exports = {
 	progress: true,
   keepalive: true,
   ts: {
-		// transpileOnly: true,
+		transpileOnly: true,
  		ignoreDiagnostics: [
 			1009, // `Trailing comma not allowed` -- I prefer using those so adding/removing params just affects 1 line.
 			2300,	// `Duplicate identifier` -- if a Component has `get` + `set` for an `@Input`, this throws three times. ugh.

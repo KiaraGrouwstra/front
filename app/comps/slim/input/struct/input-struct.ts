@@ -2,6 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES, AbstractControl } from '@angular/common';
 import { FieldComp } from '../field/input-field';
+import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
@@ -15,6 +16,7 @@ import { ControlStruct } from '../controls/control_struct';
   directives: [
     COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
+    forwardRef(() => InputValueComp),
   ]
 })
 export class InputStructComp {

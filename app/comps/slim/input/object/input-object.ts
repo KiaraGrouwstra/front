@@ -2,6 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
+import { InputValueComp } from '../value/input-value';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ControlObject } from '../controls/control_object';
@@ -13,6 +14,7 @@ import { ControlObject } from '../controls/control_object';
   directives: [
     COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
+    forwardRef(() => InputValueComp),
   ]
 })
 export class InputObjectComp {

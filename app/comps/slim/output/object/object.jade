@@ -13,12 +13,10 @@
       '[schema]'=`x.schema`
       '[named]'=`true`
     )
-    //- array
-    value(
+    array(
       *ngFor=`let x of (array)`
       '[path]'=`x.path`
       '[val]'=`x.val`
       '[schema]'=`x.schema`
       '[named]'=`true`
     )
-    //- ^ named due to #7084 workaround (switch from array to value)
