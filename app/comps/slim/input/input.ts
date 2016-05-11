@@ -243,16 +243,16 @@ export function input_attrs(path: Front.Path, spec: Front.Spec): Front.IAttribut
   return _.pickBy(_.negate(_.isNil))(attrs);
 }
 
-// ControlList validator for allOf
-export function allUsed(allOf: null, val_lens: (AbstractControl) => any[]): ValidatorFn {
-  return (ctrl: AbstractControl) => {
-    let vals = val_lens(ctrl);
-    // ideally it should validate as long as all types are used even without values, but this may
-    // require checking from input-array/-object by asking their `input-field`s through a QueryList...
-    let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
-    return valid ? null : {allOf: true};
-  }
-};
+// // ControlList validator for allOf
+// export function allUsed(allOf: Front.Spec[], val_lens: (AbstractControl) => any[]): ValidatorFn {
+//   return (ctrl: AbstractControl) => {
+//     let vals = val_lens(ctrl);
+//     // ideally it should validate as long as all types are used even without values, but this may
+//     // require checking from input-array/-object by asking their `input-field`s through a QueryList...
+//     let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
+//     return valid ? null : {allOf: true};
+//   }
+// };
 
 // key uniqueness validator for ControlObject
 export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn {

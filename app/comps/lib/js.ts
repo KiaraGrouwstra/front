@@ -190,7 +190,7 @@ export function tryLog<T>(fn: T): T {
 
 // create a Component, decorating the class with the provided metadata
 // export let FooComp = ng2comp({ component: {}, parameters: [], decorators: {}, class: class FooComp {} })
-export function ng2comp(o: { component: {}, parameters: Array<void>, decorators: {}, class: Class }): void {
+export function ng2comp(o: { component: {}, parameters: Array<void>, decorators: {}, class: Class }): Component {
   let cls = o.class;
   cls.annotations = [new ComponentMetadata(o.component || {})];
   cls.parameters = (o.parameters || []).map(x => x._desc ? x : [x]);

@@ -32,7 +32,6 @@ describe('ArrayComp', () => {
     expect(el).toHaveText(val.join(''));
   }));
 
-  // before disabling JIT: [viewFactory_ArrayComp0 is not a function](https://github.com/angular/angular/issues/7037)
   it('should work with nested arrays', test([nest_pars, { named: false }], ({ comp, el }) => {
     expect(el).toHaveText('1234');
   }));

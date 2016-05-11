@@ -7,7 +7,6 @@ import { ControlList } from './control_list';
 export class ControlObject<T extends AbstractControl> extends ControlList<T> {
   constructor(
     factory: () => T, //Front.CtrlFactory
-    // allOf: null = [],
     vldtr: ValidatorFn = null,
   ) { //: AbstractControl, : AbstractControl[]
     let lens = (fn) => y => y.controls.map(fn);

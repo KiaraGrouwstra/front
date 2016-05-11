@@ -32,9 +32,9 @@ export class ObjectComp {
   @ViewChildren(ValueComp) arrays: QueryList<ValueComp>;
   k: string;
   id: string;
-  array: null;
-  object: null;
-  scalar: null;
+  array: Front.IObjectCollection;
+  object: Front.IObjectCollection;
+  scalar: Front.IObjectCollection;
 
   get path(): Front.Path {
     return this._path;
@@ -75,7 +75,7 @@ export class ObjectComp {
 
 }
 
-let getColl = (path: Front.Path, val: Val, spec: Front.Spec) => {
+function getColl(path: Front.Path, val: Val, spec: Front.Spec) {
   const SCALARS = ['boolean', 'integer', 'number', 'string', 'null', 'scalar'];
   let keys = _.keys(val);
   return keys.map(k => {

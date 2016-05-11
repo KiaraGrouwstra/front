@@ -4,7 +4,7 @@ import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from
 import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, ScalarComp } from '../../../comps';
 import { infer_type, try_schema } from '../output'
-import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, RouteConfig, RouteParams } from '@angular/router';
+import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine } from '../../../lib/js';
 
 type Val = Array<Object>;

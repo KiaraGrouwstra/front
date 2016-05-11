@@ -60,11 +60,11 @@ module Front {
   // test
 
   export interface ICompTest {
-    comp: number,
-    el: number,
-    fixture: number,
-    debugEl: number,
-    test_cmp: number,
+    comp: Component,
+    el: any,  //nativeelement
+    fixture: ComponentFixture,
+    debugEl: DebugElement,
+    test_cmp: Component,
   }
 
   // input/form
@@ -95,12 +95,29 @@ module Front {
 
   // output/table
 
+  export type Rows = Array<{
+    id: string,
+    cells: {
+      path: string[],
+      val: any,
+    }
+  }>;
+
   export interface IColor {
     r: number,
     g: number,
     b: number,
     a?: number,
   }
+
+  // output/object
+
+  type IObjectCollection = Array<{
+    path: string[],
+    val: any,
+    schema: Front.Spec,
+    type: string,
+  }>; 
 
   // js
 
@@ -126,5 +143,13 @@ module Front {
     endpoint: string,
     chan_name: string,
   }
+
+  // decorators
+  type PropertyDescriptor = {
+    configurable: boolean,
+    enumerable: boolean,
+    writable: boolean,
+    value: any
+  };
 
 }

@@ -6,7 +6,7 @@ import { requestServiceProvider } from '../../services/request/request.provider'
 import { wsServiceProvider } from '../../services/ws/ws.provider';
 import { CONFIG, APP_CONFIG } from '../../../config';
 import { ROUTER_PROVIDERS } from '@angular/router';
-import { Router } from '@angular/router'; //, RouteParams
+import { Router } from '@angular/router';
 import { Http } from '@angular/http'; //Headers
 import { HTTP_BINDINGS } from '@angular/http';
 import { App } from './app';

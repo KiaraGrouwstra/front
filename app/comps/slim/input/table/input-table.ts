@@ -25,7 +25,7 @@ export class InputTableComp {
   _ctrl: ControlList<ControlGroup>;
   // type: Observable<string>;
   counter = 0;
-  items = new Set([]);
+  items: Set<number> = new Set([]);
   k: string;
   id: string;
   keys: Array<string>;
@@ -58,7 +58,7 @@ export class InputTableComp {
     this.ctrl.add();
   }
 
-  remove(item: null): void {
+  remove(item: number): void {
     let idx = _.findIndex(y => y == item)(Array.from(this.items));
     this.ctrl.removeAt(idx);
     this.items.delete(item);

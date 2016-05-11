@@ -103,7 +103,7 @@ export class ControlStruct extends ControlGroup {
     this.mapping = _.omit([k])(this.mapping);
   }
 
-  find(k: string): void {
+  find(k: string): AbstractControl {
     return this.mapping[k];
   }
 

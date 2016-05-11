@@ -24,7 +24,7 @@ describe('directives', () => {
   };
 
   class TestComponent {
-    foo: number = 'bar';
+    foo: string = 'bar';
     color: string = 'red';
     baz: string = 'color';
     condition: boolean = true;

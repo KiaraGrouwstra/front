@@ -1,7 +1,7 @@
 // import 'reflect-metadata';
 import { Component, ViewChild, ChangeDetectionStrategy, Inject, ViewEncapsulation } from '@angular/core';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm } from '@angular/common';
-import { Router, ROUTER_DIRECTIVES, RouteConfig } from '@angular/router'; //, RouteParams
+import { Router, ROUTER_DIRECTIVES } from '@angular/router';
 import { Http } from '@angular/http'; //Headers
 // import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
@@ -145,7 +145,8 @@ export class App {
   }
 
   // sets and saves the auth token + scopes from the given get/hash
-  handle_implicit = (url: string) => handle_auth(url, (get: number, hash: number) => {
+  handle_implicit = (url: string) => handle_auth(url, (get: string, hash: string) => {
+    console.log('handle_implicit', get, hash);
     let name = get.callback;
     let auth = {
       name,

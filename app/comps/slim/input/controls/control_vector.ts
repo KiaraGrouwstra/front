@@ -11,7 +11,6 @@ export class ControlVector extends ControlArray {
   constructor(
     _items: Front.CtrlFactory | Array<Front.CtrlFactory>, //private
     _additionalItems: Front.CtrlFactory, //private
-    // allOf: null = [],
     vldtr: ValidatorFn = null,
   ) {
     let controls = [];

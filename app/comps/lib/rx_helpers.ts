@@ -59,11 +59,11 @@ export function Obs_combLast(arr: Observable<any>[]): Observable<any> {
 }
 
 // maps the latest values of a set of Observables to a lambda
-export function mapComb(arr: Observable<any>[], fn: null): Observable<any> {
+export function mapComb(arr: Observable<any>[], fn: Function): Observable<any> {
   return Obs_combLast(arr).map(r => fn(...r));
 }
 
 // use the latest values of a set of Observables to subscribe to a lambda
-export function subComb(arr: Observable<any>[], fn: null): Subscription {
+export function subComb(arr: Observable<any>[], fn: Function): Subscription {
   return Obs_combLast(arr).subscribe(r => fn(...r));
 }

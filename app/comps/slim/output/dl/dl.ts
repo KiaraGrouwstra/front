@@ -23,7 +23,7 @@ export class DLComp {
   //k: Observable<string>;
   //id: Observable<string>;
   // rows: Observable<Array<any>>; //[{id, path, val, schema}]
-  rows: null;
+  rows: ICompMeta[];
 
   // get path(): Front.Path { return this._path; }
   // set path(x: Front.Path) {

@@ -2,8 +2,8 @@ let _ = require('lodash/fp');
 import { decorate } from 'core-decorators/lib/private/utils';  //, metaFor
 
 // decorate a class method (non get/set)
-function decMethod(k = 'value', wrapper = (fn) => fn.bind(this, ...arguments)): number {
-  return (target: number, key: string, descriptor: number, pars: {}) => {
+function decMethod(k = 'value', wrapper = (fn) => fn.bind(this, ...arguments)): Function {
+  return (target: {}, key: string, descriptor: Front.PropertyDescriptor, pars: {}) => {
     const fn = descriptor.value;
     if (typeof fn !== 'function') {
       throw new SyntaxError(`can only decorate methods, while ${key} is a ${typeof fn}!`);
@@ -20,7 +20,7 @@ function decMethod(k = 'value', wrapper = (fn) => fn.bind(this, ...arguments)): 
 // value for input, it will return a default value of its output type
 // intercepts bad input values for a function so as to return a default output value
 // ... this might hurt when switching to like Immutable.js though.
-export function typed(...args: number): number {
+export function typed(...args): Function {
   return decorate(decMethod('value', (fn, [from, to]) => function() {
     for (let i = 0; i < from.length; i++) {
       let frm = from[i];
@@ -32,7 +32,7 @@ export function typed(...args: number): number {
 }
 
 // simpler guard, just a try-catch wrapper with default value
-export function fallback(...args: number): number {
+export function fallback(...args): Function {
   return decorate(decMethod('value', (fn, [def], { target, key, descriptor }) => function() {
     try {
       return fn.call(this, ...arguments);
@@ -45,7 +45,7 @@ export function fallback(...args: number): number {
 }
 
 // just log errors. only useful in contexts with silent crash.
-export function try_log(...args: number): number {
+export function try_log(...args): Function {
   return decorate(decMethod('value', (fn, [], { target, key, descriptor }) => function() {
     try {
       return fn.call(this, ...arguments);
@@ -56,8 +56,8 @@ export function try_log(...args: number): number {
   }), args);
 }
 
-// wrapper for setter methods, return if not all parameters are defined
-export function combine(...args: number): number {
+// wrapper for methods returning void, return if not all parameters are defined
+export function combine(...args): Function {
   return decorate(decMethod('value', (fn, [allow_undef = {}]) => function() {
     // let names = /([^\(]+)(?=\))'/.exec(fn.toString()).split(',').slice(1);
     let names = fn.toString().split('(')[1].split(')')[0].split(/[,\s]+/);
@@ -73,11 +73,11 @@ export function combine(...args: number): number {
 }
 
 // doesn't work with `setter`, since both would start out as identically-named regular methods
-export function getter(...args: number): number {
+export function getter(...args): Function {
   return decorate(decMethod('get'), args);
 }
 
 // doesn't work with `getter`, since both would start out as identically-named regular methods
-export function setter(...args: number): number {
+export function setter(...args): Function {
   return decorate(decMethod('set'), args);
 }

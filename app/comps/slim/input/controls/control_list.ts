@@ -8,7 +8,6 @@ export class ControlList<T extends AbstractControl> extends ControlArray {
 
   constructor(
     _factory: () => T, //private  //Front.CtrlFactory
-    // allOf: null = [],
     vldtr: ValidatorFn = null,
   ) {  //: AbstractControl, : AbstractControl[]
     let controls = [];

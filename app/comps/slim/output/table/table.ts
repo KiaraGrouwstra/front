@@ -46,17 +46,30 @@ export class TableComp {
   // id: string;
   // cols: Array<any>;
   // rows: Array<any>;
-  data: number;
-  rows: number;
-  filtered: number;
-  cols: number;
-  colMeta: number;
-  filterKeys: number;
+  data: Rows;
+  rows: Rows;
+  filtered: Rows;
+  cols: {[key: string]: {
+    k: string,
+    id: string,
+    model: string,
+    variable: string,
+  }};
+  colMeta: {[key: string]: {
+    isNum: boolean,
+    hasNum: boolean,
+    isText: boolean,
+    hasText: boolean,
+    isLog?: boolean,
+    min?: number,
+    max?: number,
+  }};
+  filterKeys: string[];
   indexBased: boolean;
   col_keys: string[];
   sortedCols: string[]; // ordered
   _condCols: string[];
-  _condBoundaries: number;
+  _condBoundaries: {[key: string]: number[]};
   modalCol: string;
 
   // constructor(public cdr: ChangeDetectorRef,) {
@@ -106,14 +119,14 @@ export class TableComp {
     this.combInputs();
   }
 
-  get colOrder(): number {
+  get colOrder(): string[] {
     // console.log('get:colOrder');
     let x = this._colOrder;
     if(_.isUndefined(x)) x = this.colOrder = this.col_keys;
     if(_.difference(x, this.col_keys).length) x = this._colOrder = this.col_keys;
     return x;
   }
-  set colOrder(x: number) {
+  set colOrder(x: string[]) {
     // console.log('set:schema', x);
     if(_.isUndefined(x)) return;
     this._colOrder = x;
@@ -124,13 +137,13 @@ export class TableComp {
     this.colOrder = _.difference(this.colOrder, [name]);
   }
 
-  get sortColsDesc(): number {
+  get sortColsDesc(): {[key: string]: boolean} {
     // console.log('get:sortColsDesc');
     let x = this._sortColsDesc;
     if(_.isUndefined(x)) x = this.sortColsDesc = {};
     return x;
   }
-  set sortColsDesc(x: number) {
+  set sortColsDesc(x: {[key: string]: boolean}) {
     // console.log('set:sortColsDesc', x);
     if(_.isUndefined(x)) return;
     this._sortColsDesc = x;
@@ -138,12 +151,12 @@ export class TableComp {
     this.sort();
   }
 
-  get condFormat(): number {
+  get condFormat(): Array<Front.IColor> {
     let x = this._condFormat;
     if(_.isUndefined(x)) x = this.condFormat = {};
     return x;
   }
-  set condFormat(x: number) {
+  set condFormat(x: Array<Front.IColor>) {
     if(_.isUndefined(x)) return;
     this._condFormat = x;
     this.condCols = _.keys(x);
@@ -164,41 +177,42 @@ export class TableComp {
     this.condFormat = _.omit(col)(this.condFormat);
   }
 
-  get condCols(): number {
+  get condCols(): string[] {
     let x = this._condCols;
     if(_.isUndefined(x)) x = this.condCols = _.keys(this.condFormat);
     return x;
   }
-  set condCols(x: number) {
+  set condCols(x: string[]) {
     if(_.isUndefined(x)) return;
     this._condCols = x;
   }
 
-  get condBoundaries(): number {
+  get condBoundaries(): {[key: string]: number[]} {
     let x = this._condBoundaries;
     if(_.isUndefined(x)) x = this.condBoundaries = {};
     return x;
   }
-  set condBoundaries(x: number) {
+  set condBoundaries(x: {[key: string]: number[]}) {
     if(_.isUndefined(x)) return;
     this._condBoundaries = x;
   }
 
   @try_log()
-  setFormat(col: string, v: null): void {
+  setFormat(col: string, v: Front.IColor[]): void {
     // console.log('setFormat', col, v);
     this.condFormat = _.set(col, v)(this.condFormat);
   }
 
   @fallback(false)
-  cellIsNum(col: string, val: null): boolean {
+  cellIsNum(col: string, val: any): boolean {
+    // console.log('cellIsNum', val);
     let { isNum, hasNum } = this.colMeta[col];
     return isNum || (hasNum && _.isNumber(val));
   }
 
   @fallback('rgba(0,0,0,0)')
-  valColor(col: string, val: null): string {
-    // console.log('valColor');
+  valColor(col: string, val: any): string {
+    // console.log('valColor', val);
     let { isLog } = this.colMeta[col];
     if(!this.cellIsNum(col, val)) return null;
     let num = isLog ? Math.log10(val) : val;
@@ -223,13 +237,13 @@ export class TableComp {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
-  get filters(): number {
+  get filters(): {[key: string]: string} {
     let x = this._filters;
     if(_.isUndefined(x)) x = this.filters = {};
     // console.log('get:filters', x);
     return x;
   }
-  set filters(x: number) {
+  set filters(x: {[key: string]: string}) {
     // console.log('SET:filters', x);
     if(_.isUndefined(x)) return;
     this._filters = x;
@@ -238,7 +252,7 @@ export class TableComp {
   }
 
   @try_log()
-  setFilter(k: string, v: null): void {
+  setFilter(k: string, v: string): void {
     // console.log('setFilter', k, v);
     this.filters = _.set(k, v)(this.filters);
   }

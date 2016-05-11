@@ -3,7 +3,7 @@ let marked = require('marked');
 
 export function genPipe(name: string, fn: any => string): PipeTransform {
   let pipe = class implements PipeTransform {
-    transform(v: any, args: null): string {
+    transform(v: any, args: any[]): string {
       return fn(v);
     }
   };
@@ -18,7 +18,7 @@ export function genPipe(name: string, fn: any => string): PipeTransform {
 //   name: 'marked',
 // })
 // export class MarkedPipe {
-//   transform(s: any, args: null): string {
+//   transform(s: any, args: any[]): string {
 //     return marked(s);
 //   }
 // }

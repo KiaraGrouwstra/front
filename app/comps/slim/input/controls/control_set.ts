@@ -16,7 +16,7 @@ export class ControlSet extends Control {
     // , asyncValidator
   }
 
-  has(k: string): void {
+  has(k: string): boolean {
     return this.value.has(k);
   }
 
