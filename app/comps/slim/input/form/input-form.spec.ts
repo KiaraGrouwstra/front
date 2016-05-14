@@ -61,7 +61,6 @@ describe('FormComp', () => {
   }));
 
   it('should do array specs', test([pars(), arr_pars()], ({ comp, el }) => {
-    let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
     // console.log('controls', comp.ctrl.controls);
     // expect(comp.ctrl.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
