@@ -4,7 +4,7 @@ import { arr2obj, arr2map, combine, mapBoth, tryLog, key_spec } from '../../../l
 import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
-import { ValueComp } from '../../../comps';
+import { ValueComp } from '../../..';
 import { arrToSet } from '../../../lib/rx_helpers';
 import { AssignLocal } from '../../../lib/directives';
 

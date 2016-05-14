@@ -7,7 +7,7 @@ import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
 import { input_control, getOptsNameSpecs, mapSpec } from '../input';
-import { ControlStruct } from '../controls/control_struct';
+import { ControlStruct } from '../controls';
 
 @Component({
   selector: 'input-struct',

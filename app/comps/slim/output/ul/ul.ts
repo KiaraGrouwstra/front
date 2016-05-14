@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { combine } from '../../../lib/js';
 import { getPaths } from '../../slim';
-import { ValueComp } from '../../../comps';
+import { ValueComp } from '../../..';
 import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import { BehaviorSubject } from 'rxjs';

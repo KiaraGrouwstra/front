@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { COMMON_DIRECTIVES, AbstractControl } from '@angular/common';
-import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../../comps';
+import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../..';
 // import { FieldComp } from '../field/input-field';
 // import { InputArrayComp } from '../array/input-array';
 // import { InputObjectComp } from '../object/input-object';

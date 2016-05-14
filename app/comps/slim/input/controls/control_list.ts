@@ -1,5 +1,4 @@
 let _ = require('lodash/fp');
-import { allUsed } from '../input';
 import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
@@ -12,7 +11,6 @@ export class ControlList extends ControlArray {
     vldtr: ValidatorFn = null,
   ) {  //: AbstractControl, : AbstractControl[]
     let controls = [];
-    // let validator = Validators.compose([allUsed(allOf, y => y.controls), vldtr]);
     super(controls, vldtr);
     this.initialized = false;
   }

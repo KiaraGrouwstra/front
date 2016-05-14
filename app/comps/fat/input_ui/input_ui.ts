@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, forwardRef } from '@angular/core';
 import { COMMON_DIRECTIVES } from '@angular/common';
 import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
-import { FormComp } from '../../comps';
+import { FormComp } from '../..';
 
 @Component({
   selector: 'input-ui',

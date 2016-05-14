@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChildren, QueryList } from '@angular/core';
-import { ValueComp } from '../../../comps';
+import { ValueComp } from '../../..';
 import { getPaths } from '../../slim';
 
 type Val = Object;

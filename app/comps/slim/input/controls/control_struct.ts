@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { ControlGroup, Validators, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlObject } from './control_object';
-import { allUsed, uniqueKeys, input_control, getOptsNameSpecs } from '../input';
+import { uniqueKeys, input_control, getOptsNameSpecs } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
 let lens = (fn_obj, fn_grp) => (ctrl) => {
@@ -26,7 +26,6 @@ export class ControlStruct extends ControlGroup {
 
     let validator = Validators.compose([
       uniqueKeys(lens(y => y.value.name, _.keys)),
-      // allUsed(allOf, lens(y => y.controls.val, Object.values)),
       vldtr,
     ]);
 

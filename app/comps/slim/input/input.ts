@@ -1,12 +1,7 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { Control, ControlGroup, ControlArray, AbstractControl } from '@angular/common';
-import { ControlList } from './controls/control_list';
-import { ControlVector } from './controls/control_vector';
-import { ControlObject } from './controls/control_object';
-import { ControlObjectKvPair } from './controls/control_object_kv_pair';
-import { ControlStruct } from './controls/control_struct';
-import { ControlSet } from './controls/control_set';
+import { ControlList, ControlVector, ControlObject, ControlObjectKvPair, ControlStruct, ControlSet } from './controls';
 import { getPaths } from '../slim';
 import { validate, get_validator } from './validators';
 import { arr2obj, editValsOriginal } from '../../lib/js';
@@ -246,17 +241,6 @@ export function input_attrs(path: Front.Path, spec: Front.Spec): Front.IAttribut
   attrs.type = input_type(type);
   return _.pickBy(_.negate(_.isNil))(attrs);
 }
-
-// // ControlList validator for allOf
-// export function allUsed(allOf: Front.Spec[], val_lens: (AbstractControl) => any[]): ValidatorFn {
-//   return (ctrl: AbstractControl) => {
-//     let vals = val_lens(ctrl);
-//     // ideally it should validate as long as all types are used even without values, but this may
-//     // require checking from input-array/-object by asking their `input-field`s through a QueryList...
-//     let valid = _.every(spec => _.some(v => validate(v, spec))(vals))(allOf);
-//     return valid ? null : {allOf: true};
-//   }
-// };
 
 // key uniqueness validator for ControlObject
 export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn {

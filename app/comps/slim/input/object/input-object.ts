@@ -5,8 +5,7 @@ import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
-import { ControlObject } from '../controls/control_object';
-import { ControlObjectKvPair } from '../controls/control_object_kv_pair';
+import { ControlObject, ControlObjectKvPair } from '../controls';
 import { input_control, mapSpec, getValStruct } from '../input'
 
 @Component({

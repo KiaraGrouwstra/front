@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
 import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
-import { ULComp, TableComp } from '../../../comps';
+import { ULComp, TableComp } from '../../..';
 import { infer_type, try_schema } from '../output'
 import { ng2comp, combine } from '../../../lib/js';
 

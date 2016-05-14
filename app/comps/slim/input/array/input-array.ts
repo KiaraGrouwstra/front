@@ -3,7 +3,7 @@ import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
-import { ControlList } from '../controls/control_list';
+import { ControlList } from '../controls';
 import { input_control } from '../input'
 
 @Component({

@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { id_cleanse, ng2comp, combine, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
-import { DLComp, ArrayComp, ValueComp } from '../../../comps';
+import { DLComp, ArrayComp, ValueComp } from '../../..';
 import { infer_type } from '../output';
 
 type Val = Object;
