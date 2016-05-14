@@ -4,20 +4,20 @@ import { Validators, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlList } from './control_list';
 
-export class ControlObject<T extends AbstractControl> extends ControlList<T> {
+// export class ControlObject<T extends AbstractControl> extends ControlList<T> {
+export class ControlObject extends ControlList {
   // mapping: {[key: string]: AbstractControl} = {};
 
   constructor(
-    factory: () => T, //Front.CtrlFactory
     vldtr: ValidatorFn = null,
   ) { //: AbstractControl, : AbstractControl[]
     let lens = (fn) => y => y.controls.map(fn);
     let validator = Validators.compose([
-      uniqueKeys(    lens(y => y.value.name)),
+      uniqueKeys(lens(y => y.value.name)),
       // allUsed(allOf, lens(y => y.controls.val)),
       vldtr,
     ]);
-    super(factory, validator);  //, allOf
+    super(validator);  //, allOf
   }
 
   _updateValue(): void {

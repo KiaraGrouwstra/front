@@ -3,17 +3,23 @@ import { allUsed } from '../input';
 import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
-export class ControlList<T extends AbstractControl> extends ControlArray {
+export class ControlList extends ControlArray {
+  // <T extends AbstractControl>
   _factory: Front.CtrlFactory;
 
   constructor(
-    _factory: () => T, //private  //Front.CtrlFactory
     vldtr: ValidatorFn = null,
   ) {  //: AbstractControl, : AbstractControl[]
     let controls = [];
     // let validator = Validators.compose([allUsed(allOf, y => y.controls), vldtr]);
     super(controls, vldtr);
+  }
+
+  init(
+    _factory: Front.CtrlFactory, //() => T,
+  ): ControlList {
     this._factory = _factory;
+    return this;
   }
 
   add(): void {

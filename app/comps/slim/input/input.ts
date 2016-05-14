@@ -86,7 +86,7 @@ export function objectControl(spec: Front.Spec): ControlObject {
   // let allOf = _.get(['additionalProperties','allOf'], spec) || [];
   let valStruct = getValStruct(spec);
   let seed = () => new ControlObjectKvPair(valStruct);
-  return new ControlObject(seed); //, allOf
+  return new ControlObject().init(seed); //, allOf
 }
 
 // return initial key/value pair for the model
@@ -105,7 +105,7 @@ export function input_control(spec: Front.Spec = {}, asFactory = false): Abstrac
             add == true ?
                 input_control({}, true) :
                 false;
-        factory = () => new ControlVector(seeds, fallback); //, allOf
+        factory = () => new ControlVector().init(seeds, fallback); //, allOf
         // ^ ControlVector could also handle the simpler case below.
       } else if(spec.uniqueItems && _.size(spec.enum)) {
         factory = () => new ControlSet();
@@ -113,13 +113,13 @@ export function input_control(spec: Front.Spec = {}, asFactory = false): Abstrac
         let seed = props ?
             () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
             input_control(spec.items, true);
-        factory = () => new ControlList(seed);  //, allOf
+        factory = () => new ControlList().init(seed);  //, allOf
       }
       break;
     case 'object':
       // allOf = _.get(['additionalProperties','allOf'], spec) || [];
       let factStruct = mapSpec(x => input_control(x, true))(spec);
-      factory = () => new ControlStruct(factStruct, spec.required || []);   //, allOf
+      factory = () => new ControlStruct().init(factStruct, spec.required || []);   //, allOf
       break;
     default:
       let val = get_default(spec);

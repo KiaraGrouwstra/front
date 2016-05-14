@@ -5,15 +5,44 @@ import { ControlObject } from './control_object';
 import { allUsed, uniqueKeys, input_control, getOptsNameSpecs } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
+let lens = (fn_obj, fn_grp) => (ctrl) => {
+  let { properties: prop, patternProperties: patt, additionalProperties: add } = ctrl.controls;
+  return _.flatten([
+    fn_grp(prop.value),
+    Object.values(patt.controls).map(y => y.controls.map(fn_obj)),
+    add.controls.map(fn_obj),
+  ]);
+};
+
 export class ControlStruct extends ControlGroup {
   factStruct: Front.IObjectSpec<number>;
-  mapping: {[key: string]: AbstractControl} = {};
+  mapping: {[key: string]: AbstractControl};
 
-  constructor(factStruct: Front.IObjectSpec<number>, required: string[] = [], vldtr: ValidatorFn = null) {
+  constructor(vldtr: ValidatorFn = null) {
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
     // KvPair: ControlGroup<k,v>
     // this: ControlGroup< properties: ControlGroup<v>, patternProperties: ControlGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >
 
+    let validator = Validators.compose([
+      uniqueKeys(lens(y => y.value.name, _.keys)),
+      // allUsed(allOf, lens(y => y.controls.val, Object.values)),
+      vldtr,
+    ]);
+
+    let controls = {
+      properties: new ControlGroup({}),
+      patternProperties: new ControlGroup({}),
+      additionalProperties: new ControlObject(),
+    };
+    super(controls, {}, validator);
+    this.mapping = {};
+  }
+
+  init(
+    factStruct: Front.IObjectSpec<Front.CtrlFactory>,
+    required: string[] = [],
+  ): ControlStruct {
+    
     // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `ControlGroup`
     let { nameSpecPatt, nameSpecAdd } = getOptsNameSpecs(factStruct);
     // nameSpec actually depends too, see input-object.
@@ -24,27 +53,18 @@ export class ControlStruct extends ControlGroup {
 
     let controls = editValsLambda({
       properties: v => new ControlGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
-      patternProperties: v => new ControlGroup(mapBoth(v || {}, (fact, patt) => new ControlObject(kvFactory(nameSpecPatt[patt], fact)))),
-      additionalProperties: v => new ControlObject(kvFactory(nameSpecAdd, v)),
+      patternProperties: v => new ControlGroup(mapBoth(v || {}, (fact, patt) => new ControlObject().init(kvFactory(nameSpecPatt[patt], fact)))),
+      additionalProperties: v => new ControlObject().init(kvFactory(nameSpecAdd, v)),
     })(factStruct);
 
-    let lens = (fn_obj, fn_grp) => (ctrl) => {
-      let { properties: prop, patternProperties: patt, additionalProperties: add } = ctrl.controls;
-      return _.flatten([
-        fn_grp(prop.value),
-        Object.values(patt.controls).map(y => y.controls.map(fn_obj)),
-        add.controls.map(fn_obj),
-      ]);
-    };
+    _.each((ctrl, k) => {
+      this.removeControl(k);
+      this.addControl(k, ctrl);
+    })(controls);
 
-    let validator = Validators.compose([
-      uniqueKeys(lens(y => y.value.name, _.keys)),
-      // allUsed(allOf, lens(y => y.controls.val, Object.values)),
-      vldtr,
-    ]);
-    super(controls, {}, validator);
     this.factStruct = factStruct;
     this.mapping = _.clone(controls.properties.controls);
+    return this;
   }
 
   _updateValue(): void {

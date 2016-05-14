@@ -6,7 +6,7 @@ describe('ControlList', () => {
 
   beforeEach(() => {
     fact = () => new Control(1);
-    a = new ControlList(fact);
+    a = new ControlList().init(fact);
   });
 
   // it('should test', () => {

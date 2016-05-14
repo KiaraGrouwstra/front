@@ -10,7 +10,7 @@ describe('ControlVector', () => {
       () => new Control('b', c => ({ someError: true })),
     ];
     let add = () => new Control('c');
-    a = new ControlVector(items, add);
+    a = new ControlVector().init(items, add);
   });
 
   // it('should test', () => {

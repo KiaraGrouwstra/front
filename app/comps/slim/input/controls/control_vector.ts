@@ -9,16 +9,21 @@ export class ControlVector extends ControlArray {
   _additionalItems: Front.CtrlFactory;
 
   constructor(
-    _items: Front.CtrlFactory | Array<Front.CtrlFactory>, //private
-    _additionalItems: Front.CtrlFactory, //private
     vldtr: ValidatorFn = null,
   ) {
     let controls = [];
     // let validator = Validators.compose([allUsed(allOf, y => y.controls), vldtr]);
     super(controls, vldtr);
+  }
+
+  init(
+    _items: Front.CtrlFactory | Array<Front.CtrlFactory>, //private
+    _additionalItems: Front.CtrlFactory, //private
+  ): ControlVector {
     this._items = _items;
     this._additionalItems = _additionalItems;
     // let isHom = this.isHomogeneous = !_.isArray(items);
+    return this;
   }
 
   add(): Maybe<AbstractControl> {
