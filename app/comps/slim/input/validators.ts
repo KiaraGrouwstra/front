@@ -105,8 +105,8 @@ function matchesType(val: any, type: string): boolean {
   const mapping = {
     array: _.isArray,
     object: _.isPlainObject,
-    integer: _.isInteger,
-    number: _.isNumber,
+    integer: v => v % 1 == 0,
+    number: v => !isNaN(v),
     string: _.isString,
     null: _.isNull,
     boolean: _.isBoolean,
