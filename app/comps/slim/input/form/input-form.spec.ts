@@ -24,8 +24,8 @@ let spec = {
     'bar': scalar_spec,
   }
 };
-let obs_pars = () => _.cloneDeep({
-  inputs,
+let scalar_pars = () => _.cloneDeep({
+  spec,
 });
 let pars = () => _.cloneDeep({
   // spec,
@@ -53,19 +53,19 @@ describe('FormComp', () => {
     tcb = builder;
   }));
 
-  it('should do scalar specs', test([pars(), obs_pars()], ({ comp, el }) => {
+  it('should do scalar specs', test([pars(), scalar_pars()], ({ comp, el }) => {
     // expect(el).toHaveText(desc + text + text + 'Submit');
-    // expect(comp.ctrl.controls['foo'].errors).toEqual({required: true});
-    expect(comp.ctrl.errors).toEqual(null);
-    expect(comp.ctrl.value).toEqual({ foo: '', bar: '' });
+    // expect(comp.form.controls['foo'].errors).toEqual({required: true});
+    expect(comp.form.errors).toEqual(null);
+    expect(comp.form.value).toEqual({ foo: '', bar: '' });
   }));
 
   it('should do array specs', test([pars(), arr_pars()], ({ comp, el }) => {
     // console.log('controls', comp.ctrl.controls);
-    // expect(comp.ctrl.controls['foo'].errors).toEqual(null);
+    // expect(comp.form.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
-    expect(comp.ctrl.errors).toEqual(null);
-    expect(comp.ctrl.value).toEqual({});
+    expect(comp.form.errors).toEqual(null);
+    expect(comp.form.value).toEqual({});
   }));
 
 });
