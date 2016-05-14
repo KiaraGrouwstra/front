@@ -82,11 +82,15 @@ export function mapSpec<T,U>(fn: (T) => U): Front.IObjectSpec<(T) => U> {
 export let getValStruct = mapSpec(vldtrDefPair);
 
 // `ControlObject` generator (kicked out of `input_control`)
-export function objectControl(spec: Front.Spec): ControlObject {
-  // let allOf = _.get(['additionalProperties','allOf'], spec) || [];
-  let valStruct = getValStruct(spec);
-  let seed = () => new ControlObjectKvPair(valStruct);
-  return new ControlObject().init(seed); //, allOf
+export function objectControl(spec: Front.Spec, doSeed: boolean = false): ControlObject {
+  let ctrl = new ControlObject();
+  if(doSeed) {
+    // let allOf = _.get(['additionalProperties','allOf'], spec) || [];
+    let valStruct = getValStruct(spec);
+    let seed = () => new ControlObjectKvPair(valStruct);
+    ctrl.init(seed); //, allOf
+  }
+  return ctrl;
 }
 
 // return initial key/value pair for the model
@@ -98,28 +102,28 @@ export function input_control(spec: Front.Spec = {}, asFactory = false): Abstrac
       // only tablize predictable collections
       let props = _.get(['items','properties'], spec);
       if(_.isArray(spec.items)) {
-        let seeds = spec.items.map(x => input_control(x, true));
-        let add = spec.additionalItems;
-        let fallback = _.isPlainObject(add) ?
-            input_control(add, true) :
-            add == true ?
-                input_control({}, true) :
-                false;
-        factory = () => new ControlVector().init(seeds, fallback); //, allOf
+        // let seeds = spec.items.map(x => input_control(x, true));
+        // let add = spec.additionalItems;
+        // let fallback = _.isPlainObject(add) ?
+        //     input_control(add, true) :
+        //     add == true ?
+        //         input_control({}, true) :
+        //         false;
+        factory = () => new ControlVector() //.init(seeds, fallback); //, allOf
         // ^ ControlVector could also handle the simpler case below.
       } else if(spec.uniqueItems && _.size(spec.enum)) {
         factory = () => new ControlSet();
       } else {
-        let seed = props ?
-            () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
-            input_control(spec.items, true);
-        factory = () => new ControlList().init(seed);  //, allOf
+        // let seed = props ?
+        //     () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
+        //     input_control(spec.items, true);
+        factory = () => new ControlList() //.init(seed);  //, allOf
       }
       break;
     case 'object':
       // allOf = _.get(['additionalProperties','allOf'], spec) || [];
-      let factStruct = mapSpec(x => input_control(x, true))(spec);
-      factory = () => new ControlStruct().init(factStruct, spec.required || []);   //, allOf
+      // let factStruct = mapSpec(x => input_control(x, true))(spec);
+      factory = () => new ControlStruct() //.init(factStruct, spec.required || []);   //, allOf
       break;
     default:
       let val = get_default(spec);

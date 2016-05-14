@@ -6,6 +6,8 @@ import { InputValueComp } from '../value/input-value';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ControlObject } from '../controls/control_object';
+import { ControlObjectKvPair } from '../controls/control_object_kv_pair';
+import { input_control, mapSpec, getValStruct } from '../input'
 
 @Component({
   selector: 'input-object',
@@ -43,6 +45,18 @@ export class InputObjectComp {
   ngOnInit() {
     let props = getPaths(this.path);
     ['k', 'id'].forEach(x => this[x] = props[x]);
+  }
+
+  get ctrl(): ControlObject {
+    return this._ctrl;
+  }
+  set ctrl(x: ControlObject) {
+    if(_.isUndefined(x)) return;
+    this._ctrl = x;
+    let spec = this.spec;
+    let valStruct = getValStruct(spec);
+    let seed = () => new ControlObjectKvPair(valStruct);
+    x.init(seed);
   }
 
   get spec(): Front.Spec {

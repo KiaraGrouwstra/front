@@ -7,7 +7,7 @@ describe('ControlObject', () => {
   let obj;
 
   beforeEach(() => {
-    obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }); //input_control
+    obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }, true); //input_control
   });
 
   // it('should test', () => {

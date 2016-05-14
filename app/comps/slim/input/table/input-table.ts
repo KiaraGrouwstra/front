@@ -4,6 +4,7 @@ import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/commo
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls/control_list';
+import { input_control } from '../input'
 
 @Component({
   selector: 'input-table',
@@ -36,6 +37,17 @@ export class InputTableComp {
     ['k', 'id'].forEach(x => this[x] = props[x]);
     // [working example](http://plnkr.co/edit/mcfYMx?p=preview)
     this.keys = _.keys(this.spec.items.properties);
+  }
+
+  get ctrl(): ControlList<ControlGroup> {
+    return this._ctrl;
+  }
+  set ctrl(x: ControlList<ControlGroup>) {
+    if(_.isUndefined(x)) return;
+    this._ctrl = x;
+    let spec = this.spec;
+    let seed = () => new ControlGroup(_.mapValues(x => input_control(x), spec.items.properties));
+    x.init(seed);
   }
 
   get spec(): Front.Spec {

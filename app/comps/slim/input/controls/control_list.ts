@@ -6,6 +6,7 @@ import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 export class ControlList extends ControlArray {
   // <T extends AbstractControl>
   _factory: Front.CtrlFactory;
+  initialized: boolean;
 
   constructor(
     vldtr: ValidatorFn = null,
@@ -13,12 +14,15 @@ export class ControlList extends ControlArray {
     let controls = [];
     // let validator = Validators.compose([allUsed(allOf, y => y.controls), vldtr]);
     super(controls, vldtr);
+    this.initialized = false;
   }
 
   init(
     _factory: Front.CtrlFactory, //() => T,
   ): ControlList {
+    if(this.initialized) throw 'ControlList already initialized!';
     this._factory = _factory;
+    this.initialized = true;
     return this;
   }
 

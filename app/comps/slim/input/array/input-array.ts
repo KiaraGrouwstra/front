@@ -4,6 +4,7 @@ import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls/control_list';
+import { input_control } from '../input'
 
 @Component({
   selector: 'input-array',
@@ -38,6 +39,30 @@ export class InputArrayComp {
     // FieldComp's
     // I could ditch this whole items/counter crap and just iterate over ctrl.controls if I no longer insist id's with unique paths
     // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
+  }
+
+  get ctrl(): ControlList<Control> {
+    return this._ctrl;
+  }
+  set ctrl(x: ControlList<Control>) {
+    if(_.isUndefined(x)) return;
+    this._ctrl = x;
+    let spec = this.spec;
+    if(_.isArray(spec.items)) {
+      // ControlVector
+      let seeds = spec.items.map(s => input_control(s, true));
+      let add = spec.additionalItems;
+      let fallback = _.isPlainObject(add) ?
+          input_control(add, true) :
+          add == true ?
+              input_control({}, true) :
+              false;
+      x.init(seeds, fallback);
+    } else {
+      // ControlList
+      let seed = input_control(spec.items, true);
+      x.init(seed);
+    }
   }
 
   get spec(): Front.Spec {

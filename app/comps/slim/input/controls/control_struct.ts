@@ -17,6 +17,7 @@ let lens = (fn_obj, fn_grp) => (ctrl) => {
 export class ControlStruct extends ControlGroup {
   factStruct: Front.IObjectSpec<number>;
   mapping: {[key: string]: AbstractControl};
+  initialized: boolean;
 
   constructor(vldtr: ValidatorFn = null) {
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
@@ -36,13 +37,15 @@ export class ControlStruct extends ControlGroup {
     };
     super(controls, {}, validator);
     this.mapping = {};
+    this.initialized = false;
   }
 
   init(
     factStruct: Front.IObjectSpec<Front.CtrlFactory>,
     required: string[] = [],
   ): ControlStruct {
-    
+    if(this.initialized) throw 'ControlStruct already initialized!';
+
     // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `ControlGroup`
     let { nameSpecPatt, nameSpecAdd } = getOptsNameSpecs(factStruct);
     // nameSpec actually depends too, see input-object.
@@ -64,6 +67,7 @@ export class ControlStruct extends ControlGroup {
 
     this.factStruct = factStruct;
     this.mapping = _.clone(controls.properties.controls);
+    this.initialized = true;
     return this;
   }
 

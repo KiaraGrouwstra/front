@@ -6,7 +6,7 @@ import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
-import { input_control, getOptsNameSpecs } from '../input';
+import { input_control, getOptsNameSpecs, mapSpec } from '../input';
 import { ControlStruct } from '../controls/control_struct';
 
 @Component({
@@ -50,6 +50,17 @@ export class InputStructComp {
   ngOnInit() {
     let props = getPaths(this.path);
     ['k', 'id'].forEach(x => this[x] = props[x]);
+  }
+
+  get ctrl(): ControlStruct {
+    return this._ctrl;
+  }
+  set ctrl(x: ControlStruct) {
+    if(_.isUndefined(x)) return;
+    this._ctrl = x;
+    let spec = this.spec;
+    let factStruct = mapSpec(s => input_control(s, true))(spec);
+    x.init(factStruct, spec.required || []);
   }
 
   get spec(): Front.Spec {

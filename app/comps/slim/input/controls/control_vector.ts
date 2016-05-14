@@ -7,6 +7,7 @@ import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 export class ControlVector extends ControlArray {
   _items: Front.CtrlFactory | Front.CtrlFactory[]; // one factory (homogeneous mode) or an array of factories (use `additionalItems` when all used)
   _additionalItems: Front.CtrlFactory;
+  initialized: boolean;
 
   constructor(
     vldtr: ValidatorFn = null,
@@ -14,15 +15,18 @@ export class ControlVector extends ControlArray {
     let controls = [];
     // let validator = Validators.compose([allUsed(allOf, y => y.controls), vldtr]);
     super(controls, vldtr);
+    this.initialized = false;
   }
 
   init(
     _items: Front.CtrlFactory | Array<Front.CtrlFactory>, //private
     _additionalItems: Front.CtrlFactory, //private
   ): ControlVector {
+    if(this.initialized) throw 'ControlVector already initialized!';
     this._items = _items;
     this._additionalItems = _additionalItems;
     // let isHom = this.isHomogeneous = !_.isArray(items);
+    this.initialized = true;
     return this;
   }
 
