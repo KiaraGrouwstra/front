@@ -30,7 +30,7 @@ export class InputStructComp {
   _ctrl: ControlStruct;
   option = null;
   counter = 0;
-  indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
+  indices = { properties: new Set([]), patternProperties: {}, additionalProperties: [] }; //new Set([])
   // keys = ['name', 'val'];
   nameSpecFixed: Front.Spec;
   nameSpecFixedFiltered: Front.Spec = {};
@@ -69,7 +69,7 @@ export class InputStructComp {
     this.nameCtrlFixed = input_control(this.nameSpecFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
-    this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: new Set([]) };
+    this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: [] };  //new Set([])
     this.updateFixedList();
     })();
   }
@@ -126,17 +126,30 @@ export class InputStructComp {
 
   @try_log()
   addAdditionalProperty(k = ''): void {
-    // console.log('addAdditionalProperty', k);
+    console.log('addAdditionalProperty', k);
     this.ctrl.addAdditionalProperty(k);
-    this.indices.additionalProperties.add(this.counter++);
+    // this.indices.additionalProperties.add(this.counter++);
+    this.indices.additionalProperties.push(this.counter++);
+    console.log('this.indices.additionalProperties', this.indices.additionalProperties);
+    this.cdr.markForCheck();
   }
 
   @try_log()
   removeAdditionalProperty(item: string): void {
-    let set = this.indices.additionalProperties;
-    let idx = findIndexSet(item, set);
+    // let set = this.indices.additionalProperties;
+    // let idx = findIndexSet(item, set);
+    // this.ctrl.removeAdditionalProperty(idx);
+    // set.delete(item);
+    let arr = this.indices.additionalProperties;
+    let idx = _.find(item)(arr);
     this.ctrl.removeAdditionalProperty(idx);
-    set.delete(item);
+    this.indices.additionalProperties = Object.values(_.omit(idx)(arr));
+  }
+
+  @try_log()
+  customTrackBy(index: number, item: any): any {
+    console.log('customTrackBy', index, item);
+    return index;
   }
 
   // print(v) {

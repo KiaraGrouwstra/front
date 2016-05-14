@@ -207,14 +207,22 @@ export function input_specs(path: Front.Path = []): (v: string, idx: number) => 
 }
 
 // pars to make a form for a given API function. json-path?
-export function method_pars(spec: Front.Spec, fn_path: string): { pars: Front.IPathSpec[], desc: string } {
+export function method_pars(spec: Front.Spec, fn_path: string): { pars: Front.Spec, desc: string } {
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => id_cleanse(x));
   // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
-  let pars = (_.get(hops, spec) || []).map(input_specs(path));  //[scheme].concat()
+  let arr = _.get(hops, spec) || [];
+  let pars = specFromArr(arr);
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
   return { pars, desc };
 };
+
+// convert an array of specs to an object spec
+let specFromArr = (arr) => {
+  let names = arr.map(y => y.name);
+  let props = _.zipObject(names, arr);
+  return { type: 'object', properties: props, required: names };
+}
 
 // finds and returns an array of all json paths (as string arrays) of any tables (not within arrays)
 // in a JSON schema as suggestions to use as the meat extractor for fetched JSON results.

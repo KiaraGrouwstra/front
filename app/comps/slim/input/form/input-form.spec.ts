@@ -16,24 +16,32 @@ let scalar_spec = {
   "required": true,
   "type": "string"
 };
-let inputs = [
-  { path: ['foo'], spec: scalar_spec },
-  { path: ['bar'], spec: scalar_spec },
-];
+let spec = {
+  type: 'object',
+  required: ['foo','bar'],
+  properties: {
+    'foo': scalar_spec,
+    'bar': scalar_spec,
+  }
+};
 let obs_pars = () => _.cloneDeep({
   inputs,
 });
 let pars = () => _.cloneDeep({
-  // inputs,
+  // spec,
   desc,
 });
-let arr_spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
-let arr_inputs = [
-  { path: ['foo'], spec: arr_spec },
-  { path: ['bar'], spec: arr_spec },
-];
+let spec_arr = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
+let arr_spec = {
+  type: 'object',
+  required: ['foo','bar'],
+  properties: {
+    'foo': spec_arr,
+    'bar': spec_arr,
+  }
+};
 let arr_pars = () => _.cloneDeep({
-  inputs: arr_inputs,
+  spec: arr_spec,
 });
 let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
@@ -45,14 +53,20 @@ describe('FormComp', () => {
     tcb = builder;
   }));
 
-  it('should do scalar inputs', test([pars(), obs_pars()], ({ comp, el }) => {
+  it('should do scalar specs', test([pars(), obs_pars()], ({ comp, el }) => {
     // expect(el).toHaveText(desc + text + text + 'Submit');
-    expect(comp.items[0].ctrl.errors).toEqual({required: true});
+    // expect(comp.ctrl.controls['foo'].errors).toEqual({required: true});
+    expect(comp.ctrl.errors).toEqual(null);
+    expect(comp.ctrl.value).toEqual({ foo: '', bar: '' });
   }));
 
-  it('should do array inputs', test([pars(), arr_pars()], ({ comp, el }) => {
-    expect(comp.items[0].ctrl.errors).toEqual(null);
+  it('should do array specs', test([pars(), arr_pars()], ({ comp, el }) => {
+    let { comp, el } = makeComp(tcb, cls(_.assign(arr_pars(), pars())));
+    // console.log('controls', comp.ctrl.controls);
+    // expect(comp.ctrl.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
+    expect(comp.ctrl.errors).toEqual(null);
+    expect(comp.ctrl.value).toEqual({});
   }));
 
 });

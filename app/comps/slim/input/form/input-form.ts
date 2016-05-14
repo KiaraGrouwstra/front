@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
 import { FormBuilder } from '@angular/common';  //, Control
 import { InputValueComp } from '../value/input-value';
@@ -17,30 +17,25 @@ let _ = require('lodash/fp');
 export class FormComp {
   items: Front.IInput[] = [];
   form: ControlGroup = this._builder.group({});
-  // type: Observable<string>;
   @Output() submit = new EventEmitter(false);
-  @Input() inputs: Array<Front.IPathSpec>;
+  @Input() spec: Front.Spec;
   @Input() desc: string;
-  _inputs: Array<Front.IPathSpec>;
+  _spec: Front.Spec;
   _desc: string;
-  // @Input() path: Front.Path;
-  // @Input() spec: Front.Spec;
-  @ViewChildren(InputValueComp) vals: QueryList<InputValueComp>;
+  @ViewChild(InputValueComp) v: InputValueComp;
 
   constructor(
     private _builder: FormBuilder,
   ) {}
 
-  set inputs(x: Front.IInput) {
+  get spec() {
+    return this._spec;
+  }
+  set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
-    // console.log('REMAKING FORM');
-    this.items = x.map(x => _.assign(x, { ctrl: input_control(x.spec), named: true }));
-    // ^ inefficient to redo for old ones each time, switch to additive mutations
-    let params = _.fromPairs(this.items.map(x => [x.spec.name, x.ctrl]));
-    this.form = this._builder.group(params);
-    // shouldn't map like this, all controls' state will be ditched whenever I'd like to add a control upstream
-    // transitively wrap every object with `this._builder.group({})` with matching in-form `ngControlGroup`s.
-    // implied by new input value?
+    this._spec = x;
+    this.form = input_control(x);
+    // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
   }
 
 }

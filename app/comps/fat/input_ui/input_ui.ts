@@ -7,7 +7,7 @@ import { FormComp } from '../../comps';
 @Component({
   selector: 'input-ui',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<input-form [inputs]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
+  template: `<input-form [spec]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
   directives: [
     // FormComp,
     forwardRef(() => FormComp),

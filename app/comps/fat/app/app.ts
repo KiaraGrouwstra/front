@@ -88,8 +88,8 @@ export class App {
       if(name == api) $('#scope-list .collapsible-header').click();
     }));
 
-    this.curl = curl_spec.map(input_specs());
-    this.scrape_spec = scrape_spec.map(input_specs());
+    this.curl = curl_spec;
+    this.scrape_spec = scrape_spec;
 
     this.handle_implicit(window.location);
     this.load_ui(api);

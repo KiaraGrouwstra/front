@@ -1,22 +1,14 @@
-//- {fields: [html], desc: html}
-//- '#my_form'='ngForm'
-//- '(ngSubmit)'=`onSubmit(form.value)`
-//- '(ngSubmit)'=`submit.emit(form.value)`
 form(
   '[ngFormModel]'='form'
   '#frm'='ngForm'
 )
   .fn_desc {{ desc }}
-  //- delegate loop to ng-output/object.jade?
-  //-  | async
-  //- '[name]'=`v.spec.name`
-  //- *ngFor=`let v of items$ | async`
   input-value(
-    *ngFor=`let v of items`
-    '[path]'=`v.path`
-    '[spec]'=`v.spec`
-    '[named]'=`v.named`
-    '[ctrl]'=`v.ctrl`
+    *ngIf=`spec`
+    '[path]'=`[]`
+    '[spec]'=`spec`
+    '[named]'=`false`
+    '[ctrl]'=`form`
   )
   //- type='submit'
   //- '[disabled]'=`!form.valid`

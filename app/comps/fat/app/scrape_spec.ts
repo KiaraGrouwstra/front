@@ -18,66 +18,67 @@ let selector = {
 };
 
 // TODO: update so as to incorporate nesting
-export let scrape_spec: Front.Spec[] = [
-  {
-    name: 'url',
-    type: 'string',
-    format: 'url',
-    required: true,
-    description: 'the URL to scrape and extract',
-  },
-  {
-    name: 'parselet',
-    description: 'json parselet',
-    type: 'object',
-    // additionalProperties: selector,
-    additionalProperties: {
+export let scrape_spec: Front.Spec = {
+  type: 'object',
+  required: ['url', 'parselet', 'headers'],
+  properties: {
+    'url': {
+      type: 'string',
+      format: 'url',
+      required: true,
+      description: 'the URL to scrape and extract',
+    },
+    'parselet': {
+      description: 'json parselet',
       type: 'object',
-      properties: {
-        'selector': selector,
-        'type': {
-          type: 'string',
-          enum: [
-            'text',
-            'attribute',
-            'inner html',
-            'outer html',
-          ],
-          // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
-        },
-        'attribute': {
-          type: 'string',
-          'x-bindings': {
-            // styles: {},
-            // classes: {},
-            attributes: {
-              disabled: `./type != 'attribute'`,
+      // additionalProperties: selector,
+      additionalProperties: {
+        type: 'object',
+        properties: {
+          'selector': selector,
+          'type': {
+            type: 'string',
+            enum: [
+              'text',
+              'attribute',
+              'inner html',
+              'outer html',
+            ],
+            // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
+          },
+          'attribute': {
+            type: 'string',
+            'x-bindings': {
+              // styles: {},
+              // classes: {},
+              attributes: {
+                disabled: `./type != 'attribute'`,
+              },
             },
           },
         },
+        additionalProperties: false,
       },
-      additionalProperties: false,
+      minProperties: 1,
     },
-    minProperties: 1,
-  },
-  {
-    name: 'headers',
-    description: 'Request Headers',
-    type: 'object',
-    properties: {
-      'Content-Type': {
+    'headers': {
+      description: 'Request Headers',
+      type: 'object',
+      properties: {
+        'Content-Type': {
+          type: 'string',
+          suggestions: mimeTypes,
+        },
+      },
+      additionalProperties: {
         type: 'string',
-        suggestions: mimeTypes,
+        required: true,
+        name: 'header value',
+        description: 'any string',
+      },
+      'x-keys': {
+        suggestions: headers,
       },
     },
-    additionalProperties: {
-      type: 'string',
-      required: true,
-      name: 'header value',
-      description: 'any string',
-    },
-    'x-keys': {
-      suggestions: headers,
-    },
   },
-];
+};
