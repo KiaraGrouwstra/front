@@ -52,7 +52,7 @@ export let scrape_spec: Front.Spec = {
               // styles: {},
               // classes: {},
               attributes: {
-                disabled: `./type != 'attribute'`,
+                disabled: `nav('../type') != 'attribute'`,
               },
             },
           },

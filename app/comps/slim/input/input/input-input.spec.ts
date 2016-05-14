@@ -22,7 +22,7 @@ let spec = {
 let ctrl = input_control(spec);
 let attrs = input_attrs(path, spec);
 let pars = () => _.cloneDeep({
-  // path,
+  path,
   spec,
   ctrl,
   attrs,

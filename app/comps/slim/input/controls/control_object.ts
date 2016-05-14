@@ -5,6 +5,8 @@ import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlList } from './control_list';
 
 export class ControlObject<T extends AbstractControl> extends ControlList<T> {
+  // mapping: {[key: string]: AbstractControl} = {};
+
   constructor(
     factory: () => T, //Front.CtrlFactory
     vldtr: ValidatorFn = null,
@@ -20,6 +22,12 @@ export class ControlObject<T extends AbstractControl> extends ControlList<T> {
 
   _updateValue(): void {
     this._value = _.fromPairs(this.controls.map(c => [c.value.name, c.value.val]));
+  }
+
+  find(k: string): AbstractControl {
+    // return this.mapping[k];
+    return _.find(c => c.controls('name') == k)(this.controls).controls('val');
+    // ^ terrible for performance. better: hook into add/remove/nameCtrl.valueChanges
   }
 
 }

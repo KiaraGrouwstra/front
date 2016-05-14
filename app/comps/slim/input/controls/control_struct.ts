@@ -7,10 +7,9 @@ import { mapBoth, editValsLambda } from '../../../lib/js';
 
 export class ControlStruct extends ControlGroup {
   factStruct: Front.IObjectSpec<number>;
-  mapping: {[key: string]: AbstractControl};
+  mapping: {[key: string]: AbstractControl} = {};
 
   constructor(factStruct: Front.IObjectSpec<number>, required: string[] = [], vldtr: ValidatorFn = null) {
-    mapping = {};
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
     // KvPair: ControlGroup<k,v>
     // this: ControlGroup< properties: ControlGroup<v>, patternProperties: ControlGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >

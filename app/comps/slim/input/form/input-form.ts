@@ -38,4 +38,10 @@ export class FormComp {
     // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
   }
 
+  nav(path: string[]): any {
+    console.log('form:nav', path);
+    let ctrl = path.reduce((acc, v, idx) => _.isNumber(v) ? acc.at(v) : acc.find ? acc.find(v) : acc.controls[v], this.form);
+    return ctrl.value;
+  }
+
 }
