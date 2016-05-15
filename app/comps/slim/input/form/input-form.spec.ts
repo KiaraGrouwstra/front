@@ -65,7 +65,7 @@ describe('FormComp', () => {
     // expect(comp.form.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
     expect(comp.form.errors).toEqual(null);
-    expect(comp.form.value).toEqual({});
+    expect(comp.form.value).toEqual({ foo: [], bar: [] });
   }));
 
 });

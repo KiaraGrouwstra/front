@@ -24,7 +24,7 @@ describe('ControlStruct', () => {
   // })
 
   it('allow finding by key', () => {
-    expect(obj.find('foo').value).toEqual(0);
+    expect(obj.byName('foo').value).toEqual(0);
     expect(obj.valid).toEqual(true);
   });
 
