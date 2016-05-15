@@ -1,3 +1,4 @@
+import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 import { Control } from '@angular/common';
 import { PolymorphicControl } from './polymorphic_control';
 
@@ -12,10 +13,10 @@ describe('PolymorphicControl', () => {
 
   it('should allow swapping out controls', () => {
     expect(poly.value).toEqual(null);
-    expect(poly.errors).toEqual(false);
+    expect(poly.errors).toEqual(null);
     poly.ctrl = a;
     expect(poly.value).toEqual('a');
-    expect(poly.errors).toEqual(false);
+    expect(poly.errors).toEqual(null);
     poly.ctrl = b;
     expect(poly.value).toEqual('b');
     expect(poly.errors).toEqual({ someError: true });

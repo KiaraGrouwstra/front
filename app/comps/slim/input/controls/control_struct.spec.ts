@@ -1,3 +1,4 @@
+import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 let _ = require('lodash/fp');
 import { Control } from '@angular/common';
 import { ControlStruct } from './control_struct';

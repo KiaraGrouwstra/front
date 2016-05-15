@@ -13,7 +13,9 @@ export class PolymorphicControl extends Control {
   }
 
   get ctrl(): AbstractControl {
-    return this._ctrl;
+    let x = this._ctrl;
+    if(_.isUndefined(x)) x = this._ctrl = new Control(null);
+    return x;
   }
   set ctrl(x: AbstractControl) {
     if(_.isUndefined(x)) return;
