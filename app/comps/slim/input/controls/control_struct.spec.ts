@@ -16,7 +16,7 @@ describe('ControlStruct', () => {
       additionalProperties: num,
       required: ['foo'],
     };
-    obj = input_control(spec);
+    obj = input_control(spec, false, true);
   });
 
   // it('should test', () => {

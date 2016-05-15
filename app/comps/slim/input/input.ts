@@ -89,7 +89,7 @@ export function objectControl(spec: Front.Spec, doSeed: boolean = false): Contro
 }
 
 // return initial key/value pair for the model
-export function input_control(spec: Front.Spec = {}, asFactory = false): AbstractControl | Front.CtrlFactory {
+export function input_control(spec: Front.Spec = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
   let factory, seed;  //, allOf
   switch(spec.type) {
     case 'array':
@@ -97,28 +97,42 @@ export function input_control(spec: Front.Spec = {}, asFactory = false): Abstrac
       // only tablize predictable collections
       let props = _.get(['items','properties'], spec);
       if(_.isArray(spec.items)) {
-        // let seeds = spec.items.map(x => input_control(x, true));
-        // let add = spec.additionalItems;
-        // let fallback = _.isPlainObject(add) ?
-        //     input_control(add, true) :
-        //     add == true ?
-        //         input_control({}, true) :
-        //         false;
-        factory = () => new ControlVector() //.init(seeds, fallback); //, allOf
+        let cls = ControlVector;
+        if(doSeed) {
+          let seeds = spec.items.map(x => input_control(x, true, true));
+          let add = spec.additionalItems;
+          let fallback = _.isPlainObject(add) ?
+              input_control(add, true, true) :
+              add == true ?
+                  input_control({}, true, true) :
+                  false;
+          factory = () => new cls().init(seeds, fallback);
+        } else {
+          factory = () => new cls();
+        }
         // ^ ControlVector could also handle the simpler case below.
       } else if(spec.uniqueItems && _.size(spec.enum)) {
-        factory = () => new ControlSet();
+        factory = () => new ControlSet(spec.enum);
       } else {
-        // let seed = props ?
-        //     () => new ControlGroup(_.mapValues(x => input_control(x), props)) :
-        //     input_control(spec.items, true);
-        factory = () => new ControlList() //.init(seed);  //, allOf
+        let cls = ControlList;
+        if(doSeed) {
+          let seed = props ?
+              () => new ControlGroup(_.mapValues(x => input_control(x, false, true), props)) :
+              input_control(spec.items, true, true);
+          factory = () => new cls().init(seed);
+        } else {
+          factory = () => new cls();
+        }
       }
       break;
     case 'object':
-      // allOf = _.get(['additionalProperties','allOf'], spec) || [];
-      // let factStruct = mapSpec(x => input_control(x, true))(spec);
-      factory = () => new ControlStruct() //.init(factStruct, spec.required || []);   //, allOf
+      let cls = ControlStruct;
+      if(doSeed) {
+        let factStruct = mapSpec(x => input_control(x, true, true))(spec);
+        factory = () => new cls().init(factStruct, spec.required || []);
+      } else {
+        factory = () => new cls();
+      }
       break;
     default:
       let val = get_default(spec);

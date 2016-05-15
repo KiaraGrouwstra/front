@@ -64,6 +64,7 @@ export class ControlStruct extends ControlGroup {
       this.addControl(k, ctrl);
     })(controls);
 
+    this._updateValue();
     this.factStruct = factStruct;
     this.mapping = _.clone(controls.properties.controls);
     this.initialized = true;
@@ -128,10 +129,5 @@ export class ControlStruct extends ControlGroup {
   byName(k: string): AbstractControl {
     return this.mapping[k];
   }
-
-  // add() { //: void
-  //   let ctrl = this._factory();
-  //   this.push(ctrl);
-  // }
 
 }
