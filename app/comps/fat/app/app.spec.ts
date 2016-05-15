@@ -1,5 +1,5 @@
 import { ComponentFixture, NgMatchers, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { ReflectiveInjector, provide } from '@angular/core';
+import { ReflectiveInjector } from '@angular/core';
 import { RequestService } from '../../services/request/request';
 import { WsService } from '../../services/ws/ws';
 import { requestServiceProvider } from '../../services/request/request.provider';
@@ -11,7 +11,8 @@ import { Http } from '@angular/http'; //Headers
 import { HTTP_BINDINGS } from '@angular/http';
 import { App } from './app';
 
-export let appProvider = provide(App, {
+export let appProvider = {
+  provide: App,
   deps: [
     // Router,
     Http,
@@ -32,7 +33,7 @@ export let appProvider = provide(App, {
     ws,
     config,
   ),
-});
+};
 
 xdescribe('App', () => {
   let injector: ReflectiveInjector;
@@ -44,7 +45,7 @@ xdescribe('App', () => {
       HTTP_BINDINGS, ROUTER_PROVIDERS,
       requestServiceProvider,
       wsServiceProvider,
-      provide(APP_CONFIG, { useValue: CONFIG }),
+      { provide: APP_CONFIG, useValue: CONFIG },
     ]);
     app = injector.get(App);
   })

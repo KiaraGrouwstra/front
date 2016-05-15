@@ -1,5 +1,5 @@
 import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from '@angular/core/testing';
-import { ReflectiveInjector, provide } from '@angular/core';
+import { ReflectiveInjector } from '@angular/core';
 import { RequestService } from './request';
 import { requestServiceProvider } from './request.provider';
 import { WsService } from '../ws/ws';
@@ -14,7 +14,7 @@ describe('RequestService', () => {
     injector = ReflectiveInjector.resolveAndCreate([
       requestServiceProvider,
       wsServiceProvider,
-      provide(APP_CONFIG, { useValue: CONFIG }),
+      { provide: APP_CONFIG, useValue: CONFIG },
     ]);
     req = injector.get(RequestService);
     spyOn(req._ws.chan, 'push');

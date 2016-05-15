@@ -1,5 +1,5 @@
 import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from '@angular/core/testing';
-import { ReflectiveInjector, provide } from '@angular/core';
+import { ReflectiveInjector } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WsService } from './ws';
 import { wsServiceProvider } from './ws.provider';
@@ -12,7 +12,7 @@ describe('WebSocket', () => {
   beforeEach(() => {
     injector = ReflectiveInjector.resolveAndCreate([
       wsServiceProvider,
-      provide(APP_CONFIG, { useValue: CONFIG }),
+      { provide: APP_CONFIG, useValue: CONFIG },
     ]);
     ws = injector.get(WsService);
     ws.connect();

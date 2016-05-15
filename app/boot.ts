@@ -11,7 +11,7 @@ import { bootstrap } from '@angular/platform-browser-dynamic';
 // import { bootstrapStatic } from '@angular/platform-browser';
 import { ROUTER_PROVIDERS } from '@angular/router';
 import { HTTP_BINDINGS } from '@angular/http';
-import { provide, enableProdMode } from '@angular/core';
+import { enableProdMode } from '@angular/core';
 
 import { App } from './comps/fat/app/app';
 import { RequestService } from './comps/services/request/request';
@@ -24,7 +24,7 @@ let singletons = [
   HTTP_BINDINGS, ROUTER_PROVIDERS,
   requestServiceProvider,
   wsServiceProvider,
-  provide(APP_CONFIG, { useValue: CONFIG }),
+  { provide: APP_CONFIG, useValue: CONFIG },
 ];
 enableProdMode();
 bootstrap(App, singletons);
