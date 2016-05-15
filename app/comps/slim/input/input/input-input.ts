@@ -3,6 +3,7 @@ import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
 import { ng2comp } from '../../../lib/js';
 import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
 import { FormComp } from '../form/input-form';
+import { findControl, splitPath, relativeControl } from '../input';
 
 @Component({
   selector: 'my-input',
@@ -23,17 +24,8 @@ export class InputComp {
   _ctrl: Control;
   _attrs: Front.IAttributes;
 
-  constructor(
-    public form: FormComp,
-  ) {
-    // console.log('input', form);
-  }
-
   nav(relativePath: string) {
-    console.log('input:nav', relativePath);
-    let relPath = relativePath.split('/').map(s => isNaN(s) ? s : Number(s));
-    let path = relPath.reduce((acc, v, idx) => v == '..' ? acc.slice(0,-1) : acc.concat(v), this.path);
-    return form.nav(path);
+    return relativeControl(this.ctrl.root, this.path, relativePath).value;
   }
 
 }

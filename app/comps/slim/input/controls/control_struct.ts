@@ -125,7 +125,7 @@ export class ControlStruct extends ControlGroup {
     this.mapping = _.omit([k])(this.mapping);
   }
 
-  find(k: string): AbstractControl {
+  byName(k: string): AbstractControl {
     return this.mapping[k];
   }
 

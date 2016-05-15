@@ -13,20 +13,20 @@ import { App } from './app';
 
 export let appProvider = provide(App, {
   deps: [
-    Router,
+    // Router,
     Http,
     RequestService,
     WsService,
     APP_CONFIG,
   ],
   useFactory: (
-    router,
+    // router,
     http,
     req,
     ws,
     config,
   ) => new App(
-    router,
+    // router,
     http,
     req,
     ws,

@@ -16,17 +16,13 @@ let _ = require('lodash/fp');
 })
 export class FormComp {
   items: Front.IInput[] = [];
-  form: ControlGroup = this._builder.group({});
+  form: ControlGroup = new ControlGroup({});
   @Output() submit = new EventEmitter(false);
   @Input() spec: Front.Spec;
   @Input() desc: string;
   _spec: Front.Spec;
   _desc: string;
   @ViewChild(InputValueComp) v: InputValueComp;
-
-  constructor(
-    private _builder: FormBuilder,
-  ) {}
 
   get spec() {
     return this._spec;
@@ -36,12 +32,6 @@ export class FormComp {
     this._spec = x;
     this.form = input_control(x);
     // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
-  }
-
-  nav(path: string[]): any {
-    console.log('form:nav', path);
-    let ctrl = path.reduce((acc, v, idx) => _.isNumber(v) ? acc.at(v) : acc.find ? acc.find(v) : acc.controls[v], this.form);
-    return ctrl.value;
   }
 
 }

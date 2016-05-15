@@ -10,7 +10,7 @@ module Front {
   // export type Spec = swagger_io.v2.SchemaJson;
   export type Spec = swagger_io.v2.Schema;
 
-  export type Path = string[];
+  export type Path = Array<string | number>;
 
   export interface IPathSpec {
     path: Path,

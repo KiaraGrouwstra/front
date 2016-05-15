@@ -279,3 +279,30 @@ export function categorizeKeys(patterns, blacklist = []): (keys: string[]) => { 
     return { rest, patts };
   };
 }
+
+// split a string path to an array
+export function splitPath(path: string) {
+  return path.split('/').map(s => isNaN(s) ? s : Number(s));
+}
+
+// like `AbstractControl`'s 'find()`, but also deals with Polymorphic/Object/Struct controls.
+export function findControl(control: AbstractControl, path: Front.Path | string) {
+  let arrPath = _.isArray(path) ? path : splitPath(path);
+  return arrPath.reduce((acc, v, idx) => {
+    let ctrl = acc.ctrl ? acc.ctrl : acc; // PolymorphicControl
+    return _.isNumber(v) ? ctrl.at(v) :   // ControlArray (ControlList)
+        ctrl.byName ? acc.byName(v) :   // ControlStruct (ControlObject)
+        ctrl.controls[v];   // ControlGroup
+  }, control);
+}
+
+// merge a relative path with an absolute path
+export function mergePath(currentPath: Front.Path, relativePath: string) {
+  return splitPath(relativePath).reduce((acc, v, idx) => v == '..' ? acc.slice(0,-1) : acc.concat(v), currentPath);
+}
+
+// navigate to a control relative from the current one
+export function relativeControl(control: AbstractControl, currentPath: Front.Path, relativePath: string) {
+  let mergedPath = mergePath(currentPath, relativePath);
+  return findControl(control, mergedPath).value;
+}
