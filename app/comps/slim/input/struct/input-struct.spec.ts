@@ -58,7 +58,7 @@ describe('InputStructComp', () => {
 
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
-  it('should validate key uniqueness', test(pars(), ({ comp, el }) => {
+  xit('should validate key uniqueness', test(pars(), ({ comp, el }) => {
     comp.addAdditionalProperty();
     expect(comp.ctrl.errors).toEqual(null);
     // expect(comp.ctrl.valid).toEqual(true);
@@ -67,7 +67,7 @@ describe('InputStructComp', () => {
     // expect(comp.ctrl.valid).toEqual(false);
   }));
 
-  it('should allow setting values', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+  xit('should allow setting values', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     let val = debugEl.query(By.css('#test-fixed'));
     let v = comp.ctrl.controls.properties.controls['fixed'];
     setInput(val, 'fixed');
@@ -77,7 +77,7 @@ describe('InputStructComp', () => {
     // ^ can't set a select to a non-whitelisted value
   }));
 
-  it('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+  xit('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     let val = debugEl.query(By.css('#test-fixed'));
     let v = comp.ctrl.controls.properties.controls['fixed'];
     expect(v.errors).not.toEqual(null);
@@ -87,7 +87,7 @@ describe('InputStructComp', () => {
     expect(v.errors).not.toEqual(null);
   }));
 
-  it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+  xit('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     console.log('input-struct');
 
     let btn = debugEl.query(By.css('a.add-add'));

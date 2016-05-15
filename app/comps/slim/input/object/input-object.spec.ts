@@ -57,7 +57,7 @@ describe('InputObjectComp', () => {
 
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
-  it('should validate key uniqueness', test(pars(), ({ comp, el }) => {
+  xit('should validate key uniqueness', test(pars(), ({ comp, el }) => {
     comp.add();
     expect(comp.ctrl.errors).toEqual(null);
     comp.add();
@@ -74,7 +74,7 @@ describe('InputObjectComp', () => {
     return { name, val, n, v };
   }
 
-  it('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+  xit('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     console.log('input-object:fixed');
     let { name, val, n, v } = firstControl(comp, debugEl, fixture);
     let p = x => console.log(`input-object: ${x}`);
@@ -125,7 +125,7 @@ describe('InputObjectComp', () => {
     // expect(v.errors).not.toEqual(null); // null
   }));
 
-  it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
+  xit('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
     console.log('input-object:add');
     let { name, val, n, v } = firstControl(comp, debugEl, fixture);
     expect(v.validator({ value: 'additional' })).toEqual(null);
