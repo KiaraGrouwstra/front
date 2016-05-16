@@ -30,7 +30,7 @@ export class InputStructComp {
   _ctrl: ControlStruct;
   option = null;
   counter = 0;
-  indices = { properties: new Set([]), patternProperties: {}, additionalProperties: [] }; //new Set([])
+  indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
   // keys = ['name', 'val'];
   nameSpecFixed: Front.Spec;
   nameSpecFixedFiltered: Front.Spec = {};
@@ -68,7 +68,9 @@ export class InputStructComp {
   }
   set spec(x: Front.Spec) {
     tryLog(() => {
-    if(_.isUndefined(x)) return;
+    // this is getting set with the same value multiple times. why?
+    if(_.isUndefined(x) || _.isEqual(this._spec, x)) return;
+    // console.log('set:spec', 'from', this._spec, 'to', x);
     this._spec = x;
     let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
     this.isOneOf = _.has(['oneOf'], add);
@@ -80,7 +82,7 @@ export class InputStructComp {
     this.nameCtrlFixed = input_control(this.nameSpecFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
-    this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: [] };  //new Set([])
+    this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: new Set([]) };
     this.updateFixedList();
     })();
   }
@@ -137,31 +139,22 @@ export class InputStructComp {
 
   @try_log()
   addAdditionalProperty(k = ''): void {
-    console.log('addAdditionalProperty', k);
     this.ctrl.addAdditionalProperty(k);
-    // this.indices.additionalProperties.add(this.counter++);
-    this.indices.additionalProperties.push(this.counter++);
-    console.log('this.indices.additionalProperties', this.indices.additionalProperties);
-    this.cdr.markForCheck();
+    this.indices.additionalProperties.add(this.counter++);
   }
 
   @try_log()
   removeAdditionalProperty(item: string): void {
-    // let set = this.indices.additionalProperties;
-    // let idx = findIndexSet(item, set);
-    // this.ctrl.removeAdditionalProperty(idx);
-    // set.delete(item);
-    let arr = this.indices.additionalProperties;
-    let idx = _.find(item)(arr);
+    let set = this.indices.additionalProperties;
+    let idx = findIndexSet(item, set);
     this.ctrl.removeAdditionalProperty(idx);
-    this.indices.additionalProperties = Object.values(_.omit(idx)(arr));
+    set.delete(item);
   }
 
-  // @try_log()
-  customTrackBy(index: number, item: any): any {
-    console.log('customTrackBy', index, item);
-    return index;
-  }
+  // customTrackBy(index: number, item: any): any {
+  //   console.log('customTrackBy', index, item);
+  //   return index;
+  // }
 
   // print(v) {
   //   console.log('print', v);

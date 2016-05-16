@@ -119,7 +119,8 @@
               th Value
               th
             tbody
-              tr(*ngFor=`let item of indices.additionalProperties; trackBy: customTrackBy; let i = index`)
+              //- ; trackBy: customTrackBy
+              tr(*ngFor=`let item of indices.additionalProperties; let i = index`)
                 td
                   input-field(
                     '[named]'=`false`
