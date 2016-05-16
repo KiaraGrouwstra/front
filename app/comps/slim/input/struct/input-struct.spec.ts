@@ -88,35 +88,23 @@ describe('InputStructComp', () => {
   }));
 
   it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
-    console.log('input-struct');
-
     let btn = debugEl.query(By.css('a.add-add'));
     dispatchEvent(btn.nativeElement, 'click');
     // comp.addAdditionalProperty();
-
     fixture.detectChanges();
-    comp.cdr.markForCheck();
-    tick(10000);
-    tick();
-    flushMicrotasks();
 
-    // the new additional field won't show up...
-    console.log('debugEl.nativeElement', debugEl.nativeElement);
     let name = debugEl.query(By.css('#test-0-name'));
     expect(name).not.toEqual(null);
-    // let val = debugEl.query(By.css('#test-0-val'));
-    // expect(val).not.toEqual(null);
-    // let { name: n, val: v } = comp.ctrl.controls.additionalProperties.at(0).controls;
-    //
-    // setInput(name, 'foo');
-    // expect(v.errors).not.toEqual(null);
-    // setInput(val, 'additional');
-    // expect(v.errors).toEqual(null);
-    // setInput(name, 'fixed');
-    // expect(n.errors).not.toEqual(null);
-  }));
+    let val = debugEl.query(By.css('#test-0-val'));
+    expect(val).not.toEqual(null);
+    let { name: n, val: v } = comp.ctrl.controls.additionalProperties.at(0).controls;
 
-  // it('should switch val value/validator on name change', test(pars, ({ comp, el }) => {
-  // }));
+    setInput(name, 'foo');
+    expect(v.errors).not.toEqual(null);
+    setInput(val, 'additional');
+    expect(v.errors).toEqual(null);
+    setInput(name, 'fixed');
+    expect(n.errors).not.toEqual(null);
+  }));
 
 });

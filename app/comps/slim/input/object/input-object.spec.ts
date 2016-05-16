@@ -75,72 +75,40 @@ describe('InputObjectComp', () => {
   }
 
   it('should validate fixed properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
-    console.log('input-object:fixed');
     let { name, val, n, v } = firstControl(comp, debugEl, fixture);
-    let p = x => console.log(`input-object: ${x}`);
-    let sub = n.valueChanges.subscribe(p, p, p);
-
-    // expect(v.validator({ value: 'additional' })).toEqual(null);
-    // expect(v.validator({ value: 'fixed' })).toEqual({ enum: true });
 
     setInput(name, 'fixed');
     // n.updateValue('fixed');
     expect(n.value).toEqual('fixed');
     n.updateValueAndValidity();
-    // fixture.detectChanges();
-    tick();
-
-    // expect(v.validator({ value: 'additional' })).toEqual({ enum: true });
-    // expect(v.validator({ value: 'fixed' })).toEqual(null);
-
-    // console.log('v.errors', v.errors);
-    expect(v.errors).not.toEqual(null);
-
+    expect(v.errors).toEqual({ enum: true });
     fixture.detectChanges();
-    tick();
-    tick(10000);
-    flushMicrotasks();
-    comp.cdr.markForCheck();
 
-    comp.cdr.markForCheck();
-
-    console.log('val.nativeElement', val.nativeElement);
     setInput(val, 'fixed');
-    // v.updateValue('fixed');
-
-    fixture.detectChanges();
-
-    fixture.detectChanges();
-    tick();
-    tick(10000);
-    flushMicrotasks();
-    comp.cdr.markForCheck();
-
     expect(v.value).toEqual('fixed');
-    // expect(v.errors).toEqual(null);
-    // setInput(val, 'additional');
-    // // fixture.detectChanges();
-    // // tick();
-    // expect(v.value).toEqual('');  // not allowed
-    // expect(v.errors).not.toEqual(null); // null
+    expect(v.errors).toEqual(null);
+
+    setInput(val, 'additional');
+    expect(v.value).toEqual('');  // not allowed
+    expect(v.errors).toEqual({ enum: true });
   }));
 
   it('should validate additional properties', test(validationPars(), ({ comp, el, fixture, debugEl }) => {
-    console.log('input-object:add');
     let { name, val, n, v } = firstControl(comp, debugEl, fixture);
-    expect(v.validator({ value: 'additional' })).toEqual(null);
-    expect(v.validator({ value: 'fixed' })).toEqual({ enum: true });
-    setInput(name, 'foo');
-    console.log('v.errors', v.errors);
-    expect(v.errors).not.toEqual(null);
+
+    setInput(name, 'bar');
+    n.updateValueAndValidity();
+    expect(v.errors).toEqual({ enum: true });
+    fixture.detectChanges();
+
     setInput(val, 'additional');
     expect(v.errors).toEqual(null);
+
     setInput(name, 'fixed');
-    // these three fail, implying it hasn't switched to properties:fixed validator
-    expect(v.validator({ value: 'additional' })).toEqual({ enum: true });
-    expect(v.validator({ value: 'fixed' })).toEqual(null);
-    // expect(v.errors).not.toEqual(null);
-    // console.log('v.errors', v.errors);
+    n.updateValueAndValidity();
+    tick();
+    // when do I need `tick()`, when `fixture.detectChanges()`?
+    expect(v.errors).toEqual({ enum: true });
   }));
 
   // it('should switch val value/validator on name change', test(pars, ({ comp, el }) => {
