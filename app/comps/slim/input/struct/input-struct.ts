@@ -157,7 +157,7 @@ export class InputStructComp {
     this.indices.additionalProperties = Object.values(_.omit(idx)(arr));
   }
 
-  @try_log()
+  // @try_log()
   customTrackBy(index: number, item: any): any {
     console.log('customTrackBy', index, item);
     return index;
