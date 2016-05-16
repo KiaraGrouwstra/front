@@ -296,10 +296,13 @@ export function splitObj(obj: {}): [keys: string[], values: any[]] {
 // evaluate an expression within a context (of the component)
 export let evalExpr: (vars: {}) => (expr: string) => any =
   (vars: {}) => (expr: string) => {
-    let [keys, vals] = splitObj(vars);
+    let propObj = _.assign(...[vars, Object.getPrototypeOf(vars)].map(x => arr2obj(Object.getOwnPropertyNames(x), k => x[k])));
+    let [keys, vals] = splitObj(propObj);
     // Function(param1, ..., paramn, body)
-    let fn = Function.apply(null, keys.concat([`return ${expr}`]));
-    return fn.apply(null, vals);
+    let fn = Function.apply(vars, keys.concat([`return ${expr}`]));
+    return fn.apply(vars, vals);
+    // let fn = Function.apply(vars, [`return ${expr}`]);
+    // return fn.apply(vars);
 }
 
 // print a complex object for debugging -- regular log sucks cuz it elides values, JSON.stringify errors on cyclical structures.

@@ -304,7 +304,9 @@ export function findControl(control: AbstractControl, path: Front.Path | string)
   let arrPath = _.isArray(path) ? path : splitPath(path);
   return arrPath.reduce((acc, v, idx) => {
     let ctrl = acc.ctrl ? acc.ctrl : acc; // PolymorphicControl
-    return _.isNumber(v) ? ctrl.at(v) :   // ControlArray (ControlList)
+    return _.isNumber(v) ?
+        ctrl.at ? ctrl.at(v) :   // ControlArray (ControlList)
+        ctrl.controls['additionalProperties'].at(v) : // ControlStruct: additional
         ctrl.byName ? acc.byName(v) :   // ControlStruct (ControlObject)
         ctrl.controls[v];   // ControlGroup
   }, control);
@@ -318,5 +320,5 @@ export function mergePath(currentPath: Front.Path, relativePath: string) {
 // navigate to a control relative from the current one
 export function relativeControl(control: AbstractControl, currentPath: Front.Path, relativePath: string) {
   let mergedPath = mergePath(currentPath, relativePath);
-  return findControl(control, mergedPath).value;
+  return findControl(control, mergedPath);
 }
