@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
 import { ng2comp } from '../../../lib/js';
 import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
@@ -24,8 +24,17 @@ export class InputComp {
   _ctrl: Control;
   _attrs: Front.IAttributes;
 
+  constructor(public cdr: ChangeDetectorRef) {
+    this.cdr = cdr;
+  }
+
   nav(relativePath: string) {
-    return relativeControl(this.ctrl.root, this.path, relativePath).value;
+    let ctrl = relativeControl(this.ctrl.root, this.path, relativePath);
+    ctrl.valueChanges.subscribe(x => {
+      console.log('value changed, marking for check!');
+      this.cdr.markForCheck();
+    });
+    return ctrl.value;
   }
 
 }

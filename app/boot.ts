@@ -26,7 +26,7 @@ let singletons = [
   wsServiceProvider,
   { provide: APP_CONFIG, useValue: CONFIG },
 ];
-enableProdMode();
+// enableProdMode();
 bootstrap(App, singletons);
 // .catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));
 

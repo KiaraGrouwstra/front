@@ -1,6 +1,5 @@
 import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
-import { FormBuilder } from '@angular/common';  //, Control
+import { COMMON_DIRECTIVES, FORM_DIRECTIVES, FormBuilder, ControlGroup } from '@angular/common';
 import { InputValueComp } from '../value/input-value';
 import { input_control } from '../input';
 let _ = require('lodash/fp');

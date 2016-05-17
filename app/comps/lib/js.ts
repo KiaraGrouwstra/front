@@ -33,13 +33,13 @@ export function Prom_toast(msg: string): Promise {
 };
 Promise.prototype.toast_result = Prom_toast;
 
-export function handle_auth(url: string, fn: (get: string, hash: string) => void): void {
-  let url_bit = (url: string, part: string) => {
+export function handle_auth(url: Location, fn: (get: string, hash: string) => void): void {
+  let url_bit = (url: Location, part: string) => {
     let par_str = url[part].substring(1);
     let params = decodeURIComponent(par_str).split('&');
-    return arr2obj(params, y => y.split('='));
+    return _.fromPairs(params.map(y => y.split('=')));
   }
-  let url_get_hash = (url: string) => ['search', 'hash'].map(x => url_bit(url, x));
+  let url_get_hash = (url: Location) => ['search', 'hash'].map(x => url_bit(url, x));
   let [get, hash] = url_get_hash(url);
   if(get.callback) {
     // this.routeParams.get(foo): only available in router-instantiated components.
@@ -54,16 +54,20 @@ export function popup(popup_url: string, watch_url: string): Promise {
   return new Promise((resolve, reject) => {
     let win = window.open(popup_url);
     let pollTimer = window.setInterval(() => {
-      if(win.location.pathname) {
-        let url = win.location.href;
-        if (url.indexOf(watch_url) != -1) {
+      try {
+        if(win.location.pathname) {
+          let url = win.location.href;
+          if (url.includes(watch_url)) {
+            window.clearInterval(pollTimer);
+            resolve(win.location);
+            win.close();
+          }
+        } else {
           window.clearInterval(pollTimer);
-          resolve(win.location);
-          win.close();
+          reject('tab closed');
         }
-      } else {
-        window.clearInterval(pollTimer);
-        reject('tab closed');
+      } catch(e) {
+        // DOMException: Blocked a frame with origin [...] from accessing a cross-origin frame
       }
     }, 100);
   }).toast_result(`got auth result!`);

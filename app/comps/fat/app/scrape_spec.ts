@@ -14,7 +14,7 @@ let selector = {
   // format: 'json',
   required: true,
   name: 'floki selector',
-  description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or a@@ to get its outer html.",
+  description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
 };
 
 // TODO: update so as to incorporate nesting
@@ -52,6 +52,7 @@ export let scrape_spec: Front.Spec = {
               // styles: {},
               // classes: {},
               attributes: {
+                // hidden
                 disabled: `this.nav('../type') != 'attribute'`,
               },
             },

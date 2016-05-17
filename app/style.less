@@ -149,6 +149,15 @@ pre {
   list-style-type: disc;
 }
 
+// improves multi-line lables for inputs, but screws up labels for checkboxes...
+.input-field > label.active {
+  position: static;
+}
+
+input:disabled+label {
+  color: rgba(0,0,0,0.26)
+}
+
 // // @import (reference) '../node_modules/materialize-css/dist/css/materialize.css';
 // @import (reference) './vendor/materialize.less';
 // // @import './vendor/materialize.less';

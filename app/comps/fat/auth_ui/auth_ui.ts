@@ -70,8 +70,9 @@ export class AuthUiComp {
     });
     // this.loading = true;
     popup(url, redirect_uri)
-      .then((loc) => handler.emit(loc))
-      .then(() => global.$('#scope-list .collapsible-header').click())
+      .then((loc) => { this.handler.emit(loc); console.log('emitted location', loc); })
+      .then(() => { global.$('#scope-list .collapsible-header').click(); })
+      .catch((e) => { console.error(e); })
       // .finally(_v => this.loading = false);
   };
 
