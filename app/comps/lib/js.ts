@@ -83,8 +83,9 @@ const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
 };
 const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
+
+// somehow the native Notification API slows down my app a bunch (make table), why?
 // ditch `ms` param if ditching Materialize in favor of Notification API.
-// also figure out how to switch from color classes to icons to indicate log level.
 // { icon?: string, body?: string, lang, tag, data, vibrate, renotify, silent, sound, noscreen, sticky }
 // https://developer.mozilla.org/en-US/docs/Web/API/Notification/Notification
 export let toast: Front.ILogLevels<(msg: string, opts: Notification.options, ms?: number) => Notification> =
@@ -92,13 +93,13 @@ export let toast: Front.ILogLevels<(msg: string, opts: Notification.options, ms?
     let level = toasts[kind].val;
     if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
     if(level >= TOAST_LEVEL) {
-      // Materialize.toast(msg, ms, toasts[kind].class);
-      let merged_opts = Object.assign({
-        // body: kind,
-        icon: toasts[kind].icon,
-      }, opts);
-      let n = new Notification(msg, merged_opts);
-      return n;
+      Materialize.toast(msg, ms, toasts[kind].class);
+      // let merged_opts = Object.assign({
+      //   // body: kind,
+      //   icon: toasts[kind].icon,
+      // }, opts);
+      // let n = new Notification(msg, merged_opts);
+      // return n;
     }
 });
 

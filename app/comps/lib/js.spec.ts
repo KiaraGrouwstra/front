@@ -37,7 +37,9 @@ describe('js', () => {
   // ))
 
   it('toast creates popup toasts with a message', () => {
-    expect(toast.success('foo').constructor).toEqual(Notification);
+    toast.success('foo');
+    expect($('.toast').length).toEqual(1);
+    // expect(toast.success('foo').constructor).toEqual(Notification);
   })
 
   it('setKV can save to keys', () => {
