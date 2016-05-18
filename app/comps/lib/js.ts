@@ -3,6 +3,7 @@ let $ = require('jquery');
 let ng = require('@angular/core');
 let marked = require('marked');
 import { ComponentMetadata } from '@angular/core';
+import { Maybe } from 'ramda-fantasy';
 
 require('materialize-css/dist/js/materialize.min');
 // let YAML = require('yamljs');
@@ -82,7 +83,7 @@ const toasts: Front.ILogLevels<{ val: number, class: string }> = {
 };
 const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
-export let toast: Front.ILogLevels<(msg: string, ms: number) => void> =
+export let toast: Front.ILogLevels<(msg: string, ms?: number) => void> =
   arr2obj(_.keys(toasts), (kind: string) => (msg: string, ms = 1000: number) => {
     let level = toasts[kind].val;
     if(level >= TOAST_LEVEL) Materialize.toast(msg, ms, toasts[kind].class);
@@ -93,15 +94,9 @@ export function setKV(k: string, v: any): void {
   localStorage.setItem(k, JSON.stringify(v));
 }
 
-export function getKV(k: string): Promise {
-  return new Promise((resolve, reject) => {
-    let saved = localStorage.getItem(k);
-    if(saved != null) {
-      resolve(JSON.parse(saved));
-    } else {
-      reject(`key ${k} not found`);
-    }
-  }).toast_result(`loaded data for ${k}!`);
+export function getKV(k: string): Maybe<any> {
+  let data = localStorage.getItem(k);
+  return Maybe(data).map(x => JSON.parse(x));
 }
 
 // let range = (n) => Array(n).fill().map((x,i)=>i);

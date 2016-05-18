@@ -61,7 +61,7 @@
     "rxjs": "^5.0.0-beta.6",
     "sweet.js": "github:mozilla/sweet.js",
     "systemjs": "^0.19.6",
-    "tsmonad": "^0.6.0",
+    "tsmonad": "github:tycho01/tsmonad",
     "typescript-register": "^1.1.0",
     "typescript-require": "^0.2.9",
     "valid-url": "^1.0.9",

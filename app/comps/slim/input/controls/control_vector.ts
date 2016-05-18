@@ -2,6 +2,7 @@ let _ = require('lodash/fp');
 import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
 import { ListWrapper } from '@angular/core/src/facade/collection';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { Maybe } from 'ramda-fantasy';
 
 export class ControlVector extends ControlArray {
   _items: Front.CtrlFactory | Front.CtrlFactory[]; // one factory (homogeneous mode) or an array of factories (use `additionalItems` when all used)
@@ -29,14 +30,11 @@ export class ControlVector extends ControlArray {
   }
 
   add(): Maybe<AbstractControl> {
-    let factory = this.getFactory();
-    if(factory) {
+    return this.getFactory().map(factory => {
       let ctrl = factory();
       this.push(ctrl);
       return ctrl;
-    } else {
-      // issue some warning?
-    }
+    })
   }
 
   // use ControlList to handle the homogeneous case to simplify this class
@@ -44,7 +42,9 @@ export class ControlVector extends ControlArray {
     // let item = this._items[this.controls.length];
     // return item || this._additionalItems;
     let len = this.controls.length;
-    return len < this._items.length ? this._items[len] : this._additionalItems;
+    let factory = (len < this._items.length) ? this._items[len] : this._additionalItems;
+    return Maybe(factory);
+    // Nothing if no `additionalItems` yet the `items` array has been exhausted.
         // this.isHomogeneous ? this._items :
   }
 

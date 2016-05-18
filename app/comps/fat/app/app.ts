@@ -83,10 +83,17 @@ export class App {
     this._ws.connected$.subscribe(y => y ? toast.success('websocket connected!') : toast.warn('websocket disconnected!'));
     global.app = this;
     let api = this.apis[0];
-    this.apis.forEach(name => getKV(name).then((v) => {
-      this.auths[name] = v;
-      if(name == api) $('#scope-list .collapsible-header').click();
-    }));
+    this.apis.forEach(name => {
+      getKV(name)
+      .do((v) => {
+        toast.success(`loaded data for ${name}!`);
+        this.auths[name] = v;
+        if(name == api) $('#scope-list .collapsible-header').click();
+      })
+      .catch(() => {
+        toast.error(`key ${name} not found`);
+      })
+    });
 
     this.curl = curl_spec;
     this.scrape_spec = scrape_spec;

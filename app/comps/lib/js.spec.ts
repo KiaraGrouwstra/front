@@ -40,19 +40,17 @@ describe('js', () => {
     expect($('.toast').length).toEqual(1)
   })
 
-  it('getKV cannot load from non-existing keys', (d) => do_prom(d,
-    getKV('doesnt_exist'),
-    () => {} //(v) => expect(v).toEqual(null)
-  ))
-
   it('setKV can save to keys', () => {
     setKV('foo', 'foo')
   })
 
-  it('getKV can retrieve existing keys', (d) => do_prom(d,
-    getKV('foo'),
-    (v) => expect(v).toEqual('foo')
-  ))
+  it('getKV can retrieve existing keys', () => {
+    expect(getKV('foo').getOrElse(false)).toEqual('foo');
+  })
+
+  it('getKV cannot load from non-existing keys', () => {
+    expect(getKV('doesnt_exist').getOrElse(false)).toEqual(false);
+  })
 
   it('mapBoth does a _.mapValues showing keys as well', () => {
     expect(mapBoth({a: 1}, (v, k) => k)).toEqual({a: 'a'})
