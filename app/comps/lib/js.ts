@@ -74,20 +74,31 @@ export function popup(popup_url: string, watch_url: string): Promise {
   }).toast_result(`got auth result!`);
 }
 
-const toasts: Front.ILogLevels<{ val: number, class: string }> = {
-  debug: { val: 0, class: 'grey' },
-  info: { val: 1, class: 'blue' },
-  success: { val: 2, class: 'green' },
-  warn: { val: 3, class: 'orange' },
-  error: { val: 4, class: 'red' },
+const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
+  debug: { val: 0, class: 'grey', icon: require('../../images/debug.png') },
+  info: { val: 1, class: 'blue', icon: require('../../images/info.png') },
+  success: { val: 2, class: 'green', icon: require('../../images/success.png') },
+  warn: { val: 3, class: 'orange', icon: require('../../images/warn.png') },
+  error: { val: 4, class: 'red', icon: require('../../images/error.png') },
 };
 const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
-export let toast: Front.ILogLevels<(msg: string, ms?: number) => void> =
-  arr2obj(_.keys(toasts), (kind: string) => (msg: string, ms = 1000: number) => {
+// ditch `ms` param if ditching Materialize in favor of Notification API.
+// also figure out how to switch from color classes to icons to indicate log level.
+export let toast: Front.ILogLevels<(msg: string, opts: { icon?: string, body?: string }, ms?: number) => Notification> =
+  arr2obj(_.keys(toasts), (kind: string) => (msg: string, opts: Notification.opts = {}, ms: number = 1000) => {
     let level = toasts[kind].val;
-    if(level >= TOAST_LEVEL) Materialize.toast(msg, ms, toasts[kind].class);
     if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
+    if(level >= TOAST_LEVEL) {
+      // Materialize.toast(msg, ms, toasts[kind].class);
+      let merged_opts = Object.assign({
+        // body: kind,
+        icon: toasts[kind].icon,
+      }, opts);
+      // https://developer.mozilla.org/en-US/docs/Web/API/notification
+      let n = new Notification(msg, merged_opts);
+      return n;
+    }
 });
 
 export function setKV(k: string, v: any): void {

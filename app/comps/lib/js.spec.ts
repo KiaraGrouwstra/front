@@ -36,12 +36,11 @@ describe('js', () => {
   // ))
 
   it('toast creates popup toasts with a message', () => {
-    toast.success('foo')
-    expect($('.toast').length).toEqual(1)
+    expect(toast.success('foo').constructor).toEqual(Notification);
   })
 
   it('setKV can save to keys', () => {
-    setKV('foo', 'foo')
+    setKV('foo', 'foo');
   })
 
   it('getKV can retrieve existing keys', () => {
@@ -53,7 +52,7 @@ describe('js', () => {
   })
 
   it('mapBoth does a _.mapValues showing keys as well', () => {
-    expect(mapBoth({a: 1}, (v, k) => k)).toEqual({a: 'a'})
+    expect(mapBoth({a: 1}, (v, k) => k)).toEqual({a: 'a'});
   })
 
   it('id_cleanse strips strings to to make valid HTML element IDs (i.e. just alphanumeric characters and dashes)', () => {

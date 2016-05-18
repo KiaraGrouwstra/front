@@ -83,8 +83,8 @@ module.exports = {
 			// ^ ng2 sucks for css though -- `css` loader pre-resolves urls, `style` injects into DOM.
 			{ test: /\.less$/, loader: 'style!css!less' },
 			{ test: /\.css$/, loader: 'style!css' },
-			{ test: /\.(jpe?g|png)$/, loader: 'url?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
-			{ test: /\.(gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: 'file' }
+			// { test: /\.(jpe?g|png)$/, loader: 'url?limit=8192' }, // inline base64 URLs for <=8k images, direct URLs for the rest
+			{ test: /\.(jpe?g|png|gif|ttf|eot|svg|woff(2)?|wav|mp3)$/, loader: 'file' }
 		],
 		// postLoaders: [
     //   // instrument only testing sources with Istanbul
