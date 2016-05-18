@@ -1,3 +1,4 @@
+import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb } from './rx_helpers';  //, emitter
 import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';

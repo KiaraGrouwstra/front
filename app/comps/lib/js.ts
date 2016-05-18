@@ -85,8 +85,10 @@ const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
 // ditch `ms` param if ditching Materialize in favor of Notification API.
 // also figure out how to switch from color classes to icons to indicate log level.
-export let toast: Front.ILogLevels<(msg: string, opts: { icon?: string, body?: string }, ms?: number) => Notification> =
-  arr2obj(_.keys(toasts), (kind: string) => (msg: string, opts: Notification.opts = {}, ms: number = 1000) => {
+// { icon?: string, body?: string, lang, tag, data, vibrate, renotify, silent, sound, noscreen, sticky }
+// https://developer.mozilla.org/en-US/docs/Web/API/Notification/Notification
+export let toast: Front.ILogLevels<(msg: string, opts: Notification.options, ms?: number) => Notification> =
+  arr2obj(_.keys(toasts), (kind: string) => (msg: string, opts: Notification.options = {}, ms: number = 1000) => {
     let level = toasts[kind].val;
     if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
     if(level >= TOAST_LEVEL) {
@@ -95,7 +97,6 @@ export let toast: Front.ILogLevels<(msg: string, opts: { icon?: string, body?: s
         // body: kind,
         icon: toasts[kind].icon,
       }, opts);
-      // https://developer.mozilla.org/en-US/docs/Web/API/notification
       let n = new Notification(msg, merged_opts);
       return n;
     }

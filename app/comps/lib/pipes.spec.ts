@@ -1,3 +1,4 @@
+import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 import { MarkedPipe } from './pipes';
 
 describe('MarkedPipe', () => {

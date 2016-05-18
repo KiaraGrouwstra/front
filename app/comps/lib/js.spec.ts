@@ -1,3 +1,4 @@
+import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 let _ = require('lodash/fp');
 import { handle_auth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, id_cleanse, typed, fallback, ng2comp, combine, findTables, key_spec, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
 import { getSchema } from './schema';
@@ -15,18 +16,18 @@ describe('js', () => {
   // })
 
   it('arr2obj maps an array to an object', () => {
-    expect(arr2obj([1,2,3], y => y * 2)).toEqual({ 1: 2, 2: 4, 3: 6 })
+    expect(arr2obj([1,2,3], y => y * 2)).toEqual({ 1: 2, 2: 4, 3: 6 });
   })
 
   it('arr2map maps an array to a Map', () => {
-    expect(_.fromPairs(arr2map([1,2,3], y => y * 2).toJSON())).toEqual({ 1: 2, 2: 4, 3: 6 })
+    expect(_.fromPairs(arr2map([1,2,3], y => y * 2).toJSON())).toEqual({ 1: 2, 2: 4, 3: 6 });
   })
 
   it('handle_auth extracts get/hash params and triggers a callback for ?callback=<name> urls', () => {
-    let loc = { search: '?callback=test', hash: '#access_token=foo' }
-    handle_auth(loc, (get, hash) => expect(hash.access_token).toEqual('foo'))
-    handle_auth({ search: '', hash: '' }, () => {})
-    handle_auth({ search: '?error=foo', hash: '' }, () => {})
+    let loc = { search: '?callback=test', hash: '#access_token=foo' };
+    handle_auth(loc, (get, hash) => expect(hash.access_token).toEqual('foo'));
+    handle_auth({ search: '', hash: '' }, () => {});
+    handle_auth({ search: '?error=foo', hash: '' }, () => {});
   })
 
   // it('popup checks when a tab reaches a given url (left part)', (d) => do_prom(d,
