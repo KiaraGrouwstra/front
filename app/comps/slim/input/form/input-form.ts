@@ -1,34 +1,30 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy, Output, EventEmitter, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, FormBuilder, ControlGroup } from '@angular/common';
+let _ = require('lodash/fp');
+import { Input, forwardRef, Output, EventEmitter, ViewChild, ViewChildren, QueryList } from '@angular/core';
+import { FormBuilder, ControlGroup } from '@angular/common';
 import { InputValueComp } from '../value/input-value';
 import { input_control } from '../input';
-let _ = require('lodash/fp');
+// import { BaseSlimComp } from '../../base_slim_comp';
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+@ExtComp({
   selector: 'input-form',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-form.jade'),
   directives: [
-    FORM_DIRECTIVES, // COMMON_DIRECTIVES,
     forwardRef(() => InputValueComp),
   ]
 })
-export class FormComp {
+export class FormComp extends BaseInputComp {
   items: Front.IInput[] = [];
   form: ControlGroup = new ControlGroup({});
   @Output() submit = new EventEmitter(false);
   @Input() spec: Front.Spec;
   @Input() desc: string;
-  _spec: Front.Spec;
+  // _spec: Front.Spec;
   _desc: string;
   @ViewChild(InputValueComp) v: InputValueComp;
 
-  get spec() {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._spec = x;
+  setSpec(x: Front.Spec) {
     this.form = input_control(x);
     // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
   }

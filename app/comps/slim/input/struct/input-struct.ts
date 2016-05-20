@@ -1,41 +1,36 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, AbstractControl } from '@angular/common';
+import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
+import { AbstractControl } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
-import { getPaths } from '../../slim';
 import { input_control, getOptsNameSpecs, mapSpec } from '../input';
 import { ControlStruct } from '../controls';
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = ControlStruct;
+
+@ExtComp({
   selector: 'input-struct',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-struct.jade'),
   directives: [
-    COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
   ]
 })
-export class InputStructComp {
+export class InputStructComp extends BaseInputComp {
   @Input() named: boolean;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() ctrl: ControlStruct;
-  _named: boolean;
-  _path: Front.Path;
-  _spec: Front.Spec;
-  _ctrl: ControlStruct;
+  @Input() ctrl: Ctrl;
   option = null;
   counter = 0;
   indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
   // keys = ['name', 'val'];
   nameSpecFixed: Front.Spec;
   nameSpecFixedFiltered: Front.Spec = {};
-  k: string;
-  id: string;
   isOneOf: boolean;
   patts: string[];
   hasFixed: boolean;
@@ -43,35 +38,18 @@ export class InputStructComp {
   hasAdd: boolean;
   nameCtrlFixed: AbstractControl;
 
-  constructor(
-    public cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
-    let props = getPaths(this.path);
-    ['k', 'id'].forEach(x => this[x] = props[x]);
+  constructor(cdr: ChangeDetectorRef) {
+    super(cdr);
   }
 
-  get ctrl(): ControlStruct {
-    return this._ctrl;
-  }
-  set ctrl(x: ControlStruct) {
-    if(_.isUndefined(x)) return;
-    this._ctrl = x;
+  setCtrl(x: Ctrl): void {
     let spec = this.spec;
     let factStruct = mapSpec(s => input_control(s, true))(spec);
     x.init(factStruct, spec.required || []);
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
+  setSpec(x: Front.Spec): void {
     tryLog(() => {
-    // this is getting set with the same value multiple times. why?
-    if(_.isUndefined(x) || _.isEqual(this._spec, x)) return;
-    // console.log('set:spec', 'from', this._spec, 'to', x);
-    this._spec = x;
     let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
     this.isOneOf = _.has(['oneOf'], add);
     this.patts = _.keys(patts);
@@ -154,10 +132,6 @@ export class InputStructComp {
   // customTrackBy(index: number, item: any): any {
   //   console.log('customTrackBy', index, item);
   //   return index;
-  // }
-
-  // print(v) {
-  //   console.log('print', v);
   // }
 
 }

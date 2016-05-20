@@ -1,62 +1,40 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
+import { Input, forwardRef } from '@angular/core';
 import { combine } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ValueComp } from '../../..';
 import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import { BehaviorSubject } from 'rxjs';
+import { BaseOutputComp } from '../base_output_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-type Val = Array<any>;
+type Val = any; //Array<any>;
 
-@Component({
+@ExtComp({
   selector: 'myul',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./ul.jade'),
   directives: [
     forwardRef(() => ValueComp),
   ]
 })
-export class ULComp {
+export class ULComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
   @Input() named: boolean;
-  _path: Front.Path;
-  _val: Val;
-  _schema: Front.Spec;
-  _named: boolean;
-  // k: Observable<string>;
-  // id: Observable<string>;
   rows: Array<ICompMeta>;
   indexBased: boolean;
 
-  get path(): Front.Path {
-    return this._path;
-  }
-  set path(x: Front.Path) {
-    if(_.isUndefined(x)) return;
-    this._path = x;
-    let props = getPaths(x);
-    ['k', 'id'].forEach(x => this[x] = props[x]);
+  setPath(x: Front.Path): void {
     this.combInputs();
   }
 
-  get val(): Val {
-    return this._val;
-  }
-  set val(x: Val) {
-    if(_.isUndefined(x)) return;
-    this._val = x;
+  setVal(x: Val): void {
     this.combInputs();
   }
 
-  get schema(): Front.Spec {
-    return this._schema;
-  }
-  set schema(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._schema = x;
+  setSchema(x: Front.Spec): void {
     this.combInputs();
     this.indexBased = _.isArray(_.get(['items'], x));
   }

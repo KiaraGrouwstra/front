@@ -1,34 +1,34 @@
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
+import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
+import { Control } from '@angular/common';
 import { ng2comp } from '../../../lib/js';
 import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
 import { FormComp } from '../form/input-form';
 import { findControl, splitPath, relativeControl } from '../input';
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = Control;
+
+@ExtComp({
   selector: 'my-input',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-input.jade'),
   directives: [
-    FORM_DIRECTIVES,  //COMMON_DIRECTIVES,
     SetAttrs,
     DynamicAttrs,
   ]
 })
-export class InputComp {
+export class InputComp extends BaseInputComp {
   @Input() spec: Front.Spec;
   @Input() path: Front.Path;
-  @Input() ctrl: Control;
+  @Input() ctrl: Ctrl;
   @Input() attrs: Front.IAttributes;
-  _spec: Front.Spec;
-  _ctrl: Control;
   _attrs: Front.IAttributes;
 
-  constructor(public cdr: ChangeDetectorRef) {
-    this.cdr = cdr;
+  constructor(cdr: ChangeDetectorRef) {
+    super(cdr);
   }
 
-  nav(relativePath: string) {
+  nav(relativePath: string): any {
     let ctrl = relativeControl(this.ctrl.root, this.path, relativePath);
     ctrl.valueChanges.subscribe(x => {
       console.log('value changed, marking for check!');

@@ -1,57 +1,36 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
-import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
+import { Input, forwardRef } from '@angular/core';
+import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ULComp, TableComp } from '../../..';
 import { infer_type, try_schema } from '../output'
 import { ng2comp, combine } from '../../../lib/js';
+import { BaseOutputComp } from '../base_output_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-type Val = Array<any>;
+type Val = any; //Array<any>;
 
-@Component({
+@ExtComp({
   selector: 'array',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./array.jade'),
-  directives: [CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,
+  directives: [NgSwitch, NgSwitchWhen, NgSwitchDefault,
     forwardRef(() => ULComp),
     forwardRef(() => TableComp),
   ]
 })
-export class ArrayComp {
+export class ArrayComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
   @Input() named: boolean;
-  _path: Front.Path;
-  _val: Val;
-  _schema: Front.Spec;
-  _named: boolean;
   first: any;
   type: string;
 
-  get path(): Front.Path {
-    return this._path;
-  }
-  set path(x: Front.Path) {
-    if(_.isUndefined(x)) return;
-    this._path = x;
-  }
-
-  get val(): Val {
-    return this._val;
-  }
-  set val(x: Val) {
-    if(_.isUndefined(x)) return;
-    this._val = x;
+  setVal(x: Val): void {
     this.first = _.get([0])(x);
     this.combInputs();
   }
 
-  get schema(): Front.Spec {
-    return this._schema;
-  }
-  set schema(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._schema = x;
+  setSchema(x: Front.Spec): void {
     this.combInputs();
   }
 

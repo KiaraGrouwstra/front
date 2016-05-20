@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core'; //, ChangeDetectorRef
+import { Input, forwardRef, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { arr2obj, arr2map, combine, mapBoth, tryLog, key_spec } from '../../../lib/js';
 import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
@@ -7,12 +7,13 @@ import { getPaths } from '../../slim';
 import { ValueComp } from '../../..';
 import { arrToSet } from '../../../lib/rx_helpers';
 import { AssignLocal } from '../../../lib/directives';
+import { BaseOutputComp } from '../base_output_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-type Val = Array<Object>;
+type Val = any; //Array<Object>;
 
-@Component({
+@ExtComp({
   selector: 'mytable',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./table.jade'),
   directives: [
     AssignLocal,
@@ -24,7 +25,7 @@ type Val = Array<Object>;
   // encapsulation: ViewEncapsulation.Native,
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class TableComp {
+export class TableComp extends BaseOutputComp {
   // schema in front cuz optional, this way combInputs only gets called once
   @Input() schema: Front.Spec;
   @Input() named: boolean;
@@ -34,18 +35,10 @@ export class TableComp {
   @Input() sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
   @Input() filters: {[key: string]: string};
   @Input() condFormat: Array<Front.IColor>;
-  _path: Front.Path;
-  _val: Val;
-  _schema: Front.Spec;
-  _named: boolean;
   _colOrder: string[];
   _sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
   _filters: {[key: string]: string};
   _condFormat: Array<Front.IColor>;
-  // k: string;
-  // id: string;
-  // cols: Array<any>;
-  // rows: Array<any>;
   data: Rows;
   rows: Rows;
   filtered: Rows;
@@ -72,31 +65,18 @@ export class TableComp {
   _condBoundaries: {[key: string]: number[]};
   modalCol: string;
 
-  // constructor(public cdr: ChangeDetectorRef,) {
-  //   this.cdr = cdr;
+  // constructor(cdr: ChangeDetectorRef) {
+  //   super(cdr);
   // }
 
-  // @getter path() {
-  get path(): Front.Path {
-    // console.log('get:path');
-    return this._path;
-  }
-  // @setter path(x) {
-  set path(x: Front.Path) {
-    // console.log('set:path', x);
-    if(_.isUndefined(x)) return;
-    this._path = x;
-    let props = getPaths(x);
-    ['k', 'id'].forEach(x => this[x] = props[x]);  //, 'model'
+  setPath(x: Front.Path) {
     this.combInputs();
   }
 
   get val(): Val {
-    // console.log('get:val');
     return this._val;
   }
   set val(x: Val) {
-    // console.log('set:val', x);
     if(_.isUndefined(x)) return;
     if(!this.schema) this.schema = getSchema(x).items;
     this._val = x;
@@ -106,28 +86,19 @@ export class TableComp {
     );
     this.combInputs();
   }
-
-  get schema(): Front.Spec {
-    // console.log('table:get:schema', this._schema);
-    return this._schema;
-  }
-  set schema(x: Front.Spec) {
-    // console.log('table:set:schema', x);
-    if(_.isUndefined(x)) return;
-    this._schema = x;
+  
+  setSchema(x: Front.Spec) {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();
   }
 
   get colOrder(): string[] {
-    // console.log('get:colOrder');
     let x = this._colOrder;
     if(_.isUndefined(x)) x = this.colOrder = this.col_keys;
     if(_.difference(x, this.col_keys).length) x = this._colOrder = this.col_keys;
     return x;
   }
   set colOrder(x: string[]) {
-    // console.log('set:schema', x);
     if(_.isUndefined(x)) return;
     this._colOrder = x;
   }
@@ -240,11 +211,9 @@ export class TableComp {
   get filters(): {[key: string]: string} {
     let x = this._filters;
     if(_.isUndefined(x)) x = this.filters = {};
-    // console.log('get:filters', x);
     return x;
   }
   set filters(x: {[key: string]: string}) {
-    // console.log('SET:filters', x);
     if(_.isUndefined(x)) return;
     this._filters = x;
     this.filterKeys = _.keys(x);
@@ -253,7 +222,6 @@ export class TableComp {
 
   @try_log()
   setFilter(k: string, v: string): void {
-    // console.log('setFilter', k, v);
     this.filters = _.set(k, v)(this.filters);
   }
 
@@ -293,8 +261,7 @@ export class TableComp {
 
   // set and filter() for data/filters, sort() for rest
   // @try_log()
-  combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema, Front.Spec) => {
-    // console.log('combInputs');
+  combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Spec) => {
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
     this.colMeta = arr2obj(this.col_keys, col => {
       let spec = key_spec(col, schema);
@@ -324,7 +291,6 @@ export class TableComp {
   // current design flaw: the filter stored per column is shared between numbers/text, while columns may include both. first see what other filters I want.
   @try_log()
   filter(): void {
-    // console.log('filter');
     let filters = this.filters;
     let filter_keys = this.filterKeys;
     let colMeta = this.colMeta;
@@ -344,14 +310,12 @@ export class TableComp {
 
   @try_log()
   sort(): void {
-    // console.log('sort');
     let sort = this.sortColsDesc;
     this.data = _.orderBy(_.keys(sort).map(y => `cells.${y}.val`), Object.values(sort).map(y => y ? 'desc' : 'asc'), this.filtered);
   }
 
   @try_log()
   sortClick(col: string): void {
-    // console.log('sortClick', col);
     switch (this.sortColsDesc[col]) {
       case true:
         // this.sortColsDesc = _.omit([col], this.sortColsDesc);
@@ -384,7 +348,7 @@ export class TableComp {
   }
 
   clearFormats(): void {
-    this.condFormat = {};
+    this.condFormat = [];
   }
 
   clearFilters(): void {

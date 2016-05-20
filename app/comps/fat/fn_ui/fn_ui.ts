@@ -1,16 +1,15 @@
 let _ = require('lodash/fp');
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'; //, forwardRef
-import { COMMON_DIRECTIVES } from '@angular/common';
+import { Input, Output, EventEmitter } from '@angular/core'; //, forwardRef
 import { arr2obj, combine } from '../../lib/js';
 let marked = require('marked');
+import { BaseComp } from '../../base_comp';
+import { ExtComp } from '../../lib/annotations';
 
-@Component({
+@ExtComp({
   selector: 'fn-ui',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./fn_ui.jade'),
-  directives: [COMMON_DIRECTIVES],
 })
-export class FnUiComp {
+export class FnUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
   @Input() spec: Front.Spec;
   @Input() oauth_sec: string;

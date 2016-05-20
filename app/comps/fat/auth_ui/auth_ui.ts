@@ -1,15 +1,14 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'; //, forwardRef
-import { COMMON_DIRECTIVES } from '@angular/common';
-import { arr2obj, popup, combine } from '../../lib/js';  //, Prom_finally
 let _ = require('lodash/fp');
+import { Input, Output, EventEmitter } from '@angular/core'; //, forwardRef
+import { arr2obj, popup, combine } from '../../lib/js';  //, Prom_finally
+import { BaseComp } from '../../base_comp';
+import { ExtComp } from '../../lib/annotations';
 
-@Component({
+@ExtComp({
   selector: 'auth-ui',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./auth_ui.jade'),
-  directives: [COMMON_DIRECTIVES],
 })
-export class AuthUiComp {
+export class AuthUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
   @Input() name: string;
   @Input() scopes: string[];

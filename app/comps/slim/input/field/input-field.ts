@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Component, Input, Output, forwardRef, ChangeDetectionStrategy, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, Control } from '@angular/common';
+import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Control } from '@angular/common';
 let marked = require('marked');
 import { input_attrs, get_template } from '../input';
 import { val_errors, val_keys } from '../validators';
@@ -15,13 +15,15 @@ import { RadioControlValueAccessor } from './radio_value_accessor';
 import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
 import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
 import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = Control;
+
+@ExtComp({
   selector: 'input-field',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-field.jade'),
   directives: [
-    COMMON_DIRECTIVES,
     forwardRef(() => InputValueComp),
     InputComp,
     // Select,
@@ -34,21 +36,15 @@ import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
     MdRadioDispatcher,
   ],
 })
-export class FieldComp {
+export class FieldComp extends BaseInputComp {
   // type: Observable<string>;
   option = null;
   @Output() changes = new EventEmitter(false);
   @Input() named: boolean;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() ctrl: Control;
-  _named: boolean;
-  _path: Front.Path;
-  _spec: Front.Spec;
-  _ctrl: Control;
+  @Input() ctrl: Ctrl;
   @ViewChild(InputComp) i: InputComp;
-  k: string;
-  id: string;
   attrs: Front.IAttributes;
   type: string;
   of: string; // that enum?
@@ -57,14 +53,12 @@ export class FieldComp {
   validator_keys: string[];
   validator_msgs: {[key: string]: (any) => string};
 
-  constructor(
-    public cdr: ChangeDetectorRef,
-  ) {}
+  constructor(cdr: ChangeDetectorRef) {
+    super(cdr);
+  }
 
   ngOnInit() {
     // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
-    let props = getPaths(this.path);
-    ['id'].forEach(x => this[x] = props[x]);  //, 'k', 'model', 'variable'
     let spec = this.spec;
     // let key = spec.name;  // variable
     // this.ctrl: from controls[key];
@@ -74,12 +68,7 @@ export class FieldComp {
     this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._spec = x;
+  setSpec(x: Front.Spec): void {
     const ofs = ['anyOf','oneOf','allOf'];
     this.of = _.find(k => x[k])(ofs) || _.findKey(x.type || {})(ofs);
     let spec = x;

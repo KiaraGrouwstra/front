@@ -1,21 +1,22 @@
 let _ = require('lodash/fp');
 import { Observable } from 'rxjs/Observable';
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ViewChild } from '@angular/core';
-import { CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
+import { Input, forwardRef, ViewChild } from '@angular/core';
+import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, ScalarComp } from '../../..';
 import { infer_type, try_schema } from '../output'
 import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine } from '../../../lib/js';
+import { BaseOutputComp } from '../base_output_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-type Val = Array<Object>;
+type Val = any; //Array<Object>;
 
-@Component({
+@ExtComp({
   selector: 'value',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./value.jade'),
   // template: `<router-outlet></router-outlet>`,
   directives: [
-    CORE_DIRECTIVES, NgSwitch, NgSwitchWhen, NgSwitchDefault,
+    NgSwitch, NgSwitchWhen, NgSwitchDefault,
     forwardRef(() => ArrayComp),
     forwardRef(() => ObjectComp),
     forwardRef(() => ScalarComp),
@@ -28,46 +29,22 @@ type Val = Array<Object>;
 //   {path:'/',    name: 'Loading', component: LoadingComp, useAsDefault: true},
 //   {path:'/:id', name: 'CrisisDetail', component: CrisisDetailComponent}
 // ])
-export class ValueComp {
+export class ValueComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
   @Input() named: boolean;
-  _path: Front.Path;
-  _val: Val;
-  _schema: Front.Spec;
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
   @ViewChild(ScalarComp) scalar: ScalarComp;
   new_spec: Front.Spec;
   type: string;
 
-  // type: Observable<string>;
-  // new_spec$: Observable<any>;
-
-  // get path(): Front.Path {
-  //   return this._path;
-  // }
-  // set path(x: Front.Path) {
-  //   this._path = x;
-  //   this.combInputs();
-  // }
-
-  get val(): Val {
-    return this._val;
-  }
-  set val(x: Val) {
-    if(_.isUndefined(x)) return;
-    this._val = x;
+  setVal(x: Val): void {
     this.combInputs();
   }
 
-  get schema(): Front.Spec {
-    return this._schema;
-  }
-  set schema(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._schema = x;
+  setSchema(x: Front.Spec): void {
     this.combInputs();
   }
 

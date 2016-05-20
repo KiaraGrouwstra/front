@@ -1,35 +1,30 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
+import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
+import { ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ControlObject, ControlObjectKvPair } from '../controls';
 import { input_control, mapSpec, getValStruct } from '../input'
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = ControlObject<ControlGroup>; // { name, val }
+@ExtComp({
   selector: 'input-object',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-object.jade'),
   directives: [
-    COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
   ]
 })
-export class InputObjectComp {
+export class InputObjectComp extends BaseInputComp {
   @Input() named: boolean;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() ctrl: ControlObject<ControlGroup>; // { name, val }
-  _named: boolean;
-  _path: Front.Path;
-  _spec: Front.Spec;
-  _ctrl: ControlObject<ControlGroup>; // { name, val }
+  @Input() ctrl: Ctrl;
   option = null;
-  k: string;
-  id: string;
   counter: number = 0;
   items = new Set([]);
   keys: Array<string> = ['name', 'val'];
@@ -37,33 +32,18 @@ export class InputObjectComp {
   keySugg: string[];
   keyEnum: string[];
 
-  constructor(
-    public cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit() {
-    let props = getPaths(this.path);
-    ['k', 'id'].forEach(x => this[x] = props[x]);
+  constructor(cdr: ChangeDetectorRef) {
+    super(cdr);
   }
 
-  get ctrl(): ControlObject {
-    return this._ctrl;
-  }
-  set ctrl(x: ControlObject) {
-    if(_.isUndefined(x)) return;
-    this._ctrl = x;
+  setCtrl(x: Ctrl): void {
     let spec = this.spec;
     let valStruct = getValStruct(spec);
     let seed = () => new ControlObjectKvPair(valStruct);
     x.init(seed);
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._spec = x;
+  setSpec(x: Front.Spec): void {
     let { properties, patternProperties, additionalProperties } = x;
     this.isOneOf = _.has(['oneOf'], additionalProperties);
     // this.keyEnum = _.uniq(_.keys(properties).concat(_.get(['x-keys', 'enum'], x)));

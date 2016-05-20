@@ -1,20 +1,19 @@
 let _ = require('lodash/fp');
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, forwardRef } from '@angular/core';
-import { COMMON_DIRECTIVES } from '@angular/common';
+import { Input, Output, EventEmitter, ViewChild, forwardRef } from '@angular/core';
 import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
 import { FormComp } from '../..';
+import { BaseComp } from '../../base_comp';
+import { ExtComp } from '../../lib/annotations';
 
-@Component({
+@ExtComp({
   selector: 'input-ui',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<input-form [spec]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
   directives: [
     // FormComp,
     forwardRef(() => FormComp),
-    COMMON_DIRECTIVES,
   ],
 })
-export class InputUiComp {
+export class InputUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
   @Input() spec: Front.Spec;
   @Input() fn_path: string;

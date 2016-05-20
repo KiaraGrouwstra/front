@@ -1,52 +1,38 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, Control } from '@angular/common';
+import { Input, forwardRef } from '@angular/core';
+import { Control } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
 import { input_control } from '../input'
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = ControlList<Control>;
+
+@ExtComp({
   selector: 'input-array',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-array.jade'),
   directives: [
-    COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
   ]
 })
-export class InputArrayComp {
+export class InputArrayComp extends BaseInputComp {
   @Input() named: boolean;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() ctrl: ControlList<Control>;
-  _named: boolean;
-  _path: Front.Path;
-  _spec: Front.Spec;
-  _ctrl: ControlList<Control>;
+  @Input() ctrl: Ctrl;
   option = null;
-  k: string;
-  id: string;
   counter = 0;
   items = new Set([]);
   indexBased: boolean;
   inAdditional: boolean;
   isOneOf: boolean;
 
-  ngOnInit() {
-    let props = getPaths(this.path);
-    ['k', 'id'].forEach(x => this[x] = props[x]);
-    // FieldComp's
     // I could ditch this whole items/counter crap and just iterate over ctrl.controls if I no longer insist id's with unique paths
     // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
-  }
 
-  get ctrl(): ControlList<Control> {
-    return this._ctrl;
-  }
-  set ctrl(x: ControlList<Control>) {
-    if(_.isUndefined(x)) return;
-    this._ctrl = x;
+  setCtrl(x: Ctrl): void {
     let spec = this.spec;
     if(_.isArray(spec.items)) {
       // ControlVector
@@ -65,12 +51,7 @@ export class InputArrayComp {
     }
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._spec = x;
+  setSpec(x: Front.Spec): void {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.inAdditional = _.has(['additionalItems', 'oneOf'], x);
     this.isOneOf = this.inAdditional || _.has(['items', 'oneOf'], x);

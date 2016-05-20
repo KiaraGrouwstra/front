@@ -1,62 +1,46 @@
 let _ = require('lodash/fp');
-import { Component, Input, forwardRef, ChangeDetectionStrategy } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES, ControlGroup } from '@angular/common';
+import { Input, forwardRef } from '@angular/core';
+import { ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
 import { input_control } from '../input'
+import { BaseInputComp } from '../base_input_comp';
+import { ExtComp } from '../../../lib/annotations';
 
-@Component({
+type Ctrl = ControlList<ControlGroup>;
+
+@ExtComp({
   selector: 'input-table',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: require('./input-table.jade'),
   directives: [
-    COMMON_DIRECTIVES, FORM_DIRECTIVES,
     forwardRef(() => FieldComp),
   ]
 })
-export class InputTableComp {
+export class InputTableComp extends BaseInputComp {
   @Input() named: boolean;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() ctrl: ControlList<ControlGroup>;
-  _named: boolean;
-  _path: Front.Path;
-  _spec: Front.Spec;
-  _ctrl: ControlList<ControlGroup>;
+  @Input() ctrl: Ctrl;
   // type: Observable<string>;
   counter = 0;
   items: Set<number> = new Set([]);
-  k: string;
-  id: string;
   keys: Array<string>;
   indexBased: boolean;
 
-  ngOnInit() {
-    let props = getPaths(this.path);
-    ['k', 'id'].forEach(x => this[x] = props[x]);
-    // [working example](http://plnkr.co/edit/mcfYMx?p=preview)
-    this.keys = _.keys(this.spec.items.properties);
-  }
 
-  get ctrl(): ControlList<ControlGroup> {
-    return this._ctrl;
-  }
-  set ctrl(x: ControlList<ControlGroup>) {
-    if(_.isUndefined(x)) return;
-    this._ctrl = x;
+  setCtrl(x: Ctrl): void {
     let spec = this.spec;
     let seed = () => new ControlGroup(_.mapValues(x => input_control(x), spec.items.properties));
     x.init(seed);
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
-  }
-  set spec(x: Front.Spec) {
-    if(_.isUndefined(x)) return;
-    this._spec = x;
-    this.indexBased = _.isArray(_.get(['items'], x));
+  setSpec(x: Front.Spec): void {
+    if(_.isArray(_.get(['items'], x))) {
+      this.indexBased = true;
+    } else {
+      this.keys = _.keys(x.items.properties);
+    }
   }
 
   getSpec(idx: number, col: string): Front.Spec {
