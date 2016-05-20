@@ -8,7 +8,7 @@ import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { ScalarComp } from './scalar';
 let cls = test_comp('scalar', ScalarComp);
 let pars = {
-  path: ['test'],
+  // path: ['test'],
   val: '<em>foo</em>',
   schema: {},
 };

@@ -14,14 +14,9 @@ type Val = any;
   // div :(, replace component with like scalar pipe? ngContent if it'd work with piping/Rx?
 })
 export class ScalarComp extends BaseOutputComp {
-  @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
   html: string;
-
-  setPath(x: Front.Path): void {
-    this.combInputs();
-  }
 
   setVal(x: Val): void {
     this.combInputs();
@@ -31,8 +26,8 @@ export class ScalarComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Spec) => {
-    this.html = parseScalar(path, val, schema);
-  }, { schema: true })(this.path, this.val, this.schema);
+  combInputs = () => combine((val: Val, schema: Front.Spec) => {
+    this.html = parseScalar(val, schema);
+  }, { schema: true })(this.val, this.schema);
 
 }

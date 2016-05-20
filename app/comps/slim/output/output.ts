@@ -1,8 +1,7 @@
 // let jsonPath = require('JSONPath');
 let _ = require('lodash/fp');
 let marked = require('marked');
-let validUrl = require('valid-url');
-import { validate } from '../input/validators';
+import { validate, validateFormat } from '../input/validators';
 
 // infer the type for a value lacking a spec
 export let infer_type = (v: any) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
@@ -17,28 +16,32 @@ export let try_schema = (val: any, spec: Front.Spec) => {
     try_schema(val, tp) : null; //infer_type(val)
 }
 
+// html-wrap a uri
+function wrapUri(s: string): string {
+  return `<a href="${s}">${s}</a>`;
+}
+
+// html-wrap an email
+function wrapEmail(s: string): string {
+  return `<a href="mailto:${s}">${s}</a>`;
+}
+
 // meant to use without makeTemplate
-export function parseScalar(path: Front.Path, api_spec: {}, schema: Front.Spec): string {
-  let val = `${api_spec}`;
-  // if(Array_last(path) == "description") {
-  let last = path[path.length-1];   // [] breaks .path...
-  if(last == "description") {
-    // val = `<span class="markdown">${marked(val)}</span>`  // openapi MD descs, wrapped to ensure 1 node
-    let tmp = marked(val);
-    val = `<span class="markdown">${tmp}</span>`;  // openapi MD descs, wrapped to ensure 1 node
-  } else if (validUrl.isUri(val)) {
+export function parseScalar(val: any, spec: Front.Spec): string {
+  let s = val.toString();
+  if (validateFormat(s, 'uri')) {
     const IMG_EXTS = ['jpg','jpeg','bmp','png','gif','tiff','svg','bpg','heif','hdr','webp','ppm','pgm','pbm','pnm'].map(ext => '\\.' + ext);
-    if (_.some(reg => new RegExp(reg, 'i').test(val))(IMG_EXTS)) {
-      val = `<img src="${val}">`;
+    if (_.some(reg => new RegExp(reg, 'i').test(s))(IMG_EXTS)) {
+      s = `<img src="${s}">`;
     } else {
-      val = `<a href="${val}">${val}</a>`;
+      s = wrapUri(s);
     }
+  // } else if (validateFormat(s, 'email')) {
+  //   s = wrapEmail(s);
   }
-  switch (_.get(['format'], schema)) {
-    // case "uri": return `<a href="${val}">${val}</a>`; //break;
-    // case "email": return `<a href="mailto:${val}">${val}</a>`; //break;
-    case "uri": let str1 = `<a href="${val}">${val}</a>`; return str1; //break;
-    case "email": let str2 = `<a href="mailto:${val}">${val}</a>`; return str2; //break;
-    default: return val;
+  switch (_.get(['format'], spec)) {
+    case "uri": return wrapUri(s);
+    case "email": return wrapEmail(s);
+    default: return s;
   }
 }

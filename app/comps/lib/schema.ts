@@ -1,5 +1,6 @@
 let _ = require('lodash/fp');
 import { arr2obj, mapBoth } from './js';
+import { formatMap, validateFormat } from '../slim/input/validators';
 
 // generate a schema for a given value, with root stuff added
 export function getRootSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Spec {
@@ -54,6 +55,8 @@ export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Fron
         minLength: v.length,
         // pattern
         enum: [v],
+        format: _.find(frmt => validateFormat(v, frmt))(_.keys(formatMap)) || null,
+        // I'd actually need to check all formats and have a way to recognize stricter formats...
       })
     }
   }
@@ -123,7 +126,7 @@ function typeSpec(type: string, obj: Front.Spec): Front.Spec {
     number:
     ['maximum','minimum','exclusiveMaximum','exclusiveMinimum'], //'multipleOf',
     string:
-      ['maxLength','minLength','pattern','enum'],
+      ['maxLength','minLength','pattern','enum','format'],
     'array':
       ['maxItems','minItems','additionalItems','uniqueItems'],
     'object':
@@ -166,6 +169,21 @@ const mergers = {
   minLength: min,
   // pattern
   enum: ([a, b]) => (a && b) ? _.union(a, b) : a ? b : a, // just union could return [], which the spec doesn't allow
+  format: checkSym(
+    ([x, y], [xObj, yObj]) => {
+      if (_.isUndefined(x)) {
+        return undefined;
+      }
+      if (_.isNull(x)) {
+        return y;
+      }
+      if (_.isEqual(x, y)) {
+        return x;  // totally ignores all other properties!
+      }
+      // merge further than leaving all non-equal ones?
+    },
+    ([a,b], [acc, val]) => undefined
+  ),
 
   // ARRAYS:
   items: checkSym(
@@ -258,6 +276,7 @@ const strictest = {
   minLength: max_num,
   // pattern
   enum: undefined,
+  format: null, // use null for 'all required' so undefined can remain 'nothing required'
 
   // ARRAYS:
   items: [], // undefined

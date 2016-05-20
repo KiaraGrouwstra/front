@@ -41,46 +41,47 @@ function isNBit(n: number): boolean {
   return _.inRange(-x, x-1);
 }
 
+export const formatMap = {
+  // [json-schema](https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-7)
+  'date-time': v => !isNaN(Date.parse(v)),
+  email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  hostname: /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/, // naive: http://stackoverflow.com/questions/106179/
+  uri: /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/,
+  ipv4: /^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$/,
+  ipv6: /^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/,
+  // [open-api](http://swagger.io/specification/#dataTypeFormat)
+  int32: isNBit(32),
+  int64: isNBit(64),
+  // float: v => matchesType(v, 'number'),
+  // double: v => matchesType(v, 'number'),
+  byte: /[\dA-Za-z\+\/\=]*/,
+  binary: /[\dA-Fa-f]*/,
+  date: v => !isNaN(Date.parse(v)),
+  // password: , // no validation, just intended to switch to <input type='password'>
+  // MISC:
+  alpha: /^[a-zA-Z]+$/,
+  alphanumeric: /^[a-zA-Z0-9]+$/,
+  identifier: /^[-_a-zA-Z0-9]+$/,
+  hexadecimal: /^[a-fA-F0-9]+$/,
+  numeric: v => /^[0-9]+$/,
+  uppercase: v => v === v.toUpperCase(),
+  lowercase: v => v === v.toLowerCase(),
+  url: /(http(s):\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+  uuid: /^(?:urn\:uuid\:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i,
+  'json-pointer': /^(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?$|^\#(?:\/(?:[a-z0-9_\-\.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)+)*(?:\/)?$/i,
+  'relative-json-pointer': /^(?:0|[1-9][0-9]*)(?:\#|(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?)$/,
+  regex: v => {
+    try {
+      RegExp(v);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+};
+
 // [ajv](https://github.com/epoberezkin/ajv/blob/master/lib/compile/formats.js)
-let validateFormat = (val: any, format: string) => {
-  const formatMap = {
-    // [json-schema](https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-7)
-    'date-time': v => !isNaN(Date.parse(v)),
-    email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-    hostname: /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/, // naive: http://stackoverflow.com/questions/106179/
-    uri: /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/,
-    ipv4: /^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$/,
-    ipv6: /^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/,
-    // [open-api](http://swagger.io/specification/#dataTypeFormat)
-    int32: isNBit(32),
-    int64: isNBit(64),
-    // float: v => matchesType(v, 'number'),
-    // double: v => matchesType(v, 'number'),
-    byte: /[\dA-Za-z\+\/\=]*/,
-    binary: /[\dA-Fa-f]*/,
-    date: v => !isNaN(Date.parse(v)),
-    // password: , // no validation, just intended to switch to <input type='password'>
-    // MISC:
-    alpha: /^[a-zA-Z]+$/,
-    alphanumeric: /^[a-zA-Z0-9]+$/,
-    identifier: /^[-_a-zA-Z0-9]+$/,
-    hexadecimal: /^[a-fA-F0-9]+$/,
-    numeric: v => /^[0-9]+$/,
-    uppercase: v => v === v.toUpperCase(),
-    lowercase: v => v === v.toLowerCase(),
-    url: /(http(s):\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
-    uuid: /^(?:urn\:uuid\:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i,
-    'json-pointer': /^(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?$|^\#(?:\/(?:[a-z0-9_\-\.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)+)*(?:\/)?$/i,
-    'relative-json-pointer': /^(?:0|[1-9][0-9]*)(?:\#|(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?)$/,
-    regex: v => {
-      try {
-        RegExp(v);
-        return true;
-      } catch (e) {
-        return false;
-      }
-    },
-  };
+export function validateFormat(val: any, format: string) {
   let vldtr = formatMap[format];
   return !vldtr ? true : _.isRegExp(vldtr) ? vldtr.test(val) : vldtr(val);
   // let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',

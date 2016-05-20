@@ -16,6 +16,8 @@ describe('schema generator', () => {
     { user: 'barney', age: 36 }
   ];
   let tableSpec = { type: 'array', items: { properties: { user: { type: 'string' }, age: { type: 'integer' } }, type: 'object' } };
+  let email = 'spam@yahoo.com';
+  let emailSpec = { type: 'string', format: 'email', maxLength: 14, minLength: 14, enum: [email] };
 
   // beforeEach(() => {})
 
@@ -34,6 +36,9 @@ describe('schema generator', () => {
 
   it('getSchema verbose', () => {
     expect(getSchema(numArr, { verbose: true })).toEqual(numArrSpecVerb);
+  })
+  it('getSchema verbose - format', () => {
+    expect(getSchema(email, { verbose: true })).toEqual(emailSpec);
   })
 
   it('getRootSchema', () => {

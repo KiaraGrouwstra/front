@@ -66,7 +66,6 @@
     "tsmonad": "github:tycho01/tsmonad",
     "typescript-register": "^1.1.0",
     "typescript-require": "^0.2.9",
-    "valid-url": "^1.0.9",
     "webpack": "^2.1.0-beta.6",
     "webpack-dev-middleware": "^1.6.1",
     "yamljs": "^0.2.4",
