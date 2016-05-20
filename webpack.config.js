@@ -9,9 +9,7 @@ var babelSettings = {
 		// 'es2015-native-modules',
 		'es2015-webpack', // leaves ES6 modules intact; still required, for `let { foo: bar, ...baz } = obj`.
 		// 'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
-		'stage-2',	// does this add something?
-		'stage-1', // used for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
-		'stage-0', // used for: async/await
+		'stage-0', // 0 for await, 1 for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
 		// 'lodash',
 	],
 	'plugins': [

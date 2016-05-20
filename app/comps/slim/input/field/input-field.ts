@@ -10,8 +10,8 @@ import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { SetAttrs } from '../../../lib/directives';
 // import { Select } from 'ng2-select';
-// import { RadioControlValueAccessor } from 'Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor';
 import { RadioControlValueAccessor } from './radio_value_accessor';
+// from Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor, but crashes with that
 import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
 import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
 import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
