@@ -1,14 +1,14 @@
 import { Pipe, PipeTransform, Injectable } from '@angular/core';
 let marked = require('marked');
 
-export function genPipe(name: string, fn: any => string): PipeTransform {
+export function genPipe(fn: (any) => string, opts: PipeMetadata): PipeTransform {
   let pipe = class implements PipeTransform {
     transform(v: any, args: any[]): string {
       return fn(v);
     }
   };
   pipe.annotations = [
-    new Pipe({ name }),
+    new Pipe(opts),
     new Injectable(),
   ];
   return pipe;
@@ -23,4 +23,4 @@ export function genPipe(name: string, fn: any => string): PipeTransform {
 //   }
 // }
 
-export const MarkedPipe: PipeTransform = genPipe('marked', marked);
+export const MarkedPipe = genPipe(marked, { name: 'marked' });

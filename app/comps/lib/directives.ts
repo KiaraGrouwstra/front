@@ -1,7 +1,8 @@
 let _ = require('lodash/fp');
 // let lodash = require('lodash');
-import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, ViewRef, TemplateRef } from '@angular/core'; //, Input
+import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, ViewRef, TemplateRef, DoCheck, KeyValueDiffer, KeyValueDiffers, KeyValueChangeRecord } from '@angular/core';
 import { DomElementSchemaRegistry } from '@angular/compiler/src/schema/dom_element_schema_registry';
+import { isPresent, isBlank } from '@angular/core/src/facade/lang';
 import { evalExpr, print } from './js';
 
 // [HTML attribute vs. DOM property](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#html-attribute-vs-dom-property)
@@ -29,6 +30,44 @@ function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string
   return setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
 }
 
+class ObjAttrDirective implements DoCheck {
+  _el: HTMLElement;
+  _obj: {[key: string]: string};
+  _differ: KeyValueDiffer;
+  _elName: string;
+
+  constructor(
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+  ) {
+    this._el = _elRef.nativeElement;
+  }
+
+  set attributes(obj: {[key: string]: string}) {
+    this._obj = obj;
+    if (isBlank(this._differ) && isPresent(obj)) {
+      this._differ = this._differs.find(obj).create(null);
+    }
+  }
+
+  ngDoCheck() {
+    let obj = this._obj;
+    if (isPresent(this._differ)) {
+      var changes = this._differ.diff(obj);
+      if (isPresent(changes)) {
+        changes.forEachRemovedItem((record: KeyValueChangeRecord) => {
+          this._setItem(record.key, null);
+        });
+      }
+    }
+    _.each((v, k) => {
+      this._setItem(k, v);
+    })(obj);
+  }
+
+}
+
 // set multiple properties/attributes from an object without knowing which is which.
 // TODO: use `Differ`s to improve performance; see [NgClass](https://github.com/angular/angular/blob/master/modules/%40angular/common/src/directives/ng_class.ts)
 // named after attributes rather than properties so my json-schema could go with
@@ -37,22 +76,45 @@ function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string
   selector: '[setAttrs]',
   inputs: ['attributes: setAttrs'],
 })
-export class SetAttrs {
-  _el: HTMLElement;
+export class SetAttrs extends ObjAttrDirective {
+
   constructor(
-    private _elRef: ElementRef,
-    private _renderer: Renderer,
-    private _registry: DomElementSchemaRegistry
+    _differs: KeyValueDiffers,
+    _elRef: ElementRef,
+    _renderer: Renderer,
+    _registry: DomElementSchemaRegistry,
   ) {
-    this._el = _elRef.nativeElement;
+    super(_differs, _elRef, _renderer);
+    this._registry = _registry;
+    this._elName = this._el.tagName;
   }
-  set attributes(obj) {
-    let elName = this._el.tagName;
-    _.each((v, k) => {
-      let method = keyMethod(this._registry, elName, k);
-      this._renderer[method](this._el, k, v);
-    })(obj);
+
+  private _setItem(name: string, val: string): void {
+    let method = keyMethod(this._registry, this._elName, name);
+    this._renderer[method](this._el, name, val);
   }
+
+  ngDoCheck() {
+    if (isPresent(this._differ)) {
+      var changes = this._differ.diff(this._obj);
+      if (isPresent(changes)) {
+        this._applyChanges(changes);
+      }
+    }
+  }
+
+  private _applyChanges(changes: any): void {
+    changes.forEachAddedItem((record: KeyValueChangeRecord) => {
+      this._setItem(record.key, record.currentValue);
+    });
+    changes.forEachChangedItem((record: KeyValueChangeRecord) => {
+      this._setItem(record.key, record.currentValue);
+    });
+    changes.forEachRemovedItem((record: KeyValueChangeRecord) => {
+      this._setItem(record.key, null);
+    });
+  }
+
 }
 
 // eval an expression within the context of a ViewContainer
@@ -72,67 +134,73 @@ function evalInView(str: string, view: ViewContainerRef): any {
   selector: '[dynamicAttrs]',
   inputs: ['attributes: dynamicAttrs'],
 })
-export class DynamicAttrs {
-  _el: HTMLElement;
+export class DynamicAttrs extends ObjAttrDirective {
+
   constructor(
-    private _elRef: ElementRef,
-    private _renderer: Renderer,
-    private _registry: DomElementSchemaRegistry,
-    private _viewContainer: ViewContainerRef,
+    _differs: KeyValueDiffers,
+    _elRef: ElementRef,
+    _renderer: Renderer,
+    _registry: DomElementSchemaRegistry,
+    _viewContainer: ViewContainerRef,
   ) {
-    this._el = _elRef.nativeElement;
+    super(_differs, _elRef, _renderer);
+    this._registry = _registry;
+    this._viewContainer = _viewContainer;
+    this._elName = this._el.tagName;
   }
-  set attributes(obj) {
-    let elName = this._el.tagName;
-    _.each((evalStr, k) => {
-      let method = keyMethod(this._registry, elName, k);
-      let v = evalInView(evalStr, this._viewContainer);
-      this._renderer[method](this._el, k, v);
-      // what of style, class, directive?
-    })(obj);
+
+  private _setItem(name: string, evalStr: string): void {
+    let method = keyMethod(this._registry, this._elName, name);
+    let val = evalInView(evalStr, this._viewContainer);
+    this._renderer[method](this._el, name, val);
   }
+
 }
 
 @Directive({
   selector: '[dynamicStyle]',
   inputs: ['attributes: dynamicStyle'],
 })
-export class DynamicStyle {
-  _el: HTMLElement;
+export class DynamicStyle extends ObjAttrDirective {
+
   constructor(
-    private _elRef: ElementRef,
-    private _renderer: Renderer,
-    private _viewContainer: ViewContainerRef,
+    _differs: KeyValueDiffers,
+    _elRef: ElementRef,
+    _renderer: Renderer,
+    _viewContainer: ViewContainerRef,
   ) {
-    this._el = _elRef.nativeElement;
+    super(_differs, _elRef, _renderer);
+    this._viewContainer = _viewContainer;
   }
-  set attributes(obj) {
-    _.each((evalStr, k) => {
-      let v = evalInView(evalStr, this._viewContainer);
-      this._renderer.setElementStyle(this._el, k, v);
-    })(obj);
+
+  private _setItem(name: string, evalStr: string): void {
+    let val = evalInView(evalStr, this._viewContainer);
+    this._renderer.setElementStyle(this._el, name, val);
   }
+
 }
 
 @Directive({
   selector: '[dynamicClass]',
   inputs: ['attributes: dynamicClass'],
 })
-export class DynamicClass {
-  _el: HTMLElement;
+export class DynamicClass extends ObjAttrDirective {
+
   constructor(
-    private _elRef: ElementRef,
-    private _renderer: Renderer,
-    private _viewContainer: ViewContainerRef,
+    _differs: KeyValueDiffers,
+    _elRef: ElementRef,
+    _renderer: Renderer,
+    _viewContainer: ViewContainerRef,
   ) {
-    this._el = _elRef.nativeElement;
+    super(_differs, _elRef, _renderer);
+    this._viewContainer = _viewContainer;
   }
-  set attributes(obj) {
-    _.each((evalStr, k) => {
-      let v = evalInView(evalStr, this._viewContainer);
-      this._renderer.setElementClass(this._el, k, v);
-    })(obj);
+
+  private _setItem(name: string, evalStr: string): void {
+    let val = evalInView(evalStr, this._viewContainer);
+    this._renderer.setElementClass(this._el, name, val);
   }
+
 }
 
 // set local template variables from an object.
@@ -146,7 +214,6 @@ export class AssignLocal {
     private _viewContainer: ViewContainerRef,
   ) {}
   set localVariable(obj) {
-    // let [k, v] = obj;
     _.each((v, k) => {
       let context = this._viewContainer._element.parentView.context;
       context[k] = v;
