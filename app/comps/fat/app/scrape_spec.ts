@@ -21,13 +21,41 @@ let selector = {
 // TODO: update so as to incorporate nesting
 export let scrape_spec: Front.Spec = {
   type: 'object',
-  required: ['url', 'parselet', 'headers'],
+  required: ['url', 'headers', 'parselet'],
   properties: {
     'url': {
       type: 'string',
       format: 'url',
       required: true,
       description: 'the URL to scrape and extract',
+    },
+    'headers': {
+      description: 'Request Headers',
+      type: 'object',
+      properties: {
+        'Content-Type': {
+          type: 'string',
+          suggestions: mimeTypes,
+        },
+      },
+      additionalProperties: {
+        type: 'string',
+        required: true,
+        name: 'header value',
+        description: 'any string',
+      },
+      'x-keys': {
+        suggestions: headers,
+      },
+    },
+    'processor': {
+      type: 'string',
+      enum: [
+        'none',
+        'parselet',
+        'transformer',
+      ],
+      default: 'none',
     },
     'parselet': {
       description: 'json parselet',
@@ -63,24 +91,19 @@ export let scrape_spec: Front.Spec = {
         additionalProperties: false,
       },
       minProperties: 1,
-    },
-    'headers': {
-      description: 'Request Headers',
-      type: 'object',
-      properties: {
-        'Content-Type': {
-          type: 'string',
-          suggestions: mimeTypes,
+      'x-bindings': {
+        attributes: {
+          disabled: `this.nav('../processor') != 'parselet'`,
         },
       },
-      additionalProperties: {
-        type: 'string',
-        required: true,
-        name: 'header value',
-        description: 'any string',
-      },
-      'x-keys': {
-        suggestions: headers,
+    },
+    'transformer': {
+      type: 'string',
+      default: `(json) => JSON.parse(json)`,
+      'x-bindings': {
+        attributes: {
+          disabled: `this.nav('../processor') != 'transformer'`,
+        },
       },
     },
   },

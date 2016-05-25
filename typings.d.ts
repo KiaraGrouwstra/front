@@ -117,7 +117,7 @@ module Front {
     val: any,
     schema: Front.Spec,
     type: string,
-  }>; 
+  }>;
 
   // js
 
@@ -136,7 +136,11 @@ module Front {
   export type Data = any;
 
   // ui
-  export type Submitter = (v: any) => { obs: Observable, start?: string, next?: string, done?: string };
+  export type ObsInfo = { obs: Observable<any>, start?: string, next?: string, done?: string };
+  export type Submitter = (v: any) => ObsInfo;
+
+  // request
+  export type ReqMeta = { urls: string|string[], headers: {}, verb?: string, body?: string };
 
   // config
   export interface Config {

@@ -103,21 +103,19 @@ function submit_req(fn: Front.Submitter): Front.Submitter {
   });
 }
 
-// handle emit api input_ui
-export let req_url: Front.Submitter = submit_req(function(v: any) {
-  let { urls } = v;
+// run addUrl (fetch, optionally with transformer)
+function doAddUrl(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
+  let { urls } = meta;
   return {
-    obs: this._req.addUrl(v).map(x => JSON.parse(x)),
-    // ^ JSON.parse is an assumption of the returned content
+    obs: this._req.addUrl(meta).map(transformer),
     start: `starting fetch request`,
     next: `GET ${urls}`,
     done: `got ${urls}`,
   };
-});
+}
 
-// handle scrape form submit
-export let extract_url: Front.Submitter = submit_req(function(v: any) {
-  let { url, parselet, headers } = v;
+// run parsley (fetch with parselet)
+function doParsley(url: string, parselet: {[key: string]: { selector: string, type: string, attribute: string }}): Front.ObsInfo {
   let urls = [url];
   const type_map = {
     text: () => '',
@@ -134,6 +132,18 @@ export let extract_url: Front.Submitter = submit_req(function(v: any) {
     next: `GET ${url} with extractors: ${json}`,
     done: `got ${url}`,
   };
+}
+
+// handle emit api input_ui
+export let req_url: Front.Submitter = submit_req(function(v: Front.ReqMeta) {
+  return doAddUrl.call(this, v, x => JSON.parse(x));
+  // ^ assume JSON API
+});
+
+// handle scrape form submit
+export let extract_url: Front.Submitter = submit_req(function({ url, headers, processor, parselet, transformer }) {
+  let fn = processor == 'transformer' ? eval(transformer) : y => y;
+  return processor == 'parselet' ? doParsley.call(this, url, parselet) : doAddUrl.call(this, { urls: url, headers }, fn);
 });
 
 // handle curl form submit

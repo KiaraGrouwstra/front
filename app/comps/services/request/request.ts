@@ -14,8 +14,7 @@ export class RequestService {
   }
 
   // fetch URL content
-  addUrl(pars: {}): Observable<any> {
-    // { urls: string|string[], headers: {}, verb: string, body: string }
+  addUrl(pars: Front.ReqMeta): Observable<any> {
     let n = [].concat(pars.urls).length;
     return this._ws.ask('/urls', pars, n);
   }
