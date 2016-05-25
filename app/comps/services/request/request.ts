@@ -14,21 +14,21 @@ export class RequestService {
   }
 
   // fetch URL content
-  addUrl(pars: {}): Observable {
-    // { urls, headers, verb, body }
+  addUrl(pars: {}): Observable<any> {
+    // { urls: string|string[], headers: {}, verb: string, body: string }
     let n = [].concat(pars.urls).length;
     return this._ws.ask('/urls', pars, n);
   }
 
   // fetch URL content (and Parsley parse)
-  parsley(urls: string[], json: string): Observable {
+  parsley(urls: string|string[], json: string): Observable<any> {
     let pars = {urls, parselet: json};
     let n = [].concat(urls).length;
     return this._ws.ask('/parse', pars, n);
   }
 
   // try variations of a CURL command by skipping different headers
-  toCurl(str: string): Observable {
+  toCurl(str: string): Observable<any> {
     let found = str.match(/-H '([^']+)'/g);
     let url = /'[^']+(?=')/.exec(str)[0].substr(1);
     let headers = _.fromPairs(found.map(x =>

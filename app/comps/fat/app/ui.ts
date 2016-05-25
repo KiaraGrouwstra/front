@@ -117,13 +117,22 @@ export let req_url: Front.Submitter = submit_req(function(v: any) {
 
 // handle scrape form submit
 export let extract_url: Front.Submitter = submit_req(function(v: any) {
-  let json = JSON.stringify(v.parselet);
-  let { urls } = v;
+  let { url, parselet, headers } = v;
+  let urls = [url];
+  const type_map = {
+    text: () => '',
+    attribute: (attr) => `@${attr}`,
+    'inner html': () => '@',
+    'outer html': () => '@@',
+  };
+  let json = JSON.stringify(_.mapValues(
+    ({ selector, type, attribute }) => selector + type_map[type](attribute)
+  )(parselet));
   return {
     obs: this._req.parsley(urls, json),
     start: `starting HTML extraction request`,
-    next: `GET ${urls} with extractors: ${json}`,
-    done: `got ${urls}`,
+    next: `GET ${url} with extractors: ${json}`,
+    done: `got ${url}`,
   };
 });
 

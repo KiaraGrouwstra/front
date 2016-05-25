@@ -14,7 +14,8 @@ let selector = {
   // format: 'json',
   required: true,
   name: 'floki selector',
-  description: "use CSS selectors, use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
+  description: 'use CSS selectors',
+  // description: "use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
 };
 
 // TODO: update so as to incorporate nesting
@@ -44,6 +45,7 @@ export let scrape_spec: Front.Spec = {
               'inner html',
               'outer html',
             ],
+            description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
             // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
           },
           'attribute': {
