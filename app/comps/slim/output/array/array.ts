@@ -6,6 +6,7 @@ import { infer_type, try_schema } from '../output'
 import { ng2comp, combine } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Val = any; //Array<any>;
 
@@ -21,7 +22,7 @@ export class ArrayComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   first: any;
   type: string;
 

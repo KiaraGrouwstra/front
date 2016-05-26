@@ -9,6 +9,7 @@ import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTable
 // import { InputTableComp } from '../table/input-table';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 const SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
 const ofs = ['anyOf','oneOf','allOf'];
@@ -29,7 +30,7 @@ type Ctrl = AbstractControl;
 export class InputValueComp extends BaseInputComp {
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @Input() ctrl: Ctrl;
   type: string;
 

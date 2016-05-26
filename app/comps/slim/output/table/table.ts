@@ -9,6 +9,7 @@ import { arrToSet } from '../../../lib/rx_helpers';
 import { AssignLocal } from '../../../lib/directives';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Val = any; //Array<Object>;
 
@@ -28,7 +29,7 @@ type Val = any; //Array<Object>;
 export class TableComp extends BaseOutputComp {
   // schema in front cuz optional, this way combInputs only gets called once
   @Input() schema: Front.Spec;
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() colOrder: string[];
@@ -86,7 +87,7 @@ export class TableComp extends BaseOutputComp {
     );
     this.combInputs();
   }
-  
+
   setSchema(x: Front.Spec) {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();

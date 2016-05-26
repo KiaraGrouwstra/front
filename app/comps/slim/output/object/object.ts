@@ -6,6 +6,7 @@ import { DLComp, ArrayComp, ValueComp } from '../../..';
 import { infer_type } from '../output';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Val = any; //Object;
 
@@ -23,7 +24,7 @@ export class ObjectComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @ViewChild(DLComp) dl: DLComp;
   @ViewChildren(ObjectComp) objects: QueryList<ObjectComp>;
   @ViewChildren(ValueComp) arrays: QueryList<ValueComp>;

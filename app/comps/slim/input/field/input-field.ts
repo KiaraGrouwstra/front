@@ -17,6 +17,7 @@ import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
 import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Ctrl = Control;
 
@@ -40,7 +41,7 @@ export class FieldComp extends BaseInputComp {
   // type: Observable<string>;
   option = null;
   @Output() changes = new EventEmitter(false);
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
   @Input() ctrl: Ctrl;

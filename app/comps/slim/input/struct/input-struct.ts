@@ -9,6 +9,7 @@ import { input_control, getOptsNameSpecs, mapSpec } from '../input';
 import { ControlStruct } from '../controls';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Ctrl = ControlStruct;
 
@@ -21,7 +22,7 @@ type Ctrl = ControlStruct;
   ]
 })
 export class InputStructComp extends BaseInputComp {
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
   @Input() ctrl: Ctrl;

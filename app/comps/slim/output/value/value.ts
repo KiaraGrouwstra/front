@@ -8,6 +8,7 @@ import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Val = any; //Array<Object>;
 
@@ -33,7 +34,7 @@ export class ValueComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
   @Input() schema: Front.Spec;
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
   @ViewChild(ScalarComp) scalar: ScalarComp;

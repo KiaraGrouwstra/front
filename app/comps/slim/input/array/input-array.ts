@@ -7,6 +7,7 @@ import { ControlList } from '../controls';
 import { input_control } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
 type Ctrl = ControlList<Control>;
 
@@ -18,7 +19,7 @@ type Ctrl = ControlList<Control>;
   ]
 })
 export class InputArrayComp extends BaseInputComp {
-  @Input() named: boolean;
+  @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
   @Input() ctrl: Ctrl;
