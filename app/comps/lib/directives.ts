@@ -3,7 +3,7 @@ let _ = require('lodash/fp');
 import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, ViewRef, TemplateRef, DoCheck, KeyValueDiffer, KeyValueDiffers, KeyValueChangeRecord } from '@angular/core';
 import { DomElementSchemaRegistry } from '@angular/compiler/src/schema/dom_element_schema_registry';
 import { isPresent, isBlank } from '@angular/core/src/facade/lang';
-import { evalExpr, print } from './js';
+import { evalExpr, transformWhile, print } from './js';
 
 // [HTML attribute vs. DOM property](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#html-attribute-vs-dom-property)
 // [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
@@ -117,9 +117,9 @@ export class SetAttrs extends ObjAttrDirective {
 
 }
 
-// eval an expression within the context of a ViewContainer
-function evalInView(str: string, view: ViewContainerRef): any {
-  return evalExpr(view._element.parentView.context)(str);
+// get the context for a viewContainer -- for e.g. `_View_FieldComp5` first go up to `_View_FieldComp0`.
+function getContext(view: ViewContainerRef): Object {
+  return transformWhile(y => y.context.constructor == Object, y => y.parent, view._element.parentView).context;
 }
 
 // dynamically bind things: properties, attributes //, styles, classes, directives
@@ -145,13 +145,13 @@ export class DynamicAttrs extends ObjAttrDirective {
   ) {
     super(_differs, _elRef, _renderer);
     this._registry = _registry;
-    this._viewContainer = _viewContainer;
+    this._context = getContext(_viewContainer);
     this._elName = this._el.tagName;
   }
 
   private _setItem(name: string, evalStr: string): void {
     let method = keyMethod(this._registry, this._elName, name);
-    let val = evalInView(evalStr, this._viewContainer);
+    let val = evalExpr(this._context)(evalStr);
     this._renderer[method](this._el, name, val);
   }
 
@@ -170,11 +170,11 @@ export class DynamicStyle extends ObjAttrDirective {
     _viewContainer: ViewContainerRef,
   ) {
     super(_differs, _elRef, _renderer);
-    this._viewContainer = _viewContainer;
+    this._context = getContext(_viewContainer);
   }
 
   private _setItem(name: string, evalStr: string): void {
-    let val = evalInView(evalStr, this._viewContainer);
+    let val = evalExpr(this._context)(evalStr);
     this._renderer.setElementStyle(this._el, name, val);
   }
 
@@ -193,11 +193,11 @@ export class DynamicClass extends ObjAttrDirective {
     _viewContainer: ViewContainerRef,
   ) {
     super(_differs, _elRef, _renderer);
-    this._viewContainer = _viewContainer;
+    this._context = getContext(_viewContainer);
   }
 
   private _setItem(name: string, evalStr: string): void {
-    let val = evalInView(evalStr, this._viewContainer);
+    let val = evalExpr(this._context)(evalStr);
     this._renderer.setElementClass(this._el, name, val);
   }
 
@@ -211,11 +211,13 @@ export class DynamicClass extends ObjAttrDirective {
 export class AssignLocal {
   _el: HTMLElement;
   constructor(
-    private _viewContainer: ViewContainerRef,
-  ) {}
+    _viewContainer: ViewContainerRef,
+  ) {
+    this._context = getContext(_viewContainer);
+  }
   set localVariable(obj) {
     _.each((v, k) => {
-      let context = this._viewContainer._element.parentView.context;
+      let context = this._context;
       context[k] = v;
       // Object.assign(context, { [k]: v });
       // _.set(k, v)(context);

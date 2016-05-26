@@ -1,0 +1,11 @@
+//- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+//- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
+//- ^ doesn't actually sync well :(, trying CSS instead
+input.validate.tooltipped(
+  '[setAttrs]'=`attrs`
+  '[ngFormControl]'=`ctrl`
+  '[(ngModel)]'=`ctrl.value`
+  '[dynamicAttrs]'=`spec['x-bindings']?.attributes`
+)
+//- '[placeholder]'=`attrs.placeholder`
+//- ^ should not be used together with value?

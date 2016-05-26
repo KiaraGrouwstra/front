@@ -11,7 +11,6 @@ export { TableComp  } from './slim/output/table/table';
 export { ValueComp  } from './slim/output/value/value';
 
 // input
-export { InputComp        } from './slim/input/input/input-input';
 export { FieldComp        } from './slim/input/field/input-field';
 export { InputArrayComp   } from './slim/input/array/input-array';
 export { InputObjectComp  } from './slim/input/object/input-object';

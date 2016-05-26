@@ -1,8 +1,8 @@
 //- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
-div(*ngIf=`of`)
+form
+  div(*ngIf=`of`)
 
-  //- select.jade
-  form
+    //- select.jade
     .input-field
       //- '(input)'=`option = $event.target.value`
       select(
@@ -13,87 +13,79 @@ div(*ngIf=`of`)
           '[value]'=`idx`
         )
           | {{opt.type}}
-  //- script.
-  //-   $('select').material_select();
-  //- ng2-select(
-  //-   '[items]'=`spec[of]`
-  //-   '(data)'=`print('(data)')`
-  //-   '(selected)'=`print('(selected)')`
-  //-   '(removed)'=`print('(removed)')`
-  //-   '(typed)'=`print('(typed)')`
-  //- )
+    //- script.
+    //-   $('select').material_select();
+    //- ng2-select(
+    //-   '[items]'=`spec[of]`
+    //-   '(data)'=`print('(data)')`
+    //-   '(selected)'=`print('(selected)')`
+    //-   '(removed)'=`print('(removed)')`
+    //-   '(typed)'=`print('(typed)')`
+    //- )
 
-  input-value(
-    *ngIf=`option`
-    '[path]'=`path`
-    '[spec]'=`resolveSpec()`
-    '[named]'=`named`
-    '[ctrl]'=`ctrl`
-  )
-
-//- '[hidden]'=`hidden`
-//- ^ I don't know why, but it seemed to dislike this version for some reason...
-.input-field(
-  *ngIf=`!of`
-  '[ngClass]'=`{hidden: hidden}`
-)
-  div('[ngSwitch]'='type')
-    template('[ngSwitchWhen]'=`'input'`)
-      //- '[path]'=`path`
-      //- '[spec]'=`spec`
-      //- '[name]'=`name`
-      my-input(
-        '[ctrl]'=`ctrl`
-        '[attrs]'=`attrs`
-        '[spec]'=`spec`
-        '[path]'=`path`
-      )
-    template('[ngSwitchWhen]'=`'range'`)
-      include ../misc/range.jade
-    template('[ngSwitchWhen]'=`'switch'`)
-      include ../misc/switch.jade
-    template('[ngSwitchWhen]'=`'date'`)
-      include ../misc/date.jade
-    template('[ngSwitchWhen]'=`'file'`)
-      include ../misc/file.jade
-    template('[ngSwitchWhen]'=`'datalist'`)
-      include ../misc/datalist.jade
-    template('[ngSwitchWhen]'=`'select'`)
-      include ../misc/select.jade
-    template('[ngSwitchWhen]'=`'radio'`)
-      include ../misc/radio.jade
-    template('[ngSwitchWhen]'=`'checkboxes'`)
-      include ../misc/checkboxes.jade
-    template(ngSwitchDefault)
-      p UNIMPLEMENTED FIELD TYPE {{ type }}!
-      
-  //- data-error='wrong'
-  //- data-success='right'
-  //- .active
-  //- '[ngClass]'=`{ 'active': attrs.default }`
-  label.active(
-    *ngIf=`named`
-    '[attr.for]'=`id`
-    '[innerHtml]'=`label`
-  )
-  //- ^ .active normally added dynamically by materialize.js when selecting the input.
-  //- when the inputs have initial values the label/input text would initially clash though.
-  //- | {{label}}
-  //- ^ does {{label}} need to be raw HTML?
-  //- p= `val: {{ ${ctrl}.value }}`
-  //- p= `errors: {{ ${ctrl}.errors | json }}`
-  //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
-  ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
-    //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
-    //- | {{vldtr}}: {{!showError(vldtr)}}
-    //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for spec ' + vldtr`
-    li.error-item(
-      *ngFor=`let vldtr of validator_keys`
-      '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
-      '[hidden]'=`!showError(vldtr)`
+    input-value(
+      *ngIf=`option`
+      '[path]'=`path`
+      '[spec]'=`resolveSpec()`
+      '[named]'=`named`
+      '[ctrl]'=`ctrl`
     )
 
-//- p ctrl.value: {{ctrl.value | json}}
-//- p ctrl.errors: {{ctrl.errors | json}}
-//- p validator_keys: {{validator_keys | json}}
-//- p ctrl.validator: {{ctrl._validator | json}}
+  //- '[hidden]'=`hidden`
+  //- ^ I don't know why, but it seemed to dislike this version for some reason...
+  .input-field(
+    *ngIf=`!of`
+    '[ngClass]'=`{hidden: hidden}`
+  )
+    div('[ngSwitch]'='type')
+      template('[ngSwitchWhen]'=`'input'`)
+        include ../misc/input.jade
+      template('[ngSwitchWhen]'=`'range'`)
+        include ../misc/range.jade
+      template('[ngSwitchWhen]'=`'switch'`)
+        include ../misc/switch.jade
+      template('[ngSwitchWhen]'=`'date'`)
+        include ../misc/date.jade
+      template('[ngSwitchWhen]'=`'file'`)
+        include ../misc/file.jade
+      template('[ngSwitchWhen]'=`'datalist'`)
+        include ../misc/datalist.jade
+      template('[ngSwitchWhen]'=`'select'`)
+        include ../misc/select.jade
+      template('[ngSwitchWhen]'=`'radio'`)
+        include ../misc/radio.jade
+      template('[ngSwitchWhen]'=`'checkboxes'`)
+        include ../misc/checkboxes.jade
+      template(ngSwitchDefault)
+        p UNIMPLEMENTED FIELD TYPE {{ type }}!
+        
+    //- data-error='wrong'
+    //- data-success='right'
+    //- .active
+    //- '[ngClass]'=`{ 'active': attrs.default }`
+    label.active(
+      *ngIf=`named`
+      '[attr.for]'=`id`
+      '[innerHtml]'=`label`
+    )
+    //- ^ .active normally added dynamically by materialize.js when selecting the input.
+    //- when the inputs have initial values the label/input text would initially clash though.
+    //- | {{label}}
+    //- ^ does {{label}} need to be raw HTML?
+    //- p= `val: {{ ${ctrl}.value }}`
+    //- p= `errors: {{ ${ctrl}.errors | json }}`
+    //- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
+    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
+      //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
+      //- | {{vldtr}}: {{!showError(vldtr)}}
+      //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for spec ' + vldtr`
+      li.error-item(
+        *ngFor=`let vldtr of validator_keys`
+        '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
+        '[hidden]'=`!showError(vldtr)`
+      )
+
+  //- p ctrl.value: {{ctrl.value | json}}
+  //- p ctrl.errors: {{ctrl.errors | json}}
+  //- p validator_keys: {{validator_keys | json}}
+  //- p ctrl.validator: {{ctrl._validator | json}}

@@ -324,6 +324,13 @@ export function print(k: string, v: {}): void {
   console.log(k, cname(v), cnames(v));
 };
 
+export function transformWhile(predicate: (any) => boolean, transformer: (any) => any, v: any): any {
+  while(predicate(v)) {
+    v = transformer(v);
+  }
+  return v;
+}
+
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)
 // [swagger editor ng1 html](https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html)

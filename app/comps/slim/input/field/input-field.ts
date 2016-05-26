@@ -2,13 +2,12 @@ let _ = require('lodash/fp');
 import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Control } from '@angular/common';
 let marked = require('marked');
-import { input_attrs, get_template } from '../input';
+import { input_attrs, get_template, relativeControl } from '../input';
 import { val_errors, val_keys } from '../validators';
 import { InputValueComp } from '../value/input-value';
-import { InputComp } from '../input/input-input';
 import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
-import { SetAttrs } from '../../../lib/directives';
+import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
 // import { Select } from 'ng2-select';
 import { RadioControlValueAccessor } from './radio_value_accessor';
 // from Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor, but crashes with that
@@ -26,12 +25,12 @@ type Ctrl = Control;
   template: require('./input-field.jade'),
   directives: [
     forwardRef(() => InputValueComp),
-    InputComp,
     // Select,
     RadioControlValueAccessor,
     MdRadioGroup,
     MdRadioButton,
     SetAttrs,
+    DynamicAttrs,
   ],
   providers: [
     MdRadioDispatcher,
@@ -45,7 +44,6 @@ export class FieldComp extends BaseInputComp {
   @Input() path: Front.Path;
   @Input() spec: Front.Spec;
   @Input() ctrl: Ctrl;
-  @ViewChild(InputComp) i: InputComp;
   attrs: Front.IAttributes;
   type: string;
   of: string; // that enum?
@@ -59,7 +57,7 @@ export class FieldComp extends BaseInputComp {
   }
 
   ngOnInit() {
-    // hidden, type:input|?, id, label, ctrl, validator_keys, validators, InputComp
+    // hidden, type:input|?, id, label, ctrl, validator_keys, validators
     let spec = this.spec;
     // let key = spec.name;  // variable
     // this.ctrl: from controls[key];
@@ -88,6 +86,14 @@ export class FieldComp extends BaseInputComp {
 
   resolveSpec(): Front.Spec {
     return this.spec[this.of][this.option];
+  }
+
+  nav(relativePath: string): any {
+    let ctrl = relativeControl(this.ctrl.root, this.path, relativePath);
+    // ctrl.valueChanges.subscribe(x => {
+    //   this.cdr.markForCheck();
+    // });
+    return ctrl.value;
   }
 
   // print(v) {
