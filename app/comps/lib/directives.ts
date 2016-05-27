@@ -31,13 +31,11 @@ function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string
   return setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
 }
 
-class ObjAttrDirective implements DoCheck {
+class ObjDirective implements DoCheck {
   _el: HTMLElement;
   _obj: {[key: string]: string};
   _differ: KeyValueDiffer;
   _elName: string;
-  _context: ComponentClass;
-  _extra: {};
 
   constructor(
     private _differs: KeyValueDiffers,
@@ -45,7 +43,7 @@ class ObjAttrDirective implements DoCheck {
     private _renderer: Renderer,
   ) {
     this._el = _elRef.nativeElement;
-    this._extra = {};
+    this._extra = {}; // Dynamic
   }
 
   set attributes(obj: {[key: string]: string}) {
@@ -54,6 +52,13 @@ class ObjAttrDirective implements DoCheck {
       this._differ = this._differs.find(obj).create(null);
     }
   }
+
+}
+
+// mixin: http://www.2ality.com/2016/05/six-nifty-es6-tricks.html
+const DynamicDirective = Sup => class extends Sup {
+  _context: ComponentClass;
+  _extra: {};
 
   set extraVars(obj: {[key: string]: any}) {
     this._extra = obj;
@@ -74,7 +79,7 @@ class ObjAttrDirective implements DoCheck {
     })(obj);
   }
 
-}
+};
 
 // set multiple properties/attributes from an object without knowing which is which.
 // named after attributes rather than properties so my json-schema could go with
@@ -83,7 +88,7 @@ class ObjAttrDirective implements DoCheck {
   selector: '[setAttrs]',
   inputs: ['attributes: setAttrs'],
 })
-export class SetAttrs extends ObjAttrDirective {
+export class SetAttrs extends ObjDirective {
 
   constructor(
     _differs: KeyValueDiffers,
@@ -140,7 +145,7 @@ function getContext(view: ViewContainerRef): Object {
   selector: '[dynamicAttrs]',
   inputs: ['attributes: dynamicAttrs', 'extraVars: extraVars'],
 })
-export class DynamicAttrs extends ObjAttrDirective {
+export class DynamicAttrs extends DynamicDirective(ObjDirective) {
 
   constructor(
     _differs: KeyValueDiffers,
@@ -167,7 +172,7 @@ export class DynamicAttrs extends ObjAttrDirective {
   selector: '[dynamicStyle]',
   inputs: ['attributes: dynamicStyle', 'extraVars: extraVars'],
 })
-export class DynamicStyle extends ObjAttrDirective {
+export class DynamicStyle extends DynamicDirective(ObjDirective) {
 
   constructor(
     _differs: KeyValueDiffers,
@@ -190,7 +195,7 @@ export class DynamicStyle extends ObjAttrDirective {
   selector: '[dynamicClass]',
   inputs: ['attributes: dynamicClass', 'extraVars: extraVars'],
 })
-export class DynamicClass extends ObjAttrDirective {
+export class DynamicClass extends DynamicDirective(ObjDirective) {
 
   constructor(
     _differs: KeyValueDiffers,
