@@ -10,6 +10,7 @@ import { ControlStruct } from '../controls';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { DynamicAttrs } from '../../../lib/directives';
 
 type Ctrl = ControlStruct;
 
@@ -19,6 +20,7 @@ type Ctrl = ControlStruct;
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
+    DynamicAttrs,
   ]
 })
 export class InputStructComp extends BaseInputComp {

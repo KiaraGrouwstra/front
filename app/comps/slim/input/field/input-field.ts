@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Control } from '@angular/common';
 let marked = require('marked');
-import { input_attrs, get_template, relativeControl } from '../input';
+import { input_attrs, get_template } from '../input';
 import { val_errors, val_keys } from '../validators';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj } from '../../../lib/js';
@@ -30,7 +30,7 @@ type Ctrl = Control;
     MdRadioGroup,
     MdRadioButton,
     SetAttrs,
-    DynamicAttrs,
+    // DynamicAttrs,
   ],
   providers: [
     MdRadioDispatcher,
@@ -86,14 +86,6 @@ export class FieldComp extends BaseInputComp {
 
   resolveSpec(): Front.Spec {
     return this.spec[this.of][this.option];
-  }
-
-  nav(relativePath: string): any {
-    let ctrl = relativeControl(this.ctrl.root, this.path, relativePath);
-    // ctrl.valueChanges.subscribe(x => {
-    //   this.cdr.markForCheck();
-    // });
-    return ctrl.value;
   }
 
   // print(v) {

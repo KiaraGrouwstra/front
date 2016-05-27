@@ -49,4 +49,5 @@ export class InputValueComp extends BaseInputComp {
     this.type = x.type;
     if(SCALARS.includes(this.type) || _.some(k => x[k])(ofs) || _.some(x.type || {})(ofs)) this.type = 'scalar';
   }
+
 }

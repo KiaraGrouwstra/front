@@ -21,7 +21,7 @@ let selector = {
 // TODO: update so as to incorporate nesting
 export let scrape_spec: Front.Spec = {
   type: 'object',
-  required: ['url', 'headers', 'parselet'],
+  required: ['url', 'headers', 'processor', 'parselet', 'transformer'],
   properties: {
     'url': {
       type: 'string',
@@ -73,8 +73,8 @@ export let scrape_spec: Front.Spec = {
               'inner html',
               'outer html',
             ],
-            description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
             // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
+            // description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
           },
           'attribute': {
             type: 'string',
@@ -83,7 +83,7 @@ export let scrape_spec: Front.Spec = {
               // classes: {},
               attributes: {
                 // hidden
-                disabled: `this.nav('../type') != 'attribute'`,
+                hidden: `this.nav('../type', path) != 'attribute'`,
               },
             },
           },
@@ -93,7 +93,7 @@ export let scrape_spec: Front.Spec = {
       minProperties: 1,
       'x-bindings': {
         attributes: {
-          disabled: `this.nav('../processor') != 'parselet'`,
+          hidden: `this.nav('../processor', path) != 'parselet'`,
         },
       },
     },
@@ -102,7 +102,7 @@ export let scrape_spec: Front.Spec = {
       default: `(json) => JSON.parse(json)`,
       'x-bindings': {
         attributes: {
-          disabled: `this.nav('../processor') != 'transformer'`,
+          hidden: `this.nav('../processor', path) != 'transformer'`,
         },
       },
     },

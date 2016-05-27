@@ -306,15 +306,13 @@ export function splitObj(obj: {}): [keys: string[], values: any[]] {
 
 // http://www.2ality.com/2012/04/eval-variables.html
 // evaluate an expression within a context (of the component)
-export let evalExpr: (vars: {}) => (expr: string) => any =
-  (vars: {}) => (expr: string) => {
-    let propObj = _.assign(...[vars, Object.getPrototypeOf(vars)].map(x => arr2obj(Object.getOwnPropertyNames(x), k => x[k])));
+export let evalExpr = (context: {}, vars: {} = {}) => (expr: string) => {
+    let varArr = [context, vars];
+    let propObj = Object.assign({}, ...[...varArr, ...varArr.map(x => Object.getPrototypeOf(x))]
+        .map(x => arr2obj(Object.getOwnPropertyNames(x), k => x[k])));
     let [keys, vals] = splitObj(propObj);
-    // Function(param1, ..., paramn, body)
-    let fn = Function.apply(vars, keys.concat([`return ${expr}`]));
-    return fn.apply(vars, vals);
-    // let fn = Function.apply(vars, [`return ${expr}`]);
-    // return fn.apply(vars);
+    let fn = Function.apply(context, keys.concat(`return ${expr}`));
+    return fn.apply(context, vals);
 }
 
 // print a complex object for debugging -- regular log sucks cuz it elides values, JSON.stringify errors on cyclical structures.
@@ -324,7 +322,8 @@ export function print(k: string, v: {}): void {
   console.log(k, cname(v), cnames(v));
 };
 
-export function transformWhile(predicate: (any) => boolean, transformer: (any) => any, v: any): any {
+// transform a value while the predicate holds true
+export function transformWhile<T>(predicate: (T) => boolean, transformer: (T) => T, v: T): T {
   while(predicate(v)) {
     v = transformer(v);
   }

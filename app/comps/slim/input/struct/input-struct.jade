@@ -28,7 +28,12 @@
           //-   th Value
           //-   th
           tbody
-            tr(*ngFor=`let item of indices.properties; let i = index`)
+            //- assign spec to variable to prevent duplicate lookup
+            tr(
+              *ngFor=`let item of indices.properties; let i = index`
+              '[dynamicAttrs]'=`specFixed(item)['x-bindings']?.attributes`
+              '[extraVars]'=`{ path: path.concat(item) }`
+            )
               //- td
               //-   input-field(
               //-     '[named]'=`false`

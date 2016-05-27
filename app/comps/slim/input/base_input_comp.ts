@@ -4,7 +4,7 @@ import { FORM_DIRECTIVES, AbstractControl } from '@angular/common';
 import { ExtComp } from '../../lib/annotations';
 // import { BaseSlimComp } from '../base_slim_comp';
 import { BaseInOutComp } from '../base_in_out_comp';
-import { getPaths } from '../input';
+import { relativeControl } from './input';  //, getPaths
 
 type Ctrl = AbstractControl;
 
@@ -40,5 +40,13 @@ export class BaseInputComp extends BaseInOutComp {
     this.setCtrl(x);
   }
   setCtrl(x: Ctrl): void {}
+
+  nav(relativePath: string, path = this.path): any {
+    let ctrl = relativeControl(this.ctrl.root, path, relativePath);
+    // ctrl.valueChanges.subscribe(x => {
+    //   this.cdr.markForCheck();
+    // });
+    return ctrl.value;
+  }
 
 }

@@ -4,6 +4,7 @@ import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, Vie
 import { DomElementSchemaRegistry } from '@angular/compiler/src/schema/dom_element_schema_registry';
 import { isPresent, isBlank } from '@angular/core/src/facade/lang';
 import { evalExpr, transformWhile, print } from './js';
+import { NgForRow } from '@angular/common/src/directives/ng_for'
 
 // [HTML attribute vs. DOM property](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#html-attribute-vs-dom-property)
 // [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
@@ -35,6 +36,8 @@ class ObjAttrDirective implements DoCheck {
   _obj: {[key: string]: string};
   _differ: KeyValueDiffer;
   _elName: string;
+  _context: ComponentClass;
+  _extra: {};
 
   constructor(
     private _differs: KeyValueDiffers,
@@ -42,6 +45,7 @@ class ObjAttrDirective implements DoCheck {
     private _renderer: Renderer,
   ) {
     this._el = _elRef.nativeElement;
+    this._extra = {};
   }
 
   set attributes(obj: {[key: string]: string}) {
@@ -49,6 +53,10 @@ class ObjAttrDirective implements DoCheck {
     if (isBlank(this._differ) && isPresent(obj)) {
       this._differ = this._differs.find(obj).create(null);
     }
+  }
+
+  set extraVars(obj: {[key: string]: any}) {
+    this._extra = obj;
   }
 
   ngDoCheck() {
@@ -69,7 +77,6 @@ class ObjAttrDirective implements DoCheck {
 }
 
 // set multiple properties/attributes from an object without knowing which is which.
-// TODO: use `Differ`s to improve performance; see [NgClass](https://github.com/angular/angular/blob/master/modules/%40angular/common/src/directives/ng_class.ts)
 // named after attributes rather than properties so my json-schema could go with
 // that without causing confusing with its existing `properties` attribute.
 @Directive({
@@ -119,20 +126,19 @@ export class SetAttrs extends ObjAttrDirective {
 
 // get the context for a viewContainer -- for e.g. `_View_FieldComp5` first go up to `_View_FieldComp0`.
 function getContext(view: ViewContainerRef): Object {
-  return transformWhile(y => y.context.constructor == Object, y => y.parent, view._element.parentView).context;
+  return transformWhile(x => [Object, NgForRow].includes(x.context.constructor), y => y.parent, view._element.parentView).context;
 }
 
-// dynamically bind things: properties, attributes //, styles, classes, directives
+// dynamically bind properties/attributes
 // intended as a `[[prop]]="evalStr"`, if now `[dynamicAttrs]="{ prop: evalStr }"`
 // hint toward original: `bindAndWriteToRenderer` @ `compiler/view_compiler/property_binder.ts`.
 // alternative: `[prop]="eval(evalStr)"` for `eval = evalExpr(this)` on class.
 // ^ try that for directives! but can't dynamically bind to different things like this.
 // challenge: even if I extract rules from JSON, how do I generate these bindings?...
 // unless I could dynamically bind to directives, which was the problem, so use this.
-// TODO: use `Differ`s to improve performance; more challenging cuz double...
 @Directive({
   selector: '[dynamicAttrs]',
-  inputs: ['attributes: dynamicAttrs'],
+  inputs: ['attributes: dynamicAttrs', 'extraVars: extraVars'],
 })
 export class DynamicAttrs extends ObjAttrDirective {
 
@@ -151,7 +157,7 @@ export class DynamicAttrs extends ObjAttrDirective {
 
   private _setItem(name: string, evalStr: string): void {
     let method = keyMethod(this._registry, this._elName, name);
-    let val = evalExpr(this._context)(evalStr);
+    let val = evalExpr(this._context, this._extra)(evalStr);
     this._renderer[method](this._el, name, val);
   }
 
@@ -159,7 +165,7 @@ export class DynamicAttrs extends ObjAttrDirective {
 
 @Directive({
   selector: '[dynamicStyle]',
-  inputs: ['attributes: dynamicStyle'],
+  inputs: ['attributes: dynamicStyle', 'extraVars: extraVars'],
 })
 export class DynamicStyle extends ObjAttrDirective {
 
@@ -174,7 +180,7 @@ export class DynamicStyle extends ObjAttrDirective {
   }
 
   private _setItem(name: string, evalStr: string): void {
-    let val = evalExpr(this._context)(evalStr);
+    let val = evalExpr(this._context, this._extra)(evalStr);
     this._renderer.setElementStyle(this._el, name, val);
   }
 
@@ -182,7 +188,7 @@ export class DynamicStyle extends ObjAttrDirective {
 
 @Directive({
   selector: '[dynamicClass]',
-  inputs: ['attributes: dynamicClass'],
+  inputs: ['attributes: dynamicClass', 'extraVars: extraVars'],
 })
 export class DynamicClass extends ObjAttrDirective {
 
@@ -197,7 +203,7 @@ export class DynamicClass extends ObjAttrDirective {
   }
 
   private _setItem(name: string, evalStr: string): void {
-    let val = evalExpr(this._context)(evalStr);
+    let val = evalExpr(this._context, this._extra)(evalStr);
     this._renderer.setElementClass(this._el, name, val);
   }
 
