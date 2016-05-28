@@ -1,0 +1,7 @@
+//- trigger resize on programmatic val change: `$('#textarea1').trigger('autoresize');`
+//- ng2 alt. w/o Materialize/jQuery: https://github.com/stevepapa/angular2-autosize
+textarea.materialize-textarea.validate.tooltipped(
+  '[setAttrs]'=`attrs`
+  '[ngFormControl]'=`ctrl`
+  '[(ngModel)]'=`ctrl.value`
+)

@@ -100,6 +100,7 @@ export let scrape_spec: Front.Spec = {
     'transformer': {
       type: 'string',
       default: `(json) => JSON.parse(json)`,
+      'x-template': 'textarea',
       'x-bindings': {
         attributes: {
           hidden: `this.nav('../processor', path) != 'transformer'`,

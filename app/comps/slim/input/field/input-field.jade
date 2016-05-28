@@ -56,6 +56,8 @@ form
         include ../misc/radio.jade
       template('[ngSwitchWhen]'=`'checkboxes'`)
         include ../misc/checkboxes.jade
+      template('[ngSwitchWhen]'=`'textarea'`)
+        include ../misc/textarea.jade
       template(ngSwitchDefault)
         p UNIMPLEMENTED FIELD TYPE {{ type }}!
         

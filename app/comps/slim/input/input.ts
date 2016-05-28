@@ -37,7 +37,7 @@ let input_type = (type: string) => _.get([type], {
 
 // pick a Jade template
 export function get_template(spec: Front.Spec, attrs: Front.IAttributes): string|void {
-  return _.get([spec.type], {
+  return spec['x-template'] || _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
     // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
     string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'select' : null,
