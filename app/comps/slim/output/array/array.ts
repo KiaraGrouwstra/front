@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { Input, forwardRef } from '@angular/core';
+import { Input, forwardRef, ViewChild } from '@angular/core';
 import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ULComp, TableComp } from '../../..';
 import { infer_type, try_schema } from '../output'
@@ -25,6 +25,8 @@ export class ArrayComp extends BaseOutputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   first: any;
   type: string;
+  @ViewChild(ULComp) ul: ULComp;
+  @ViewChild(TableComp) table: TableComp;
 
   setVal(x: Val): void {
     this.first = _.get([0])(x);

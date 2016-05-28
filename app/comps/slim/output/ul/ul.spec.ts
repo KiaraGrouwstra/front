@@ -4,6 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { GlobalsService } from '../../../services';
 
 import { ULComp } from './ul';
 let cls = test_comp('myul', ULComp);
@@ -18,6 +19,8 @@ let pars = {
 describe('ULComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

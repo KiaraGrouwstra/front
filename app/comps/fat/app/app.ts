@@ -19,9 +19,8 @@ let _ = require('lodash/fp');
 // import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
-import { WsService } from '../../services/ws/ws';
-import { RequestService } from '../../services/request/request';
-import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs, Front.IPathSpec } from '../../lib/js';
+import { WsService, RequestService, GlobalsService } from '../../services';
+import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
 import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
 import { curl_spec } from './curl_spec';
@@ -74,6 +73,7 @@ export class App {
     private _req: RequestService,
     private _ws: WsService,
     @Inject(APP_CONFIG) private _config: Front.Config,
+    public g: GlobalsService,
     //private _routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
   ) {}
 

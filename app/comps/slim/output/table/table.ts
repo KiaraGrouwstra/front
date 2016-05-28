@@ -10,6 +10,7 @@ import { AssignLocal } from '../../../lib/directives';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { GlobalsService } from '../../../services';
 
 type Val = any; //Array<Object>;
 
@@ -35,11 +36,11 @@ export class TableComp extends BaseOutputComp {
   @Input() colOrder: string[];
   @Input() sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
   @Input() filters: {[key: string]: string};
-  @Input() condFormat: Array<Front.IColor>;
+  @Input() condFormat: Front.CondFormat;
   _colOrder: string[];
   _sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
   _filters: {[key: string]: string};
-  _condFormat: Array<Front.IColor>;
+  _condFormat: Front.CondFormat;
   data: Rows;
   rows: Rows;
   filtered: Rows;
@@ -58,17 +59,17 @@ export class TableComp extends BaseOutputComp {
     min?: number,
     max?: number,
   }};
-  filterKeys: string[];
   indexBased: boolean;
   col_keys: string[];
-  sortedCols: string[]; // ordered
-  _condCols: string[];
-  _condBoundaries: {[key: string]: number[]};
+  condBoundaries: {[key: string]: number[]};
   modalCol: string;
 
-  // constructor(cdr: ChangeDetectorRef) {
-  //   super(cdr);
-  // }
+  constructor(
+    cdr: ChangeDetectorRef,
+    g: GlobalsService,
+  ) {
+    super(cdr, g);
+  }
 
   setPath(x: Front.Path) {
     this.combInputs();
@@ -119,19 +120,17 @@ export class TableComp extends BaseOutputComp {
     // console.log('set:sortColsDesc', x);
     if(_.isUndefined(x)) return;
     this._sortColsDesc = x;
-    this.sortedCols = _.keys(x);
     this.sort();
   }
 
-  get condFormat(): Array<Front.IColor> {
+  get condFormat(): Front.CondFormat {
     let x = this._condFormat;
     if(_.isUndefined(x)) x = this.condFormat = {};
     return x;
   }
-  set condFormat(x: Array<Front.IColor>) {
+  set condFormat(x: Front.CondFormat) {
     if(_.isUndefined(x)) return;
     this._condFormat = x;
-    this.condCols = _.keys(x);
     this.condBoundaries = mapBoth(x, (colors, col) => {
       if(!colors) return [];
       let { min, max, isLog } = this.colMeta[col];
@@ -147,26 +146,6 @@ export class TableComp extends BaseOutputComp {
   @try_log()
   clearFormat(col: string): void {
     this.condFormat = _.omit(col)(this.condFormat);
-  }
-
-  get condCols(): string[] {
-    let x = this._condCols;
-    if(_.isUndefined(x)) x = this.condCols = _.keys(this.condFormat);
-    return x;
-  }
-  set condCols(x: string[]) {
-    if(_.isUndefined(x)) return;
-    this._condCols = x;
-  }
-
-  get condBoundaries(): {[key: string]: number[]} {
-    let x = this._condBoundaries;
-    if(_.isUndefined(x)) x = this.condBoundaries = {};
-    return x;
-  }
-  set condBoundaries(x: {[key: string]: number[]}) {
-    if(_.isUndefined(x)) return;
-    this._condBoundaries = x;
   }
 
   @try_log()
@@ -190,7 +169,7 @@ export class TableComp extends BaseOutputComp {
     let num = isLog ? Math.log10(val) : val;
     let colors = this.condFormat[col];
     if(!colors) return null;
-    let boundaries = this.condBoundaries[col];
+    let boundaries = this.condBoundaries[col] || {};
     let leftIdx = _.findLastIndex(y => y <= num, boundaries);
     if(leftIdx == boundaries.length - 1) return this.formatColor(_.last(colors));
     let [ lower, upper ] = boundaries.slice(leftIdx, leftIdx + 2);
@@ -217,7 +196,6 @@ export class TableComp extends BaseOutputComp {
   set filters(x: {[key: string]: string}) {
     if(_.isUndefined(x)) return;
     this._filters = x;
-    this.filterKeys = _.keys(x);
     this.filter();
   }
 
@@ -293,7 +271,7 @@ export class TableComp extends BaseOutputComp {
   @try_log()
   filter(): void {
     let filters = this.filters;
-    let filter_keys = this.filterKeys;
+    let filter_keys = _.keys(filters);
     let colMeta = this.colMeta;
     this.filtered = _.filter((row) => _.every((k) => {
       let filter = filters[k];

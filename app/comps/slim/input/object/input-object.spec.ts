@@ -6,6 +6,7 @@ import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control, objectControl } from '../input'
 import { By } from '@angular/platform-browser';
+import { GlobalsService } from '../../../services';
 
 import { InputObjectComp } from './input-object';
 let cls = test_comp('input-object', InputObjectComp);
@@ -40,6 +41,8 @@ let validationPars = () => ({ path, spec: validationSpec, ctrl: objectControl(va
 describe('InputObjectComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

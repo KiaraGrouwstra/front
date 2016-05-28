@@ -1,9 +1,6 @@
 import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
 import { ReflectiveInjector } from '@angular/core';
-import { RequestService } from '../../services/request/request';
-import { WsService } from '../../services/ws/ws';
-import { requestServiceProvider } from '../../services/request/request.provider';
-import { wsServiceProvider } from '../../services/ws/ws.provider';
+import { WsService, RequestService, GlobalsService, wsServiceProvider, requestServiceProvider, globalsServiceProvider } from '../../services';
 import { CONFIG, APP_CONFIG } from '../../../config';
 import { ROUTER_PROVIDERS } from '@angular/router';
 import { Router } from '@angular/router';
@@ -19,6 +16,7 @@ export let appProvider = {
     RequestService,
     WsService,
     APP_CONFIG,
+    GlobalsService,
   ],
   useFactory: (
     // router,
@@ -26,16 +24,18 @@ export let appProvider = {
     req,
     ws,
     config,
+    g,
   ) => new App(
     // router,
     http,
     req,
     ws,
     config,
+    g,
   ),
 };
 
-xdescribe('App', () => {
+describe('App', () => {
   let injector: ReflectiveInjector;
   let app;
 
@@ -46,6 +46,7 @@ xdescribe('App', () => {
       requestServiceProvider,
       wsServiceProvider,
       { provide: APP_CONFIG, useValue: CONFIG },
+      globalsServiceProvider,
     ]);
     app = injector.get(App);
   })
@@ -56,6 +57,10 @@ xdescribe('App', () => {
 
   it('should be able to create the app', () => {
     expect(app).toBeDefined();
+  });
+
+  it('should have properties', () => {
+    expect(app.auto_meat).toEqual(true);
   });
 
 })

@@ -5,6 +5,7 @@ import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
+import { GlobalsService } from '../../../services';
 
 import { FormComp } from './input-form';
 let cls = test_comp('input-form', FormComp);
@@ -48,6 +49,8 @@ let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 describe('FormComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

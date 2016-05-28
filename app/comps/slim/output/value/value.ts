@@ -1,10 +1,9 @@
 let _ = require('lodash/fp');
-import { Observable } from 'rxjs/Observable';
 import { Input, forwardRef, ViewChild } from '@angular/core';
 import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, ScalarComp } from '../../..';
 import { infer_type, try_schema } from '../output'
-import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
+// import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';

@@ -5,6 +5,7 @@ import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
+import { GlobalsService } from '../../../services';
 
 import { InputValueComp } from './input-value';
 let cls = test_comp('input-value', InputValueComp);
@@ -31,6 +32,8 @@ let req = 'This field is required.';
 describe('InputValueComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

@@ -4,6 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { GlobalsService } from '../../../services';
 
 import { ArrayComp } from './array';
 let cls = test_comp('array', ArrayComp);
@@ -19,6 +20,8 @@ let nest_pars = _.assign(obs_pars, { val: [1, [2, 3], 4] });
 describe('ArrayComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

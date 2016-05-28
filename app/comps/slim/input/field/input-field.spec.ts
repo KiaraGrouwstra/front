@@ -6,6 +6,7 @@ import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { Control } from '@angular/common';
 import { input_control } from '../input'
+import { GlobalsService } from '../../../services';
 
 import { FieldComp } from './input-field';
 let cls = test_comp('input-field', FieldComp);
@@ -32,6 +33,8 @@ let req = 'This field is required.';
 describe('FieldComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

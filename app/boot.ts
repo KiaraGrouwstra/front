@@ -14,16 +14,14 @@ import { HTTP_BINDINGS } from '@angular/http';
 import { enableProdMode } from '@angular/core';
 
 import { App } from './comps/fat/app/app';
-import { RequestService } from './comps/services/request/request';
-import { requestServiceProvider } from './comps/services/request/request.provider';
-import { WsService } from './comps/services/ws/ws';
-import { wsServiceProvider } from './comps/services/ws/ws.provider';
+import { wsServiceProvider, requestServiceProvider, globalsServiceProvider } from './comps/services';
 import { CONFIG, APP_CONFIG } from './config';
 
 let singletons = [
   HTTP_BINDINGS, ROUTER_PROVIDERS,
   requestServiceProvider,
   wsServiceProvider,
+  globalsServiceProvider,
   { provide: APP_CONFIG, useValue: CONFIG },
 ];
 // enableProdMode();

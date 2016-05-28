@@ -4,6 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { GlobalsService } from '../../../services';
 
 import { ValueComp } from './value';
 let cls = test_comp('value', ValueComp);
@@ -22,6 +23,8 @@ describe('ValueComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
+  beforeEachProviders(() => [GlobalsService]);
+
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
@@ -39,7 +42,8 @@ describe('ValueComp', () => {
   }));
 
   xit('should handle tables', test([obs_pars, { val: table }], ({ comp, el }) => {
-    expect(el).toHaveText('ab12AB');
+    // expect(el).toHaveText('ab12AB');
+    expect(comp.array.table.col_keys).toEqual(['a', 'b']);
   }));
 
 });

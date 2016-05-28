@@ -10,7 +10,6 @@ type Ctrl = AbstractControl;
 
 @ExtComp({
   directives: [FORM_DIRECTIVES],
-  // providers: [GlobalsProvider],
 })
 export class BaseInputComp extends BaseInOutComp {
 

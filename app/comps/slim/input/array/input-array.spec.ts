@@ -6,6 +6,7 @@ import { dispatchEvent } from '@angular/platform-browser/testing';
 import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
 import { input_control } from '../input'
 import { By } from '@angular/platform-browser';
+import { GlobalsService } from '../../../services';
 
 import { InputArrayComp } from './input-array';
 let cls = test_comp('input-array', InputArrayComp);
@@ -50,6 +51,8 @@ let validationPars = () => _.cloneDeep({ path, spec: validationSpec, ctrl: valid
 describe('InputArrayComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
+
+  beforeEachProviders(() => [GlobalsService]);
 
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;

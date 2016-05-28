@@ -59,7 +59,7 @@
       //- actually check object length
       .pattern-props(*ngIf=`hasPatts`)
         b Pattern Properties
-        .patt(*ngFor=`let patt of patts`)
+        .patt(*ngFor=`let patt of g._.keys(patts)`)
           emp {{patt}}
           //- #newPatt
           //- input-field(

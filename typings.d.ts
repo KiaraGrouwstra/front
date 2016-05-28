@@ -110,6 +110,8 @@ module Front {
     a?: number,
   }
 
+  export type CondFormat = { [key: string]: Front.IColor[] };
+
   // output/object
 
   type IObjectCollection = Array<{

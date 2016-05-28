@@ -4,7 +4,7 @@
   .card-content
     p.card-title(*ngIf='named') {{k}}
     a.btn.waves-effect.waves-light.clear-btn.yellow(
-      '[ngClass]'=`{ 'disabled': !sortedCols?.length }`
+      '[ngClass]'=`{ 'disabled': !g._.size(sortColsDesc) }`
       '(click)'=`clearSorts()`
     )
       | clear sort
@@ -14,12 +14,12 @@
     )
       | clear hide
     a.btn.waves-effect.waves-light.clear-btn.orange(
-      '[ngClass]'=`{ 'disabled': !condCols.length }`
+      '[ngClass]'=`{ 'disabled': !g._.size(condFormat) }`
       '(click)'=`clearFormats()`
     )
       | clear formatting
     a.btn.waves-effect.waves-light.clear-btn.teal(
-      '[ngClass]'=`{ 'disabled': !filterKeys?.length }`
+      '[ngClass]'=`{ 'disabled': !g._.size(filters) }`
       '(click)'=`clearFilters()`
     )
       | clear filters
@@ -36,7 +36,7 @@
           '*ngFor'=`let name of colOrder; let idx = index`
           '*assignLocal'=`{ col: cols[name] }`
           id=`{{cols[name].id}}`
-          '[class.sort]'=`sortedCols.includes(name)`
+          '[class.sort]'=`g._.keys(sortColsDesc).includes(name)`
           '[class.asc]'=`sortColsDesc[name] == false`
           '[class.desc]'=`sortColsDesc[name]`
           '[ngClass]'=`{ 'waves-red': idx % 6 == 0, 'waves-orange': idx % 6 == 1, 'waves-yellow': idx % 6 == 2, 'waves-green': idx % 6 == 3, 'waves-teal': idx % 6 == 4, 'waves-purple': idx % 6 == 5 }`

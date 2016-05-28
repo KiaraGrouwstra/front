@@ -11,6 +11,7 @@ import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { DynamicAttrs } from '../../../lib/directives';
+import { GlobalsService } from '../../../services';
 
 type Ctrl = ControlStruct;
 
@@ -35,14 +36,16 @@ export class InputStructComp extends BaseInputComp {
   nameSpecFixed: Front.Spec;
   nameSpecFixedFiltered: Front.Spec = {};
   isOneOf: boolean;
-  patts: string[];
   hasFixed: boolean;
   hasPatts: boolean;
   hasAdd: boolean;
   nameCtrlFixed: AbstractControl;
 
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+  constructor(
+    cdr: ChangeDetectorRef,
+    g: GlobalsService,
+  ) {
+    super(cdr, g);
   }
 
   setCtrl(x: Ctrl): void {
@@ -55,7 +58,6 @@ export class InputStructComp extends BaseInputComp {
     tryLog(() => {
     let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
     this.isOneOf = _.has(['oneOf'], add);
-    this.patts = _.keys(patts);
     [this.hasFixed, this.hasPatts, this.hasAdd] = [props, patts, add].map(x => _.size(x));
     // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSpecFixed: this.nameSpecFixed, nameSpecPatt: this.nameSpecPatt, nameSpecAdd: this.nameSpecAdd } = getOptsNameSpecs(x);
     // Object.assign(this, getOptsNameSpecs(x));
@@ -63,7 +65,7 @@ export class InputStructComp extends BaseInputComp {
     this.nameCtrlFixed = input_control(this.nameSpecFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
-    this.indices = { properties: new Set(prepopulated), patternProperties: arr2obj(this.patts, patt => new Set([])), additionalProperties: new Set([]) };
+    this.indices = { properties: new Set(prepopulated), patternProperties: _.mapValues(x => new Set([]))(patts), additionalProperties: new Set([]) };
     this.updateFixedList();
     })();
   }
