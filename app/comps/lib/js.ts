@@ -330,6 +330,19 @@ export function transformWhile<T>(predicate: (T) => boolean, transformer: (T) =>
   return v;
 }
 
+export class ExtendableError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+    this.message = message;
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
+}
+
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)
 // [type map](https://github.com/Textalk/angular-schema-form/blob/development/src/services/schema-form.js)
 // [swagger editor ng1 html](https://github.com/swagger-api/swagger-editor/blob/master/app/templates/operation.html)
