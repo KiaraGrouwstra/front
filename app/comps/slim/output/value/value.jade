@@ -5,7 +5,8 @@ div([ngSwitch]='type')
     array('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`, '[named]'=`false`)
   template([ngSwitchWhen]=`'scalar'`)
     //- '[path]'=`path`, 
-    scalar('[val]'=`val`, '[schema]'=`new_spec`)
+    scalar(*ngIf=`!isHtml(val)`, '[val]'=`val`, '[schema]'=`new_spec`)
+    myiframe(*ngIf=`isHtml(val)`, '[val]'=`val`)
   template(ngSwitchDefault)
-    p UNIMPLEMENTED OUTPUT-VALUE TYPE ({{ type }})!
+    p UNIMPLEMENTED OUTPUT-VALUE TYPE ({{ type | json }})!
     //- | async

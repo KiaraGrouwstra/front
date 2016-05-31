@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 import { Input } from '@angular/core';
 import { ExtComp } from '../lib/annotations';
+import { try_log } from '../lib/decorators';
 import { BaseSlimComp } from './base_slim_comp';
 import { getPaths } from './slim';
 // import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -39,7 +40,8 @@ export class BaseInOutComp extends BaseSlimComp {
 
   // now my `set:path` is asymmetrical, but if I put this in `setPath`, I'd need to `super` it on override...
   // ngOnInit() {
-  setPathStuff(path: Front.Path) {
+  @try_log()
+  setPathStuff(path: Front.Path): void {
     const copy = ['id', 'k'];  //, 'model', 'variable'
     let props = getPaths(path);
     copy.forEach(x => {

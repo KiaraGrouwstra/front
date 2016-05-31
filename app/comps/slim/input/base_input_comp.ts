@@ -2,6 +2,7 @@ let _ = require('lodash/fp');
 import { Input } from '@angular/core';
 import { FORM_DIRECTIVES, AbstractControl } from '@angular/common';
 import { ExtComp } from '../../lib/annotations';
+import { fallback } from '../../lib/decorators';
 // import { BaseSlimComp } from '../base_slim_comp';
 import { BaseInOutComp } from '../base_in_out_comp';
 import { relativeControl } from './input';  //, getPaths
@@ -40,6 +41,7 @@ export class BaseInputComp extends BaseInOutComp {
   }
   setCtrl(x: Ctrl): void {}
 
+  @fallback(undefined)
   nav(relativePath: string, path = this.path): any {
     let ctrl = relativeControl(this.ctrl.root, path, relativePath);
     // ctrl.valueChanges.subscribe(x => {

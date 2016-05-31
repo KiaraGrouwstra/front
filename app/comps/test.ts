@@ -16,11 +16,11 @@ export let test_comp = (selector: string, cls: Class) => (static_pars = {}, obs_
   let in_str = _.keys(obj).map(k => ` [${k}]='${k}'`).join('');
   let out_str = _.keys(outputs).map(k => ` (${k})='${k}($event)'`).join('');
   let tmplt = `<${selector}${in_str}${out_str}>${content}</${selector}>`;
-  return test_comp_html(tmplt, cls, obs_obj, static_obj, outputs);
+  return test_comp_html(tmplt, cls, static_obj, obs_obj, outputs);
 }
 
 // a component template for testing other components, by full html template
-export let test_comp_html = (tmplt: string, cls: Class, obs_pars = {}, static_pars = {}, outputs = {}) => {
+export let test_comp_html = (tmplt: string, cls: Class, static_pars = {}, obs_pars = {}, outputs = {}) => {
   let cmp = class {
     //http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders
     // @ViewChild(cls) comp;

@@ -144,10 +144,20 @@ describe('js', () => {
     expect(obj.c).toEqual(NaN);
   })
 
-  it('findTables', () => {
-    let data = { foo: [ { bar: 1 } ] };
-    let spec = getSchema(data);
-    expect(findTables(spec)).toEqual([['foo']]);
+  describe('findTables', () => {
+
+    it('finds all tables', () => {
+      let data = { foo: [ { bar: 1 } ], baz: [ {} ] };
+      let spec = getSchema(data);
+      expect(findTables(spec)).toEqual([['foo'], ['baz']]);
+    })
+
+    it('returns empty if none', () => {
+      let data = { foo: { bar: 1 } };
+      let spec = getSchema(data);
+      expect(findTables(spec)).toEqual([]);
+    })
+
   })
 
   describe('key_spec', () => {

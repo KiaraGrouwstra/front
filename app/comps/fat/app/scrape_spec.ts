@@ -7,27 +7,16 @@ let headers = standardHeaders.concat(chromeHeaders);
 // ^ okay for an auto-complete list of suggestions, maybe not for an enum error message...
 let mimeTypes = ['application/json','application/x-www-form-urlencoded','multipart/form-data','text/html'];
 
-// parselet values should have their `selector`, `type` and `attribute` serialized into a single string!
-
-let selector = {
-  type: 'string',
-  // format: 'json',
-  required: true,
-  name: 'floki selector',
-  description: 'use CSS selectors',
-  // description: "use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
-};
-
-// TODO: update so as to incorporate nesting
-export let scrape_spec: Front.Spec = {
+export let fetch_spec: Front.Spec = {
   type: 'object',
-  required: ['url', 'headers', 'processor', 'parselet', 'transformer'],
+  required: ['urls', 'headers'],
   properties: {
-    'url': {
+    'urls': {
       type: 'string',
       format: 'url',
       required: true,
-      description: 'the URL to scrape and extract',
+      'x-template': 'textarea',
+      description: 'the URLs to scrape and extract, delimited with line breaks (`\\n`)',
     },
     'headers': {
       description: 'Request Headers',
@@ -48,6 +37,25 @@ export let scrape_spec: Front.Spec = {
         suggestions: headers,
       },
     },
+  },
+};
+
+// parselet values should have their `selector`, `type` and `attribute` serialized into a single string!
+
+let selector = {
+  type: 'string',
+  // format: 'json',
+  required: true,
+  name: 'floki selector',
+  description: 'use CSS selectors',
+  // description: "use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
+};
+
+// TODO: update so as to incorporate nesting
+export let process_spec: Front.Spec = {
+  type: 'object',
+  required: ['processor', 'parselet', 'transformer'],
+  properties: {
     'processor': {
       type: 'string',
       enum: [

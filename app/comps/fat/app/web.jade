@@ -2,15 +2,18 @@
   .col.s12#scrape-ui
     .card
       .card-content
-        //- scrape-ui(
-        //-   '(handler)'=`extract_url($event)`
-        //- )
-        //- '#web'
+        //- can't access template variable declared later... ViewChild not working either :(
         input-form(
-          #scrape_form
-          '[spec]'=`scrape_spec`
-          '[desc]'=`'scraper desc'`
-          '(submit)'=`extract_url($event)`
+          #fetch_form
+          '[spec]'=`fetch_spec`
+          '[desc]'=`'fetch what?'`
+          '(submit)'=`doFetch($event, process_form.form.value)`
+        )
+        input-form(
+          #process_form
+          '[spec]'=`process_spec`
+          '[desc]'=`'process how?'`
+          '(submit)'=`doProcess($event, fetch_form.form.value)`
         )
   .resp.col.s12
     - prefix = 'web_'

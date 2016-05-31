@@ -13,17 +13,10 @@ export class RequestService {
     _ws.connect();
   }
 
-  // fetch URL content
-  addUrl(pars: Front.ReqMeta): Observable<any> {
+  // fetch URL content (and optionally Parsley parse)
+  addUrls(pars: Front.ReqMeta): Observable<any> {
     let n = [].concat(pars.urls).length;
-    return this._ws.ask('/urls', pars, n);
-  }
-
-  // fetch URL content (and Parsley parse)
-  parsley(urls: string|string[], json: string): Observable<any> {
-    let pars = {urls, parselet: json};
-    let n = [].concat(urls).length;
-    return this._ws.ask('/parse', pars, n);
+    return this._ws.ask(pars.parselet ? '/parse' : '/urls', pars, n);
   }
 
   // try variations of a CURL command by skipping different headers

@@ -29,7 +29,7 @@ bootstrap(App, singletons);
 // .catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));
 
 window._ = require('lodash/fp');
-window.$ = window.jQuery = require('jquery');
+window.jQuery = window.$ = require('jquery');
 //Materialize
 require('materialize-css/dist/js/materialize');
 window.noUiSlider = require('materialize-css/extras/noUiSlider/nouislider');

@@ -6,6 +6,8 @@ import { WsService } from '../ws/ws';
 import { wsServiceProvider } from '../ws/ws.provider';
 import { CONFIG, APP_CONFIG } from '../../../config';
 
+const urls = ['https://baidu.com/'];
+
 describe('RequestService', () => {
   let injector: ReflectiveInjector;
   let req;
@@ -32,28 +34,25 @@ describe('RequestService', () => {
     expect(req._ws.chan.push).not.toHaveBeenCalled();
   })
 
-  it('addUrl', () => {
-    let urls = 'https://baidu.com/';
+  it('addUrls', () => {
     let verb = 'GET';
     let headers = [];
     let body = {};
-    req.addUrl({ urls, headers, verb, body });
+    req.addUrls({ urls, headers, verb, body });
     expect(req._ws.chan.push).toHaveBeenCalledWith('/urls', { body: { urls, headers, verb, body }, id: 0 });
   })
 
   it('parsley', () => {
-    let urls = 'https://baidu.com/';
     let parselet = '{}';
-    req.parsley(urls, parselet);
+    req.addUrls({ urls, parselet });
     expect(req._ws.chan.push).toHaveBeenCalledWith('/parse', { body: {urls, parselet}, id: 0 });
   })
 
   it('toCurl', () => {
     let curl = "curl 'url' -H 'a: b'";
     req.toCurl(curl);
-    let urls = 'url';
     let headers = { a: 'b' };
-    expect(req._ws.chan.push).toHaveBeenCalledWith('/check', { body: {urls, headers}, id: 0 });
+    expect(req._ws.chan.push).toHaveBeenCalledWith('/check', { body: { urls: 'url', headers}, id: 0 });
   })
 
 })

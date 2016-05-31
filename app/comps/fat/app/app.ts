@@ -21,10 +21,10 @@ import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
 import { WsService, RequestService, GlobalsService } from '../../services';
 import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
-import { load_ui, get_submit, req_url, pick_fn, extract_url, doCurl } from './ui';
+import { load_ui, get_submit, req_url, pick_fn, doFetch, doProcess, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
 import { curl_spec } from './curl_spec';
-import { scrape_spec } from './scrape_spec';
+import { fetch_spec, process_spec } from './scrape_spec';
 
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ValueComp, AuthUiComp, FnUiComp, InputUiComp, FormComp];  // , ROUTER_DIRECTIVES
 let pipes = [MarkedPipe];
@@ -43,7 +43,8 @@ export class App {
   @ViewChild(FnUiComp) fn_ui: FnUiComp;
   @ViewChild(InputUiComp) input_ui: InputUiComp;
   @ViewChild('curl_form') curl_form: FormComp;
-  @ViewChild('scrape_form') scrape_form: FormComp;
+  @ViewChild('fetch_form') fetch_form: FormComp;
+  @ViewChild('process_form') process_form: FormComp;
   // @ViewChild('web') web_form; //: ElementRef
   // @ViewChild('curl') curl_form; //: ElementRef
   auto_meat = true;
@@ -54,18 +55,25 @@ export class App {
   meat = [];
   auths = {};
   _data: Front.Data[];
+  _extracted: Front.Data[];
   _raw: Front.Data[];
-  raw = { test: 'lol' };
+  // raw = { test: 'lol' };
+  raw = [{ test: 'lol' }];
+  // ^ ObjectComp is nicer for screen space with 1 item than TableComp, but
+  // allowing to store single items without the array causes ambiguity on whether
+  // an array here would be there for that or as part of a wrapper-less data item...
   apis = ['instagram', 'github', 'ganalytics'];
   _spec: Front.Spec;
   spec = {};
   _path: Front.Path;
   path = ['test'];
-  curl: Array<Front.IPathSpec>;
-  scrape_spec: Array<Front.IPathSpec>;
+  curl: Front.Spec;
+  fetch_spec: Front.Spec;
+  process_spec: Front.Spec;
   raw_str: string;
   colored: string;
   zoomed_spec: Front.Spec;
+  extractor: Function;
 
   constructor(
     // public router: Router,
@@ -96,11 +104,23 @@ export class App {
     });
 
     this.curl = curl_spec;
-    this.scrape_spec = scrape_spec;
+    this.fetch_spec = fetch_spec;
+    this.process_spec = process_spec;
 
     this.handle_implicit(window.location);
     this.load_ui(api);
   };
+
+  get extractor(): Function {
+    let x = this._extractor;
+    if(_.isUndefined(x)) x = this._extractor = y => y;
+    return x;
+  }
+  set extractor(x: Function) {
+    this._extractor = x;
+    this.setExtracted();
+    this.setData();
+  }
 
   get raw(): Front.Data[] {
     return this._raw;
@@ -108,20 +128,55 @@ export class App {
   set raw(x: Front.Data) {
     if(_.isUndefined(x)) return;
     this._raw = x;
-    this.data = x;
+    // this.data = x;
+    this.setExtracted();
+    this.setData();
   }
+
   addData(x: Front.Data): void {
     this._raw = this._raw.concat(x);
-    this.data = this.data.concat(_.get(this.meat)(x));
+    let extracted = this.extractor(x);
+    this.extracted = this.extracted.concat(extracted);
+    let zoomed = this.zoomLens(extracted);
+    this.data = this.data.concat(zoomed);
+  }
+
+  get extracted(): Front.Data[] {
+    if(_.isUndefined(this._extracted)) this.setExtracted();
+    return this._extracted;
+  }
+  set extracted(x: Front.Data) {
+    this._extracted = x;
+  }
+
+  setExtracted() {
+    let extractor = this.extractor;
+    let raw = this.raw;
+    if(raw) {
+      // this.extracted = raw.map(extractor);
+      this.extracted = _.isArray(raw) ? raw.map(extractor) : extractor(raw);
+    }
   }
 
   get data(): Front.Data[] {
+    if(_.isUndefined(this._data)) this.setData();
     return this._data;
   }
   set data(x: Front.Data) {
     this._data = x;
     this.raw_str = JSON.stringify(x);
     this.colored = prettyPrint(x);
+  }
+
+  setData() {
+    let extracted = this.extracted;
+    if(extracted) {
+      let fn = this.zoomLens.bind(this);
+      // this.data = extracted.map(fn);
+      // this.data = _.isArray(extracted) ? extracted.map(fn) : fn(extracted);
+      let v = _.isArray(extracted) ? extracted.map(fn) : fn(extracted);
+      this.data = v;
+    }
   }
 
   get spec(): Front.Spec {
@@ -139,11 +194,13 @@ export class App {
   set meat(x: string[]) {
     if(_.isUndefined(x)) return;
     this._meat = x;
-    if(this.raw) {
-      this.data = [];
-      this.raw.forEach(v => this.data.concat(_.get(x)(v)));
-    }
     this.spec_meat();
+    this.setData();
+  }
+
+  zoomLens(v: Object): any {
+    let meat = this.meat;
+    return _.size(meat) ? _.get(meat)(v) : v;
   }
 
   spec_meat(): Front.Spec {
@@ -153,7 +210,6 @@ export class App {
 
   // sets and saves the auth token + scopes from the given get/hash
   handle_implicit = (url: string) => handle_auth(url, (get: string, hash: string) => {
-    console.log('handle_implicit', get, hash);
     let name = get.callback;
     let auth = {
       name,
@@ -168,7 +224,8 @@ export class App {
   load_ui = load_ui;
   req_url = req_url;
   pick_fn = pick_fn;
-  extract_url = extract_url;
+  doFetch = doFetch;
+  doProcess = doProcess;
   doCurl = doCurl;
 }
 

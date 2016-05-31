@@ -140,9 +140,12 @@ module Front {
   // ui
   export type ObsInfo = { obs: Observable<any>, start?: string, next?: string, done?: string };
   export type Submitter = (v: any) => ObsInfo;
+  export type Parselet = {[key: string]: { selector: string, type: string, attribute: string }};
+  export type FetchForm = { urls: string, headers: {[key: string]: string} };
+  export type ProcessForm = { processor: string, parselet: Parselet, transformer: string };
 
   // request
-  export type ReqMeta = { urls: string|string[], headers: {}, verb?: string, body?: string };
+  export type ReqMeta = { urls: string[], headers: {}, verb?: string, body?: string, parselet?: string };
 
   // config
   export interface Config {

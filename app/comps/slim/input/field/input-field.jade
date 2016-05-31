@@ -59,7 +59,7 @@ form
       template('[ngSwitchWhen]'=`'textarea'`)
         include ../misc/textarea.jade
       template(ngSwitchDefault)
-        p UNIMPLEMENTED FIELD TYPE {{ type }}!
+        p UNIMPLEMENTED FIELD TYPE {{ type | json }}!
         
     //- data-error='wrong'
     //- data-success='right'

@@ -75,11 +75,11 @@ export function popup(popup_url: string, watch_url: string): Promise {
 }
 
 const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
-  debug: { val: 0, class: 'grey', icon: require('../../images/debug.png') },
-  info: { val: 1, class: 'blue', icon: require('../../images/info.png') },
-  success: { val: 2, class: 'green', icon: require('../../images/success.png') },
-  warn: { val: 3, class: 'orange', icon: require('../../images/warn.png') },
-  error: { val: 4, class: 'red', icon: require('../../images/error.png') },
+  debug: { val: 0, class: 'grey', icon: require('../../images/debug.png'), logger: 'debug' },
+  info: { val: 1, class: 'blue', icon: require('../../images/info.png'), logger: 'info' },
+  success: { val: 2, class: 'green', icon: require('../../images/success.png'), logger: 'log' },
+  warn: { val: 3, class: 'orange', icon: require('../../images/warn.png'), logger: 'warn' },
+  error: { val: 4, class: 'red', icon: require('../../images/error.png'), logger: 'error' },
 };
 const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
@@ -90,13 +90,13 @@ const LOG_LEVEL = toasts.info.val;
 // https://developer.mozilla.org/en-US/docs/Web/API/Notification/Notification
 export let toast: Front.ILogLevels<(msg: string, opts: Notification.options, ms?: number) => Notification> =
   arr2obj(_.keys(toasts), (kind: string) => (msg: string, opts: Notification.options = {}, ms: number = 1000) => {
-    let level = toasts[kind].val;
-    if(level >= LOG_LEVEL) console.log(`${kind}:`, msg);
+    let { val: level, class: color, icon, logger } = toasts[kind];
+    if(level >= LOG_LEVEL) console[logger](`${kind}:`, msg);
     if(level >= TOAST_LEVEL) {
-      Materialize.toast(msg, ms, toasts[kind].class);
+      Materialize.toast(msg, ms, color);
       // let merged_opts = Object.assign({
       //   // body: kind,
-      //   icon: toasts[kind].icon,
+      //   icon,
       // }, opts);
       // let n = new Notification(msg, merged_opts);
       // return n;
@@ -245,6 +245,8 @@ export function findTables(spec: Front.Spec, path: Front.Path = []): Front.Path[
     if (spec.type == 'object') {
       let keys = _.keys(spec.properties);
       return _.flatten(keys.map(k => findTables(spec.properties[k], path.concat(k))));
+    } else {
+      return [];
     }
   }
 };

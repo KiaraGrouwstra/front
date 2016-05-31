@@ -71,7 +71,7 @@ export class TableComp extends BaseOutputComp {
     super(cdr, g);
   }
 
-  setPath(x: Front.Path) {
+  setPath(x: Front.Path): void {
     this.combInputs();
   }
 
@@ -89,7 +89,8 @@ export class TableComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  setSchema(x: Front.Spec) {
+  @try_log()
+  setSchema(x: Front.Spec): void {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();
   }
@@ -317,6 +318,8 @@ export class TableComp extends BaseOutputComp {
     return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
     // _.get(['items', 'type'], spec) ? spec.items : try_schema(this.first, _.get(['items'], spec));
   }
+
+  // v should be able to do these from the template again?
 
   clearSorts(): void {
     this.sortColsDesc = {};

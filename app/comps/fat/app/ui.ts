@@ -74,7 +74,7 @@ function submit_req(fn: Front.Submitter): Front.Submitter {
     // ^ wait, this should trigger inference, but what about APIs, for which I do have specs?
     this.raw = []; // array to concat to
     // ^ forcing everything into an array is great for the purpose of making results combineable,
-    // whether they were originally arrays or not, but could make for terrible use of space...
+    // whether they were originally arrays or not, but could make for terrible use of screen space...
     // under what circumstances should I go with this approach? expected responses n > 1.
     // ... distinguish with Promise vs. Observable or something?
     this.meat_opts = null;
@@ -103,11 +103,11 @@ function submit_req(fn: Front.Submitter): Front.Submitter {
   });
 }
 
-// run addUrl (fetch, optionally with transformer)
-function doAddUrl(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
+// run addUrls (fetch, optionally with transformer)
+function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   let { urls } = meta;
   return {
-    obs: this._req.addUrl(meta).map(transformer),
+    obs: this._req.addUrls(meta).map(transformer),
     start: `starting fetch request`,
     next: `GET ${urls}`,
     done: `got ${urls}`,
@@ -115,35 +115,59 @@ function doAddUrl(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
 }
 
 // run parsley (fetch with parselet)
-function doParsley(url: string, parselet: {[key: string]: { selector: string, type: string, attribute: string }}): Front.ObsInfo {
-  let urls = [url];
+function doParsley(meta: Front.ReqMeta, parselet: Front.Parselet): Front.ObsInfo {
+  let { urls } = meta;
   const type_map = {
     text: () => '',
     attribute: (attr) => `@${attr}`,
     'inner html': () => '@',
     'outer html': () => '@@',
   };
-  let json = JSON.stringify(_.mapValues(
+  meta.parselet = JSON.stringify(_.mapValues(
     ({ selector, type, attribute }) => selector + type_map[type](attribute)
   )(parselet));
   return {
-    obs: this._req.parsley(urls, json),
+    obs: this._req.addUrls(meta),
     start: `starting HTML extraction request`,
-    next: `GET ${url} with extractors: ${json}`,
-    done: `got ${url}`,
+    next: `GET ${urls} with extractors: ${json}`,
+    done: `got ${urls}`,
   };
 }
 
 // handle emit api input_ui
 export let req_url: Front.Submitter = submit_req(function(v: Front.ReqMeta) {
-  return doAddUrl.call(this, v, x => JSON.parse(x));
+  return doAddUrls.call(this, v, x => JSON.parse(x));
   // ^ assume JSON API
 });
 
-// handle scrape form submit
-export let extract_url: Front.Submitter = submit_req(function({ url, headers, processor, parselet, transformer }) {
-  let fn = processor == 'transformer' ? eval(transformer) : y => y;
-  return processor == 'parselet' ? doParsley.call(this, url, parselet) : doAddUrl.call(this, { urls: url, headers }, fn);
+// handle fetch form submit
+export let doFetch: Front.Submitter = submit_req(function(
+  { urls, headers }: Front.FetchForm,
+  // { processor, parselet, transformer }: Front.ProcessForm,
+  // ^ haven't managed to pass this in yet
+) {
+  urls = urls.split('\n').filter(y => y);
+  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, { urls, headers });  //, fn
+  return doAddUrls.call(this, { urls, headers });
+});
+
+// handle process form submit
+export function doProcess(
+  // $raw: Observable<string>,
+  { processor, parselet, transformer }: Front.ProcessForm,
+  { urls, headers }: Front.FetchForm,
+): void { // Observable<any>
+  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, { urls, headers }, fn);
+  const fn_map = {
+    transformer: eval(transformer),
+    parselet: parse(parselet),
+  };
+  let fn = fn_map[processor] || y => y;
+  // return $raw.map(fn);
+  this.extractor = fn;
+  if(!_.size(this.raw)) {
+    this.doFetch({ processor, parselet, transformer }, { urls, headers });
+  }
 });
 
 // handle curl form submit
