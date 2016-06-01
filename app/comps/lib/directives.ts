@@ -4,7 +4,8 @@ import { Directive, Renderer, ElementRef, ViewContainerRef, EmbeddedViewRef, Vie
 import { DomElementSchemaRegistry } from '@angular/compiler/src/schema/dom_element_schema_registry';
 import { isPresent, isBlank } from '@angular/core/src/facade/lang';
 import { evalExpr, transformWhile, print } from './js';
-import { NgForRow } from '@angular/common/src/directives/ng_for'
+import { NgForRow } from '@angular/common/src/directives/ng_for';
+// import { ExtDir } from './annotations';
 
 // [HTML attribute vs. DOM property](https://angular.io/docs/ts/latest/guide/template-syntax.html#!#html-attribute-vs-dom-property)
 // [HTML attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
