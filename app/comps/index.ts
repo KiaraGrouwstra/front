@@ -3,7 +3,6 @@
 
 // output
 export { IframeComp } from './slim/output/iframe/iframe';
-export { ScalarComp } from './slim/output/scalar/scalar';
 export { ULComp     } from './slim/output/ul/ul';
 export { DLComp     } from './slim/output/dl/dl';
 export { ArrayComp  } from './slim/output/array/array';

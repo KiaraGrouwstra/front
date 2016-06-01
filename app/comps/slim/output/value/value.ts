@@ -1,13 +1,14 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild } from '@angular/core';
 import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
-import { ArrayComp, ObjectComp, ScalarComp, IframeComp } from '../../..';
+import { ArrayComp, ObjectComp, IframeComp } from '../../..';
 import { infer_type, try_schema } from '../output'
 // import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine, tryLog } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { ScalarPipe } from '../../../lib/pipes';
 
 type Val = any; //Array<Object>;
 
@@ -19,9 +20,11 @@ type Val = any; //Array<Object>;
     NgSwitch, NgSwitchWhen, NgSwitchDefault,
     forwardRef(() => ArrayComp),
     forwardRef(() => ObjectComp),
-    forwardRef(() => ScalarComp),
     forwardRef(() => IframeComp),
-  ]
+  ],
+  pipes: [
+    ScalarPipe,
+  ],
 })
 // I really want this class switched to a router-based approach, cuz now
 // the parameters still leak over into an old class before it switches.
@@ -37,7 +40,6 @@ export class ValueComp extends BaseOutputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
-  @ViewChild(ScalarComp) scalar: ScalarComp;
   new_spec: Front.Spec;
   type: string;
 
