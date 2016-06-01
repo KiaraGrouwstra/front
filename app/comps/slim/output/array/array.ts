@@ -19,7 +19,7 @@ type Val = any; //Array<any>;
   ]
 })
 export class ArrayComp extends BaseOutputComp {
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -37,9 +37,13 @@ export class ArrayComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((val: Val, schema: Front.Schema) => {
+  // combInputs = () => combine((val: Val, schema: Front.Schema) => {
+  combInputs(): void {
+    let { val, schema } = this;
+    if(_.isNil(val)) return;
     let first = this.first;
     this.type = _.get(['items', 'type'], schema) || _.isPlainObject(first) ? 'object' : 'other';
-  }, { schema: true })(this.val, this.schema);
+  // }, { schema: true })(this.val, this.schema);
+  }
 
 }

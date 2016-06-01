@@ -41,7 +41,7 @@ export class FieldComp extends BaseInputComp {
   option = null;
   @Output() changes = new EventEmitter(false);
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   attrs: Front.IAttributes;

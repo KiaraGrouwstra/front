@@ -15,7 +15,7 @@ export abstract class BaseInOutComp extends BaseSlimComp {
   // @Input() schema: Front.Schema;
   // these should be here but it doesn't seem to inherit
   // @Input() @BooleanFieldValue() named: boolean = false;
-  // @Input() path: Front.Path;
+  // @Input() path: Front.Path = [];
 
   // _schema: Front.Schema;
   _path: Front.Path;

@@ -20,7 +20,7 @@ type Ctrl = ControlList<ControlGroup>;
 })
 export class InputTableComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   // type: Observable<string>;

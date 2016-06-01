@@ -57,6 +57,7 @@ export function try_log(...args): Function {
 }
 
 // wrapper for methods returning void, return if not all parameters are defined
+// this broke with Sweet and would be fully useless with minification, so use is discouraged.
 export function combine(...args): Function {
   return decorate(decMethod('value', (fn, [allow_undef = {}]) => function() {
     // let names = /([^\(]+)(?=\))'/.exec(fn.toString()).split(',').slice(1);

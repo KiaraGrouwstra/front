@@ -3,11 +3,11 @@ form(
   '#frm'='ngForm'
 )
   .fn_desc {{ desc }}
+  //- '[path]'=`[]`
+  //- '[named]'=`false`
   input-value(
     *ngIf=`schema`
-    '[path]'=`[]`
     '[schema]'=`schema`
-    '[named]'=`false`
     '[ctrl]'=`form`
   )
   //- type='submit'

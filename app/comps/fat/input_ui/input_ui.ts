@@ -43,12 +43,16 @@ export class InputUiComp extends BaseComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((spec: Front.ApiSpec, fn_path: string) => {
+  // combInputs = () => combine((spec: Front.ApiSpec, fn_path: string) => {
+  combInputs(): void {
+    let { spec, fn_path } = this;
+    if(_.some(_.isNil)([spec, fn_path])) return;
     // let { pars: this.pars, desc: this.desc } = methodPars(spec, fn_path);
     let obj = methodPars(spec, fn_path);
     this.pars = obj.pars;
     this.desc = obj.desc || '';
-  })(this.spec, this.fn_path);
+  // })(this.spec, this.fn_path);
+  }
 
   // submit param inputs for an API function
   submit(form_val: {}): void {

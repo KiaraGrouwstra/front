@@ -20,7 +20,7 @@ type Val = any; //Array<any>;
   ]
 })
 export class ULComp extends BaseOutputComp {
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -40,12 +40,16 @@ export class ULComp extends BaseOutputComp {
     this.indexBased = _.isArray(_.get(['items'], x));
   }
 
-  combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  // combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  combInputs(): void {
+    let { path, val, schema } = this;
+    if(_.some(_.isNil)([path, val])) return;
     this.rows = val.map((v, idx) => {
       let path_k = path.concat(idx);
       let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
       return { path: path_k, val: v, schema: row_schema };
     });
-  }, { schema: true })(this.path, this.val, this.schema);
+  // }, { schema: true })(this.path, this.val, this.schema);
+  }
 
 }

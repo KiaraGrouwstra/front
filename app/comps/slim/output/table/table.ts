@@ -31,7 +31,7 @@ export class TableComp extends BaseOutputComp {
   // schema in front cuz optional, this way combInputs only gets called once
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() colOrder: string[];
   @Input() sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
@@ -41,9 +41,9 @@ export class TableComp extends BaseOutputComp {
   _sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
   _filters: {[key: string]: string};
   _condFormat: Front.CondFormat;
-  data: Rows;
-  rows: Rows;
-  filtered: Rows;
+  data: Front.Rows;
+  rows: Front.Rows;
+  filtered: Front.Rows;
   cols: {[key: string]: {
     k: string,
     id: string,
@@ -72,6 +72,10 @@ export class TableComp extends BaseOutputComp {
     super();
   }
 
+  ngOnInit() {
+    console.log('table', this.schema);
+  }
+
   setPath(x: Front.Path): void {
     this.combInputs();
   }
@@ -81,7 +85,9 @@ export class TableComp extends BaseOutputComp {
   }
   set val(x: Val) {
     if(_.isUndefined(x)) return;
+    console.log('set:val', x, this.schema);
     if(!this.schema) this.schema = getSchema(x).items;
+    console.log('after', this.schema);
     this._val = x;
     this.col_keys = Array.from(x
       .map(o => _.keys(o))
@@ -92,6 +98,7 @@ export class TableComp extends BaseOutputComp {
 
   @try_log()
   setSchema(x: Front.Schema): void {
+    console.log('setSchema', x);
     this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();
   }
@@ -241,8 +248,11 @@ export class TableComp extends BaseOutputComp {
   }
 
   // set and filter() for data/filters, sort() for rest
-  // @try_log()
-  combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  @try_log()
+  // combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  combInputs(): void {
+    let { path, val, schema } = this;
+    if(_.some(_.isNil)([path, val])) return;
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
     this.colMeta = arr2obj(this.col_keys, col => {
       let col_schema = keySchema(col, schema);
@@ -266,8 +276,9 @@ export class TableComp extends BaseOutputComp {
     this.rows = rowPars(this.col_keys, path, val);
     this.filter();
     global.$('.tooltipped').tooltip({delay: 0});
-  }))(this.path, this.val, this.schema);
+  // }))(this.path, this.val, this.schema);
   // , { schema: true }
+  }
 
   // current design flaw: the filter stored per column is shared between numbers/text, while columns may include both. first see what other filters I want.
   @try_log()

@@ -52,9 +52,13 @@ export class AuthUiComp extends BaseComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((scopes: string[], have: string[]) => {
+  // combInputs = () => combine((scopes: string[], have: string[]) => {
+  combInputs(): void {
+    let { scopes, have } = this;
+    if(_.some(_.isNil)([scopes, have])) return;
     this.have_scope = arr2obj(scopes, s => have.includes(s));
-  })(this.scopes, this.have);
+  // })(this.scopes, this.have);
+  }
 
   onSubmit(): void {
     let scope = this.scopes.filter(s => this.want_scope[s]).join(' ');

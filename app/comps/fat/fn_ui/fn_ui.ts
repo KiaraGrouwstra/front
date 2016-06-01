@@ -51,7 +51,10 @@ export class FnUiComp extends BaseComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((spec: Front.ApiSpec, oauth_sec: string, have: string[]) => {
+  // combInputs = () => combine((spec: Front.ApiSpec, oauth_sec: string, have: string[]) => {
+  combInputs(): void {
+    let { spec, oauth_sec, have } = this;
+    if(_.some(_.isNil)([spec, oauth_sec, have])) return;
     this.tags = _.get(['tags'], spec) || [];
     let paths = _.get(['paths'], spec) || {};
     let misc_key;
@@ -90,6 +93,7 @@ export class FnUiComp extends BaseComp {
       global.$('#fn-list .collapsible-header').eq(0).click();
       global.$('.tooltipped').tooltip({delay: 0})
     }, 300);
-  })(this.spec, this.oauth_sec, this.have);
+  // })(this.spec, this.oauth_sec, this.have);
+  }
 
 }

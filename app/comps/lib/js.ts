@@ -348,8 +348,8 @@ export class ExtendableError extends Error {
 
 export function getSafe(path: string[]): Function {
   // console.log('getSafe', path);
-  // return _.get(path);
-  return _.size(path) ? _.get(path) : y => y;
+  return _.isArray && _.size(path) ? _.get(path) : y => y;
+  // return _.isNil(path) ? y => y : _.get(path);
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

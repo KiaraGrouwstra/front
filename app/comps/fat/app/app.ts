@@ -68,9 +68,9 @@ export class App {
   // _spec: Front.ApiSpec;
   spec: Front.ApiSpec = {};
   _schema: Front.Schema;
-  schema: Front.Schema = { type: 'object', additionalProperties: false };
-  _path: Front.Path;
-  path = ['test'];
+  schema: Front.Schema; // = { type: 'object', additionalProperties: false };
+  // _path: Front.Path;
+  // path = ['test'];
   curl: Front.Schema;
   fetch_spec: Front.Schema;
   process_spec: Front.Schema;
@@ -214,8 +214,8 @@ export class App {
   schemaMeat(): Front.Schema {
     let path = _.flatten(this.meat.map(str => ['properties', str]));
     console.log('schemaMeat', path, this.schema);
-    this.zoomed_schema = _.get(path)(this.schema);
-    // this.zoomed_schema = getSafe(path)(this.schema);
+    // this.zoomed_schema = _.get(path)(this.schema);
+    this.zoomed_schema = getSafe(path)(this.schema);
     console.log('_.get', _.get(path)(this.schema));
     console.log('getSafe', getSafe(path)(this.schema));
   }

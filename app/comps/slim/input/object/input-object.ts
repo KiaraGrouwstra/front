@@ -22,7 +22,7 @@ type Ctrl = ControlObject<ControlGroup>; // { name, val }
 })
 export class InputObjectComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;

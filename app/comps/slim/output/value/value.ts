@@ -7,6 +7,7 @@ import { inferType, trySchema } from '../output'
 import { combine, tryLog } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
+import { try_log } from '../../../lib/decorators';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { ScalarPipe } from '../../../lib/pipes';
 
@@ -34,7 +35,7 @@ type Val = any; //Array<Object>;
 //   {path:'/:id', name: 'CrisisDetail', component: CrisisDetailComponent}
 // ])
 export class ValueComp extends BaseOutputComp {
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -51,13 +52,18 @@ export class ValueComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  combInputs = () => tryLog(combine((val: any, schema: Front.Schema) => {
+  @try_log()
+  // combInputs = () => tryLog(combine((val: any, schema: Front.Schema) => {
+  combInputs(): void {
+    let { val, schema } = this;
+    if(_.isNil(val)) return;
     this.new_schema = _.get(['type'], schema) ? schema : trySchema(val, schema);
     this.type = _.get(['type'], schema) || inferType(val);
     // ^ handles anyOf/oneOf/allOf as well; good.
     let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
     if(SCALARS.includes(this.type)) this.type = 'scalar';
-  }, { schema: true }))(this.val, this.schema);
+  // }, { schema: true }))(this.val, this.schema);
+  }
 
   isHtml(v: Val): boolean {
     return _.isString(v) && /^\s*<!DOCTYPE/.test(v);

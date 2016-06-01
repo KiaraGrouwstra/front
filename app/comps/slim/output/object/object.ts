@@ -21,7 +21,7 @@ type Val = any; //Object;
   ],
 })
 export class ObjectComp extends BaseOutputComp {
-  @Input() path: Front.Path;
+  @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -44,13 +44,17 @@ export class ObjectComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  // combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
+  combInputs(): void {
+    let { path, val, schema } = this;
+    if(_.some(_.isNil)([path, val])) return;
     let coll = getColl(path, val, schema);
     const TYPES = ['array','object','scalar'];
     TYPES.forEach(x => {
       this[x] = coll.filter(y => y.type == x);
     });
-  }, { schema: true })(this.path, this.val, this.schema);
+  // }, { schema: true })(this.path, this.val, this.schema);
+  }
 
 }
 
