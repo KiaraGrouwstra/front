@@ -71,7 +71,7 @@ function submit_req(fn: Front.Submitter): Front.Submitter {
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
     toast.info(start);
     this.spec = {};
-    // ^ wait, this should trigger inference, but what about APIs, for which I do have specs?
+    // ^ Should trigger inference. What about APIs? For those I should have specs.
     this.raw = []; // array to concat to
     // ^ forcing everything into an array is great for the purpose of making results combineable,
     // whether they were originally arrays or not, but could make for terrible use of screen space...
@@ -114,18 +114,29 @@ function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   };
 }
 
+function processParselet(prslt: Front.Parselet): Front.RealParselet {
+  const type_map = {
+    // { selector, parselet, type, attribute }
+    text: ([k, o]) => [k, o.selector],
+    attribute: ([k, o]) => [k, o.selector + '@' + o.attribute ],
+    'inner html': ([k, o]) => [k, o.selector + '@'],
+    'outer html': ([k, o]) => [k, o.selector + '@@'],
+    array: ([k, o]) => {
+      return [`${k}(${o.selector})`, [processParselet(o.parselet)]];
+    },
+  };
+  return _.flow([
+    _.toPairs,
+    _.map(type_map[type]),
+    _.fromPairs,
+    s => JSON.stringify(s),
+  ])(prslt);
+}
+
 // run parsley (fetch with parselet)
 function doParsley(meta: Front.ReqMeta, parselet: Front.Parselet): Front.ObsInfo {
   let { urls } = meta;
-  const type_map = {
-    text: () => '',
-    attribute: (attr) => `@${attr}`,
-    'inner html': () => '@',
-    'outer html': () => '@@',
-  };
-  meta.parselet = JSON.stringify(_.mapValues(
-    ({ selector, type, attribute }) => selector + type_map[type](attribute)
-  )(parselet));
+  meta.parselet = processParselet(parselet);
   return {
     obs: this._req.addUrls(meta),
     start: `starting HTML extraction request`,
@@ -160,7 +171,7 @@ export function doProcess(
   // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, { urls, headers }, fn);
   const fn_map = {
     transformer: eval(transformer),
-    parselet: parse(parselet),
+    parselet: parse(processParselet(parselet)),
   };
   let fn = fn_map[processor] || y => y;
   // return $raw.map(fn);

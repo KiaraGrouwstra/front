@@ -51,7 +51,58 @@ let selector = {
   // description: "use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
 };
 
-// TODO: update so as to incorporate nesting
+let parselet = {
+  description: 'json parselet',
+  type: 'object',
+  // additionalProperties: selector,
+  additionalProperties: {
+    type: 'object',
+    properties: {
+      'selector': selector,
+      'type': {
+        type: 'string',
+        enum: [
+          'text',
+          'attribute',
+          'inner html',
+          'outer html',
+          'array',
+        ],
+        // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
+        // description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
+      },
+      'attribute': {
+        type: 'string',
+        'x-bindings': {
+          // styles: {},
+          // classes: {},
+          attributes: {
+            hidden: `this.nav('../type', path) != 'attribute'`,
+          },
+        },
+      },
+    },
+    additionalProperties: false,
+  },
+  minProperties: 1,
+  'x-bindings': {
+    attributes: {
+      hidden: `this.nav('../processor', path) != 'parselet'`,
+    },
+  },
+};
+
+let nested = _.assign(parselet, {
+  'x-bindings': {
+    attributes: {
+      hidden: `this.nav('../type', path) != 'array'`,
+    },
+  },
+});
+
+nested  .additionalProperties.properties.parselet = nested;
+parselet.additionalProperties.properties.parselet = nested;
+
 export let process_spec: Front.Spec = {
   type: 'object',
   required: ['processor', 'parselet', 'transformer'],
@@ -65,46 +116,7 @@ export let process_spec: Front.Spec = {
       ],
       default: 'none',
     },
-    'parselet': {
-      description: 'json parselet',
-      type: 'object',
-      // additionalProperties: selector,
-      additionalProperties: {
-        type: 'object',
-        properties: {
-          'selector': selector,
-          'type': {
-            type: 'string',
-            enum: [
-              'text',
-              'attribute',
-              'inner html',
-              'outer html',
-            ],
-            // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
-            // description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
-          },
-          'attribute': {
-            type: 'string',
-            'x-bindings': {
-              // styles: {},
-              // classes: {},
-              attributes: {
-                // hidden
-                hidden: `this.nav('../type', path) != 'attribute'`,
-              },
-            },
-          },
-        },
-        additionalProperties: false,
-      },
-      minProperties: 1,
-      'x-bindings': {
-        attributes: {
-          hidden: `this.nav('../processor', path) != 'parselet'`,
-        },
-      },
-    },
+    'parselet': parselet,
     'transformer': {
       type: 'string',
       default: `(json) => JSON.parse(json)`,
