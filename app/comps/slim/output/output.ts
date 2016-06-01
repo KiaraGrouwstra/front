@@ -28,6 +28,8 @@ function wrapEmail(s: string): string {
 
 // meant to use without makeTemplate
 export function parseScalar(val: any, spec: Front.Spec): string {
+  let displayVal = _.get(['x-display-as', val])(spec);
+  if(displayVal) return displayVal;
   let s = val.toString();
   if (validateFormat(s, 'uri')) {
     const IMG_EXTS = ['jpg','jpeg','bmp','png','gif','tiff','svg','bpg','heif','hdr','webp','ppm','pgm','pbm','pnm'].map(ext => '\\.' + ext);
