@@ -7,7 +7,7 @@ import { BaseInOutComp } from '../base_in_out_comp';
 type Val = any;
 
 @ExtComp({})
-export class BaseOutputComp extends BaseInOutComp {
+export abstract class BaseOutputComp extends BaseInOutComp {
 
   // @Input() schema: Front.Spec;
   // @Input() val: Val;

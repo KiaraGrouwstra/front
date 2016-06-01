@@ -12,7 +12,7 @@ type Ctrl = AbstractControl;
 @ExtComp({
   directives: [FORM_DIRECTIVES],
 })
-export class BaseInputComp extends BaseInOutComp {
+export abstract class BaseInputComp extends BaseInOutComp {
 
   // @Input() spec: Front.Spec;
   // @Input() ctrl: Ctrl;

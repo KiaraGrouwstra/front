@@ -33,8 +33,12 @@ export class InputObjectComp extends BaseInputComp {
   keySugg: string[];
   keyEnum: string[];
 
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+  constructor(
+    // BaseComp
+    public cdr: ChangeDetectorRef,
+    // public g: GlobalsService,
+  ) {
+    super();
   }
 
   setCtrl(x: Ctrl): void {

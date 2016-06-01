@@ -42,10 +42,11 @@ export class InputStructComp extends BaseInputComp {
   nameCtrlFixed: AbstractControl;
 
   constructor(
-    cdr: ChangeDetectorRef,
-    g: GlobalsService,
+    // BaseComp
+    public cdr: ChangeDetectorRef,
+    public g: GlobalsService,
   ) {
-    super(cdr, g);
+    super();
   }
 
   setCtrl(x: Ctrl): void {

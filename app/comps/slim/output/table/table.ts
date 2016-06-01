@@ -65,10 +65,11 @@ export class TableComp extends BaseOutputComp {
   modalCol: string;
 
   constructor(
-    cdr: ChangeDetectorRef,
-    g: GlobalsService,
+    // BaseComp
+    public cdr: ChangeDetectorRef,
+    public g: GlobalsService,
   ) {
-    super(cdr, g);
+    super();
   }
 
   setPath(x: Front.Path): void {

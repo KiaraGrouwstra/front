@@ -32,21 +32,21 @@ function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string
   return setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
 }
 
-// base class for below directives
-class ObjDirective implements DoCheck {
+abstract class ObjDirective implements DoCheck {
   _el: HTMLElement;
   _obj: {[key: string]: string};
   _differ: KeyValueDiffer;
   _elName: string;
 
-  constructor(
-    private _differs: KeyValueDiffers,
-    private _elRef: ElementRef,
-    private _renderer: Renderer,
-  ) {
-    this._el = _elRef.nativeElement;
-    this._extra = {}; // Dynamic
-  }
+  // constructor(
+  //   // ObjDirective
+  //   private _differs: KeyValueDiffers,
+  //   private _elRef: ElementRef,
+  //   private _renderer: Renderer,
+  // ) {
+  //   // ObjDirective
+  //   this._el = _elRef.nativeElement;
+  // }
 
   set attributes(obj: {[key: string]: string}) {
     this._obj = obj;
@@ -58,9 +58,14 @@ class ObjDirective implements DoCheck {
 }
 
 // mixin: http://www.2ality.com/2016/05/six-nifty-es6-tricks.html
-const DynamicDirective = Sup => class extends Sup {
+const DynamicDirective = Sup => abstract class extends Sup {
   _context: ComponentClass;
   _extra: {};
+
+  // constructor() {
+  //   // DynamicDirective
+  //   this._extra = {};
+  // }
 
   set extraVars(obj: {[key: string]: any}) {
     this._extra = obj;
@@ -93,13 +98,17 @@ const DynamicDirective = Sup => class extends Sup {
 export class SetAttrs extends ObjDirective {
 
   constructor(
-    _differs: KeyValueDiffers,
-    _elRef: ElementRef,
-    _renderer: Renderer,
-    _registry: DomElementSchemaRegistry,
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
+    private _registry: DomElementSchemaRegistry,
   ) {
-    super(_differs, _elRef, _renderer);
-    this._registry = _registry;
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // this
     this._elName = this._el.tagName;
   }
 
@@ -150,14 +159,20 @@ function getContext(view: ViewContainerRef): Object {
 export class DynamicAttrs extends DynamicDirective(ObjDirective) {
 
   constructor(
-    _differs: KeyValueDiffers,
-    _elRef: ElementRef,
-    _renderer: Renderer,
-    _registry: DomElementSchemaRegistry,
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
+    private _registry: DomElementSchemaRegistry,
     _viewContainer: ViewContainerRef,
   ) {
-    super(_differs, _elRef, _renderer);
-    this._registry = _registry;
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // DynamicDirective
+    this._extra = {};
+    // this
     this._context = getContext(_viewContainer);
     this._elName = this._el.tagName;
   }
@@ -178,12 +193,19 @@ export class DynamicAttrs extends DynamicDirective(ObjDirective) {
 export class DynamicStyle extends DynamicDirective(ObjDirective) {
 
   constructor(
-    _differs: KeyValueDiffers,
-    _elRef: ElementRef,
-    _renderer: Renderer,
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
     _viewContainer: ViewContainerRef,
   ) {
-    super(_differs, _elRef, _renderer);
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // DynamicDirective
+    this._extra = {};
+    // this
     this._context = getContext(_viewContainer);
   }
 
@@ -202,12 +224,19 @@ export class DynamicStyle extends DynamicDirective(ObjDirective) {
 export class DynamicClass extends DynamicDirective(ObjDirective) {
 
   constructor(
-    _differs: KeyValueDiffers,
-    _elRef: ElementRef,
-    _renderer: Renderer,
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
     _viewContainer: ViewContainerRef,
   ) {
-    super(_differs, _elRef, _renderer);
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // DynamicDirective
+    this._extra = {};
+    // this
     this._context = getContext(_viewContainer);
   }
 

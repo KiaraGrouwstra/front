@@ -9,7 +9,7 @@ import { getPaths } from './slim';
 type Val = any;
 
 @ExtComp({})
-export class BaseInOutComp extends BaseSlimComp {
+export abstract class BaseInOutComp extends BaseSlimComp {
 
   // TableComp: schema in front cuz optional, this way combInputs only gets called once
   // @Input() schema: Front.Spec;

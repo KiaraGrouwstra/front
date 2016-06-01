@@ -8,9 +8,10 @@ import { GlobalsService } from './services';
     COMMON_DIRECTIVES,
   ],
 })
-export class BaseComp {
-  constructor(
-    public cdr: ChangeDetectorRef,
-    public g: GlobalsService,
-  ) {}
+export abstract class BaseComp {
+  // constructor(
+  //   // BaseComp
+  //   public cdr: ChangeDetectorRef,
+  //   public g: GlobalsService,
+  // ) {}
 }

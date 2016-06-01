@@ -10,7 +10,7 @@ import { ExtComp } from '../lib/annotations';
   //   COMMON_DIRECTIVES,
   // ],
 })
-export class BaseSlimComp extends BaseComp {
+export abstract class BaseSlimComp extends BaseComp {
   // constructor(cdr: ChangeDetectorRef) {
   //   super(cdr);
   // }

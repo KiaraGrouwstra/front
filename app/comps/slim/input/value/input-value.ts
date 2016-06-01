@@ -41,8 +41,12 @@ export class InputValueComp extends BaseInputComp {
   @ViewChild(InputStructComp) o: InputStructComp;
   @ViewChild(InputTableComp) t: InputTableComp;
 
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+  constructor(
+    // BaseComp
+    public cdr: ChangeDetectorRef,
+    // public g: GlobalsService,
+  ) {
+    super();
   }
 
   setSpec(x: Front.Spec): void {

@@ -52,8 +52,12 @@ export class FieldComp extends BaseInputComp {
   validator_keys: string[];
   validator_msgs: {[key: string]: (any) => string};
 
-  constructor(cdr: ChangeDetectorRef) {
-    super(cdr);
+  constructor(
+    // BaseComp
+    public cdr: ChangeDetectorRef,
+    // public g: GlobalsService,
+  ) {
+    super();
   }
 
   ngOnInit() {
