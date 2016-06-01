@@ -5,7 +5,7 @@ import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
-import { input_control, getOptsNameSpecs, mapSpec } from '../input';
+import { inputControl, getOptsNameSpecs, mapSpec } from '../input';
 import { ControlStruct } from '../controls';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
@@ -50,7 +50,7 @@ export class InputStructComp extends BaseInputComp {
 
   setCtrl(x: Ctrl): void {
     let spec = this.spec;
-    let factStruct = mapSpec(s => input_control(s, true))(spec);
+    let factStruct = mapSpec(s => inputControl(s, true))(spec);
     x.init(factStruct, spec.required || []);
   }
 
@@ -62,7 +62,7 @@ export class InputStructComp extends BaseInputComp {
     // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSpecFixed: this.nameSpecFixed, nameSpecPatt: this.nameSpecPatt, nameSpecAdd: this.nameSpecAdd } = getOptsNameSpecs(x);
     // Object.assign(this, getOptsNameSpecs(x));
     _.forEach((v, k) => { this[k] = v; })(getOptsNameSpecs(x));
-    this.nameCtrlFixed = input_control(this.nameSpecFixed);
+    this.nameCtrlFixed = inputControl(this.nameSpecFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
     this.indices = { properties: new Set(prepopulated), patternProperties: _.mapValues(x => new Set([]))(patts), additionalProperties: new Set([]) };

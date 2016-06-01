@@ -2,7 +2,7 @@ import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescri
 let _ = require('lodash/fp');
 import { Control } from '@angular/common';
 import { ControlStruct } from './control_struct';
-import { input_control } from '../input'
+import { inputControl } from '../input'
 
 describe('ControlStruct', () => {
   let obj;
@@ -16,7 +16,7 @@ describe('ControlStruct', () => {
       additionalProperties: num,
       required: ['foo'],
     };
-    obj = input_control(spec, false, true);
+    obj = inputControl(spec, false, true);
   });
 
   // it('should test', () => {

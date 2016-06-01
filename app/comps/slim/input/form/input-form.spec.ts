@@ -3,12 +3,12 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
-import { input_control } from '../input'
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
+import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
 import { FormComp } from './input-form';
-let cls = test_comp('input-form', FormComp);
+let cls = testComp('input-form', FormComp);
 let desc = 'hi';
 let scalar_spec = {
   "description": "The geography ID.",

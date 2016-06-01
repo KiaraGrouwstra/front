@@ -46,8 +46,8 @@ export function notify(kw: string, obs: Observable<any>): Subscription {
   return obs.subscribe(...loggers(kw));
 }
 
-// generalizes combineLatest from 2 Observables to an array of n: Obs_combLast([a$, b$]).map([a, b] => ...)
-export function Obs_combLast(arr: Observable<any>[]): Observable<any> {
+// generalizes combineLatest from 2 Observables to an array of n: combLastObs([a$, b$]).map([a, b] => ...)
+export function combLastObs(arr: Observable<any>[]): Observable<any> {
   return arr.reduce((obj_obs, v, idx) => {
   	  let combiner = (obj, val) => Object.assign(obj, {[idx]: val});
       return _.get(['subscribe'], v) ? //_.has
@@ -60,10 +60,10 @@ export function Obs_combLast(arr: Observable<any>[]): Observable<any> {
 
 // maps the latest values of a set of Observables to a lambda
 export function mapComb(arr: Observable<any>[], fn: Function): Observable<any> {
-  return Obs_combLast(arr).map(r => fn(...r));
+  return combLastObs(arr).map(r => fn(...r));
 }
 
 // use the latest values of a set of Observables to subscribe to a lambda
 export function subComb(arr: Observable<any>[], fn: Function): Subscription {
-  return Obs_combLast(arr).subscribe(r => fn(...r));
+  return combLastObs(arr).subscribe(r => fn(...r));
 }

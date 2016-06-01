@@ -3,12 +3,12 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
-import { input_control } from '../input'
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
+import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
 import { InputValueComp } from './input-value';
-let cls = test_comp('input-value', InputValueComp);
+let cls = testComp('input-value', InputValueComp);
 let path = ['test'];
 let named = true;
 // let name = 'foo';
@@ -24,7 +24,7 @@ let pars = (spec) => ({
   path,
   spec,
   named,
-  ctrl: input_control(spec),
+  ctrl: inputControl(spec),
   // name,
 });
 let req = 'This field is required.';

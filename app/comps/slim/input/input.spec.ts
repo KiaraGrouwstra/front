@@ -1,5 +1,5 @@
 let _ = require('lodash/fp');
-import { mapSpec, input_control, categorizeKeys } from './input';
+import { mapSpec, inputControl, categorizeKeys } from './input';
 import { Control, ControlGroup } from '@angular/common';
 import { ControlList, ControlStruct } from './controls';
 
@@ -11,10 +11,10 @@ describe('input', () => {
     expect(mapSpec(y => y * 2)(spec)).toEqual(doubled);
   })
 
-  it('input_control', () => {
-    expect(input_control({ type: 'string' }).constructor).toEqual(Control);
-    expect(input_control({ type: 'array' }).constructor).toEqual(ControlList);
-    expect(input_control({ type: 'object' }).constructor).toEqual(ControlStruct);
+  it('inputControl', () => {
+    expect(inputControl({ type: 'string' }).constructor).toEqual(Control);
+    expect(inputControl({ type: 'array' }).constructor).toEqual(ControlList);
+    expect(inputControl({ type: 'object' }).constructor).toEqual(ControlStruct);
   })
 
   it('categorizeKeys', () => {

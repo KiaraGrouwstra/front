@@ -1,9 +1,9 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { id_cleanse, ng2comp, combine, key_spec } from '../../../lib/js';
+import { idCleanse, ng2comp, combine, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { DLComp, ArrayComp, ValueComp } from '../../..';
-import { infer_type } from '../output';
+import { inferType } from '../output';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -59,8 +59,8 @@ function getColl(path: Front.Path, val: Val, spec: Front.Spec) {
   let keys = _.keys(val);
   return keys.map(k => {
     let new_spec = key_spec(k, spec);
-    let path_k = path.concat(id_cleanse(k));
-    let type = _.get(['type'], new_spec) || infer_type(val[k]);
+    let path_k = path.concat(idCleanse(k));
+    let type = _.get(['type'], new_spec) || inferType(val[k]);
     if(SCALARS.includes(type)) type = 'scalar';
     return {
       path: path_k,

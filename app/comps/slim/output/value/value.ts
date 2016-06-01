@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild } from '@angular/core';
 import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, IframeComp } from '../../..';
-import { infer_type, try_schema } from '../output'
+import { inferType, trySchema } from '../output'
 // import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
 import { combine, tryLog } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
@@ -52,8 +52,8 @@ export class ValueComp extends BaseOutputComp {
   }
 
   combInputs = () => tryLog(combine((val: any, schema: Front.Spec) => {
-    this.new_spec = _.get(['type'], schema) ? schema : try_schema(val, schema);
-    this.type = _.get(['type'], schema) || infer_type(val);
+    this.new_spec = _.get(['type'], schema) ? schema : trySchema(val, schema);
+    this.type = _.get(['type'], schema) || inferType(val);
     // ^ handles anyOf/oneOf/allOf as well; good.
     let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
     if(SCALARS.includes(this.type)) this.type = 'scalar';

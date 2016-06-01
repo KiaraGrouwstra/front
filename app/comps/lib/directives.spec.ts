@@ -4,7 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { COMMON_DIRECTIVES } from '@angular/common';
-import { test_comp, asyncTest, setInput, sendEvent, genClass } from '../test';
+import { testComp, asyncTest, setInput, sendEvent, genClass } from '../test';
 import { SetAttrs, DynamicAttrs, DynamicStyle, DynamicClass, AssignLocal } from './directives';
 import { ng2comp, print } from './js';
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';

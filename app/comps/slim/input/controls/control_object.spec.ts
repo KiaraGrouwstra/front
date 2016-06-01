@@ -2,13 +2,13 @@ import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescri
 let _ = require('lodash/fp');
 import { Control } from '@angular/common';
 import { ControlObject } from './control_object';
-import { objectControl } from '../input'  //input_control
+import { objectControl } from '../input'  //inputControl
 
 describe('ControlObject', () => {
   let obj;
 
   beforeEach(() => {
-    obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }, true); //input_control
+    obj = objectControl({type: 'object', additionalProperties: { type: 'number' } }, true); //inputControl
   });
 
   // it('should test', () => {

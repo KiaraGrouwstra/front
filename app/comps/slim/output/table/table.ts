@@ -316,7 +316,7 @@ export class TableComp extends BaseOutputComp {
   getSpec(idx: number): Front.Spec {
     let spec = this.schema;
     return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
-    // _.get(['items', 'type'], spec) ? spec.items : try_schema(this.first, _.get(['items'], spec));
+    // _.get(['items', 'type'], spec) ? spec.items : trySchema(this.first, _.get(['items'], spec));
   }
 
   // v should be able to do these from the template again?

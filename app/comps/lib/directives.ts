@@ -32,6 +32,7 @@ function keyMethod(registry: DomElementSchemaRegistry, elName: string, k: string
   return setMethod[registry.hasProperty(elName, k) ? 'property' : 'attribute'];
 }
 
+// base class for below directives
 class ObjDirective implements DoCheck {
   _el: HTMLElement;
   _obj: {[key: string]: string};
@@ -135,7 +136,7 @@ function getContext(view: ViewContainerRef): Object {
   return transformWhile(x => [Object, NgForRow].includes(x.context.constructor), y => y.parent, view._element.parentView).context;
 }
 
-// dynamically bind properties/attributes
+// dynamically bind properties/attributes (cf. SetAttrs), using strings evaluated in the component context
 // intended as a `[[prop]]="evalStr"`, if now `[dynamicAttrs]="{ prop: evalStr }"`
 // hint toward original: `bindAndWriteToRenderer` @ `compiler/view_compiler/property_binder.ts`.
 // alternative: `[prop]="eval(evalStr)"` for `eval = evalExpr(this)` on class.
@@ -169,6 +170,7 @@ export class DynamicAttrs extends DynamicDirective(ObjDirective) {
 
 }
 
+// set styles dynamically (cf. NgStyle), using strings evaluated in the component context
 @Directive({
   selector: '[dynamicStyle]',
   inputs: ['attributes: dynamicStyle', 'extraVars: extraVars'],
@@ -192,6 +194,7 @@ export class DynamicStyle extends DynamicDirective(ObjDirective) {
 
 }
 
+// set classes dynamically (cf. NgClass), using strings evaluated in the component context
 @Directive({
   selector: '[dynamicClass]',
   inputs: ['attributes: dynamicClass', 'extraVars: extraVars'],

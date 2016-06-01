@@ -3,13 +3,13 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { Control } from '@angular/common';
-import { input_control } from '../input'
+import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
 import { FieldComp } from './input-field';
-let cls = test_comp('input-field', FieldComp);
+let cls = testComp('input-field', FieldComp);
 let path = ['test'];
 let spec = {
   "description": "The geography ID.",
@@ -18,7 +18,7 @@ let spec = {
   "required": true,
   "type": "string"
 };
-let ctrl = input_control(spec);
+let ctrl = inputControl(spec);
 let named = true;
 // let name = 'foo';
 let pars = () => _.cloneDeep({

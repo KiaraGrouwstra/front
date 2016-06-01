@@ -1,15 +1,15 @@
 // let _ = require('lodash/fp');
 import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
 import { TestComponentBuilder } from '@angular/compiler/testing';
-import { test_comp, test_comp_html, asyncTest } from '../../../test';
+import { testComp, testCompHtml, asyncTest } from '../../../test';
 
 import { IframeComp } from './iframe';
-let cls = test_comp('myiframe', IframeComp);
+let cls = testComp('myiframe', IframeComp);
 let pars = {
   val: '<!DOCTYPE html><html><body><em>foo</em></body></html>',
 };
 // let text = '<em>foo</em>';
-// let cls = () => test_comp_html(`<myiframe>${text}</myiframe>`, IframeComp);
+// let cls = () => testCompHtml(`<myiframe>${text}</myiframe>`, IframeComp);
 
 describe('Iframe', () => {
   let tcb;

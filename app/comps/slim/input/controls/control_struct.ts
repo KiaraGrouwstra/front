@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { ControlGroup, Validators, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlObject } from './control_object';
-import { uniqueKeys, input_control, getOptsNameSpecs } from '../input';
+import { uniqueKeys, inputControl, getOptsNameSpecs } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
 let lens = (fn_obj, fn_grp) => (ctrl) => {
@@ -49,7 +49,7 @@ export class ControlStruct extends ControlGroup {
     let { nameSpecPatt, nameSpecAdd } = getOptsNameSpecs(factStruct);
     // nameSpec actually depends too, see input-object.
     let kvFactory = (nameSpec, ctrlFactory) => () => new ControlGroup({
-      name: input_control(nameSpec),
+      name: inputControl(nameSpec),
       val: ctrlFactory(),
     });
 

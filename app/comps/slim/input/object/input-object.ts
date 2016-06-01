@@ -6,7 +6,7 @@ import { InputValueComp } from '../value/input-value';
 import { ng2comp, key_spec } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ControlObject, ControlObjectKvPair } from '../controls';
-import { input_control, mapSpec, getValStruct } from '../input'
+import { inputControl, mapSpec, getValStruct } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';

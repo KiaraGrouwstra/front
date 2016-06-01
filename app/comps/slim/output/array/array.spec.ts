@@ -3,11 +3,11 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { GlobalsService } from '../../../services';
 
 import { ArrayComp } from './array';
-let cls = test_comp('array', ArrayComp);
+let cls = testComp('array', ArrayComp);
 let path = ['test'];
 let val = ['foo', 'bar', 'baz'];
 let obs_pars = {

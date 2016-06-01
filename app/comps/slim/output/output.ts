@@ -4,16 +4,16 @@ let marked = require('marked');
 import { validate, validateFormat } from '../input/validators';
 
 // infer the type for a value lacking a spec
-export let infer_type = (v: any) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
+export let inferType = (v: any) => Array.isArray(v) ? 'array' : _.isObject(v) ? 'object' : 'scalar';
 
 // for a spec using `*Of` try its different options to see if any one is valid for the given data
 // (which seems fair for `oneOf` but blatantly disregards `allOf` and to lesser extent `anyOf`)
-export let try_schema = (val: any, spec: Front.Spec) => {
+export let trySchema = (val: any, spec: Front.Spec) => {
   let options = _.get(['oneOf'], spec) || _.get(['anyOf'], spec) || _.get(['allOf'], spec) || [];
   let tp = _.find((schema, idx, arr) => validate(val, schema), options);
   return _.has(['type'], tp) ? tp :
     _.some(x => _.get([x], tp), ['oneOf','anyOf','allOf']) ?
-    try_schema(val, tp) : null; //infer_type(val)
+    trySchema(val, tp) : null; //inferType(val)
 }
 
 // html-wrap a uri

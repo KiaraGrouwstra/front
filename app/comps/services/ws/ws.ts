@@ -36,7 +36,7 @@ export class WsService {
     this.chan.on('msg', e => this.out.next(e));
   }
 
-  ask_many(url: string, pars = {}): Observable {
+  askMany(url: string, pars = {}): Observable {
     let id = this.id++;
     this.chan.push(url, {body: pars, id});
     return this.out
@@ -51,7 +51,7 @@ export class WsService {
 
   // request that completes after n responses
   ask(url: string, pars = {}, n = 1): Observable {
-    return this.ask_many(url, pars).take(n);
+    return this.askMany(url, pars).take(n);
   }
 
   // alt: directly scrape pages from browser using Chrome startup flag `--disable-web-security` or by making this into an extension?

@@ -7,7 +7,7 @@ import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
 let $RefParser = require('json-schema-ref-parser');
 
-export let load_ui = tryLog(async function(name: string) {
+export let loadUi = tryLog(async function(name: string) {
   this.api = name;
 
   let api = await (
@@ -57,14 +57,14 @@ export let load_ui = tryLog(async function(name: string) {
 })
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
-export let pick_fn = tryLog(function(fn_path: string) {
+export let pickFn = tryLog(function(fn_path: string) {
   this.raw = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
   this.path = ['paths', fn_path, 'get', 'responses', '200'];
 });
 
-function submit_req(fn: Front.Submitter): Front.Submitter {
+function submitReq(fn: Front.Submitter): Front.Submitter {
   return tryLog(function(v: any) {
     // if(v.constructor == Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);
@@ -115,7 +115,7 @@ function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
 }
 
 function processParselet(prslt: Front.Parselet): Front.RealParselet {
-  const type_map = {
+  const TYPE_MAP = {
     // { selector, parselet, type, attribute }
     text: ([k, o]) => [k, o.selector],
     attribute: ([k, o]) => [k, o.selector + '@' + o.attribute ],
@@ -127,7 +127,7 @@ function processParselet(prslt: Front.Parselet): Front.RealParselet {
   };
   return _.flow([
     _.toPairs,
-    _.map(type_map[type]),
+    _.map(TYPE_MAP[type]),
     _.fromPairs,
     s => JSON.stringify(s),
   ])(prslt);
@@ -146,13 +146,13 @@ function doParsley(meta: Front.ReqMeta, parselet: Front.Parselet): Front.ObsInfo
 }
 
 // handle emit api input_ui
-export let req_url: Front.Submitter = submit_req(function(v: Front.ReqMeta) {
+export let reqUrl: Front.Submitter = submitReq(function(v: Front.ReqMeta) {
   return doAddUrls.call(this, v, x => JSON.parse(x));
   // ^ assume JSON API
 });
 
 // handle fetch form submit
-export let doFetch: Front.Submitter = submit_req(function(
+export let doFetch: Front.Submitter = submitReq(function(
   { urls, headers }: Front.FetchForm,
   // { processor, parselet, transformer }: Front.ProcessForm,
   // ^ haven't managed to pass this in yet
@@ -182,7 +182,7 @@ export function doProcess(
 });
 
 // handle curl form submit
-export let doCurl: Front.Submitter = submit_req(function(v: any) {
+export let doCurl: Front.Submitter = submitReq(function(v: any) {
   let { curl } = v;
   return {
     obs: this._req.toCurl(curl),

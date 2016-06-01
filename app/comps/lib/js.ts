@@ -21,27 +21,28 @@ export function arr2map<T,U>(arr: Array<T>, fn: (T) => U): Map<T,U> {
   return arr.reduce((map, k) => map.set(k, fn(k)), new Map());
 }
 
-export function do_return<T>(fn: (T) => void): (v: T) => T {
+export function doReturn<T>(fn: (T) => void): (v: T) => T {
   return (v) => {
     fn(v);
     return v;
   };
 }
 
-export function Prom_toast(msg: string): Promise {
+export function promToast(msg: string): Promise {
   // return this.do(_v => toast.success(msg), e => toast.error(e));
-  return this.then(do_return(_v => toast.success(msg)), do_return(e => toast.error(e)));
+  return this.then(doReturn(_v => toast.success(msg)), doReturn(e => toast.error(e)));
 };
-Promise.prototype.toast_result = Prom_toast;
+Promise.prototype.toastResult = promToast;
 
-export function handle_auth(url: Location, fn: (get: string, hash: string) => void): void {
-  let url_bit = (url: Location, part: string) => {
-    let par_str = url[part].substring(1);
-    let params = decodeURIComponent(par_str).split('&');
-    return _.fromPairs(params.map(y => y.split('=')));
-  }
-  let url_get_hash = (url: Location) => ['search', 'hash'].map(x => url_bit(url, x));
-  let [get, hash] = url_get_hash(url);
+function urlBit(url: Location, part: string): Object {
+  let par_str = url[part].substring(1);
+  let params = decodeURIComponent(par_str).split('&');
+  return _.fromPairs(params.map(y => y.split('=')));
+}
+
+export function handleAuth(url: Location, fn: (get: string, hash: string) => void): void {
+  let urlGetHash = (url: Location) => ['search', 'hash'].map(x => urlBit(url, x));
+  let [get, hash] = urlGetHash(url);
   if(get.callback) {
     // this.routeParams.get(foo): only available in router-instantiated components.
     fn(get, hash);
@@ -71,7 +72,7 @@ export function popup(popup_url: string, watch_url: string): Promise {
         // DOMException: Blocked a frame with origin [...] from accessing a cross-origin frame
       }
     }, 100);
-  }).toast_result(`got auth result!`);
+  }).toastResult(`got auth result!`);
 }
 
 const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
@@ -140,7 +141,7 @@ export function prettyPrint(o: {}): string {
 };
 
 // cleanse a string to use as an ID
-export function id_cleanse(s: string): string {
+export function idCleanse(s: string): string {
   return s.replace(/[^\w]+/g, '-').replace(/(^-)|(-$)/g, '');
 }
 
@@ -221,7 +222,7 @@ export function input_specs(path: Front.Path = []): (v: string, idx: number) => 
 // pars to make a form for a given API function. json-path?
 export function method_pars(spec: Front.Spec, fn_path: string): { pars: Front.Spec, desc: string } {
   let hops = ['paths', fn_path, 'get', 'parameters'];
-  let path = hops.map(x => id_cleanse(x));
+  let path = hops.map(x => idCleanse(x));
   // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let arr = _.get(hops, spec) || [];
   let pars = specFromArr(arr);

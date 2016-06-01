@@ -3,12 +3,12 @@ let marked = require('marked');
 import { Control, ControlGroup, ControlArray, AbstractControl } from '@angular/common';
 import { ControlList, ControlVector, ControlObject, ControlObjectKvPair, ControlStruct, ControlSet } from './controls';
 import { getPaths } from '../slim';
-import { validate, get_validator } from './validators';
+import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal } from '../../lib/js';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
 // get the default value for a value type
-function type_default(type: string): any {
+function typeDefault(type: string): any {
   let def_vals = {
     string: '',
     number: 0,
@@ -17,17 +17,17 @@ function type_default(type: string): any {
     array: [],
     object: {},
     // file: 'file', //[],
-  }
-  return _.get([type], def_vals)
+  };
+  return _.get([type], def_vals);
 }
 
-function get_default(spec: Front.Spec): any {
+function getDefault(spec: Front.Spec): any {
   let def = spec.default;
-  return (!_.isUndefined(def)) ? def : type_default(spec.type);
+  return (!_.isUndefined(def)) ? def : typeDefault(spec.type);
 }
 
 // get the input type for a value type
-let input_type = (type: string) => _.get([type], {
+let inputType = (type: string) => _.get([type], {
   string: 'text',
   number: 'number',
   integer: 'number',
@@ -36,7 +36,7 @@ let input_type = (type: string) => _.get([type], {
 }) || type;
 
 // pick a Jade template
-export function get_template(spec: Front.Spec, attrs: Front.IAttributes): string|void {
+export function getTemplate(spec: Front.Spec, attrs: Front.IAttributes): string|void {
   return spec['x-template'] || _.get([spec.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
     // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
@@ -58,8 +58,8 @@ export function get_template(spec: Front.Spec, attrs: Front.IAttributes): string
 // return the default value + validator for a spec
 function vldtrDefPair(spec: Front.Spec): Front.IVldtrDef {
   return {
-    val: get_default(spec),
-    vldtr: get_validator(spec),
+    val: getDefault(spec),
+    vldtr: getValidator(spec),
   };
 }
 
@@ -76,7 +76,7 @@ export function mapSpec<T,U>(fn: (T) => U): Front.IObjectSpec<(T) => U> {
 // : Front.IObjectSpec<(Front.Spec) => Front.IVldtrDef>
 export let getValStruct = mapSpec(vldtrDefPair);
 
-// `ControlObject` generator (kicked out of `input_control`)
+// `ControlObject` generator (kicked out of `inputControl`)
 export function objectControl(spec: Front.Spec, doSeed: boolean = false): ControlObject {
   let ctrl = new ControlObject();
   if(doSeed) {
@@ -89,7 +89,7 @@ export function objectControl(spec: Front.Spec, doSeed: boolean = false): Contro
 }
 
 // return initial key/value pair for the model
-export function input_control(spec: Front.Spec = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
+export function inputControl(spec: Front.Spec = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
   let factory, seed;  //, allOf
   switch(spec.type) {
     case 'array':
@@ -99,12 +99,12 @@ export function input_control(spec: Front.Spec = {}, asFactory = false, doSeed: 
       if(_.isArray(spec.items)) {
         let cls = ControlVector;
         if(doSeed) {
-          let seeds = spec.items.map(x => input_control(x, true, true));
+          let seeds = spec.items.map(x => inputControl(x, true, true));
           let add = spec.additionalItems;
           let fallback = _.isPlainObject(add) ?
-              input_control(add, true, true) :
+              inputControl(add, true, true) :
               add == true ?
-                  input_control({}, true, true) :
+                  inputControl({}, true, true) :
                   false;
           factory = () => new cls().init(seeds, fallback);
         } else {
@@ -117,8 +117,8 @@ export function input_control(spec: Front.Spec = {}, asFactory = false, doSeed: 
         let cls = ControlList;
         if(doSeed) {
           let seed = props ?
-              () => new ControlGroup(_.mapValues(x => input_control(x, false, true), props)) :
-              input_control(spec.items, true, true);
+              () => new ControlGroup(_.mapValues(x => inputControl(x, false, true), props)) :
+              inputControl(spec.items, true, true);
           factory = () => new cls().init(seed);
         } else {
           factory = () => new cls();
@@ -128,15 +128,15 @@ export function input_control(spec: Front.Spec = {}, asFactory = false, doSeed: 
     case 'object':
       let cls = ControlStruct;
       if(doSeed) {
-        let factStruct = mapSpec(x => input_control(x, true, true))(spec);
+        let factStruct = mapSpec(x => inputControl(x, true, true))(spec);
         factory = () => new cls().init(factStruct, spec.required || []);
       } else {
         factory = () => new cls();
       }
       break;
     default:
-      let val = get_default(spec);
-      let validator = get_validator(spec);
+      let val = getDefault(spec);
+      let validator = getValidator(spec);
       factory = () => new Control(val, validator); //, async_validator
   }
   return asFactory ? factory : factory();
@@ -146,7 +146,7 @@ const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 
 // get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
-export function input_attrs(path: Front.Path, spec: Front.Spec): Front.IAttributes {
+export function inputAttrs(path: Front.Path, spec: Front.Spec): Front.IAttributes {
   // general parameters
   // // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
   // let kind = spec.in || '';
@@ -252,7 +252,7 @@ export function input_attrs(path: Front.Path, spec: Front.Spec): Front.IAttribut
   }
   let extra = _.get([type], type_params) || {};
   Object.assign(attrs, extra);
-  attrs.type = input_type(type);
+  attrs.type = inputType(type);
   return _.pickBy(_.negate(_.isNil))(attrs);
 }
 

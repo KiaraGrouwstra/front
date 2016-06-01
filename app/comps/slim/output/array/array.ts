@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild } from '@angular/core';
 import { NgSwitch, NgSwitchWhen, NgSwitchDefault } from '@angular/common';
 import { ULComp, TableComp } from '../../..';
-import { infer_type, try_schema } from '../output'
+import { inferType, trySchema } from '../output'
 import { ng2comp, combine } from '../../../lib/js';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';

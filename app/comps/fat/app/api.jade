@@ -8,7 +8,7 @@
       )
         a(
           '[ngClass]'=`{ 'green-text': auths[api]?.token }`
-          '(click)'=`load_ui(api)`
+          '(click)'=`loadUi(api)`
         ) {{api}}
     //- paper-tooltip {{ auths[api]?.token ? "auth token: " + auths[api]?.token : "connect to " + api }}
 
@@ -21,7 +21,7 @@
       .collapsible-body
         #auth(#auth)
           auth-ui(
-            '(handler)'=`handle_implicit($event)`
+            '(handler)'=`handleImplicit($event)`
             '[name]'=`auth_ui_name`
             '[scopes]'=`auth_ui_scopes`
             '[oauth_info]'=`auth_ui_oauth_info`
@@ -31,7 +31,7 @@
 .row
   #functions.col.s3
     fn-ui(
-      '(handler)'=`pick_fn($event)`
+      '(handler)'=`pickFn($event)`
       '[spec]'=`spec`
       '[oauth_sec]'=`fn_ui_oauth_sec`
       '[have]'=`fn_ui_have`
@@ -39,7 +39,7 @@
   
   #input.col.s6
     input-ui(
-      '(handler)'=`req_url($event)`
+      '(handler)'=`reqUrl($event)`
       '[spec]'=`spec`
       '[fn_path]'=`fn_path`
       '[token]'=`input_ui_token`

@@ -3,13 +3,13 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
-import { input_control } from '../input'
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
+import { inputControl } from '../input'
 import { By } from '@angular/platform-browser';
 import { GlobalsService } from '../../../services';
 
 import { InputStructComp } from './input-struct';
-let cls = test_comp('input-struct', InputStructComp);
+let cls = testComp('input-struct', InputStructComp);
 let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
@@ -19,7 +19,7 @@ let scalar = {
   "type": "string"
 };
 let spec = { type: "object", additionalProperties: scalar };
-let ctrl = input_control(spec);
+let ctrl = inputControl(spec);
 let named = false;
 let pars = () => _.cloneDeep({ path, spec, ctrl, named });
 
@@ -36,7 +36,7 @@ let validationSpec = {
     enum: ['additional'],
   },
 };
-let validationPars = () => ({ path, spec: validationSpec, ctrl: input_control(validationSpec), named });
+let validationPars = () => ({ path, spec: validationSpec, ctrl: inputControl(validationSpec), named });
 
 describe('InputStructComp', () => {
   let tcb;

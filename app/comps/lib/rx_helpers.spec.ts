@@ -1,5 +1,5 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
-import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, Obs_combLast, mapComb } from './rx_helpers';  //, emitter
+import { elemToArr, arrToArr, elemToSet, arrToSet, setToSet, loggers, notify, combLastObs, mapComb } from './rx_helpers';  //, emitter
 import { Observable } from 'rxjs/Observable';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import { BehaviorSubject } from 'rxjs';
@@ -86,8 +86,8 @@ describe('Rx Helpers', () => {
     (v) => expect(v).toEqual(keys)
   ))
 
-  it('Obs_combLast combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
-    Obs_combLast([1,2,3].map(v => new BehaviorSubject(v))),
+  it('combLastObs combines the latest values from multiple Observables for use in one', (d) => do_obs(d,
+    combLastObs([1,2,3].map(v => new BehaviorSubject(v))),
     (r) => expect(r).toEqual([1,2,3])
     , true
   ))

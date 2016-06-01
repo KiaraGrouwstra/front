@@ -3,11 +3,11 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { GlobalsService } from '../../../services';
 
 import { TableComp } from './table';
-let cls = test_comp('mytable', TableComp);
+let cls = testComp('mytable', TableComp);
 let path = ['test'];
 let val = [ { a: 1, b: 2 }, { a: 'A', b: 'B' } ];
 let obs_pars = {

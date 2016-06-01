@@ -4,7 +4,7 @@ import { Control } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
-import { input_control } from '../input'
+import { inputControl } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -37,17 +37,17 @@ export class InputArrayComp extends BaseInputComp {
     let spec = this.spec;
     if(_.isArray(spec.items)) {
       // ControlVector
-      let seeds = spec.items.map(s => input_control(s, true));
+      let seeds = spec.items.map(s => inputControl(s, true));
       let add = spec.additionalItems;
       let fallback = _.isPlainObject(add) ?
-          input_control(add, true) :
+          inputControl(add, true) :
           add == true ?
-              input_control({}, true) :
+              inputControl({}, true) :
               false;
       x.init(seeds, fallback);
     } else {
       // ControlList
-      let seed = input_control(spec.items, true);
+      let seed = inputControl(spec.items, true);
       x.init(seed);
     }
   }

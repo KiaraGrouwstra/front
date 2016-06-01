@@ -4,7 +4,7 @@ import { ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
-import { input_control } from '../input'
+import { inputControl } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -29,10 +29,9 @@ export class InputTableComp extends BaseInputComp {
   keys: Array<string>;
   indexBased: boolean;
 
-
   setCtrl(x: Ctrl): void {
     let spec = this.spec;
-    let seed = () => new ControlGroup(_.mapValues(x => input_control(x), spec.items.properties));
+    let seed = () => new ControlGroup(_.mapValues(x => inputControl(x), spec.items.properties));
     x.init(seed);
   }
 

@@ -5,7 +5,7 @@ import { arr2obj, mapBoth } from '../../lib/js';
 
 // tv4: https://github.com/geraintluff/tv4
 // json-editor: https://github.com/jdorn/json-editor/blob/master/src/validator.js
-const val_conds: {[key: string]: (v: any, par: any) => boolean} = {
+const valConds: {[key: string]: (v: any, par: any) => boolean} = {
   // schema: (v, par) => (v, par),
   // collectionFormat: (v, par) => (v, par),
   required: (v, par) => v.length, // assumes string?
@@ -89,7 +89,7 @@ export function validateFormat(val: any, format: string) {
 }
 
 export const validate = (v: any, spec: Front.Spec): boolean => _.every(k => {
-  let fn = val_conds[k];
+  let fn = valConds[k];
   return fn ? fn(v, spec[k], spec) : true;
 })(_.keys(spec))
 // actually filter applicable keys by type: https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
@@ -97,10 +97,10 @@ export const validate = (v: any, spec: Front.Spec): boolean => _.every(k => {
 // should filter on value applied to; only works if the spec limits it to 1 `type`.
 // solution: both filter by spec-type and do run-time checks (pass if wrong type) in validators?
 
-const val_fns: {[key: string]: (par: any) => ValidatorFn} =
-  mapBoth(val_conds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
-// ... _.keys(val_conds).map((k) => ... val_conds[k] ...
-// const ng_validators = _.assign(Validators, val_fns);
+const valFns: {[key: string]: (par: any) => ValidatorFn} =
+  mapBoth(valConds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
+// ... _.keys(valConds).map((k) => ... valConds[k] ...
+// const ng_validators = _.assign(Validators, valFns);
 
 function matchesType(val: any, type: string): boolean {
   const mapping = {
@@ -129,7 +129,7 @@ function matchesType(val: any, type: string): boolean {
 // [tests](https://github.com/jdorn/json-editor/blob/master/tests/validation.html)
 // includes: dependencies, definitions, $ref, custom
 // [z-schema](https://github.com/zaggino/z-schema/blob/master/src/Errors.js)
-export const val_errors: {[key: string]: (x: any) => (v: any) => string} = {
+export const valErrors: {[key: string]: (x: any) => (v: any) => string} = {
   required: x => v => `This field is required.`,
   maximum: x => v => `Must not be more than ${x}.`,
   exclusiveMaximum: x => v => `Must be less than ${x}.`,
@@ -170,15 +170,15 @@ export const val_errors: {[key: string]: (x: any) => (v: any) => string} = {
   format: x => v => `Should match format '${x}'.`,
 };
 
-export const val_keys: string[] = _.keys(val_errors);
+export const VAL_KEYS: string[] = _.keys(valErrors);
 
 // prepare the form control validators
-export function get_validator(spec: Front.Spec): ValidatorFn {
+export function getValidator(spec: Front.Spec): ValidatorFn {
   const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => get_validator(opt));
+  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => getValidator(opt));
   let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
-  let used_vals = val_keys.filter(k => spec[k] != null);
-  let validators = used_vals.map(k => val_fns[k](spec[k])).concat(of_vldtr);
+  let used_vals = VAL_KEYS.filter(k => spec[k] != null);
+  let validators = used_vals.map(k => valFns[k](spec[k])).concat(of_vldtr);
   return Validators.compose(validators);
 }
 

@@ -3,12 +3,12 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
-import { test_comp, asyncTest, setInput, sendEvent } from '../../../test';
-import { input_control } from '../input'
+import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
+import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
 import { InputTableComp } from './input-table';
-let cls = test_comp('input-table', InputTableComp);
+let cls = testComp('input-table', InputTableComp);
 let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
@@ -18,7 +18,7 @@ let scalar = {
   "type": "string"
 };
 let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
-let ctrl = input_control(spec);
+let ctrl = inputControl(spec);
 let named = false;
 let pars = () => _.cloneDeep({ path, spec, ctrl, named });
 

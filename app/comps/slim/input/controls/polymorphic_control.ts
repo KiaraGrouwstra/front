@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Control, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
-import { input_control } from '../input'
+import { inputControl } from '../input'
 
 // crap, I'm gonna need to override all Control/AbstractControl methods...
 
@@ -24,7 +24,7 @@ export class PolymorphicControl extends Control {
   }
 
   setSpec(spec: Front.Spec): void {
-    this.ctrl = input_control(spec, false);
+    this.ctrl = inputControl(spec, false);
   }
 
   get value(): any { return this.ctrl.value; }

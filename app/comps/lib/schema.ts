@@ -259,35 +259,35 @@ const mergers = {
   ),
 };
 
-const max_num = Number.MAX_VALUE;
-const min_num = Number.MIN_VALUE;
+const MAX_NUM = Number.MAX_VALUE;
+const MIN_NUM = Number.MIN_VALUE;
 
 // for each key in a schema specify the strictest value, i.e. the defaults to start from
 const strictest = {
   // NUMBERS:
-  // multipleOf: max_num,
-  maximum: min_num,
-  minimum: max_num,
-  exclusiveMaximum: min_num,
-  exclusiveMinimum: max_num,
+  // multipleOf: MAX_NUM,
+  maximum: MIN_NUM,
+  minimum: MAX_NUM,
+  exclusiveMaximum: MIN_NUM,
+  exclusiveMinimum: MAX_NUM,
 
   // STRINGS:
-  maxLength: min_num,
-  minLength: max_num,
+  maxLength: MIN_NUM,
+  minLength: MAX_NUM,
   // pattern
   enum: undefined,
   format: null, // use null for 'all required' so undefined can remain 'nothing required'
 
   // ARRAYS:
   items: [], // undefined
-  maxItems: min_num,
-  minItems: max_num,
+  maxItems: MIN_NUM,
+  minItems: MAX_NUM,
   additionalItems: false,
   uniqueItems: true,
 
   // OBJECTS:
-  maxProperties: min_num,
-  minProperties: max_num,
+  maxProperties: MIN_NUM,
+  minProperties: MAX_NUM,
   required: null, // use null for 'all required' so undefined can remain 'nothing required'
   properties: undefined, // {}
   patternProperties: undefined, // {}

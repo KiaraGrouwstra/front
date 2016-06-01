@@ -2,8 +2,8 @@ let _ = require('lodash/fp');
 import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Control } from '@angular/common';
 let marked = require('marked');
-import { input_attrs, get_template } from '../input';
-import { val_errors, val_keys } from '../validators';
+import { inputAttrs, getTemplate } from '../input';
+import { valErrors, VAL_KEYS } from '../validators';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
@@ -61,8 +61,8 @@ export class FieldComp extends BaseInputComp {
     let spec = this.spec;
     // let key = spec.name;  // variable
     // this.ctrl: from controls[key];
-    this.attrs = input_attrs(this.path, spec);
-    this.type = get_template(spec, this.attrs);
+    this.attrs = inputAttrs(this.path, spec);
+    this.type = getTemplate(spec, this.attrs);
     // this.changes = this.ctrl.valueChanges;
     this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });
   }
@@ -73,11 +73,11 @@ export class FieldComp extends BaseInputComp {
     let spec = x;
     this.hidden = spec.type == 'hidden';
     this.label = marked(`**${spec.name}:** ${spec.description || ''}`);
-    // this.validator_msgs = get_validator(spec).val_msgs;
+    // this.validator_msgs = getValidator(spec).val_msgs;
     // this.validator_keys = _.keys(this.validator_msgs);
-    this.validator_keys = val_keys.filter(k => spec[k] != null);  // must filter, since validator_msgs without params are of no use
-    // this.validator_msgs = mapBoth(val_errors, (fn, k) => fn(spec[k]));
-    this.validator_msgs = arr2obj(this.validator_keys, k => val_errors[k](spec[k]));
+    this.validator_keys = VAL_KEYS.filter(k => spec[k] != null);  // must filter, since validator_msgs without params are of no use
+    // this.validator_msgs = mapBoth(valErrors, (fn, k) => fn(spec[k]));
+    this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](spec[k]));
   }
 
   showError(vldtr: string): string {

@@ -20,8 +20,8 @@ let _ = require('lodash/fp');
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
 import { WsService, RequestService, GlobalsService } from '../../services';
-import { handle_auth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
-import { load_ui, get_submit, req_url, pick_fn, doFetch, doProcess, doCurl } from './ui';
+import { handleAuth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
+import { loadUi, get_submit, reqUrl, pickFn, doFetch, doProcess, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
 import { curl_spec } from './curl_spec';
 import { fetch_spec, process_spec } from './scrape_spec';
@@ -107,8 +107,8 @@ export class App {
     this.fetch_spec = fetch_spec;
     this.process_spec = process_spec;
 
-    this.handle_implicit(window.location);
-    this.load_ui(api);
+    this.handleImplicit(window.location);
+    this.loadUi(api);
   };
 
   get extractor(): Function {
@@ -185,7 +185,7 @@ export class App {
   set spec(x: Front.Spec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
-    this.spec_meat();
+    this.specMeat();
   }
 
   get meat(): string[] {
@@ -194,7 +194,7 @@ export class App {
   set meat(x: string[]) {
     if(_.isUndefined(x)) return;
     this._meat = x;
-    this.spec_meat();
+    this.specMeat();
     this.setData();
   }
 
@@ -203,13 +203,13 @@ export class App {
     return _.size(meat) ? _.get(meat)(v) : v;
   }
 
-  spec_meat(): Front.Spec {
+  specMeat(): Front.Spec {
     let spec_path = _.flatten(this.meat.map(str => ['properties', str]));
     this.zoomed_spec = _.get(spec_path)(this.spec);
   }
 
   // sets and saves the auth token + scopes from the given get/hash
-  handle_implicit = (url: string) => handle_auth(url, (get: string, hash: string) => {
+  handleImplicit = (url: string) => handleAuth(url, (get: string, hash: string) => {
     let name = get.callback;
     let auth = {
       name,
@@ -221,9 +221,9 @@ export class App {
     setKV(name, auth);
   });
 
-  load_ui = load_ui;
-  req_url = req_url;
-  pick_fn = pick_fn;
+  loadUi = loadUi;
+  reqUrl = reqUrl;
+  pickFn = pickFn;
   doFetch = doFetch;
   doProcess = doProcess;
   doCurl = doCurl;
