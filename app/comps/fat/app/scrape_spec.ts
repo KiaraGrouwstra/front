@@ -7,7 +7,7 @@ let headers = standardHeaders.concat(chromeHeaders);
 // ^ okay for an auto-complete list of suggestions, maybe not for an enum error message...
 let mimeTypes = ['application/json','application/x-www-form-urlencoded','multipart/form-data','text/html'];
 
-export let fetch_spec: Front.Spec = {
+export let fetch_spec: Front.Schema = {
   type: 'object',
   required: ['urls', 'headers'],
   properties: {
@@ -92,7 +92,7 @@ let parselet = {
   },
 };
 
-let nested = _.assign(parselet, {
+let nested = _.assign(_.clone(parselet), {
   'x-bindings': {
     attributes: {
       hidden: `this.nav('../type', path) != 'array'`,
@@ -103,7 +103,7 @@ let nested = _.assign(parselet, {
 nested  .additionalProperties.properties.parselet = nested;
 parselet.additionalProperties.properties.parselet = nested;
 
-export let process_spec: Front.Spec = {
+export let process_spec: Front.Schema = {
   type: 'object',
   required: ['processor', 'parselet', 'transformer'],
   properties: {

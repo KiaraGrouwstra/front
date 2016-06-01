@@ -3,10 +3,10 @@ import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
 import { ControlGroup } from '@angular/common';
 import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
-import { ng2comp, key_spec } from '../../../lib/js';
+import { ng2comp, keySchema } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { ControlObject, ControlObjectKvPair } from '../controls';
-import { inputControl, mapSpec, getValStruct } from '../input'
+import { inputControl, mapSchema, getValStruct } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -23,7 +23,7 @@ type Ctrl = ControlObject<ControlGroup>; // { name, val }
 export class InputObjectComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;
   counter: number = 0;
@@ -42,13 +42,13 @@ export class InputObjectComp extends BaseInputComp {
   }
 
   setCtrl(x: Ctrl): void {
-    let spec = this.spec;
-    let valStruct = getValStruct(spec);
+    let schema = this.schema;
+    let valStruct = getValStruct(schema);
     let seed = () => new ControlObjectKvPair(valStruct);
     x.init(seed);
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     let { properties, patternProperties, additionalProperties } = x;
     this.isOneOf = _.has(['oneOf'], additionalProperties);
     // this.keyEnum = _.uniq(_.keys(properties).concat(_.get(['x-keys', 'enum'], x)));
@@ -64,14 +64,14 @@ export class InputObjectComp extends BaseInputComp {
     // window.setTimeout(() => $('select').material_select(), 300);
   }
 
-  resolveSpec(i: number): Front.Spec {
+  resolveSchema(i: number): Front.Schema {
     let opt = this.option;
     let ctrl = this.ctrl;
-    let spec = this.spec;
+    let schema = this.schema;
     let ret = _.isNumber(i) ?
-      key_spec(ctrl.at(i).controls.name.value, this.spec) :
-      spec.additionalProperties;
-    return (this.isOneOf && ret == spec.additionalProperties) ? ret.oneOf[opt] : ret;
+      keySchema(ctrl.at(i).controls.name.value, this.schema) :
+      schema.additionalProperties;
+    return (this.isOneOf && ret == schema.additionalProperties) ? ret.oneOf[opt] : ret;
   }
 
   add(): void {

@@ -13,7 +13,7 @@
           '[(ngModel)]'=`option`
         )
           option(
-            *ngFor=`let opt of inAdditional ? spec.additionalItems.oneOf : spec.items.oneOf; let idx = index`
+            *ngFor=`let opt of inAdditional ? schema.additionalItems.oneOf : schema.items.oneOf; let idx = index`
             '[value]'=`idx`
           )
             | {{opt.type}}
@@ -22,7 +22,7 @@
       
       ul(
         *ngIf=`!isOneOf || option`
-        '[ngControlGroup]'=`spec.name`
+        '[ngControlGroup]'=`schema.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
         li.row(
@@ -31,11 +31,11 @@
           button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item, i)`)
             | ×
           //- '[name]'=`i`
-          //- '[spec]'=`spec.items`
+          //- '[schema]'=`schema.items`
           input-field.col(
             '[named]'=`false`
             '[path]'=`path.concat(item)`
-            '[spec]'=`resolveSpec(i)`
+            '[schema]'=`resolveSchema(i)`
             '[ctrl]'=`ctrl.at(i)`
           )
           

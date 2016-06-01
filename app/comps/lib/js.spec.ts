@@ -1,6 +1,6 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 let _ = require('lodash/fp');
-import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, key_spec, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
+import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
 import { getSchema } from './schema';
 
 describe('js', () => {
@@ -148,27 +148,27 @@ describe('js', () => {
 
     it('finds all tables', () => {
       let data = { foo: [ { bar: 1 } ], baz: [ {} ] };
-      let spec = getSchema(data);
-      expect(findTables(spec)).toEqual([['foo'], ['baz']]);
+      let schema = getSchema(data);
+      expect(findTables(schema)).toEqual([['foo'], ['baz']]);
     })
 
     it('returns empty if none', () => {
       let data = { foo: { bar: 1 } };
-      let spec = getSchema(data);
-      expect(findTables(spec)).toEqual([]);
+      let schema = getSchema(data);
+      expect(findTables(schema)).toEqual([]);
     })
 
   })
 
-  describe('key_spec', () => {
+  describe('keySchema', () => {
     it('does fixed', () => {
-      expect(key_spec('a', { properties: { a: 1 } })).toEqual(1);
+      expect(keySchema('a', { properties: { a: 1 } })).toEqual(1);
     })
     it('does patts', () => {
-      expect(key_spec('c', { patternProperties: { '^c$': 3 } })).toEqual(3);
+      expect(keySchema('c', { patternProperties: { '^c$': 3 } })).toEqual(3);
     })
     it('does additional', () => {
-      expect(key_spec('z', { additionalProperties: 5 })).toEqual(5);
+      expect(keySchema('z', { additionalProperties: 5 })).toEqual(5);
     })
   })
 

@@ -5,7 +5,7 @@ import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
 export class ControlObjectKvPair extends ControlGroup {
   constructor(
-    valStruct: Front.IObjectSpec<ValidatorFn>,
+    valStruct: Front.IObjectSchema<ValidatorFn>,
   ) {
     let nameCtrl = inputControl({ name: 'name', type: 'string', required: true });
     let name$ = nameCtrl.valueChanges;

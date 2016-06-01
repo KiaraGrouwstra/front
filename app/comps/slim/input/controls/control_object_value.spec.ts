@@ -8,7 +8,7 @@ describe('ControlObjectValue', () => {
   let v, name$;
 
   beforeEach(() => {
-    let spec = {
+    let schema = {
       properties: {
         'fixed': {
           type: 'string',
@@ -21,7 +21,7 @@ describe('ControlObjectValue', () => {
         enum: ['additional'],
       },
     };
-    let valStruct = getValStruct(spec);
+    let valStruct = getValStruct(schema);
     name$ = new Subject();
     v = new ControlObjectValue(name$, valStruct);
   });

@@ -21,7 +21,7 @@ type Ctrl = ControlList<Control>;
 export class InputArrayComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;
   counter = 0;
@@ -34,11 +34,11 @@ export class InputArrayComp extends BaseInputComp {
     // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
 
   setCtrl(x: Ctrl): void {
-    let spec = this.spec;
-    if(_.isArray(spec.items)) {
+    let schema = this.schema;
+    if(_.isArray(schema.items)) {
       // ControlVector
-      let seeds = spec.items.map(s => inputControl(s, true));
-      let add = spec.additionalItems;
+      let seeds = schema.items.map(s => inputControl(s, true));
+      let add = schema.additionalItems;
       let fallback = _.isPlainObject(add) ?
           inputControl(add, true) :
           add == true ?
@@ -47,27 +47,27 @@ export class InputArrayComp extends BaseInputComp {
       x.init(seeds, fallback);
     } else {
       // ControlList
-      let seed = inputControl(spec.items, true);
+      let seed = inputControl(schema.items, true);
       x.init(seed);
     }
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.inAdditional = _.has(['additionalItems', 'oneOf'], x);
     this.isOneOf = this.inAdditional || _.has(['items', 'oneOf'], x);
     // window.setTimeout(() => $('select').material_select(), 300);
   }
 
-  getSpec(idx: number): Front.Spec {
-    let spec = this.spec;
-    return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
+  getSchema(idx: number): Front.Schema {
+    let schema = this.schema;
+    return this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
   }
 
-  resolveSpec(idx: number): Front.Spec {
+  resolveSchema(idx: number): Front.Schema {
     let opt = this.option;
-    let spec = this.getSpec(idx);
-    return !this.isOneOf ? spec : spec.oneOf[opt];
+    let schema = this.getSchema(idx);
+    return !this.isOneOf ? schema : schema.oneOf[opt];
   }
 
   add(): void {

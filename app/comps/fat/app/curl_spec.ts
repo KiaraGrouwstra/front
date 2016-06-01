@@ -1,4 +1,4 @@
-export let curl_spec: Front.Spec = {
+export let curl_spec: Front.Schema = {
   name: 'curl',
   type: 'string',
   required: true,

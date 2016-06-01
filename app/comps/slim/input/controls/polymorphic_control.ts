@@ -23,8 +23,8 @@ export class PolymorphicControl extends Control {
     this._ctrl = x;
   }
 
-  setSpec(spec: Front.Spec): void {
-    this.ctrl = inputControl(spec, false);
+  setSchema(schema: Front.Schema): void {
+    this.ctrl = inputControl(schema, false);
   }
 
   get value(): any { return this.ctrl.value; }

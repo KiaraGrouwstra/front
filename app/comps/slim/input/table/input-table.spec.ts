@@ -17,10 +17,10 @@ let scalar = {
   "required": true,
   "type": "string"
 };
-let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
-let ctrl = inputControl(spec);
+let schema = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
+let ctrl = inputControl(schema);
 let named = false;
-let pars = () => _.cloneDeep({ path, spec, ctrl, named });
+let pars = () => _.cloneDeep({ path, schema, ctrl, named });
 
 describe('InputTableComp', () => {
   let tcb;

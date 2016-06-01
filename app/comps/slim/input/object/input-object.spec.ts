@@ -18,12 +18,12 @@ let scalar = {
   "required": true,
   "type": "string"
 };
-let spec = { type: "object", additionalProperties: scalar };
-let ctrl = objectControl(spec); //inputControl
+let schema = { type: "object", additionalProperties: scalar };
+let ctrl = objectControl(schema); //inputControl
 let named = false;
-let pars = () => _.cloneDeep({ path, spec, ctrl, named });
+let pars = () => _.cloneDeep({ path, schema, ctrl, named });
 
-let validationSpec = {
+let validationSchema = {
   type: 'object',
   properties: {
     'fixed': {
@@ -36,7 +36,7 @@ let validationSpec = {
     enum: ['additional'],
   },
 };
-let validationPars = () => ({ path, spec: validationSpec, ctrl: objectControl(validationSpec), named });  //inputControl
+let validationPars = () => ({ path, schema: validationSchema, ctrl: objectControl(validationSchema), named });  //inputControl
 
 describe('InputObjectComp', () => {
   let tcb;

@@ -11,10 +11,10 @@ import { ExtComp } from '../../lib/annotations';
 })
 export class FnUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
-  @Input() spec: Front.Spec;
+  @Input() spec: Front.ApiSpec;
   @Input() oauth_sec: string;
   @Input() have: string[];
-  _spec: Front.Spec;
+  _spec: Front.ApiSpec;
   _oauth_sec: string;
   _have: string[];
   tags: swagger_io.v2.Schemajson.tags;
@@ -24,10 +24,10 @@ export class FnUiComp extends BaseComp {
   path_tooltips: {[key: string]: string};
   has_usable: {[key: string]: boolean};
 
-  get spec(): Front.Spec {
+  get spec(): Front.ApiSpec {
     return this._spec;
   }
-  set spec(x: Front.Spec) {
+  set spec(x: Front.ApiSpec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.combInputs();
@@ -51,7 +51,7 @@ export class FnUiComp extends BaseComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((spec: Front.Spec, oauth_sec: string, have: string[]) => {
+  combInputs = () => combine((spec: Front.ApiSpec, oauth_sec: string, have: string[]) => {
     this.tags = _.get(['tags'], spec) || [];
     let paths = _.get(['paths'], spec) || {};
     let misc_key;

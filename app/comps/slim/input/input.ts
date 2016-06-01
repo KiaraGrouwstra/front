@@ -21,9 +21,9 @@ function typeDefault(type: string): any {
   return _.get([type], def_vals);
 }
 
-function getDefault(spec: Front.Spec): any {
-  let def = spec.default;
-  return (!_.isUndefined(def)) ? def : typeDefault(spec.type);
+function getDefault(schema: Front.Schema): any {
+  let def = schema.default;
+  return (!_.isUndefined(def)) ? def : typeDefault(schema.type);
 }
 
 // get the input type for a value type
@@ -36,35 +36,35 @@ let inputType = (type: string) => _.get([type], {
 }) || type;
 
 // pick a Jade template
-export function getTemplate(spec: Front.Spec, attrs: Front.IAttributes): string|void {
-  return spec['x-template'] || _.get([spec.type], {
+export function getTemplate(schema: Front.Schema, attrs: Front.IAttributes): string|void {
+  return schema['x-template'] || _.get([schema.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
-    // string: spec.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
-    string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'select' : null,
-    // string: _.size(attrs.suggestions) ? 'datalist' : _.size(spec.enum) ? 'radio' : null,
+    // string: schema.enum ? (attrs.exclusive ? 'select' : 'datalist') : null,
+    string: _.size(attrs.suggestions) ? 'datalist' : _.size(schema.enum) ? 'select' : null,
+    // string: _.size(attrs.suggestions) ? 'datalist' : _.size(schema.enum) ? 'radio' : null,
     // ^ radio over select? alt. autocomplete over datalist?
     integer: (attrs.max && attrs.min && attrs.max > attrs.min) ? 'range' : null,
     // number: null,
     boolean: 'switch',
     date: 'date',
     file: 'file',
-    // array: spec.uniqueItems && _.size(spec.enum) ? 'checkboxes' : null,
+    // array: schema.uniqueItems && _.size(schema.enum) ? 'checkboxes' : null,
     // how to trigger, since only `input-field` runs by here?
     // ^ I'll assume `enum` implies scalar (checking in the face of *Of may be hard); otherwise how could I visualize?
     // object: [fieldset],
   }) || 'input';
 }
 
-// return the default value + validator for a spec
-function vldtrDefPair(spec: Front.Spec): Front.IVldtrDef {
+// return the default value + validator for a schema
+function vldtrDefPair(schema: Front.Schema): Front.IVldtrDef {
   return {
-    val: getDefault(spec),
-    vldtr: getValidator(spec),
+    val: getDefault(schema),
+    vldtr: getValidator(schema),
   };
 }
 
-// map a spec's subspecs given a lambda
-export function mapSpec<T,U>(fn: (T) => U): Front.IObjectSpec<(T) => U> {
+// map a schema's subschemas given a lambda
+export function mapSchema<T,U>(fn: (T) => U): Front.IObjectSchema<(T) => U> {
   return editValsOriginal({
     properties: _.mapValues(fn),
     patternProperties: _.mapValues(fn),
@@ -72,16 +72,16 @@ export function mapSpec<T,U>(fn: (T) => U): Front.IObjectSpec<(T) => U> {
   });
 }
 
-// get a struct of validator-default pairs of a spec
-// : Front.IObjectSpec<(Front.Spec) => Front.IVldtrDef>
-export let getValStruct = mapSpec(vldtrDefPair);
+// get a struct of validator-default pairs of a schema
+// : Front.IObjectSchema<(Front.Schema) => Front.IVldtrDef>
+export let getValStruct = mapSchema(vldtrDefPair);
 
 // `ControlObject` generator (kicked out of `inputControl`)
-export function objectControl(spec: Front.Spec, doSeed: boolean = false): ControlObject {
+export function objectControl(schema: Front.Schema, doSeed: boolean = false): ControlObject {
   let ctrl = new ControlObject();
   if(doSeed) {
-    // let allOf = _.get(['additionalProperties','allOf'], spec) || [];
-    let valStruct = getValStruct(spec);
+    // let allOf = _.get(['additionalProperties','allOf'], schema) || [];
+    let valStruct = getValStruct(schema);
     let seed = () => new ControlObjectKvPair(valStruct);
     ctrl.init(seed); //, allOf
   }
@@ -89,18 +89,18 @@ export function objectControl(spec: Front.Spec, doSeed: boolean = false): Contro
 }
 
 // return initial key/value pair for the model
-export function inputControl(spec: Front.Spec = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
+export function inputControl(schema: Front.Schema = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
   let factory, seed;  //, allOf
-  switch(spec.type) {
+  switch(schema.type) {
     case 'array':
-      // allOf = _.get(['items','allOf'], spec) || []; // oneOf is covered in the UI
+      // allOf = _.get(['items','allOf'], schema) || []; // oneOf is covered in the UI
       // only tablize predictable collections
-      let props = _.get(['items','properties'], spec);
-      if(_.isArray(spec.items)) {
+      let props = _.get(['items','properties'], schema);
+      if(_.isArray(schema.items)) {
         let cls = ControlVector;
         if(doSeed) {
-          let seeds = spec.items.map(x => inputControl(x, true, true));
-          let add = spec.additionalItems;
+          let seeds = schema.items.map(x => inputControl(x, true, true));
+          let add = schema.additionalItems;
           let fallback = _.isPlainObject(add) ?
               inputControl(add, true, true) :
               add == true ?
@@ -111,14 +111,14 @@ export function inputControl(spec: Front.Spec = {}, asFactory = false, doSeed: b
           factory = () => new cls();
         }
         // ^ ControlVector could also handle the simpler case below.
-      } else if(spec.uniqueItems && _.size(spec.enum)) {
-        factory = () => new ControlSet(spec.enum);
+      } else if(schema.uniqueItems && _.size(schema.enum)) {
+        factory = () => new ControlSet(schema.enum);
       } else {
         let cls = ControlList;
         if(doSeed) {
           let seed = props ?
               () => new ControlGroup(_.mapValues(x => inputControl(x, false, true), props)) :
-              inputControl(spec.items, true, true);
+              inputControl(schema.items, true, true);
           factory = () => new cls().init(seed);
         } else {
           factory = () => new cls();
@@ -128,15 +128,15 @@ export function inputControl(spec: Front.Spec = {}, asFactory = false, doSeed: b
     case 'object':
       let cls = ControlStruct;
       if(doSeed) {
-        let factStruct = mapSpec(x => inputControl(x, true, true))(spec);
-        factory = () => new cls().init(factStruct, spec.required || []);
+        let factStruct = mapSchema(x => inputControl(x, true, true))(schema);
+        factory = () => new cls().init(factStruct, schema.required || []);
       } else {
         factory = () => new cls();
       }
       break;
     default:
-      let val = getDefault(spec);
-      let validator = getValidator(spec);
+      let val = getDefault(schema);
+      let validator = getValidator(schema);
       factory = () => new Control(val, validator); //, async_validator
   }
   return asFactory ? factory : factory();
@@ -146,7 +146,7 @@ const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 
 // get the html attributes for a given parameter/input
 // http://swagger.io/specification/#parameterObject
-export function inputAttrs(path: Front.Path, spec: Front.Spec): Front.IAttributes {
+export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.parameter | Front.Schema): Front.IAttributes {
   // general parameters
   // // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
   // let kind = spec.in || '';
@@ -265,20 +265,20 @@ export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn 
   };
 }
 
-// calculate the different specs for key input controls, plus enum/suggestion options
-// any spec-like object will do for the param, since only keys are checked.
-export function getOptsNameSpecs(specLike: Front.IObjectSpec<any>): Object {
-  let { properties: props, patternProperties: patterns, additionalProperties: add } = specLike;
+// calculate the different schemas for key input controls, plus enum/suggestion options
+// any schema-like object will do for the param, since only keys are checked.
+export function getOptsNameSchemas(schemaLike: Front.IObjectSchema<any>): Object {
+  let { properties: props, patternProperties: patterns, additionalProperties: add } = schemaLike;
   let [fixed, patts] = [props, patterns].map(_.keys);
   let categorizer = categorizeKeys(patts, fixed);
-  let sugg = categorizer(_.get(['x-keys', 'suggestions'], specLike) || []);
-  let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], specLike) || []);
-  let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], specLike) || []);
-  let nameSpec = { name: 'name', type: 'string', required: true };
-  let nameSpecFixed = _.assign(nameSpec, { enum: fixed });
-  let nameSpecPatt = arr2obj(patts, patt => _.assign(nameSpec, { enum: pattEnum[patt], suggestions: pattSugg[patt] }));
-  let nameSpecAdd = _.assign(nameSpec, { enum: addEnum, suggestions: addSugg, not: { anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed }) } });
-  return { nameSpecFixed, nameSpecPatt, nameSpecAdd, addSugg, pattSugg, addEnum, pattEnum };
+  let sugg = categorizer(_.get(['x-keys', 'suggestions'], schemaLike) || []);
+  let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], schemaLike) || []);
+  let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], schemaLike) || []);
+  let nameSchema = { name: 'name', type: 'string', required: true };
+  let nameSchemaFixed = _.assign(nameSchema, { enum: fixed });
+  let nameSchemaPatt = arr2obj(patts, patt => _.assign(nameSchema, { enum: pattEnum[patt], suggestions: pattSugg[patt] }));
+  let nameSchemaAdd = _.assign(nameSchema, { enum: addEnum, suggestions: addSugg, not: { anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed }) } });
+  return { nameSchemaFixed, nameSchemaPatt, nameSchemaAdd, addSugg, pattSugg, addEnum, pattEnum };
 };
 
 // categorize keys to a pattern or additional

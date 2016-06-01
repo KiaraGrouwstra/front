@@ -14,22 +14,22 @@ type Ctrl = AbstractControl;
 })
 export abstract class BaseInputComp extends BaseInOutComp {
 
-  // @Input() spec: Front.Spec;
+  // @Input() schema: Front.Schema;
   // @Input() ctrl: Ctrl;
 
-  _spec: Front.Spec;
+  _schema: Front.Schema;
   _ctrl: Ctrl;
 
-  get spec(): Front.Spec {
-    return this._spec;
+  get schema(): Front.Schema {
+    return this._schema;
   }
-  set spec(x: Front.Spec) {
+  set schema(x: Front.Schema) {
     // this is getting set with the same value multiple times. why?
-    if(_.isUndefined(x) || _.isEqual(this._spec, x)) return;
-    this._spec = x;
-    this.setSpec(x);
+    if(_.isUndefined(x) || _.isEqual(this._schema, x)) return;
+    this._schema = x;
+    this.setSchema(x);
   }
-  setSpec(x: Front.Spec): void {}
+  setSchema(x: Front.Schema): void {}
 
   get ctrl(): Ctrl {
     return this._ctrl;

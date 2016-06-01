@@ -36,23 +36,23 @@ type Val = any; //Array<Object>;
 export class ValueComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
-  @Input() schema: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
   @ViewChild(ArrayComp) array: ArrayComp;
   @ViewChild(ObjectComp) object: ObjectComp;
-  new_spec: Front.Spec;
+  new_schema: Front.Schema;
   type: string;
 
   setVal(x: Val): void {
     this.combInputs();
   }
 
-  setSchema(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     this.combInputs();
   }
 
-  combInputs = () => tryLog(combine((val: any, schema: Front.Spec) => {
-    this.new_spec = _.get(['type'], schema) ? schema : trySchema(val, schema);
+  combInputs = () => tryLog(combine((val: any, schema: Front.Schema) => {
+    this.new_schema = _.get(['type'], schema) ? schema : trySchema(val, schema);
     this.type = _.get(['type'], schema) || inferType(val);
     // ^ handles anyOf/oneOf/allOf as well; good.
     let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];

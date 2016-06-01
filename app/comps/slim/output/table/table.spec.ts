@@ -27,7 +27,7 @@ describe('TableComp', () => {
     tcb = builder;
   }));
 
-  it('should work without header, spec or nesting using a table without holes', test(obs_pars, ({ comp, el }) => {
+  it('should work without header, schema or nesting using a table without holes', test(obs_pars, ({ comp, el }) => {
     // expect(el).toHaveText(flat);
     expect(comp.col_keys).toEqual(['a', 'b']);
   }));
@@ -37,6 +37,6 @@ describe('TableComp', () => {
     expect(comp.col_keys).toEqual(['a', 'b']);
   }));
 
-  // spec, nesting, holes
+  // schema, nesting, holes
 
 });

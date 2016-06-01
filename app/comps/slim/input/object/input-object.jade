@@ -13,7 +13,7 @@
           '[(ngModel)]'=`option`
         )
           option(
-            *ngFor=`let opt of spec.additionalProperties.oneOf; let idx = index`
+            *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
             '[value]'=`idx`
           )
             | {{opt.type}}
@@ -22,11 +22,11 @@
       
       ul(
         *ngIf=`!isOneOf || option`
-        '[ngControlGroup]'=`spec.name`
+        '[ngControlGroup]'=`schema.name`
       )
         table.bordered.highlight
         thead
-          //- spec.items.properties[key].name
+          //- schema.items.properties[key].name
           th Name
           th Value
           th
@@ -43,17 +43,17 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('name')`
-                '[spec]'=`{ name: 'name', type: 'string', required: true, enum: keyEnum, suggestions: keySugg }`
+                '[schema]'=`{ name: 'name', type: 'string', required: true, enum: keyEnum, suggestions: keySugg }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
             //- ("#key = 'val'")
             td
               //- '[name]'=`i`
-              //- '[spec]'=`((spec?.properties && i) ? spec?.properties[ctrl.at(i).controls.name] : null) || spec.additionalProperties`
+              //- '[schema]'=`((schema?.properties && i) ? schema?.properties[ctrl.at(i).controls.name] : null) || schema.additionalProperties`
               input-value(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('val')`
-                '[spec]'=`resolveSpec(i)`
+                '[schema]'=`resolveSchema(i)`
                 '[ctrl]'=`ctrl.at(i).controls.val`
               )
             td

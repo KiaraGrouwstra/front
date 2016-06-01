@@ -149,11 +149,11 @@
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
           )
-            //- colMeta[name].spec
+            //- colMeta[name].schema
             value(
               '[path]'=`r.cells[name].path`
               '[val]'=`r.cells[name].val`
-              '[schema]'=`getSpec(idx)`
+              '[schema]'=`getSchema(idx)`
             )
           //- td(
           //-   *ngFor=`let name of colOrder; #c = r.cells.get(name)`

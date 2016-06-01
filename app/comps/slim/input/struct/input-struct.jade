@@ -2,18 +2,18 @@
   .card-content('[id]'=`id`)
     p.card-title(*ngIf='named') {{k}}
     //- '[ngControlGroup]'=`ctrl`
-    //- '[ngControlGroup]'=`spec.name`
+    //- '[ngControlGroup]'=`schema.name`
     form
       .fixed-props(*ngIf=`hasFixed`)
         b Fixed Properties
-        .fixed-add(*ngIf=`nameSpecFixedFiltered.enum.length`)
+        .fixed-add(*ngIf=`nameSchemaFixedFiltered.enum.length`)
           //- #newFixed
-          //- '[spec]'=`nameSpecFixed`
+          //- '[schema]'=`nameSchemaFixed`
           //- '(changes)'=`print($event)`
           input-field(
             '[named]'=`false`
             '[path]'=`path.concat('newFixed')`
-            '[spec]'=`nameSpecFixedFiltered`
+            '[schema]'=`nameSchemaFixedFiltered`
             '[ctrl]'=`nameCtrlFixed`
             '(changes)'=`addProperty($event)`
           )
@@ -28,30 +28,30 @@
           //-   th Value
           //-   th
           tbody
-            //- assign spec to variable to prevent duplicate lookup
+            //- assign schema to variable to prevent duplicate lookup
             tr(
               *ngFor=`let item of indices.properties; let i = index`
-              '[dynamicAttrs]'=`specFixed(item)['x-bindings']?.attributes`
+              '[dynamicAttrs]'=`schemaFixed(item)['x-bindings']?.attributes`
               '[extraVars]'=`{ path: path.concat(item) }`
             )
               //- td
               //-   input-field(
               //-     '[named]'=`false`
               //-     '[path]'=`path.concat(item).concat('name')`
-              //-     '[spec]'=`nameSpecFixed`
+              //-     '[schema]'=`nameSchemaFixed`
               //-     '[ctrl]'=`ctrl.controls.properties.controls[item].controls.name`
               //-   )
               td
                 //- p item: {{item}}, i: {{i}}
-                //- set spec's name: item
+                //- set schema's name: item
                 input-value(
                   '[named]'=`true`
                   '[path]'=`path.concat(item)`
-                  '[spec]'=`specFixed(item)`
+                  '[schema]'=`schemaFixed(item)`
                   '[ctrl]'=`ctrl.controls.properties.controls[item]`
                 )
               td(
-                *ngIf=`!spec?.required?.includes(item)`
+                *ngIf=`!schema?.required?.includes(item)`
               )
                 button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removeProperty(item)`)
                   | ×
@@ -65,7 +65,7 @@
           //- input-field(
           //-   '[named]'=`false`
           //-   '[path]'=`path.concat(item).concat('name')`
-          //-   '[spec]'=`nameSpecPatt[patt]`
+          //-   '[schema]'=`nameSchemaPatt[patt]`
           //-   '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
           //- )
           //- '(click)'=`addPatternProperty(patt, newPatt.value); newPatt.value = '';`
@@ -84,14 +84,14 @@
                   input-field(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('name')`
-                    '[spec]'=`nameSpecPatt[patt]`
+                    '[schema]'=`nameSchemaPatt[patt]`
                     '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
                   )
                 td
                   input-value(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('val')`
-                    '[spec]'=`specPatt(patt,i)`
+                    '[schema]'=`schemaPatt(patt,i)`
                     '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.val`
                   )
                 td
@@ -109,7 +109,7 @@
               '[(ngModel)]'=`option`
             )
               option(
-                *ngFor=`let opt of spec.additionalProperties.oneOf; let idx = index`
+                *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
                 '[value]'=`idx`
               )
                 | {{opt.type}}
@@ -130,14 +130,14 @@
                   input-field(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('name')`
-                    '[spec]'=`nameSpecAdd`
+                    '[schema]'=`nameSchemaAdd`
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.name`
                   )
                 td
                   input-value(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('val')`
-                    '[spec]'=`isOneOf ? spec.additionalProperties.oneOf[opt] : spec.additionalProperties`
+                    '[schema]'=`isOneOf ? schema.additionalProperties.oneOf[opt] : schema.additionalProperties`
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.val`
                   )
                 td

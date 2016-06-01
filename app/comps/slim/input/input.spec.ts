@@ -1,14 +1,14 @@
 let _ = require('lodash/fp');
-import { mapSpec, inputControl, categorizeKeys } from './input';
+import { mapSchema, inputControl, categorizeKeys } from './input';
 import { Control, ControlGroup } from '@angular/common';
 import { ControlList, ControlStruct } from './controls';
 
 describe('input', () => {
 
-  it('mapSpec', () => {
-    let spec = { properties: { a: 1 }, patternProperties: { x: 2 }, additionalProperties: 3 };
+  it('mapSchema', () => {
+    let schema = { properties: { a: 1 }, patternProperties: { x: 2 }, additionalProperties: 3 };
     let doubled = { properties: { a: 2 }, patternProperties: { x: 4 }, additionalProperties: 6 };
-    expect(mapSpec(y => y * 2)(spec)).toEqual(doubled);
+    expect(mapSchema(y => y * 2)(schema)).toEqual(doubled);
   })
 
   it('inputControl', () => {

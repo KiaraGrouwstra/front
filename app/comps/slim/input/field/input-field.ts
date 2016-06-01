@@ -42,7 +42,7 @@ export class FieldComp extends BaseInputComp {
   @Output() changes = new EventEmitter(false);
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   attrs: Front.IAttributes;
   type: string;
@@ -62,34 +62,34 @@ export class FieldComp extends BaseInputComp {
 
   ngOnInit() {
     // hidden, type:input|?, id, label, ctrl, validator_keys, validators
-    let spec = this.spec;
-    // let key = spec.name;  // variable
+    let schema = this.schema;
+    // let key = schema.name;  // variable
     // this.ctrl: from controls[key];
-    this.attrs = inputAttrs(this.path, spec);
-    this.type = getTemplate(spec, this.attrs);
+    this.attrs = inputAttrs(this.path, schema);
+    this.type = getTemplate(schema, this.attrs);
     // this.changes = this.ctrl.valueChanges;
     this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     const ofs = ['anyOf','oneOf','allOf'];
     this.of = _.find(k => x[k])(ofs) || _.findKey(x.type || {})(ofs);
-    let spec = x;
-    this.hidden = spec.type == 'hidden';
-    this.label = marked(`**${spec.name}:** ${spec.description || ''}`);
-    // this.validator_msgs = getValidator(spec).val_msgs;
+    let schema = x;
+    this.hidden = schema.type == 'hidden';
+    this.label = marked(`**${schema.name}:** ${schema.description || ''}`);
+    // this.validator_msgs = getValidator(schema).val_msgs;
     // this.validator_keys = _.keys(this.validator_msgs);
-    this.validator_keys = VAL_KEYS.filter(k => spec[k] != null);  // must filter, since validator_msgs without params are of no use
-    // this.validator_msgs = mapBoth(valErrors, (fn, k) => fn(spec[k]));
-    this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](spec[k]));
+    this.validator_keys = VAL_KEYS.filter(k => schema[k] != null);  // must filter, since validator_msgs without params are of no use
+    // this.validator_msgs = mapBoth(valErrors, (fn, k) => fn(schema[k]));
+    this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }
 
   showError(vldtr: string): string {
     return (this.ctrl.errors||{})[vldtr];
   }
 
-  resolveSpec(): Front.Spec {
-    return this.spec[this.of][this.option];
+  resolveSchema(): Front.Schema {
+    return this.schema[this.of][this.option];
   }
 
   // print(v) {

@@ -5,7 +5,7 @@ import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
-import { inputControl, getOptsNameSpecs, mapSpec } from '../input';
+import { inputControl, getOptsNameSchemas, mapSchema } from '../input';
 import { ControlStruct } from '../controls';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
@@ -27,14 +27,14 @@ type Ctrl = ControlStruct;
 export class InputStructComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;
   counter = 0;
   indices = { properties: new Set([]), patternProperties: {}, additionalProperties: new Set([]) };
   // keys = ['name', 'val'];
-  nameSpecFixed: Front.Spec;
-  nameSpecFixedFiltered: Front.Spec = {};
+  nameSchemaFixed: Front.Schema;
+  nameSchemaFixedFiltered: Front.Schema = {};
   isOneOf: boolean;
   hasFixed: boolean;
   hasPatts: boolean;
@@ -50,20 +50,20 @@ export class InputStructComp extends BaseInputComp {
   }
 
   setCtrl(x: Ctrl): void {
-    let spec = this.spec;
-    let factStruct = mapSpec(s => inputControl(s, true))(spec);
-    x.init(factStruct, spec.required || []);
+    let schema = this.schema;
+    let factStruct = mapSchema(s => inputControl(s, true))(schema);
+    x.init(factStruct, schema.required || []);
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     tryLog(() => {
     let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
     this.isOneOf = _.has(['oneOf'], add);
     [this.hasFixed, this.hasPatts, this.hasAdd] = [props, patts, add].map(x => _.size(x));
-    // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSpecFixed: this.nameSpecFixed, nameSpecPatt: this.nameSpecPatt, nameSpecAdd: this.nameSpecAdd } = getOptsNameSpecs(x);
-    // Object.assign(this, getOptsNameSpecs(x));
-    _.forEach((v, k) => { this[k] = v; })(getOptsNameSpecs(x));
-    this.nameCtrlFixed = inputControl(this.nameSpecFixed);
+    // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSchemaFixed: this.nameSchemaFixed, nameSchemaPatt: this.nameSchemaPatt, nameSchemaAdd: this.nameSchemaAdd } = getOptsNameSchemas(x);
+    // Object.assign(this, getOptsNameSchemas(x));
+    _.forEach((v, k) => { this[k] = v; })(getOptsNameSchemas(x));
+    this.nameCtrlFixed = inputControl(this.nameSchemaFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
     this.indices = { properties: new Set(prepopulated), patternProperties: _.mapValues(x => new Set([]))(patts), additionalProperties: new Set([]) };
@@ -72,19 +72,19 @@ export class InputStructComp extends BaseInputComp {
   }
 
   @fallback({})
-  specFixed(item: string): Front.Spec {
-    return _.set(['name'], item)(this.spec.properties[item]);
+  schemaFixed(item: string): Front.Schema {
+    return _.set(['name'], item)(this.schema.properties[item]);
   }
 
   @fallback({})
-  specPatt(patt: string, i: number): Front.Spec {
+  schemaPatt(patt: string, i: number): Front.Schema {
     let name = ctrl.patternProperties.controls[patt].at(i).controls.name.value;
-    return _.set(['name'], name)(this.spec.patternProperties[patt]);
+    return _.set(['name'], name)(this.schema.patternProperties[patt]);
   }
 
   @try_log()
   addProperty(k: string): void {
-    if(this.nameSpecFixedFiltered.enum.includes(k)) {
+    if(this.nameSchemaFixedFiltered.enum.includes(k)) {
       this.ctrl.addProperty(k);
       this.indices.properties.add(k);
       // if no intentions to add reordering I could've just iterated over `_.keys(this.ctrl.controls.properties.controls)`
@@ -104,7 +104,7 @@ export class InputStructComp extends BaseInputComp {
 
   @try_log()
   updateFixedList(): void {
-    this.nameSpecFixedFiltered = _.update('enum', arr => _.difference(arr, Array.from(this.indices.properties)))(this.nameSpecFixed);
+    this.nameSchemaFixedFiltered = _.update('enum', arr => _.difference(arr, Array.from(this.indices.properties)))(this.nameSchemaFixed);
   }
 
   @try_log()

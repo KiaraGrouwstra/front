@@ -18,17 +18,17 @@ let scalar = {
   "required": true,
   "type": "string"
 };
-let spec = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar };
-let ctrl = inputControl(spec);
+let schema = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar };
+let ctrl = inputControl(schema);
 let named = false;
 let pars = () => _.cloneDeep({
   path,
-  spec,
+  schema,
   ctrl,
   named,
 });
 
-let validationSpec = {
+let validationSchema = {
   type: 'array',
   items: [
     {
@@ -45,8 +45,8 @@ let validationSpec = {
     enum: ['c'],
   },
 };
-let validationCtrl = inputControl(validationSpec);
-let validationPars = () => _.cloneDeep({ path, spec: validationSpec, ctrl: validationCtrl, named });
+let validationCtrl = inputControl(validationSchema);
+let validationPars = () => _.cloneDeep({ path, schema: validationSchema, ctrl: validationCtrl, named });
 
 describe('InputArrayComp', () => {
   let tcb;

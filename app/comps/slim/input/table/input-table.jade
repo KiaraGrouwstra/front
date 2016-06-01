@@ -5,7 +5,7 @@
     //- '[ngControlGroup]'=`ctrl`
     form
       ul(
-        '[ngControlGroup]'=`spec.name`
+        '[ngControlGroup]'=`schema.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
         li.row(*ngFor=`let item of items; let i = index`)
@@ -17,15 +17,15 @@
             tbody
               //- id=`{{?.id}}`
               tr(*ngFor=`let key of keys`)
-                //- spec.items.properties[key].name
+                //- schema.items.properties[key].name
                 th {{key}}
                 td
                   //- '[name]'=`i`
-                  //- '[spec]'=`spec.items.properties[key]`
+                  //- '[schema]'=`schema.items.properties[key]`
                   input-field(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat(key)`
-                    '[spec]'=`getSpec(i, key)`
+                    '[schema]'=`getSchema(i, key)`
                     '[ctrl]'=`ctrl.at(i).controls[key]`
                   )
 

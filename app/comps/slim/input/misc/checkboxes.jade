@@ -1,6 +1,6 @@
 //- for use with ControlSet
 ul
-  li(*ngFor='let opt of spec.enum')
+  li(*ngFor='let opt of schema.enum')
     md-checkbox(
       '[checked]'=`ctrl.has(opt)`
       '(change)'=`$event ? ctrl.add(opt) : ctrl.delete(opt)`

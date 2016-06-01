@@ -58,7 +58,7 @@ abstract class ObjDirective implements DoCheck {
 }
 
 // mixin: http://www.2ality.com/2016/05/six-nifty-es6-tricks.html
-const DynamicDirective = Sup => abstract class extends Sup {
+const DynamicDirective = Sup => class extends Sup {
   _context: ComponentClass;
   _extra: {};
 

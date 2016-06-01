@@ -9,8 +9,8 @@ form
   datalist(
     '[id]'=`attrs.id + '-datalist'`
   )
-    //- *ngFor='let opt of spec.enum'
+    //- *ngFor='let opt of schema.enum'
     option(
-      *ngFor='let opt of spec.suggestions'
+      *ngFor='let opt of schema.suggestions'
       '[value]'='opt'
     )

@@ -214,24 +214,24 @@ export function ng2comp(o: { component: {}, parameters: Array<void>, decorators:
   return cls;
 };
 
-// use to map an array of input specs to a version with path added
-export function input_specs(path: Front.Path = []): (v: string, idx: number) => Front.IPathSpec {
-  return (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), spec: v });
+// use to map an array of input schemas to a version with path added
+export function inputSchemas(path: Front.Path = []): (v: string, idx: number) => Front.IPathSchema {
+  return (v, idx) => ({ path: path.concat(_.get('name')(v) || idx), schema: v });
 }
 
 // pars to make a form for a given API function. json-path?
-export function method_pars(spec: Front.Spec, fn_path: string): { pars: Front.Spec, desc: string } {
+export function methodPars(spec: Front.ApiSpec, fn_path: string): { pars: Front.Schema, desc: string } {
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => idCleanse(x));
   // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let arr = _.get(hops, spec) || [];
-  let pars = specFromArr(arr);
+  let schema = schemaFromArr(arr);
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
-  return { pars, desc };
+  return { pars: schema, desc };
 };
 
-// convert an array of specs to an object spec
-let specFromArr = (arr) => {
+// convert an array of schemas to an object schema
+let schemaFromArr = (arr) => {
   let names = arr.map(y => y.name);
   let props = _.zipObject(names, arr);
   return { type: 'object', properties: props, required: names };
@@ -239,13 +239,13 @@ let specFromArr = (arr) => {
 
 // finds and returns an array of all json paths (as string arrays) of any tables (not within arrays)
 // in a JSON schema as suggestions to use as the meat extractor for fetched JSON results.
-export function findTables(spec: Front.Spec, path: Front.Path = []): Front.Path[] {
-  if (spec.type == 'array' && spec.items.type == 'object') {
+export function findTables(schema: Front.Schema, path: Front.Path = []): Front.Path[] {
+  if (schema.type == 'array' && schema.items.type == 'object') {
     return [path];
   } else {
-    if (spec.type == 'object') {
-      let keys = _.keys(spec.properties);
-      return _.flatten(keys.map(k => findTables(spec.properties[k], path.concat(k))));
+    if (schema.type == 'object') {
+      let keys = _.keys(schema.properties);
+      return _.flatten(keys.map(k => findTables(schema.properties[k], path.concat(k))));
     } else {
       return [];
     }
@@ -253,7 +253,7 @@ export function findTables(spec: Front.Spec, path: Front.Path = []): Front.Path[
 };
 
 // update an OpenAPI/Swagger schema from an older version.
-export function updateSpec(specification: Front.Spec): Front.Spec {
+export function updateSpec(specification: Front.ApiSpec): Front.ApiSpec {
   let spec = _.cloneDeep(specification);
   // [Swagger 1.1 to 1.2](https://github.com/OAI/OpenAPI-Specification/wiki/1.2-transition)
   // [1.2 to 2.0](https://github.com/OAI/OpenAPI-Specification/wiki/Swagger-1.2-to-2.0-Migration-Guide)
@@ -269,13 +269,13 @@ export function updateSpec(specification: Front.Spec): Front.Spec {
 };
 
 // TODO: simplify the `_.find` part if with {cap:false} I can make lodash have it expose Object keys.
-// for a given object key get the appropriate entry in the spec
-export function key_spec(k: string, spec: Front.Spec): Front.Spec {
-  return _.get(['properties', k], spec)
+// for a given object key get the appropriate entry in the schema
+export function keySchema(k: string, schema: Front.Schema): Front.Schema {
+  return _.get(['properties', k], schema)
   || _.get(['patternProperties', _.find(p => new RegExp(p).test(k))(
-    _.keys(_.get(['patternProperties'], spec))
-  )], spec)
-  || _.get(['additionalProperties'], spec);
+    _.keys(_.get(['patternProperties'], schema))
+  )], schema)
+  || _.get(['additionalProperties'], schema);
 };
 
 // find the index of an item within a Set (indicating in what order the item was added).
@@ -344,6 +344,12 @@ export class ExtendableError extends Error {
       this.stack = (new Error(message)).stack;
     }
   }
+}
+
+export function getSafe(path: string[]): Function {
+  // console.log('getSafe', path);
+  // return _.get(path);
+  return _.size(path) ? _.get(path) : y => y;
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

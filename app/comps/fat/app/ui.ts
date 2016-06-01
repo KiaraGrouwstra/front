@@ -13,6 +13,10 @@ export let loadUi = tryLog(async function(name: string) {
   let api = await (
     this._http
     .get(`./openapi/${name}.json`)
+    // .map(x => {
+    //     let esc = _.escapeRegExp("http://json-schema.org/draft-04/schema");
+    //     return x._body.replace(new RegExp(esc, 'g'), "/openapi/schema.json");
+    // })
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
     .toPromise()
@@ -39,21 +43,6 @@ export let loadUi = tryLog(async function(name: string) {
   //   global.$('.tooltipped').tooltip({delay: 0});
   // }, 3);
 
-  // output
-  // let schema = await (
-  //     this.http
-  //     .get('./openapi/openapi.json')
-  //     .map(x => {
-  //         let esc = _.escapeRegExp("http://json-schema.org/draft-04/schema");
-  //         return x._body.replace(new RegExp(esc, 'g'), "/openapi/schema.json");
-  //     })
-  //     .map(x => JSON.parse(x))
-  //     .mergeMap(x => $RefParser.dereference(x))
-  //     .toPromise()
-  // )
-  // let html = parseVal([], api, schema);
-  // this.loadHtml('output', {}, html);
-
 })
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
@@ -70,8 +59,8 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
     toast.info(start);
-    this.spec = {};
-    // ^ Should trigger inference. What about APIs? For those I should have specs.
+    this.schema = {};
+    // ^ Should trigger inference. What about for APIs? For those I should have specs.
     this.raw = []; // array to concat to
     // ^ forcing everything into an array is great for the purpose of making results combineable,
     // whether they were originally arrays or not, but could make for terrible use of screen space...
@@ -82,9 +71,9 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
       x => {
         console.log(next, x);
         // toast.info(next);
-        if(_.isEmpty(this.spec)) this.spec = getSchema(x);
+        if(_.isEmpty(this.schema)) this.schema = getSchema(x);
         if(!this.meat_opts) {
-          this.meat_opts = findTables(this.spec);
+          this.meat_opts = findTables(this.schema);
           this.meat_str_opts = this.meat_opts.map(y => y.join('.'));
           // window.setTimeout(() => $('select').material_select(), 500);
         }

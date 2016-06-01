@@ -3,14 +3,14 @@ import { arr2obj, mapBoth } from './js';
 import { formatMap, validateFormat } from '../slim/input/validators';
 
 // generate a schema for a given value, with root stuff added
-export function getRootSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Spec {
+export function getRootSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Schema {
   return _.assign(getSchema(v, settings), {
     '$schema': 'http://json-schema.org/draft-04/schema#',
   });
 }
 
 // generate a schema for a given value
-export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Spec {
+export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Front.Schema {
   let type = getType(v);
   let schema = { type };
   if (_.isArray(v)) {
@@ -70,11 +70,11 @@ function getType(v: any): string {
   return _.isArray(v) ? 'array' : _.isObject(v) ? 'object' : _.isNumber(v) ? (_.isInteger(v) ? 'integer' : 'number') : _.isString(v) ? 'string' : _.isNull(v) ? 'null' : _.isBoolean(v) ? 'boolean' : 'any';
 }
 
-// check a symmetric condition to merge two specs, with an asymmetric tie-breaker as fallback.
+// check a symmetric condition to merge two schemas, with an asymmetric tie-breaker as fallback.
 function checkSym(
-  lambda: Front.ValSpecMergeFn,
-  fallback: Front.ValSpecMergeFn = ([a,b]) => undefined,
-): Front.ValSpecMergeFn {
+  lambda: Front.ValSchemaMergeFn,
+  fallback: Front.ValSchemaMergeFn = ([a,b]) => undefined,
+): Front.ValSchemaMergeFn {
   return ([a, b], [acc, val]) => {
     let symm;
     symm = lambda([a, b], [acc, val]);
@@ -86,8 +86,8 @@ function checkSym(
   };
 }
 
-// merge `additionalProperties` of two specs
-let checkAdditional: Front.ValSpecMergeFn = checkSym(
+// merge `additionalProperties` of two schemas
+let checkAdditional: Front.ValSchemaMergeFn = checkSym(
   ([x, y]) => {
     if (x == true) return true;
     if (x == false) return y;
@@ -105,8 +105,8 @@ function max([a, b]: number[]): number {
   return (a && b) ? _.max([a,b]) : undefined;
 }
 
-// merge all keys of two specs (for `properties` and `patternProperties`)
-function checkProperties([a, b]: Front.Spec[]): Front.Spec {
+// merge all keys of two schemas (for `properties` and `patternProperties`)
+function checkProperties([a, b]: Front.Schema[]): Front.Schema {
   if (a && b) {
     let keys = _.uniq([..._.keys(a), ..._.keys(a)]);
     let pairs = arr2obj(keys, k => [a[k], b[k]]);
@@ -117,8 +117,8 @@ function checkProperties([a, b]: Front.Spec[]): Front.Spec {
   }
 }
 
-// get the applicable specifications for a given type from a schema
-function typeSpec(type: string, obj: Front.Spec): Front.Spec {
+// get the applicable Schemaifications for a given type from a schema
+function typeSchema(type: string, obj: Front.Schema): Front.Schema {
   let schema = { type };
   const props = {
     integer:
@@ -142,8 +142,8 @@ function typeSpec(type: string, obj: Front.Spec): Front.Spec {
   return schema;
 };
 
-// merge two schemas into one, i.e. for each key go with the less strict spec.
-export function mergeSchemas(acc: Front.Spec, val: Front.Spec): Front.Spec {
+// merge two schemas into one, i.e. for each key go with the less strict schema.
+export function mergeSchemas(acc: Front.Schema, val: Front.Schema): Front.Schema {
   if(!val) return acc;
   if(!acc) return val;
   // let mapped = mapBoth(mergers, (fn, k) => fn([acc[k], val[k]], [acc, val]));
@@ -151,11 +151,11 @@ export function mergeSchemas(acc: Front.Spec, val: Front.Spec): Front.Spec {
   return _.pickBy(y => !_.isUndefined(y))(mapped);
 }
 
-// issue: this gets tried with an `undefined` both when combining with a spec that doesn't require it (in which case I should return undefined too), as well as when there is some new nested spec that apparently should get it. not sure how to handle this, so kicking multipleOf out for now...
+// issue: this gets tried with an `undefined` both when combining with a schema that doesn't require it (in which case I should return undefined too), as well as when there is some new nested schema that apparently should get it. not sure how to handle this, so kicking multipleOf out for now...
 // let gcd = (a, b) => !b ? a : gcd(b, a % b);
 // let gcd = (a, b) => !a ? a : !b ? b : gcd(b, a % b);
 
-// for each key in a schema specify how to merge specs, i.e. how to select the less strict spec.
+// for each key in a schema specify how to merge schemas, i.e. how to select the less strict schema.
 const mergers = {
   // NUMBERS:
   // multipleOf: ([a, b]) => gcd(a, b),
@@ -168,7 +168,7 @@ const mergers = {
   maxLength: max,
   minLength: min,
   // pattern
-  enum: ([a, b]) => (a && b) ? _.union(a, b) : a ? b : a, // just union could return [], which the spec doesn't allow
+  enum: ([a, b]) => (a && b) ? _.union(a, b) : a ? b : a, // just union could return [], which the schema doesn't allow
   format: checkSym(
     ([x, y], [xObj, yObj]) => {
       if (_.isUndefined(x)) {
@@ -245,7 +245,7 @@ const mergers = {
       }
       if (x == 'number' && y == 'integer') return 'number';
       if (_.isObject(x) && x.anyOf) {
-        let other = (_.isObject(y) && y.anyOf) ? y.anyOf : typeSpec(y, yObj);
+        let other = (_.isObject(y) && y.anyOf) ? y.anyOf : typeSchema(y, yObj);
         return { anyOf: _.uniq(x.anyOf.concat(other)) };
       }
       // merge further than leaving all non-equal ones?
@@ -255,7 +255,7 @@ const mergers = {
       // oneOf
       // not
     },
-    ([a,b], [acc, val]) => ({ anyOf: [typeSpec(a, acc), typeSpec(b, val)] })
+    ([a,b], [acc, val]) => ({ anyOf: [typeSchema(a, acc), typeSchema(b, val)] })
   ),
 };
 

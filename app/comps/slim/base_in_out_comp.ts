@@ -12,12 +12,12 @@ type Val = any;
 export abstract class BaseInOutComp extends BaseSlimComp {
 
   // TableComp: schema in front cuz optional, this way combInputs only gets called once
-  // @Input() schema: Front.Spec;
+  // @Input() schema: Front.Schema;
   // these should be here but it doesn't seem to inherit
   // @Input() @BooleanFieldValue() named: boolean = false;
   // @Input() path: Front.Path;
 
-  // _schema: Front.Spec;
+  // _schema: Front.Schema;
   _path: Front.Path;
 
   k: string;

@@ -7,7 +7,7 @@ import { ControlObjectKvPair } from './control_object_kv_pair';
 import { getValStruct } from '../input';
 import { myAsync } from '../../../test';
 
-let spec = {
+let schema = {
   properties: {
     'fixed': {
       type: 'string',
@@ -20,7 +20,7 @@ let spec = {
     enum: ['additional'],
   },
 };
-let valStruct = getValStruct(spec);
+let valStruct = getValStruct(schema);
 
 describe('ControlObjectKvPair', () => {
   let kv;

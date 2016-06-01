@@ -9,21 +9,21 @@ type Val = any;
 @ExtComp({})
 export abstract class BaseOutputComp extends BaseInOutComp {
 
-  // @Input() schema: Front.Spec;
+  // @Input() schema: Front.Schema;
   // @Input() val: Val;
 
-  _schema: Front.Spec;
+  _schema: Front.Schema;
   _val: Val;
 
-  get schema(): Front.Spec {
+  get schema(): Front.Schema {
     return this._schema;
   }
-  set schema(x: Front.Spec) {
+  set schema(x: Front.Schema) {
     if(_.isUndefined(x)) return;
     this._schema = x;
     this.setSchema(x);
   }
-  setSchema(x: Front.Spec): void {}
+  setSchema(x: Front.Schema): void {}
 
   get val(): Val {
     return this._val;

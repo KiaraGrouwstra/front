@@ -6,15 +6,15 @@ module Front {
 
   // global
 
-  // export type Spec = Object | any[];
-  // export type Spec = swagger_io.v2.SchemaJson;
-  export type Spec = swagger_io.v2.Schema;
+  export type Schema = json_schema_org.draft_04.Schema;
+
+  export type ApiSpec = swagger_io.v2.Schema; // SchemaJson
 
   export type Path = Array<string | number>;
 
-  export interface IPathSpec {
+  export interface IPathSchema {
     path: Path,
-    spec: Spec,
+    schema: Schema,
   }
 
   // input
@@ -51,7 +51,7 @@ module Front {
     vldtr: ValidatorFn,
   }
 
-  export interface IObjectSpec<T> {
+  export interface IObjectSchema<T> {
     properties: {[key: string]: T},
     patternProperties: {[key: string]: T},
     additionalProperties: T,
@@ -69,7 +69,7 @@ module Front {
 
   // input/form
 
-  export interface IInput extends IPathSpec {
+  export interface IInput extends IPathSchema {
     ctrl: AbstractControl,
     named?: boolean,
   }
@@ -77,7 +77,7 @@ module Front {
   // schema
 
   // function to merge a certain values of two schemas
-  export type ValSpecMergeFn = (vals: any[], spec: Spec[]) => Spec;
+  export type ValSchemaMergeFn = (vals: any[], schema: Schema[]) => Schema;
 
   // settings for generating schemas from example values
   export interface IGenSchemaSettings {
@@ -86,11 +86,11 @@ module Front {
 
   // output
 
-  export interface ICompMeta { // extends IPathSpec
+  export interface ICompMeta { // extends IPathSchema
     id: string,
     path: Path,
     val: any,
-    schema: Spec,
+    schema: Schema,
   }
 
   // output/table
@@ -117,7 +117,7 @@ module Front {
   type IObjectCollection = Array<{
     path: string[],
     val: any,
-    schema: Front.Spec,
+    schema: Schema,
     type: string,
   }>;
 

@@ -1,13 +1,13 @@
 let _ = require('lodash/fp');
 import { Input, Output, EventEmitter, ViewChild, forwardRef } from '@angular/core';
-import { arr2obj, ng2comp, combine, method_pars } from '../../lib/js';
+import { arr2obj, ng2comp, combine, methodPars } from '../../lib/js';
 import { FormComp } from '../..';
 import { BaseComp } from '../../base_comp';
 import { ExtComp } from '../../lib/annotations';
 
 @ExtComp({
   selector: 'input-ui',
-  template: `<input-form [spec]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
+  template: `<input-form [schema]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
   directives: [
     // FormComp,
     forwardRef(() => FormComp),
@@ -15,20 +15,20 @@ import { ExtComp } from '../../lib/annotations';
 })
 export class InputUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
-  @Input() spec: Front.Spec;
+  @Input() spec: Front.ApiSpec;
   @Input() fn_path: string;
   @Input() token: string;
-  _spec: Front.Spec;
+  _spec: Front.ApiSpec;
   _fn_path: string;
   _token: string;
   @ViewChild(FormComp) form: FormComp;
   desc = '';
-  pars: Front.IPathSpec[];
+  pars: Front.IPathSchema[];
 
-  get spec(): Front.Spec {
+  get spec(): Front.ApiSpec {
     return this._spec;
   }
-  set spec(x: Front.Spec) {
+  set spec(x: Front.ApiSpec) {
     if(_.isUndefined(x)) return;
     this._spec = x;
     this.combInputs();
@@ -43,9 +43,9 @@ export class InputUiComp extends BaseComp {
     this.combInputs();
   }
 
-  combInputs = () => combine((spec: Front.Spec, fn_path: string) => {
-    // let { pars: this.pars, desc: this.desc } = method_pars(spec, fn_path);
-    let obj = method_pars(spec, fn_path);
+  combInputs = () => combine((spec: Front.ApiSpec, fn_path: string) => {
+    // let { pars: this.pars, desc: this.desc } = methodPars(spec, fn_path);
+    let obj = methodPars(spec, fn_path);
     this.pars = obj.pars;
     this.desc = obj.desc || '';
   })(this.spec, this.fn_path);
@@ -54,7 +54,7 @@ export class InputUiComp extends BaseComp {
   submit(form_val: {}): void {
     if(form_val.constructor == Event) return;
     // why is the EventEmitter first yielding an Event?
-    let kind_map = Object.assign(...this.pars.map(x => ({ [x.spec.name]: x.spec.in }) ));
+    let kind_map = Object.assign(...this.pars.map(({ schema }) => ({ [schema.name]: schema.in }) ));
     // let spec = this.spec;
     // let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes} // Swagger
     let host = this.spec.hosts[0];

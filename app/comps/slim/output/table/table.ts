@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
-import { arr2obj, arr2map, combine, mapBoth, tryLog, key_spec } from '../../../lib/js';
+import { arr2obj, arr2map, combine, mapBoth, tryLog, keySchema } from '../../../lib/js';
 import { getSchema } from '../../../lib/schema';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { getPaths } from '../../slim';
@@ -29,7 +29,7 @@ type Val = any; //Array<Object>;
 })
 export class TableComp extends BaseOutputComp {
   // schema in front cuz optional, this way combInputs only gets called once
-  @Input() schema: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
   @Input() val: Val;
@@ -91,7 +91,7 @@ export class TableComp extends BaseOutputComp {
   }
 
   @try_log()
-  setSchema(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();
   }
@@ -242,11 +242,11 @@ export class TableComp extends BaseOutputComp {
 
   // set and filter() for data/filters, sort() for rest
   // @try_log()
-  combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Spec) => {
+  combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Schema) => {
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
     this.colMeta = arr2obj(this.col_keys, col => {
-      let spec = key_spec(col, schema);
-      let type = _.get(['type'])(spec);
+      let col_schema = keySchema(col, schema);
+      let type = _.get(['type'])(col_schema);
       let anyOf = _.get(['anyOf'])(type) || [];
       const NUM_TYPES = ['number','integer'];
       let isNum = NUM_TYPES.includes(type);
@@ -261,7 +261,7 @@ export class TableComp extends BaseOutputComp {
         isLog = false;
         // let boundaries = [min, max];
       }
-      return { isNum, hasNum, isText, hasText, min, max, isLog }; //spec, boundaries
+      return { isNum, hasNum, isText, hasText, min, max, isLog }; //schema, boundaries
     });
     this.rows = rowPars(this.col_keys, path, val);
     this.filter();
@@ -314,10 +314,10 @@ export class TableComp extends BaseOutputComp {
     this.sort();
   }
 
-  getSpec(idx: number): Front.Spec {
-    let spec = this.schema;
-    return this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
-    // _.get(['items', 'type'], spec) ? spec.items : trySchema(this.first, _.get(['items'], spec));
+  getSchema(idx: number): Front.Schema {
+    let schema = this.schema;
+    return this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+    // _.get(['items', 'type'], schema) ? schema.items : trySchema(this.first, _.get(['items'], schema));
   }
 
   // v should be able to do these from the template again?

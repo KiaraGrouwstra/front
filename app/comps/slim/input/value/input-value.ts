@@ -29,7 +29,7 @@ type Ctrl = AbstractControl;
 })
 export class InputValueComp extends BaseInputComp {
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() ctrl: Ctrl;
   type: string;
@@ -49,7 +49,7 @@ export class InputValueComp extends BaseInputComp {
     super();
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     this.type = x.type;
     if(SCALARS.includes(this.type) || _.some(k => x[k])(ofs) || _.some(x.type || {})(ofs)) this.type = 'scalar';
   }

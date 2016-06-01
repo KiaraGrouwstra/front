@@ -4,7 +4,7 @@
 //- '[disabled]'=`disabled`
 //- '[placeholder]'=`'No city selected'`
 //- ng2-select(
-//-   '[items]'=`spec.enum`
+//-   '[items]'=`schema.enum`
 //-   '(data)'=`print('(data)')`
 //-   '(selected)'=`print('(selected)')`
 //-   '(removed)'=`print('(removed)')`
@@ -24,7 +24,7 @@ form
     )
       //- ; let idx = index
       option(
-        *ngFor='let opt of spec.enum'
+        *ngFor='let opt of schema.enum'
         '[value]'='opt'
       )
         | {{opt}}

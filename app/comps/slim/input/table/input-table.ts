@@ -21,7 +21,7 @@ type Ctrl = ControlList<ControlGroup>;
 export class InputTableComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path;
-  @Input() spec: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   // type: Observable<string>;
   counter = 0;
@@ -30,12 +30,12 @@ export class InputTableComp extends BaseInputComp {
   indexBased: boolean;
 
   setCtrl(x: Ctrl): void {
-    let spec = this.spec;
-    let seed = () => new ControlGroup(_.mapValues(x => inputControl(x), spec.items.properties));
+    let schema = this.schema;
+    let seed = () => new ControlGroup(_.mapValues(x => inputControl(x), schema.items.properties));
     x.init(seed);
   }
 
-  setSpec(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     if(_.isArray(_.get(['items'], x))) {
       this.indexBased = true;
     } else {
@@ -43,10 +43,10 @@ export class InputTableComp extends BaseInputComp {
     }
   }
 
-  getSpec(idx: number, col: string): Front.Spec {
-    let spec = this.spec;
-    let row_spec = this.indexBased ? (_.get(['items', idx], spec) || spec.additionalItems) : _.get(['items'], spec);
-    return row_spec.properties[col];
+  getSchema(idx: number, col: string): Front.Schema {
+    let schema = this.schema;
+    let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+    return row_schema.properties[col];
   }
 
   add(): void {

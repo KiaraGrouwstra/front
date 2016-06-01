@@ -25,14 +25,14 @@ const valConds: {[key: string]: (v: any, par: any) => boolean} = {
   multipleOf: (v, par) => (v % par == 0),
   type: (v, par) => matchesType(v, par),
   not: (v, par) => !validate(v, par),
-  items: (v, par) => _.isArray(par) ? _.every(([val, spec]) => _.some(_.isUndefined)([val, spec]) || validate(val, spec))(_.zip(v, par)) : _.every(x => validate(x, par))(v),
+  items: (v, par) => _.isArray(par) ? _.every(([val, schema]) => _.some(_.isUndefined)([val, schema]) || validate(val, schema))(_.zip(v, par)) : _.every(x => validate(x, par))(v),
   properties: (v, par) => _.every(k => validate(v[k], par[k]))(_.keys(par)),
   patternProperties: (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(_.keys(v).filter(k => new RegExp(patt).test(k))))(_.keys(par)),
   anyOf: (v, par) => _.some(x => validate(v, x))(par),
   allOf: (v, par) => _.every(x => validate(v, x))(par),
   oneOf: (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
-  additionalItems: (v, par, spec) => _.every(val => _.isObject(par) ? validate(val, par) : par)(v.slice(spec.items.length)),
-  additionalProperties: (v, par, spec) => _.every(val => validate(val, par))(_.difference(_.keys(v), _.flatMap(patt => _.keys(v).filter(k => new RegExp(patt).test(k)))(_.keys(spec.patternProperties)).concat(_.keys(spec.properties)))),
+  additionalItems: (v, par, schema) => _.every(val => _.isObject(par) ? validate(val, par) : par)(v.slice(schema.items.length)),
+  additionalProperties: (v, par, schema) => _.every(val => validate(val, par))(_.difference(_.keys(v), _.flatMap(patt => _.keys(v).filter(k => new RegExp(patt).test(k)))(_.keys(schema.patternProperties)).concat(_.keys(schema.properties)))),
   format: (v, par) => validateFormat(v, par),
 };
 
@@ -88,14 +88,14 @@ export function validateFormat(val: any, format: string) {
   //        'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'
 }
 
-export const validate = (v: any, spec: Front.Spec): boolean => _.every(k => {
+export const validate = (v: any, schema: Front.Schema): boolean => _.every(k => {
   let fn = valConds[k];
-  return fn ? fn(v, spec[k], spec) : true;
-})(_.keys(spec))
+  return fn ? fn(v, schema[k], schema) : true;
+})(_.keys(schema))
 // actually filter applicable keys by type: https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
 // this way can also add implicit type-specific validators, e.g. `uniqueKeys` for object.
-// should filter on value applied to; only works if the spec limits it to 1 `type`.
-// solution: both filter by spec-type and do run-time checks (pass if wrong type) in validators?
+// should filter on value applied to; only works if the schema limits it to 1 `type`.
+// solution: both filter by schema-type and do run-time checks (pass if wrong type) in validators?
 
 const valFns: {[key: string]: (par: any) => ValidatorFn} =
   mapBoth(valConds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
@@ -158,27 +158,27 @@ export const valErrors: {[key: string]: (x: any) => (v: any) => string} = {
   // },
   multipleOf: x => v => `Must be a multiple of ${x}.`,
   type: x => v => `Should match type ${JSON.stringify(x)}.`,
-  not: x => v => `Should not match spec ${JSON.stringify(x)}.`,
-  items: x => v => `Items should match spec ${JSON.stringify(x)}.`,
-  properties: x => v => `Properties should match spec ${JSON.stringify(x)}.`,
-  patternProperties: x => v => `Pattern properties should match spec ${JSON.stringify(x)}.`,
-  additionalItems: x => v => `Additional items should match spec ${JSON.stringify(x)}.`,
-  additionalProperties: x => v => `Additional properties should match spec ${JSON.stringify(x)}.`,
-  anyOf: x => v => `Should match any of specs ${JSON.stringify(x)}.`,
-  allOf: x => v => `Should match all of specs ${JSON.stringify(x)}.`,
-  oneOf: x => v => `Should match one of specs ${JSON.stringify(x)}.`,
+  not: x => v => `Should not match schema ${JSON.stringify(x)}.`,
+  items: x => v => `Items should match schema ${JSON.stringify(x)}.`,
+  properties: x => v => `Properties should match schema ${JSON.stringify(x)}.`,
+  patternProperties: x => v => `Pattern properties should match schema ${JSON.stringify(x)}.`,
+  additionalItems: x => v => `Additional items should match schema ${JSON.stringify(x)}.`,
+  additionalProperties: x => v => `Additional properties should match schema ${JSON.stringify(x)}.`,
+  anyOf: x => v => `Should match any of schemas ${JSON.stringify(x)}.`,
+  allOf: x => v => `Should match all of schemas ${JSON.stringify(x)}.`,
+  oneOf: x => v => `Should match one of schemas ${JSON.stringify(x)}.`,
   format: x => v => `Should match format '${x}'.`,
 };
 
 export const VAL_KEYS: string[] = _.keys(valErrors);
 
 // prepare the form control validators
-export function getValidator(spec: Front.Spec): ValidatorFn {
+export function getValidator(schema: Front.Schema): ValidatorFn {
   const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], spec) || []), []).map(opt => getValidator(opt));
+  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], schema) || []), []).map(opt => getValidator(opt));
   let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
-  let used_vals = VAL_KEYS.filter(k => spec[k] != null);
-  let validators = used_vals.map(k => valFns[k](spec[k])).concat(of_vldtr);
+  let used_vals = VAL_KEYS.filter(k => schema[k] != null);
+  let validators = used_vals.map(k => valFns[k](schema[k])).concat(of_vldtr);
   return Validators.compose(validators);
 }
 

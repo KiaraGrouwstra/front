@@ -9,14 +9,14 @@ describe('ControlStruct', () => {
 
   beforeEach(() => {
     let num = { type: 'number' };
-    let spec = {
+    let schema = {
       type: 'object',
       properties: { 'foo': num, 'bar': num },
       patternProperties: { '^x-': num },
       additionalProperties: num,
       required: ['foo'],
     };
-    obj = inputControl(spec, false, true);
+    obj = inputControl(schema, false, true);
   });
 
   // it('should test', () => {

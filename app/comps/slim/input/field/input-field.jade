@@ -9,14 +9,14 @@ form
         '[(ngModel)]'=`option`
       )
         option(
-          *ngFor=`let opt of spec[of]; let idx = index`
+          *ngFor=`let opt of schema[of]; let idx = index`
           '[value]'=`idx`
         )
           | {{opt.type}}
     //- script.
     //-   $('select').material_select();
     //- ng2-select(
-    //-   '[items]'=`spec[of]`
+    //-   '[items]'=`schema[of]`
     //-   '(data)'=`print('(data)')`
     //-   '(selected)'=`print('(selected)')`
     //-   '(removed)'=`print('(removed)')`
@@ -26,7 +26,7 @@ form
     input-value(
       *ngIf=`option`
       '[path]'=`path`
-      '[spec]'=`resolveSpec()`
+      '[schema]'=`resolveSchema()`
       '[named]'=`named`
       '[ctrl]'=`ctrl`
     )
@@ -80,10 +80,10 @@ form
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`ctrl.valid`)
       //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
       //- | {{vldtr}}: {{!showError(vldtr)}}
-      //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for spec ' + vldtr`
+      //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for schema ' + vldtr`
       li.error-item(
         *ngFor=`let vldtr of validator_keys`
-        '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for spec ' + vldtr`
+        '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for schema ' + vldtr`
         '[hidden]'=`!showError(vldtr)`
       )
 

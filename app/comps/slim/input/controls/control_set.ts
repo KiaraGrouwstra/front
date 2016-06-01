@@ -4,7 +4,7 @@ import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 
 // ctrl.value .has(k) / .add(k) / .delete(k) all work, so don't need this -_-;
 // Syntax improves though, not to mention this clarifies use-case.
-// Should I have this know its spec to validate against the enum?
+// Should I have this know its schema to validate against the enum?
 export class ControlSet extends Control {
   constructor(
     enum_opts: string[],

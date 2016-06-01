@@ -20,11 +20,11 @@ let scalar = {
   "type": "string"
 };
 let array = { "type": "array", "items": scalar };
-let pars = (spec) => ({
+let pars = (schema) => ({
   path,
-  spec,
+  schema,
   named,
-  ctrl: inputControl(spec),
+  ctrl: inputControl(schema),
   // name,
 });
 let req = 'This field is required.';

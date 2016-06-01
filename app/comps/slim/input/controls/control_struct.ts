@@ -2,7 +2,7 @@ let _ = require('lodash/fp');
 import { ControlGroup, Validators, AbstractControl } from '@angular/common';
 import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
 import { ControlObject } from './control_object';
-import { uniqueKeys, inputControl, getOptsNameSpecs } from '../input';
+import { uniqueKeys, inputControl, getOptsNameSchemas } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
 let lens = (fn_obj, fn_grp) => (ctrl) => {
@@ -15,7 +15,7 @@ let lens = (fn_obj, fn_grp) => (ctrl) => {
 };
 
 export class ControlStruct extends ControlGroup {
-  factStruct: Front.IObjectSpec<number>;
+  factStruct: Front.IObjectSchema<number>;
   mapping: {[key: string]: AbstractControl};
   initialized: boolean;
 
@@ -40,23 +40,23 @@ export class ControlStruct extends ControlGroup {
   }
 
   init(
-    factStruct: Front.IObjectSpec<Front.CtrlFactory>,
+    factStruct: Front.IObjectSchema<Front.CtrlFactory>,
     required: string[] = [],
   ): ControlStruct {
     if(this.initialized) throw 'ControlStruct already initialized!';
 
     // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `ControlGroup`
-    let { nameSpecPatt, nameSpecAdd } = getOptsNameSpecs(factStruct);
-    // nameSpec actually depends too, see input-object.
-    let kvFactory = (nameSpec, ctrlFactory) => () => new ControlGroup({
-      name: inputControl(nameSpec),
+    let { nameSchemaPatt, nameSchemaAdd } = getOptsNameSchemas(factStruct);
+    // nameSchema actually depends too, see input-object.
+    let kvFactory = (nameSchema, ctrlFactory) => () => new ControlGroup({
+      name: inputControl(nameSchema),
       val: ctrlFactory(),
     });
 
     let controls = editValsLambda({
       properties: v => new ControlGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
-      patternProperties: v => new ControlGroup(mapBoth(v || {}, (fact, patt) => new ControlObject().init(kvFactory(nameSpecPatt[patt], fact)))),
-      additionalProperties: v => new ControlObject().init(kvFactory(nameSpecAdd, v)),
+      patternProperties: v => new ControlGroup(mapBoth(v || {}, (fact, patt) => new ControlObject().init(kvFactory(nameSchemaPatt[patt], fact)))),
+      additionalProperties: v => new ControlObject().init(kvFactory(nameSchemaAdd, v)),
     })(factStruct);
 
     _.each((ctrl, k) => {

@@ -10,39 +10,39 @@ import { GlobalsService } from '../../../services';
 import { FormComp } from './input-form';
 let cls = testComp('input-form', FormComp);
 let desc = 'hi';
-let scalar_spec = {
+let scalar_schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
   "required": true,
   "type": "string"
 };
-let spec = {
+let schema = {
   type: 'object',
   required: ['foo','bar'],
   properties: {
-    'foo': scalar_spec,
-    'bar': scalar_spec,
+    'foo': scalar_schema,
+    'bar': scalar_schema,
   }
 };
 let scalar_pars = () => _.cloneDeep({
-  spec,
+  schema,
 });
 let pars = () => _.cloneDeep({
-  // spec,
+  // schema,
   desc,
 });
-let spec_arr = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_spec };
-let arr_spec = {
+let schema_arr = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar_schema };
+let arr_schema = {
   type: 'object',
   required: ['foo','bar'],
   properties: {
-    'foo': spec_arr,
-    'bar': spec_arr,
+    'foo': schema_arr,
+    'bar': schema_arr,
   }
 };
 let arr_pars = () => _.cloneDeep({
-  spec: arr_spec,
+  schema: arr_schema,
 });
 let text = 'geo-id: The geography ID.\n' + 'This field is required.';
 
@@ -56,14 +56,14 @@ describe('FormComp', () => {
     tcb = builder;
   }));
 
-  it('should do scalar specs', test([pars(), scalar_pars()], ({ comp, el }) => {
+  it('should do scalar schemas', test([pars(), scalar_pars()], ({ comp, el }) => {
     // expect(el).toHaveText(desc + text + text + 'Submit');
     // expect(comp.form.controls['foo'].errors).toEqual({required: true});
     expect(comp.form.errors).toEqual(null);
     expect(comp.form.value).toEqual({ foo: '', bar: '' });
   }));
 
-  it('should do array specs', test([pars(), arr_pars()], ({ comp, el }) => {
+  it('should do array schemas', test([pars(), arr_pars()], ({ comp, el }) => {
     // console.log('controls', comp.ctrl.controls);
     // expect(comp.form.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');

@@ -21,7 +21,7 @@ type Val = any; //Array<any>;
 export class ArrayComp extends BaseOutputComp {
   @Input() path: Front.Path;
   @Input() val: Val;
-  @Input() schema: Front.Spec;
+  @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
   first: any;
   type: string;
@@ -33,13 +33,13 @@ export class ArrayComp extends BaseOutputComp {
     this.combInputs();
   }
 
-  setSchema(x: Front.Spec): void {
+  setSchema(x: Front.Schema): void {
     this.combInputs();
   }
 
-  combInputs = () => combine((val: Val, spec: Front.Spec) => {
+  combInputs = () => combine((val: Val, schema: Front.Schema) => {
     let first = this.first;
-    this.type = _.get(['items', 'type'], spec) || _.isPlainObject(first) ? 'object' : 'other';
-  }, { spec: true })(this.val, this.schema);
+    this.type = _.get(['items', 'type'], schema) || _.isPlainObject(first) ? 'object' : 'other';
+  }, { schema: true })(this.val, this.schema);
 
 }

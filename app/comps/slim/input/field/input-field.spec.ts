@@ -11,19 +11,19 @@ import { GlobalsService } from '../../../services';
 import { FieldComp } from './input-field';
 let cls = testComp('input-field', FieldComp);
 let path = ['test'];
-let spec = {
+let schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
   "required": true,
   "type": "string"
 };
-let ctrl = inputControl(spec);
+let ctrl = inputControl(schema);
 let named = true;
 // let name = 'foo';
 let pars = () => _.cloneDeep({
   path,
-  spec,
+  schema,
   ctrl,
   named,
   // name,

@@ -22,8 +22,8 @@ describe('PolymorphicControl', () => {
     expect(poly.errors).toEqual({ someError: true });
   });
 
-  it('should allow swapping out controls from spec', () => {
-    poly.setSpec({ type: 'string', default: 'c' });
+  it('should allow swapping out controls from schema', () => {
+    poly.setSchema({ type: 'string', default: 'c' });
     expect(poly.value).toEqual('c');
   });
 

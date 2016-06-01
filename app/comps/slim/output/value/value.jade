@@ -1,14 +1,14 @@
 div([ngSwitch]='type')
   template([ngSwitchWhen]=`'object'`)
-    object('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`, '[named]'=`false`)
+    object('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_schema`, '[named]'=`false`)
   template([ngSwitchWhen]=`'array'`)
-    array('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_spec`, '[named]'=`false`)
+    array('[path]'=`path`, '[val]'=`val`, '[schema]'=`new_schema`, '[named]'=`false`)
   template([ngSwitchWhen]=`'scalar'`)
     div([ngSwitch]=`isHtml(val)`)
       template([ngSwitchWhen]=`true`)
         myiframe('[val]'=`val`)
       template(ngSwitchDefault)
-        .scalar('[innerHtml]'=`val | scalar:new_spec`)
+        .scalar('[innerHtml]'=`val | scalar:new_schema`)
   template(ngSwitchDefault)
     p UNIMPLEMENTED OUTPUT-VALUE TYPE ({{ type | json }})!
     //- | async

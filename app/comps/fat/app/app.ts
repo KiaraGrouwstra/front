@@ -20,11 +20,13 @@ let _ = require('lodash/fp');
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
 import { WsService, RequestService, GlobalsService } from '../../services';
-import { handleAuth, toast, setKV, getKV, prettyPrint, input_specs } from '../../lib/js';
+import { handleAuth, toast, setKV, getKV, prettyPrint, inputSchemas, getSafe } from '../../lib/js';
 import { loadUi, get_submit, reqUrl, pickFn, doFetch, doProcess, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
 import { curl_spec } from './curl_spec';
 import { fetch_spec, process_spec } from './scrape_spec';
+import { getSchema } from '../../lib/schema';
+import { validate } from '../../slim/input/validators';
 
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ValueComp, AuthUiComp, FnUiComp, InputUiComp, FormComp];  // , ROUTER_DIRECTIVES
 let pipes = [MarkedPipe];
@@ -63,16 +65,18 @@ export class App {
   // allowing to store single items without the array causes ambiguity on whether
   // an array here would be there for that or as part of a wrapper-less data item...
   apis = ['instagram', 'github', 'ganalytics'];
-  _spec: Front.Spec;
-  spec = {};
+  // _spec: Front.ApiSpec;
+  spec: Front.ApiSpec = {};
+  _schema: Front.Schema;
+  schema: Front.Schema = { type: 'object', additionalProperties: false };
   _path: Front.Path;
   path = ['test'];
-  curl: Front.Spec;
-  fetch_spec: Front.Spec;
-  process_spec: Front.Spec;
+  curl: Front.Schema;
+  fetch_spec: Front.Schema;
+  process_spec: Front.Schema;
   raw_str: string;
   colored: string;
-  zoomed_spec: Front.Spec;
+  zoomed_schema: Front.Schema;
   extractor: Function;
 
   constructor(
@@ -122,12 +126,21 @@ export class App {
     this.setData();
   }
 
+  assertSchema(v: any) {
+    if(!validate(v, this.schema)) {
+      console.warn('value ', v, ' does not match schema ', this.schema, ', inferring valid schema!');
+      this.meat = [];
+      this.schema = getSchema(v);
+    }
+  }
+
   get raw(): Front.Data[] {
     return this._raw;
   }
   set raw(x: Front.Data) {
     if(_.isUndefined(x)) return;
     this._raw = x;
+    this.assertSchema(x);
     // this.data = x;
     this.setExtracted();
     this.setData();
@@ -137,7 +150,7 @@ export class App {
     this._raw = this._raw.concat(x);
     let extracted = this.extractor(x);
     this.extracted = this.extracted.concat(extracted);
-    let zoomed = this.zoomLens(extracted);
+    let zoomed = getSafe(this.meat)(extracted);
     this.data = this.data.concat(zoomed);
   }
 
@@ -171,7 +184,7 @@ export class App {
   setData() {
     let extracted = this.extracted;
     if(extracted) {
-      let fn = this.zoomLens.bind(this);
+      let fn = getSafe(this.meat);
       // this.data = extracted.map(fn);
       // this.data = _.isArray(extracted) ? extracted.map(fn) : fn(extracted);
       let v = _.isArray(extracted) ? extracted.map(fn) : fn(extracted);
@@ -179,13 +192,13 @@ export class App {
     }
   }
 
-  get spec(): Front.Spec {
-    return this._spec;
+  get schema(): Front.Schema {
+    return this._schema;
   }
-  set spec(x: Front.Spec) {
+  set schema(x: Front.Schema) {
     if(_.isUndefined(x)) return;
-    this._spec = x;
-    this.specMeat();
+    this._schema = x;
+    this.schemaMeat();
   }
 
   get meat(): string[] {
@@ -194,18 +207,17 @@ export class App {
   set meat(x: string[]) {
     if(_.isUndefined(x)) return;
     this._meat = x;
-    this.specMeat();
+    this.schemaMeat();
     this.setData();
   }
 
-  zoomLens(v: Object): any {
-    let meat = this.meat;
-    return _.size(meat) ? _.get(meat)(v) : v;
-  }
-
-  specMeat(): Front.Spec {
-    let spec_path = _.flatten(this.meat.map(str => ['properties', str]));
-    this.zoomed_spec = _.get(spec_path)(this.spec);
+  schemaMeat(): Front.Schema {
+    let path = _.flatten(this.meat.map(str => ['properties', str]));
+    console.log('schemaMeat', path, this.schema);
+    this.zoomed_schema = _.get(path)(this.schema);
+    // this.zoomed_schema = getSafe(path)(this.schema);
+    console.log('_.get', _.get(path)(this.schema));
+    console.log('getSafe', getSafe(path)(this.schema));
   }
 
   // sets and saves the auth token + scopes from the given get/hash
