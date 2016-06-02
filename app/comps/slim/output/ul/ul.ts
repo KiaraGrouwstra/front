@@ -17,7 +17,7 @@ type Val = any; //Array<any>;
   template: require('./ul.jade'),
   directives: [
     forwardRef(() => ValueComp),
-  ]
+  ],
 })
 export class ULComp extends BaseOutputComp {
   @Input() path: Front.Path = [];
@@ -46,7 +46,7 @@ export class ULComp extends BaseOutputComp {
     if(_.some(_.isNil)([path, val])) return;
     this.rows = val.map((v, idx) => {
       let path_k = path.concat(idx);
-      let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+      let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'])(schema);
       return { path: path_k, val: v, schema: row_schema };
     });
   // }, { schema: true })(this.path, this.val, this.schema);

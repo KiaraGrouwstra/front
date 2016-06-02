@@ -10,7 +10,8 @@ export class ControlSet extends Control {
     enum_opts: string[],
     arr: any[] = [],
   ) {
-    let validator: ValidatorFn = (c) => _.every(v => enum_opts.includes(v))(Array.from(c.value)) ? null : { enum: true };
+    let validator: ValidatorFn = (c) => _.every(v => enum_opts.includes(v))
+        (Array.from(c.value)) ? null : { enum: true };
     // let asyncValidator: AsyncValidatorFn = null;
     super(new Set(arr), validator);
     // , asyncValidator

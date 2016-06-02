@@ -12,7 +12,7 @@ type Val = any; //Object;
   template: require('./dl.jade'),
   directives: [
     forwardRef(() => ValueComp),
-  ]
+  ],
 })
 export class DLComp extends BaseOutputComp {
   @Input() path: Front.Path = [];

@@ -58,7 +58,7 @@ export class ValueComp extends BaseOutputComp {
     let { val, schema } = this;
     if(_.isNil(val)) return;
     this.new_schema = _.get(['type'], schema) ? schema : trySchema(val, schema);
-    this.type = _.get(['type'], schema) || inferType(val);
+    this.type = _.get(['type'])(schema) || inferType(val);
     // ^ handles anyOf/oneOf/allOf as well; good.
     let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
     if(SCALARS.includes(this.type)) this.type = 'scalar';

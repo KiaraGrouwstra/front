@@ -77,7 +77,9 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
           this.meat_str_opts = this.meat_opts.map(y => y.join('.'));
           // window.setTimeout(() => $('select').material_select(), 500);
         }
-        if(this.auto_meat && !this.meat.length && this.meat_opts.length == 1) this.meat = this.meat_opts[0];
+        if(this.auto_meat && !this.meat.length && this.meat_opts.length == 1) {
+          this.meat = this.meat_opts[0];
+        }
         // this.raw = x;
         this.addData(x);
       },

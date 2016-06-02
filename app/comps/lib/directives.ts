@@ -142,7 +142,8 @@ export class SetAttrs extends ObjDirective {
 
 // get the context for a viewContainer -- for e.g. `_View_FieldComp5` first go up to `_View_FieldComp0`.
 function getContext(view: ViewContainerRef): Object {
-  return transformWhile(x => [Object, NgForRow].includes(x.context.constructor), y => y.parent, view._element.parentView).context;
+  let condition = x => [Object, NgForRow].includes(x.context.constructor);
+  return transformWhile(condition, y => y.parent, view._element.parentView).context;
 }
 
 // dynamically bind properties/attributes (cf. SetAttrs), using strings evaluated in the component context

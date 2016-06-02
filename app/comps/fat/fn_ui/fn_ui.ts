@@ -60,10 +60,13 @@ export class FnUiComp extends BaseComp {
     let misc_key;
     if(this.tags) {
       misc_key = 'misc';
-      this.tag_paths = _.assign(arr2obj(this.tags.map(y => y.name), tag =>
-          _.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
-        ),
-        { [misc_key]: _.keys(paths).filter(path => _.isEmpty(_.get(['get', 'tags'], paths[path])) ) }
+      let pathsByTag = arr2obj(this.tags.map(y => y.name), tag =>
+        _.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
+      );
+      this.tag_paths = _.assign(pathsByTag,
+        { [misc_key]: _.keys(paths).filter(
+          path => _.isEmpty(_.get(['get', 'tags'], paths[path]))
+        ) }
       );
     } else {
       this.tags = [];

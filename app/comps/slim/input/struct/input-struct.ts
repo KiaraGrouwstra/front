@@ -22,7 +22,7 @@ type Ctrl = ControlStruct;
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
     DynamicAttrs,
-  ]
+  ],
 })
 export class InputStructComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -66,7 +66,11 @@ export class InputStructComp extends BaseInputComp {
     this.nameCtrlFixed = inputControl(this.nameSchemaFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
-    this.indices = { properties: new Set(prepopulated), patternProperties: _.mapValues(x => new Set([]))(patts), additionalProperties: new Set([]) };
+    this.indices = {
+      properties: new Set(prepopulated),
+      patternProperties: _.mapValues(x => new Set([]))(patts),
+      additionalProperties: new Set([]),
+    };
     this.updateFixedList();
     })();
   }
@@ -104,7 +108,9 @@ export class InputStructComp extends BaseInputComp {
 
   @try_log()
   updateFixedList(): void {
-    this.nameSchemaFixedFiltered = _.update('enum', arr => _.difference(arr, Array.from(this.indices.properties)))(this.nameSchemaFixed);
+    this.nameSchemaFixedFiltered = _.update('enum',
+      arr => _.difference(arr, Array.from(this.indices.properties))
+    )(this.nameSchemaFixed);
   }
 
   @try_log()

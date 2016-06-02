@@ -31,7 +31,9 @@ export class InputTableComp extends BaseInputComp {
 
   setCtrl(x: Ctrl): void {
     let schema = this.schema;
-    let seed = () => new ControlGroup(_.mapValues(x => inputControl(x), schema.items.properties));
+    let seed = () => new ControlGroup(
+      _.mapValues(x => inputControl(x))(schema.items.properties)
+    );
     x.init(seed);
   }
 
@@ -45,7 +47,9 @@ export class InputTableComp extends BaseInputComp {
 
   getSchema(idx: number, col: string): Front.Schema {
     let schema = this.schema;
-    let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+    let row_schema = this.indexBased ?
+      (_.get(['items', idx])(schema) || schema.additionalItems) :
+      _.get(['items'], schema);
     return row_schema.properties[col];
   }
 

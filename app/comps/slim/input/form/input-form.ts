@@ -12,7 +12,7 @@ import { ExtComp } from '../../../lib/annotations';
   template: require('./input-form.jade'),
   directives: [
     forwardRef(() => InputValueComp),
-  ]
+  ],
 })
 export class FormComp extends BaseInputComp {
   items: Front.IInput[] = [];

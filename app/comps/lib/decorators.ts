@@ -65,8 +65,9 @@ export function combine(...args): Function {
     for (let i = 0; i < arguments.length; i++) {
       let v = arguments[i];
       let name = names[i]
-        .replace(/_\d+$/, '')   // fixes SweetJS suffixing all names with like _123. this will however break functions already named .*_\d+, e.g. foo_123
-        // do not minify the code while uing this function, it will break -- functions wrapped in combine will no longer trigger.
+        .replace(/_\d+$/, '')
+        // fixes SweetJS suffixing names with e.g. _123. breaks functions already named .*_\d+, e.g. foo_123
+        // do not minify while using this; functions wrapped in combine will no longer trigger.
       if(_.isUndefined(v) && !allow_undef[name]) return; // || _.isNull(v)
     }
     fn.call(this, ...arguments);  //return

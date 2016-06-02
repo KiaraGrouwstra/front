@@ -16,7 +16,7 @@ type Val = any; //Array<any>;
   directives: [NgSwitch, NgSwitchWhen, NgSwitchDefault,
     forwardRef(() => ULComp),
     forwardRef(() => TableComp),
-  ]
+  ],
 })
 export class ArrayComp extends BaseOutputComp {
   @Input() path: Front.Path = [];

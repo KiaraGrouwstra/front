@@ -8,32 +8,76 @@ import { arr2obj, mapBoth } from '../../lib/js';
 const valConds: {[key: string]: (v: any, par: any) => boolean} = {
   // schema: (v, par) => (v, par),
   // collectionFormat: (v, par) => (v, par),
-  required: (v, par) => v.length, // assumes string?
-  maximum: (v, par) => (v <= par),
-  exclusiveMaximum: (v, par) => (v < par),
-  minimum: (v, par) => (v >= par),
-  exclusiveMinimum: (v, par) => (v > par),
-  maxLength: (v, par) => (v.length <= par), //predefined
-  minLength: (v, par) => (v.length >= par), //predefined
-  pattern: (v, par) => new RegExp(`^${par}$`).test(v),  //escape pattern backslashes? // alt: [Validators.pattern](https://github.com/angular/angular/commit/38cb526)
-  maxItems: (v, par) => (v.length <= par),
-  minItems: (v, par) => (v.length >= par),
-  maxProperties: (v, par) => (_.size(v) <= par),
-  minProperties: (v, par) => (_.size(v) >= par),
-  uniqueItems: (v, par) => (!par || _.uniq(v).length == v.length),
-  enum: (v, par) => par.includes(v),  // actually different for array, which has to iterate, see ControlSet
-  multipleOf: (v, par) => (v % par == 0),
-  type: (v, par) => matchesType(v, par),
-  not: (v, par) => !validate(v, par),
-  items: (v, par) => _.isArray(par) ? _.every(([val, schema]) => _.some(_.isUndefined)([val, schema]) || validate(val, schema))(_.zip(v, par)) : _.every(x => validate(x, par))(v),
-  properties: (v, par) => _.every(k => validate(v[k], par[k]))(_.keys(par)),
-  patternProperties: (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(_.keys(v).filter(k => new RegExp(patt).test(k))))(_.keys(par)),
-  anyOf: (v, par) => _.some(x => validate(v, x))(par),
-  allOf: (v, par) => _.every(x => validate(v, x))(par),
-  oneOf: (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
-  additionalItems: (v, par, schema) => _.every(val => _.isObject(par) ? validate(val, par) : par)(v.slice(schema.items.length)),
-  additionalProperties: (v, par, schema) => _.every(val => validate(val, par))(_.difference(_.keys(v), _.flatMap(patt => _.keys(v).filter(k => new RegExp(patt).test(k)))(_.keys(schema.patternProperties)).concat(_.keys(schema.properties)))),
-  format: (v, par) => validateFormat(v, par),
+  required: // assumes string?
+      (v, par) => v.length,
+  maximum:
+      (v, par) => (v <= par),
+  exclusiveMaximum:
+      (v, par) => (v < par),
+  minimum:
+      (v, par) => (v >= par),
+  exclusiveMinimum:
+      (v, par) => (v > par),
+  maxLength: //predefined
+      (v, par) => (v.length <= par),
+  minLength: //predefined
+      (v, par) => (v.length >= par),
+  pattern:
+      (v, par) => new RegExp(`^${par}$`).test(v),
+      // ^ escape pattern backslashes?
+      // alt: [Validators.pattern](https://github.com/angular/angular/commit/38cb526)
+  maxItems:
+      (v, par) => (v.length <= par),
+  minItems:
+      (v, par) => (v.length >= par),
+  maxProperties:
+      (v, par) => (_.size(v) <= par),
+  minProperties:
+      (v, par) => (_.size(v) >= par),
+  uniqueItems:
+      (v, par) => (!par || _.uniq(v).length == v.length),
+  enum:
+      (v, par) => par.includes(v),
+      // actually different for array, which has to iterate, see ControlSet
+  multipleOf:
+      (v, par) => (v % par == 0),
+  type:
+      (v, par) => matchesType(v, par),
+  not:
+      (v, par) => !validate(v, par),
+  items:
+      (v, par) => _.isArray(par) ?
+        _.every(
+          ([val, schema]) => _.some(_.isUndefined)([val, schema]) || validate(val, schema)
+        )(_.zip(v, par)) :
+        _.every(x => validate(x, par))(v),
+  properties:
+      (v, par) => _.every(k => validate(v[k], par[k]))(_.keys(par)),
+  patternProperties:
+      (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(
+        _.keys(v).filter(k => new RegExp(patt).test(k))
+      ))(_.keys(par)),
+  anyOf:
+      (v, par) => _.some(x => validate(v, x))(par),
+  allOf:
+      (v, par) => _.every(x => validate(v, x))(par),
+  oneOf:
+      (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
+  additionalItems:
+      (v, par, schema) => _.every(
+        val => _.isObject(par) ? validate(val, par) : par
+      )(v.slice(schema.items.length)),
+  additionalProperties:
+      (v, par, schema) => {
+        let specKeys = _.keys(schema.patternProperties)).concat(_.keys(schema.properties);
+        let keysBySpec = _.flatMap(patt => _.keys(v).filter(
+          k => new RegExp(patt).test(k))
+        )(specKeys);
+        let restKeys = _.difference(_.keys(v), keysBySpec);
+        return _.every(val => validate(val, par))(restKeys);
+      },
+  format:
+      (v, par) => validateFormat(v, par),
 };
 
 function isNBit(n: number): boolean {
@@ -43,33 +87,56 @@ function isNBit(n: number): boolean {
 
 export const formatMap = {
   // [json-schema](https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-7)
-  'date-time': v => !isNaN(Date.parse(v)),
-  email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-  hostname: /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/, // naive: http://stackoverflow.com/questions/106179/
-  uri: /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/,
-  ipv4: /^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$/,
-  ipv6: /^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/,
+  'date-time':
+      v => !isNaN(Date.parse(v)),
+  email:
+      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  hostname:
+      /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/,
+      // naive: http://stackoverflow.com/questions/106179/
+  uri:
+      /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/,
+  ipv4:
+      /^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$/,
+  ipv6:
+      /^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/,
   // [open-api](http://swagger.io/specification/#dataTypeFormat)
-  int32: isNBit(32),
-  int64: isNBit(64),
+  int32:
+      isNBit(32),
+  int64:
+      isNBit(64),
   // float: v => matchesType(v, 'number'),
   // double: v => matchesType(v, 'number'),
-  byte: /[\dA-Za-z\+\/\=]*/,
-  binary: /[\dA-Fa-f]*/,
-  date: v => !isNaN(Date.parse(v)),
+  byte:
+      /[\dA-Za-z\+\/\=]*/,
+  binary:
+      /[\dA-Fa-f]*/,
+  date:
+      v => !isNaN(Date.parse(v)),
   // password: , // no validation, just intended to switch to <input type='password'>
   // MISC:
-  alpha: /^[a-zA-Z]+$/,
-  alphanumeric: /^[a-zA-Z0-9]+$/,
-  identifier: /^[-_a-zA-Z0-9]+$/,
-  hexadecimal: /^[a-fA-F0-9]+$/,
-  numeric: v => /^[0-9]+$/,
-  uppercase: v => v === v.toUpperCase(),
-  lowercase: v => v === v.toLowerCase(),
-  url: /(http(s):\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
-  uuid: /^(?:urn\:uuid\:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i,
-  'json-pointer': /^(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?$|^\#(?:\/(?:[a-z0-9_\-\.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)+)*(?:\/)?$/i,
-  'relative-json-pointer': /^(?:0|[1-9][0-9]*)(?:\#|(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?)$/,
+  alpha:
+      /^[a-zA-Z]+$/,
+  alphanumeric:
+      /^[a-zA-Z0-9]+$/,
+  identifier:
+      /^[-_a-zA-Z0-9]+$/,
+  hexadecimal:
+      /^[a-fA-F0-9]+$/,
+  numeric:
+      v => /^[0-9]+$/,
+  uppercase:
+      v => v === v.toUpperCase(),
+  lowercase:
+      v => v === v.toLowerCase(),
+  url:
+      /(http(s):\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+  uuid:
+      /^(?:urn\:uuid\:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i,
+  'json-pointer':
+      /^(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?$|^\#(?:\/(?:[a-z0-9_\-\.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)+)*(?:\/)?$/i,
+  'relative-json-pointer':
+      /^(?:0|[1-9][0-9]*)(?:\#|(?:\/(?:[^~\/]|~0|~1)+)*(?:\/)?)$/,
   regex: v => {
     try {
       RegExp(v);
@@ -98,7 +165,10 @@ export const validate = (v: any, schema: Front.Schema): boolean => !_.isNil(sche
 // solution: both filter by schema-type and do run-time checks (pass if wrong type) in validators?
 
 const valFns: {[key: string]: (par: any) => ValidatorFn} =
-  mapBoth(valConds, (fn, k) => (par) => (c) => par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null); // { [k]: true }
+  mapBoth(valConds, (fn, k) => (par) => (c) =>
+    par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null
+    // { [k]: true }
+  );
 // ... _.keys(valConds).map((k) => ... valConds[k] ...
 // const ng_validators = _.assign(Validators, valFns);
 
@@ -114,11 +184,12 @@ function matchesType(val: any, type: string): boolean {
     any: v => true,
     // date: _.isDate,
   };
+  const matches = (tp: string) => matchesType(val, tp);
   return _.isString(type) ? mapping[type](val) :
     _.isObject(type) ?
-      _.has(['anyOf'], type) ? _.some(tp => matchesType(val, tp))(type.anyOf) :
-      _.has(['oneOf'], type) ? _.some(tp => matchesType(val, tp))(type.oneOf) :
-      _.has(['allOf'], type) ? _.every(tp => matchesType(val, tp))(type.allOf) :
+      _.has(['anyOf'], type) ? _.some(matches)(type.anyOf) :
+      _.has(['oneOf'], type) ? _.some(matches)(type.oneOf) :
+      _.has(['allOf'], type) ? _.every(matches)(type.allOf) :
       false : // throw `bad type (object): ${type}`
     false; // throw `bad type (?): ${type}`
 }
@@ -175,8 +246,11 @@ export const VAL_KEYS: string[] = _.keys(valErrors);
 // prepare the form control validators
 export function getValidator(schema: Front.Schema): ValidatorFn {
   const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce((acc, k) => acc.concat(_.get([k], schema) || []), []).map(opt => getValidator(opt));
-  let of_vldtr = (c) => _.some(x => !x)(of_vals.map(opt => opt.validator));
+  let of_vals = ofs.reduce(
+    (acc, k) => acc.concat(_.get([k], schema) || [])
+  , []).map(opt => getValidator(opt));
+  let of_vldtrs = of_vals.map(opt => opt.validator);
+  let of_vldtr = (c) => _.some(x => !x)(of_vldtrs);
   let used_vals = VAL_KEYS.filter(k => schema[k] != null);
   let validators = used_vals.map(k => valFns[k](schema[k])).concat(of_vldtr);
   return Validators.compose(validators);

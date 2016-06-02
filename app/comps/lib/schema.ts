@@ -67,7 +67,13 @@ export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Fron
 
 // get a json-schema string representation of the type of a value
 function getType(v: any): string {
-  return _.isArray(v) ? 'array' : _.isObject(v) ? 'object' : _.isNumber(v) ? (_.isInteger(v) ? 'integer' : 'number') : _.isString(v) ? 'string' : _.isNull(v) ? 'null' : _.isBoolean(v) ? 'boolean' : 'any';
+  return _.isArray(v) ? 'array' :
+    _.isObject(v) ? 'object' :
+      _.isNumber(v) ?
+        (_.isInteger(v) ? 'integer' : 'number') :
+        _.isString(v) ? 'string' :
+          _.isNull(v) ? 'null' :
+            _.isBoolean(v) ? 'boolean' : 'any';
 }
 
 // check a symmetric condition to merge two schemas, with an asymmetric tie-breaker as fallback.
@@ -168,7 +174,8 @@ const mergers = {
   maxLength: max,
   minLength: min,
   // pattern
-  enum: ([a, b]) => (a && b) ? _.union(a, b) : a ? b : a, // just union could return [], which the schema doesn't allow
+  enum: ([a, b]) => (a && b) ? _.union(a, b) : a ? b : a,
+  // ^ just union could return [], which the schema doesn't allow
   format: checkSym(
     ([x, y], [xObj, yObj]) => {
       if (_.isUndefined(x)) {
@@ -188,12 +195,14 @@ const mergers = {
   // ARRAYS:
   items: checkSym(
     ([x, y], [xObj, yObj]) => {
-      if (_.isArray(x) && _.isArray(y)) return _.zip([x, y]).map(([a, b]) => mergeSchemas(a, b));
-      if (_.isArray(x) && _.isObject(y)) {
+      if (_.isArray(x) && _.isArray(y)) {
+        return _.zip([x, y]).map(([a, b]) => mergeSchemas(a, b));
+      } else if (_.isArray(x) && _.isObject(y)) {
         if(!x.length) {
           return y;
         } else if(y.anyOf) {
-          return { anyOf: _.uniq(y.anyOf.concat(x)) };  // merge further than leaving all non-equal ones?
+          return { anyOf: _.uniq(y.anyOf.concat(x)) };
+          // ^ merge further than leaving all non-equal ones?
         } else {
           return { anyOf: _.uniq(x.concat(y)) };
         }
@@ -228,7 +237,8 @@ const mergers = {
   // description
   // default
   definitions: checkProperties,
-  dependencies: ([a, b]) => (a && b) ? _.assign(a, b) : a ? a : b, // assumes no value conflicts, cuz no real way to resolve them
+  dependencies: ([a, b]) => (a && b) ? _.assign(a, b) : a ? a : b,
+  // ^ assumes no value conflicts, cuz no real way to resolve them
   type: checkSym(
     ([x, y], [xObj, yObj]) => {
       if (_.isUndefined(x)) {

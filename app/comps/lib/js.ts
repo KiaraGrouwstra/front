@@ -294,7 +294,8 @@ export let editValsOriginal: Front.ObjectMapper = (fnObj) => (obj) => mapBoth(ob
 // export let editVals = (fnObj) => (obj) => _.reduce((acc, fn, k) => _.update(k, fn(acc[k]))(acc), obj)(fnObj);
 // ^ no k in FP
 // keep all original properties, map even over keys not in the original object
-export let editValsBoth: Front.ObjectMapper = (fnObj) => (obj) => _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
+export let editValsBoth: Front.ObjectMapper = (fnObj) => (obj) =>
+    _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
 
 // only keep properties in mapper object, map even over keys not in the original object
 export let editValsLambda: Front.ObjectMapper = (fnObj) => (obj) => mapBoth(fnObj, (fn, k) => {

@@ -89,7 +89,11 @@ export function objectControl(schema: Front.Schema, doSeed: boolean = false): Co
 }
 
 // return initial key/value pair for the model
-export function inputControl(schema: Front.Schema = {}, asFactory = false, doSeed: boolean = false): AbstractControl | Front.CtrlFactory {
+export function inputControl(
+  schema: Front.Schema = {},
+  asFactory: boolean = false,
+  doSeed: boolean = false,
+): AbstractControl | Front.CtrlFactory {
   let factory, seed;  //, allOf
   switch(schema.type) {
     case 'array':
@@ -267,17 +271,21 @@ export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn 
 
 // calculate the different schemas for key input controls, plus enum/suggestion options
 // any schema-like object will do for the param, since only keys are checked.
-export function getOptsNameSchemas(schemaLike: Front.IObjectSchema<any>): Object {
-  let { properties: props, patternProperties: patterns, additionalProperties: add } = schemaLike;
+export function getOptsNameSchemas(obj: Front.IObjectSchema<any>): Object {
+  let { properties: props, patternProperties: patterns, additionalProperties: add } = obj;
   let [fixed, patts] = [props, patterns].map(_.keys);
   let categorizer = categorizeKeys(patts, fixed);
-  let sugg = categorizer(_.get(['x-keys', 'suggestions'], schemaLike) || []);
-  let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], schemaLike) || []);
-  let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], schemaLike) || []);
+  let sugg = categorizer(_.get(['x-keys', 'suggestions'], obj) || []);
+  let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], obj) || []);
+  let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], obj) || []);
   let nameSchema = { name: 'name', type: 'string', required: true };
   let nameSchemaFixed = _.assign(nameSchema, { enum: fixed });
-  let nameSchemaPatt = arr2obj(patts, patt => _.assign(nameSchema, { enum: pattEnum[patt], suggestions: pattSugg[patt] }));
-  let nameSchemaAdd = _.assign(nameSchema, { enum: addEnum, suggestions: addSugg, not: { anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed }) } });
+  let nameSchemaPatt = arr2obj(patts, patt => _.assign(nameSchema,
+    { enum: pattEnum[patt], suggestions: pattSugg[patt] }
+  ));
+  let nameSchemaAdd = _.assign(nameSchema, { enum: addEnum, suggestions: addSugg, not: {
+    anyOf: patts.map(patt => ({ pattern: patt })).concat({ enum: fixed })
+  }});
   return { nameSchemaFixed, nameSchemaPatt, nameSchemaAdd, addSugg, pattSugg, addEnum, pattEnum };
 };
 
@@ -314,7 +322,9 @@ export function findControl(control: AbstractControl, path: Front.Path | string)
 
 // merge a relative path with an absolute path
 export function mergePath(currentPath: Front.Path, relativePath: string) {
-  return splitPath(relativePath).reduce((acc, v, idx) => v == '..' ? acc.slice(0,-1) : acc.concat(v), currentPath);
+  return splitPath(relativePath).reduce(
+    (acc, v, idx) => v == '..' ? acc.slice(0,-1) : acc.concat(v)
+  , currentPath);
 }
 
 // navigate to a control relative from the current one

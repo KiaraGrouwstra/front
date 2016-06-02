@@ -16,7 +16,7 @@ type Ctrl = ControlList<Control>;
   template: require('./input-array.jade'),
   directives: [
     forwardRef(() => FieldComp),
-  ]
+  ],
 })
 export class InputArrayComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -61,7 +61,9 @@ export class InputArrayComp extends BaseInputComp {
 
   getSchema(idx: number): Front.Schema {
     let schema = this.schema;
-    return this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+    return this.indexBased ?
+        (_.get(['items', idx], schema) || schema.additionalItems) :
+        _.get(['items'], schema);
   }
 
   resolveSchema(idx: number): Front.Schema {

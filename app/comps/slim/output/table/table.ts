@@ -84,7 +84,7 @@ export class TableComp extends BaseOutputComp {
     if(!this.schema) this.schema = getSchema(x); //.items;
     this._val = x;
     this.col_keys = Array.from(x
-      .map(o => _.keys(o))
+      .map(_.keys)
       .reduce(arrToSet, new Set)
     );
     this.combInputs();
@@ -92,7 +92,7 @@ export class TableComp extends BaseOutputComp {
 
   @try_log()
   setSchema(x: Front.Schema): void {
-    // this.indexBased = _.isArray(_.get(['items'], x));
+    // this.indexBased = _.isArray(_.get(['items'])(x));
     this.combInputs();
   }
 
@@ -297,7 +297,9 @@ export class TableComp extends BaseOutputComp {
   @try_log()
   sort(): void {
     let sort = this.sortColsDesc;
-    this.data = _.orderBy(_.keys(sort).map(y => `cells.${y}.val`), Object.values(sort).map(y => y ? 'desc' : 'asc'), this.filtered);
+    let sortVals = _.keys(sort).map(y => `cells.${y}.val`);
+    let sortHows = Object.values(sort).map(y => y ? 'desc' : 'asc');
+    this.data = _.orderBy(sortVals, sortHows)(this.filtered);
   }
 
   @try_log()

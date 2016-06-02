@@ -1,7 +1,8 @@
 let _ = require('lodash/fp');
 import { ComponentMetadata, DirectiveMetadata, PipeMetadata } from '@angular/core';
 
-// extendible Component decorator, extended to merge items from [here](http://stackoverflow.com/questions/36837421/extending-component-decorator-with-base-class-decorator/36837482#36837482)
+// extendible Component decorator, extended to merge items from here:
+// http://stackoverflow.com/questions/36837421/extending-component-decorator-with-base-class-decorator/36837482#36837482
 let mergeMetadata = (metadataClass) => function(annotation: any) {
   return function (target: Function) {
     let parentTarget = Object.getPrototypeOf(target.prototype).constructor;

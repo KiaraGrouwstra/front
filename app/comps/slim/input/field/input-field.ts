@@ -79,7 +79,8 @@ export class FieldComp extends BaseInputComp {
     this.label = marked(`**${schema.name}:** ${schema.description || ''}`);
     // this.validator_msgs = getValidator(schema).val_msgs;
     // this.validator_keys = _.keys(this.validator_msgs);
-    this.validator_keys = VAL_KEYS.filter(k => schema[k] != null);  // must filter, since validator_msgs without params are of no use
+    this.validator_keys = VAL_KEYS.filter(k => schema[k] != null);
+    // must filter, since validator_msgs without params are of no use
     // this.validator_msgs = mapBoth(valErrors, (fn, k) => fn(schema[k]));
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }

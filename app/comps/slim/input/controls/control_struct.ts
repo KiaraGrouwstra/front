@@ -55,7 +55,9 @@ export class ControlStruct extends ControlGroup {
 
     let controls = editValsLambda({
       properties: v => new ControlGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
-      patternProperties: v => new ControlGroup(mapBoth(v || {}, (fact, patt) => new ControlObject().init(kvFactory(nameSchemaPatt[patt], fact)))),
+      patternProperties: v => new ControlGroup(mapBoth(v || {},
+        (fact, patt) => new ControlObject().init(kvFactory(nameSchemaPatt[patt], fact))
+      )),
       additionalProperties: v => new ControlObject().init(kvFactory(nameSchemaAdd, v)),
     })(factStruct);
 

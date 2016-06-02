@@ -18,7 +18,7 @@ type Ctrl = ControlObject<ControlGroup>; // { name, val }
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
-  ]
+  ],
 })
 export class InputObjectComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -56,7 +56,7 @@ export class InputObjectComp extends BaseInputComp {
     let props = _.keys(properties);
     let sugg = _.get(['x-keys', 'suggestions'], x) || [];
     let opts = _.get(['x-keys', 'enum'], x) || [];
-    let keyExcl = opts.length || (_.isEmpty(patternProperties) && _.isEmpty(additionalProperties)); //: boolean
+    let keyExcl: boolean = opts.length || (_.isEmpty(patternProperties) && _.isEmpty(additionalProperties));
     this.keySugg = keyExcl ? null : _.uniq(props.concat(sugg));
     this.keyEnum = keyExcl ? _.uniq(props.concat(opts).concat(sugg)) : null;
     // ^ enum and suggestions shouldn't actually co-occur, but concat both here in case

@@ -92,7 +92,9 @@ export class App {
 
   ngOnInit() {
     // $('select').material_select();
-    this._ws.connected$.subscribe(y => y ? toast.success('websocket connected!') : toast.warn('websocket disconnected!'));
+    this._ws.connected$.subscribe(y => y ?
+        toast.success('websocket connected!') :
+        toast.warn('websocket disconnected!'));
     global.app = this;
     let api = this.apis[0];
     this.apis.forEach(name => {
