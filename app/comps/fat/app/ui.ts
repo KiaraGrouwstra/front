@@ -71,7 +71,8 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
       x => {
         console.log(next, x);
         // toast.info(next);
-        if(_.isEmpty(this.schema)) this.schema = getSchema(x);
+        if(_.isEmpty(this.schema)) this.schema = getSchema([x]);
+        // ^ just x in case I'm not enforcing the array container
         if(!this.meat_opts) {
           this.meat_opts = findTables(this.schema);
           this.meat_str_opts = this.meat_opts.map(y => y.join('.'));

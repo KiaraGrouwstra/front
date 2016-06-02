@@ -42,7 +42,7 @@ export class ArrayComp extends BaseOutputComp {
     let { val, schema } = this;
     if(_.isNil(val)) return;
     let first = this.first;
-    this.type = _.get(['items', 'type'], schema) || _.isPlainObject(first) ? 'object' : 'other';
+    this.type = _.get(['items', 'type'], schema) || (_.isPlainObject(first) ? 'object' : 'other');
   // }, { schema: true })(this.val, this.schema);
   }
 
