@@ -88,7 +88,7 @@ export function validateFormat(val: any, format: string) {
   //        'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'
 }
 
-export const validate = (v: any, schema: Front.Schema): boolean => _.every(k => {
+export const validate = (v: any, schema: Front.Schema): boolean => !_.isNil(schema) && _.every(k => {
   let fn = valConds[k];
   return fn ? fn(v, schema[k], schema) : true;
 })(_.keys(schema))

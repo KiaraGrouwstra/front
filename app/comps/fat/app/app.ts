@@ -213,11 +213,7 @@ export class App {
 
   schemaMeat(): Front.Schema {
     let path = _.flatten(this.meat.map(str => ['properties', str]));
-    console.log('schemaMeat', path, this.schema);
-    // this.zoomed_schema = _.get(path)(this.schema);
     this.zoomed_schema = getSafe(path)(this.schema);
-    console.log('_.get', _.get(path)(this.schema));
-    console.log('getSafe', getSafe(path)(this.schema));
   }
 
   // sets and saves the auth token + scopes from the given get/hash

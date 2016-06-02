@@ -23,7 +23,7 @@
       '(click)'=`clearFilters()`
     )
       | clear filters
-      
+
     table.bordered.highlight(id=`{{id}}`)
       thead
         //- https://github.com/angular/angular/issues/2451
@@ -48,7 +48,7 @@
           //-   use(xlink:href='#arrow')
           //- svg.icon.desired(width='24', height='24')
           //-   use(xlink:href='#arrow')
-            
+
           button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.yellow(
             'data-tooltip'='sort'
           )
@@ -60,7 +60,7 @@
               template(ngSwitchDefault)
                 i.material-icons import_export
                 //- sort_by_alpha
-          
+
           a.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.blue(
             'data-tooltip'='hide'
             '(click)'=`$event.stopPropagation(); hideCol(name)`
@@ -149,11 +149,11 @@
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
           )
-            //- colMeta[name].schema
+            //- '[schema]'=`cellSchema(idx)`
             value(
               '[path]'=`r.cells[name].path`
               '[val]'=`r.cells[name].val`
-              '[schema]'=`getSchema(idx)`
+              '[schema]'=`colMeta[name].schema`
             )
           //- td(
           //-   *ngFor=`let name of colOrder; #c = r.cells.get(name)`

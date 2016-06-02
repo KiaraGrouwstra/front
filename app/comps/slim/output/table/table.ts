@@ -59,7 +59,7 @@ export class TableComp extends BaseOutputComp {
     min?: number,
     max?: number,
   }};
-  indexBased: boolean;
+  // indexBased: boolean;
   col_keys: string[];
   condBoundaries: {[key: string]: number[]};
   modalCol: string;
@@ -72,10 +72,6 @@ export class TableComp extends BaseOutputComp {
     super();
   }
 
-  ngOnInit() {
-    console.log('table', this.schema);
-  }
-
   setPath(x: Front.Path): void {
     this.combInputs();
   }
@@ -85,9 +81,7 @@ export class TableComp extends BaseOutputComp {
   }
   set val(x: Val) {
     if(_.isUndefined(x)) return;
-    console.log('set:val', x, this.schema);
-    if(!this.schema) this.schema = getSchema(x).items;
-    console.log('after', this.schema);
+    if(!this.schema) this.schema = getSchema(x); //.items;
     this._val = x;
     this.col_keys = Array.from(x
       .map(o => _.keys(o))
@@ -98,8 +92,7 @@ export class TableComp extends BaseOutputComp {
 
   @try_log()
   setSchema(x: Front.Schema): void {
-    console.log('setSchema', x);
-    this.indexBased = _.isArray(_.get(['items'], x));
+    // this.indexBased = _.isArray(_.get(['items'], x));
     this.combInputs();
   }
 
@@ -252,10 +245,11 @@ export class TableComp extends BaseOutputComp {
   // combInputs: () => void = () => tryLog(combine((path: Front.Path, val: Val, schema: Front.Schema) => {
   combInputs(): void {
     let { path, val, schema } = this;
+    let item_schema = _.get(['items'])(schema);
     if(_.some(_.isNil)([path, val])) return;
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
     this.colMeta = arr2obj(this.col_keys, col => {
-      let col_schema = keySchema(col, schema);
+      let col_schema = keySchema(col, item_schema);
       let type = _.get(['type'])(col_schema);
       let anyOf = _.get(['anyOf'])(type) || [];
       const NUM_TYPES = ['number','integer'];
@@ -271,7 +265,7 @@ export class TableComp extends BaseOutputComp {
         isLog = false;
         // let boundaries = [min, max];
       }
-      return { isNum, hasNum, isText, hasText, min, max, isLog }; //schema, boundaries
+      return { isNum, hasNum, isText, hasText, min, max, isLog, schema: col_schema }; //boundaries
     });
     this.rows = rowPars(this.col_keys, path, val);
     this.filter();
@@ -325,11 +319,12 @@ export class TableComp extends BaseOutputComp {
     this.sort();
   }
 
-  getSchema(idx: number): Front.Schema {
-    let schema = this.schema;
-    return this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
-    // _.get(['items', 'type'], schema) ? schema.items : trySchema(this.first, _.get(['items'], schema));
-  }
+  // cellSchema(idx: number, k: string): Front.Schema {
+  //   let schema = this.schema;
+  //   return this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'], schema);
+  //   // _.get(['items', 'type'], schema) ? schema.items : trySchema(this.first, _.get(['items'], schema));
+  //   return keySchema(k, rowSchema);
+  // }
 
   // v should be able to do these from the template again?
 
