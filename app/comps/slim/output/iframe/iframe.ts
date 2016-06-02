@@ -10,6 +10,9 @@ type Val = string;
   template: `<iframe [srcdoc]='val'></iframe>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.Native,  // Emulated
+  styles: [
+  require('!raw!less!./iframe.less'),
+  ],
 })
 export class IframeComp {
   @Input() val: Val;

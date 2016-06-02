@@ -6,6 +6,7 @@ import { toast, tryLog, findTables } from '../../lib/js';
 import { getSchema } from '../../lib/schema';
 // import { elemToArr } from '../../lib/rx_helpers';
 let $RefParser = require('json-schema-ref-parser');
+import { parse } from '../../lib/parsing';
 
 export let loadUi = tryLog(async function(name: string) {
   this.api = name;
@@ -119,7 +120,7 @@ function processParselet(prslt: Front.Parselet): Front.RealParselet {
   };
   return _.flow([
     _.toPairs,
-    _.map(TYPE_MAP[type]),
+    _.map(([k,o]) => TYPE_MAP[o.type]([k,o])),
     _.fromPairs,
     s => JSON.stringify(s),
   ])(prslt);
@@ -165,7 +166,7 @@ export function doProcess(
     transformer: eval(transformer),
     parselet: parse(processParselet(parselet)),
   };
-  let fn = fn_map[processor] || y => y;
+  let fn = fn_map[processor] || (y => y);
   // return $raw.map(fn);
   this.extractor = fn;
   if(!_.size(this.raw)) {

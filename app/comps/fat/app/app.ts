@@ -124,7 +124,12 @@ export class App {
   }
   set extractor(x: Function) {
     this._extractor = x;
+    this.calcDerived();
+  }
+
+  calcDerived() {
     this.setExtracted();
+    this.assertSchema(this.extracted);
     this.setData();
   }
 
@@ -142,10 +147,8 @@ export class App {
   set raw(x: Front.Data) {
     if(_.isUndefined(x)) return;
     this._raw = x;
-    this.assertSchema(x);
     // this.data = x;
-    this.setExtracted();
-    this.setData();
+    this.calcDerived();
   }
 
   addData(x: Front.Data): void {

@@ -35,56 +35,56 @@ describe('parsing', () => {
   // })
 
   it('parse - simple', () => {
-    let out = parse(html, simple);
+    let out = parse(simple)(html);
     expect(out).toEqual({ header: 'hi' });
   })
 
   it('parse - failure', () => {
-    expect(() => parse(html, will_throw)).toThrowErrorWith(`floki selector`); //SelectorError
+    expect(() => parse(will_throw)(html)).toThrowErrorWith(`floki selector`); //SelectorError
   })
 
   it('parse - optional', () => {
-    let out = parse(html, optional);
+    let out = parse(optional)(html);
     expect(out).toEqual({ header: 'hi', p: 'foo' });
   })
 
   it('parse - table', () => {
-    let out = parse(html, table);
+    let out = parse(table)(html);
     expect(out).toEqual({ words: [ { p: 'foo' } ] });
   })
 
   it('parse - table (array not pinned to body)', () => {
-    let out = parse(html, table_global);
+    let out = parse(table_global)(html);
     expect(out).toEqual({ words: [ { p: 'foo' } ] });
   })
 
   it('parse - table with optional entry', () => {
-    let out = parse(html, table_optional);
+    let out = parse(table_optional)(html);
     expect(out).toEqual({ words: [ { p: 'foo' } ] });
   })
 
   it('parse - table with empty entry', () => {
-    let out = parse(html, table_empty);
+    let out = parse(table_empty)(html);
     expect(out).toEqual({ words: [ {} ] });
   })
 
   it('parse - complex', () => {
-    let out = parse(html_sel, json_sel);
+    let out = parse(json_sel)(html_sel);
     expect(out).toEqual({ words: [ { item: 'bar' }, { item: 'cow' }, {} ] });
   })
 
   it('parse - outer', () => {
-    let out = parse(html, outer);
+    let out = parse(outer)(html);
     expect(out).toEqual({ header: '<title>hi</title>' });
   })
 
   it('parse - inner', () => {
-    let out = parse(html, inner);
+    let out = parse(inner)(html);
     expect(out).toEqual({ header: '<title>hi</title>' });
   })
 
   it('parse - attr', () => {
-    let out = parse(html, attr);
+    let out = parse(attr)(html);
     expect(out).toEqual({ attr: 'text' });
   })
 

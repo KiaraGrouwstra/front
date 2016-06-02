@@ -12,13 +12,13 @@ class SelectorError extends ExtendableError {
 }
 
 // parse the DOM of a response body based on the given parselet (JSON string), returning the ~~JSON~~ result of extracted content
-export function parse(body: string, parselet: string): any {
+export let parse = _.curry(function(parselet: string, body: string): any {
   let map = JSON.parse(parselet);
   let doc = new DOMParser().parseFromString(body, 'text/xml');
   // let $el = cheerio.load(body)('body');
   let $el = $(doc);
   return doParselet($el, map);
-}
+});
 
 // parse an HTML body/element based on a Parsley parselet value -- handles transformer resolution to pass to matchSelector
 function doParselet($el: jQueryNode, val: string|Object, is_arr: boolean = false) {

@@ -68,6 +68,7 @@ let parselet = {
           'outer html',
           'array',
         ],
+        default: 'text',
         // ^ I need these to be labels, actual values being '', '@', '@', '@@'... uh-oh, can't have two identical values?
         // description: "`attribute -> src` makes `a@src`, `text` makes `a`, `inner html` gives `a@`, `outer html` gives `a@@`.",
       },
