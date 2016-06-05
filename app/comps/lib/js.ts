@@ -286,22 +286,22 @@ export function findIndexSet(x: any, set: Set): number {
 // editVals from elins; map values of an object using a mapper
 
 // only keep properties in original object
-export let editValsOriginal: Front.ObjectMapper = (fnObj) => (obj) => mapBoth(obj, (v, k) => {
+export let editValsOriginal: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth(obj, (v, k) => {
   let fn = fnObj[k];
   return fn ? fn(v) : v
-});
+}));
 
 // export let editVals = (fnObj) => (obj) => _.reduce((acc, fn, k) => _.update(k, fn(acc[k]))(acc), obj)(fnObj);
 // ^ no k in FP
 // keep all original properties, map even over keys not in the original object
-export let editValsBoth: Front.ObjectMapper = (fnObj) => (obj) =>
-    _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj);
+export let editValsBoth: Front.ObjectMapper = _.curry((fnObj, obj) =>
+    _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj));
 
 // only keep properties in mapper object, map even over keys not in the original object
-export let editValsLambda: Front.ObjectMapper = (fnObj) => (obj) => mapBoth(fnObj, (fn, k) => {
+export let editValsLambda: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth(fnObj, (fn, k) => {
   let v = obj[k];
   return fn ? fn(v) : v
-});
+}));
 
 // split an object into its keys and values: `let [keys, vals] = splitObj(obj);`
 export function splitObj(obj: {}): [keys: string[], values: any[]] {

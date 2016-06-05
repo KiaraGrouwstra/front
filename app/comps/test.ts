@@ -101,7 +101,7 @@ export function setInput(input: ElementRef, val: any): void {
 //   expect(comp).not.toEqual(undefined);
 // }));
 // : (Front.ICompTest) => number
-export let asyncTest = (builder: TestComponentBuilder, comp_cls: Class) => (props: {}, fn) => async function(done) {
+export let asyncTest = _.curry((builder: TestComponentBuilder, comp_cls: Class, props: {}, fn) => async function(done) {
   try {
     let par = await getComp(builder, comp_cls(props));
     // fn(par);
@@ -112,7 +112,7 @@ export let asyncTest = (builder: TestComponentBuilder, comp_cls: Class) => (prop
   catch(e) {
     done.fail(e);
   }
-};
+});
 
 // a generic component class
 export let genClass = (pars: {}) => class {

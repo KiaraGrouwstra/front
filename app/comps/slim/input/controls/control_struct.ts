@@ -5,6 +5,7 @@ import { ControlObject } from './control_object';
 import { uniqueKeys, inputControl, getOptsNameSchemas } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
 
+// can curry but meh
 let lens = (fn_obj, fn_grp) => (ctrl) => {
   let { properties: prop, patternProperties: patt, additionalProperties: add } = ctrl.controls;
   return _.flatten([

@@ -166,9 +166,11 @@ export const validate = (v: any, schema: Front.Schema): boolean => !_.isNil(sche
 
 const valFns: {[key: string]: (par: any) => ValidatorFn} =
   mapBoth(valConds, (fn, k) => (par) => (c) =>
+  // mapBoth(valConds, _.curry((fn, k, par, c) =>
     par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null
     // { [k]: true }
   );
+  // ));
 // ... _.keys(valConds).map((k) => ... valConds[k] ...
 // const ng_validators = _.assign(Validators, valFns);
 
