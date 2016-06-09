@@ -14,7 +14,7 @@ import { HTTP_BINDINGS } from '@angular/http';
 import { enableProdMode } from '@angular/core';
 
 import { App } from './comps/fat/app/app';
-import { wsServiceProvider, requestServiceProvider, globalsServiceProvider } from './comps/services';
+import { wsServiceProvider, requestServiceProvider, globalsServiceProvider, FetcherService } from './comps/services';
 import { CONFIG, APP_CONFIG } from './config';
 
 let singletons = [
@@ -23,6 +23,7 @@ let singletons = [
   wsServiceProvider,
   globalsServiceProvider,
   { provide: APP_CONFIG, useValue: CONFIG },
+  FetcherService,
 ];
 // enableProdMode();
 bootstrap(App, singletons);

@@ -1,7 +1,9 @@
 #index-banner.section.no-pad-bot
   .container(style='width: 90%;')
     #floating-buttons
-      - bool = { val: '(_ws.connected$ | async)', ok: 'connected', ng: 'connecting...' }
+      - bool = { val: '(_ws.connected$ | async)', ok: 'connected', ng: 'connecting...', icon: 'power_settings_new' }
+      include ./bool.jade
+      - bool = { val: 'allowCors', ok: 'CORS requests enabled', ng: 'CORS restrictions active; considering running Chrome with flags `--disable-web-security --allow-running-insecure-content --user-data-dir=YOUR_DIRECTORY`', icon: 'loop' }
       include ./bool.jade
 
     .row

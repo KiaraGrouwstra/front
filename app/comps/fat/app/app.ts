@@ -19,7 +19,7 @@ let _ = require('lodash/fp');
 // import { autobind, mixin, decorate } from 'core-decorators';  // @decorate(_.memoize)
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
-import { WsService, RequestService, GlobalsService } from '../../services';
+import { WsService, RequestService, GlobalsService, FetcherService } from '../../services';
 import { handleAuth, toast, setKV, getKV, prettyPrint, inputSchemas, getSafe } from '../../lib/js';
 import { loadUi, get_submit, reqUrl, pickFn, doFetch, doProcess, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
@@ -78,20 +78,30 @@ export class App {
   colored: string;
   zoomed_schema: Front.Schema;
   extractor: Function;
+  allowCors: boolean = false; // cannot await promise here
 
   constructor(
     // public router: Router,
     private _http: Http,
-    private _req: RequestService,
+    private _back_fetcher: RequestService,
     private _ws: WsService,
     @Inject(APP_CONFIG) private _config: Front.Config,
     public g: GlobalsService,
-    //private _routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
-  ) {}
+    private _front_fetcher: FetcherService,
+    // private _routeParams: RouteParams, <-- for sub-components with router params: routeParams.get('id')
+  ) {
+    new Promise((resolve, reject) =>
+      fetch('http://localhost/').then(resolve).catch(reject))
+      .then(v => { this.allowCors = true; });
+  }
 
+  get fetcher() {
+    return this.allowCors ? this._front_fetcher : this._back_fetcher;
+  }
 
   ngOnInit() {
     // $('select').material_select();
+    // disable/hide if this.allowCors?
     this._ws.connected$.subscribe(y => y ?
         toast.success('websocket connected!') :
         toast.warn('websocket disconnected!'));

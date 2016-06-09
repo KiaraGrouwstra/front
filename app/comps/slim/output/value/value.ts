@@ -66,7 +66,7 @@ export class ValueComp extends BaseOutputComp {
   }
 
   isHtml(v: Val): boolean {
-    return _.isString(v) && /^\s*<!DOCTYPE/.test(v);
+    return _.isString(v) && /^\s*<!DOCTYPE/i.test(v);
   }
 
 }

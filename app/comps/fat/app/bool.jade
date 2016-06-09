@@ -9,5 +9,5 @@
   '[ngClass]'=`{green: ${bool.val} }`
   '[attr.data-tooltip]'=`${bool.val} ? '${bool.ok}' : '${bool.ng}'`
 )
-  i.material-icons power_settings_new
+  i.material-icons= bool.icon
 //- paper-tooltip=`{{ ${bool.val} ? '${bool.ok}' : '${bool.ng}' }}`

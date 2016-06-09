@@ -36,7 +36,7 @@ export class WsService {
     this.chan.on('msg', e => this.out.next(e));
   }
 
-  askMany(url: string, pars = {}): Observable {
+  askMany(url: string, pars: Front.ReqMeta = {}): Observable {
     let id = this.id++;
     this.chan.push(url, {body: pars, id});
     return this.out
@@ -50,7 +50,7 @@ export class WsService {
   // (trying this server-sided would suck too due to having to guarantee order of client reception.)
 
   // request that completes after n responses
-  ask(url: string, pars = {}, n = 1): Observable {
+  ask(url: string, pars: Front.ReqMeta = {}, n = 1): Observable {
     return this.askMany(url, pars).take(n);
   }
 

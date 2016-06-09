@@ -100,7 +100,7 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
 function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   let { urls } = meta;
   return {
-    obs: this._req.addUrls(meta).map(transformer),
+    obs: this.fetcher.addUrls(meta).map(transformer),
     start: `starting fetch request`,
     next: `GET ${urls}`,
     done: `got ${urls}`,
@@ -131,7 +131,7 @@ function doParsley(meta: Front.ReqMeta, parselet: Front.Parselet): Front.ObsInfo
   let { urls } = meta;
   meta.parselet = processParselet(parselet);
   return {
-    obs: this._req.addUrls(meta),
+    obs: this.fetcher.addUrls(meta),
     start: `starting HTML extraction request`,
     next: `GET ${urls} with extractors: ${json}`,
     done: `got ${urls}`,
@@ -178,7 +178,7 @@ export function doProcess(
 export let doCurl: Front.Submitter = submitReq(function(v: any) {
   let { curl } = v;
   return {
-    obs: this._req.toCurl(curl),
+    obs: this.fetcher.toCurl(curl),
     start: `CURL command`, //: ${curl}`
     next: `CURL reply received`,
     done: `CURL request finished`,
