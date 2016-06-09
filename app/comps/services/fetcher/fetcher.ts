@@ -1,18 +1,34 @@
+let _ = require('lodash/fp');
 import { Subject, Observable } from 'rxjs'; //, BehaviorSubject
 import { Injectable } from '@angular/core';
+
+const FOLLOW = true;
+// https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
+const BASE_INIT = {
+  method = 'GET',
+  headers = new Headers({}),
+  redirect = FOLLOW ? 'follow' : 'manual',
+  // body,
+  // mode,
+  // cache,
+  // referrer,
+  // integrity,
+  // credentials,
+};
 
 // no-cors fetch Subject: directly scrape pages from browser using Chrome startup flag `--disable-web-security` or by making this into an extension
 @Injectable()
 export class FetcherService {
   // add default init?
 
+  // ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string }
   // fetch URL content (and optionally Parsley parse)
   addUrls(pars: Front.ReqMeta): Observable<any> { // reqs: Request[]
-    let init = {
+    let init = _.assign(BASE_INIT, {
       headers: new Headers(pars.headers || {}),
-      method: pars.verb || 'GET',
+      method: pars.method || 'GET',
       body: pars.body,
-    }
+    });
     let reqs = pars.urls.map(url => new Request(url, init));
     return this.ask(reqs);
     // pars.parselet ? .map(parse(pars.parselet))
@@ -36,37 +52,23 @@ export class FetcherService {
     };
     // _.mapValues
     Observable.pairs(header_combs).map(async function([k, hdrs]) {
-      let resp = await this.ask(new Request(url, { headers: new Headers(hdrs) })).toPromise();
-      let v = { status: resp.status, length: resp.body.length };
+      let init = _.assign(BASE_INIT, { headers: new Headers(hdrs) });
+      let resp = await this.ask(new Request(url, init)).toPromise();
+      let v = { status: resp.status, length: resp.body.length, description: resp.statusText };
       return [k, v];
     })
     // merge back
     .scan(setter, {});
   }
 
-  // ReqMeta = { urls: string[], headers: {}, verb?: string, body?: string, parselet?: string }
-  // Request init: { method = 'GET', headers = new Headers({}), body, mode, credentials, cache, redirect = follow ? 'follow' : 'manual', referrer, integrity }
-  // https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
   ask(reqs: Request[]): Observable {
     return Observable.from(reqs)
       // .debounce(500) //, scheduler
       .debounce(x => Observable.timer(500))
-      .flatMap(fetchRequest)
+      .flatMap(fetch)
       .flatMap(decode);
   }
 
-}
-
-function fetchRequest(req: Request): Response {
-  console.log('fetching:', req.url);
-  return fetch(req).catch(e => {
-    console.log('catch:', e);
-    if (e instanceof TypeError && e.message == 'Failed to fetch') {
-      return fetchRequest(req: Request);
-    } else {
-      throw e;
-    }
-  });
 }
 
 // decode a response to string

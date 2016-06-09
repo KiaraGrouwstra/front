@@ -35,11 +35,11 @@ describe('RequestService', () => {
   })
 
   it('addUrls', () => {
-    let verb = 'GET';
+    let method = 'GET';
     let headers = [];
     let body = {};
-    req.addUrls({ urls, headers, verb, body });
-    expect(req._ws.chan.push).toHaveBeenCalledWith('/urls', { body: { urls, headers, verb, body }, id: 0 });
+    req.addUrls({ urls, headers, method, body });
+    expect(req._ws.chan.push).toHaveBeenCalledWith('/urls', { body: { urls, headers, method, body }, id: 0 });
   })
 
   it('parsley', () => {

@@ -82,8 +82,8 @@ export class InputUiComp extends BaseComp {
     // if(_.size(p_form) && _.any(x => p_header['Content-Type'].includes(x))
     //   (['application/x-www-form-urlencoded', 'multipart/form-data']))
     //     throw "consider adding a form-appropriate header!";
-    let verb = 'GET';
-    let req = { urls: url, headers: p_header, verb, body };
+    let method = 'GET';
+    let req = { urls: url, headers: p_header, method, body };
     this.handler.emit(req);
     // return url;
 
