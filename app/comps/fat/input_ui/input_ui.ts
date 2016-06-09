@@ -58,9 +58,7 @@ export class InputUiComp extends BaseComp {
   submit(form_val: {}): void {
     if(form_val instanceof Event) return;
     // why is the EventEmitter first yielding an Event?
-    let kind_map = Object.assign(...this.pars.map(
-      ({ schema }) => ({ [schema.name]: schema.in })
-    ));
+    let kind_map = _.mapValues(y => y.in)(this.pars.properties);
     // let spec = this.spec;
     // let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes} // Swagger
     let host = this.spec.hosts[0];
@@ -70,9 +68,9 @@ export class InputUiComp extends BaseComp {
       return arr2obj(good_keys, k => form_val[k]);
     });
     let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
+    let query = _.assign({ access_token: this.token }, p_query);
     let url = _.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`)
-        + (_.size(p_query) ? '?' : '')
-        + global.$.param(_.assign({ access_token: this.token }, p_query));
+        + (_.size(query) ? '?' + global.$.param(query) : '');
     // this.handler.emit(url);
     let body_keys = _.keys(p_body);
     if(body_keys.length > 1) throw "cannot have multiple body params!";

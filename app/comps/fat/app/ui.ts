@@ -100,6 +100,8 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
 // run addUrls (fetch, optionally with transformer)
 function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   let { urls } = meta;
+  meta.urls = urls.split('\n').filter(y => y);
+  // let meta_ = _.update('urls', s => s.split('\n').filter(y => y))(fetch_form);
   return {
     obs: this.fetcher.addUrls(meta).map(transformer),
     start: `starting fetch request`,
@@ -152,9 +154,8 @@ export let doFetch: Front.Submitter = submitReq(function(
   // { processor, parselet, transformer }: Front.ProcessForm,
   // ^ haven't managed to pass this in yet
 ) {
-  let fetch_form_ = _.update('urls', s => s.split('\n').filter(y => y))(fetch_form);
   // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, fetch_form);  //, fn
-  return doAddUrls.call(this, fetch_form_);
+  return doAddUrls.call(this, fetch_form);
 });
 
 // handle process form submit
