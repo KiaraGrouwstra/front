@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
 const FOLLOW = true;
 // https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
 const BASE_INIT = {
-  method = 'GET',
-  headers = new Headers({}),
-  redirect = FOLLOW ? 'follow' : 'manual',
+  method: 'GET',
+  headers: new Headers({}),
+  redirect: FOLLOW ? 'follow' : 'manual',
   // body,
   // mode,
   // cache,
@@ -24,11 +24,12 @@ export class FetcherService {
   // ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string }
   // fetch URL content (and optionally Parsley parse)
   addUrls(pars: Front.ReqMeta): Observable<any> { // reqs: Request[]
-    let init = _.assign(BASE_INIT, {
+    let form_init = {
       headers: new Headers(pars.headers || {}),
       method: pars.method || 'GET',
-      body: pars.body,
-    });
+      body: ['POST', 'PUT', 'PATCH', 'DELETE'].includes(pars.method) ? pars.body : null,
+    };
+    let init = _.assign(BASE_INIT, form_init);
     let reqs = pars.urls.map(url => new Request(url, init));
     return this.ask(reqs);
     // pars.parselet ? .map(parse(pars.parselet))
@@ -65,7 +66,7 @@ export class FetcherService {
     return Observable.from(reqs)
       // .debounce(500) //, scheduler
       .debounce(x => Observable.timer(500))
-      .flatMap(fetch)
+      .flatMap(req => fetch(req))
       .flatMap(decode);
   }
 
@@ -91,7 +92,7 @@ async function decode(resp: Response): Promise<string> {
 // get the response encoding
 function getEncoding(resp: Response): string {
   try {
-    return /charset=(.*)/.exec(resp.headers.get('content-type'))[1];
+    return /charset=(.*)/i.exec(resp.headers.get('content-type'))[1];
   } catch(e) {
     return 'utf8';
   }

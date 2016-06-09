@@ -56,7 +56,7 @@ export class InputUiComp extends BaseComp {
 
   // submit param inputs for an API function
   submit(form_val: {}): void {
-    if(form_val.constructor == Event) return;
+    if(form_val instanceof Event) return;
     // why is the EventEmitter first yielding an Event?
     let kind_map = Object.assign(...this.pars.map(
       ({ schema }) => ({ [schema.name]: schema.in })

@@ -54,9 +54,10 @@ export let pickFn = tryLog(function(fn_path: string) {
   this.path = ['paths', fn_path, 'get', 'responses', '200'];
 });
 
+// handle the meat/schema/Rx/logging boilerplate for submission requests
 function submitReq(fn: Front.Submitter): Front.Submitter {
   return tryLog(function(v: any) {
-    // if(v.constructor == Event) return;
+    // if(v instanceof Event) return;
     // toast.info(`request: ${JSON.stringify(v)}`);
     let { obs, start='request', next='response', done='request completed' } = fn.call(this, v);
     toast.info(start);
@@ -107,6 +108,7 @@ function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   };
 }
 
+// convert a parselet from the form format to its intended format
 function processParselet(prslt: Front.Parselet): Front.RealParselet {
   const TYPE_MAP = {
     // { selector, parselet, type, attribute }
@@ -146,22 +148,22 @@ export let reqUrl: Front.Submitter = submitReq(function(v: Front.ReqMeta) {
 
 // handle fetch form submit
 export let doFetch: Front.Submitter = submitReq(function(
-  { urls, headers }: Front.FetchForm,
+  fetch_form: Front.FetchForm,
   // { processor, parselet, transformer }: Front.ProcessForm,
   // ^ haven't managed to pass this in yet
 ) {
-  urls = urls.split('\n').filter(y => y);
-  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, { urls, headers });  //, fn
-  return doAddUrls.call(this, { urls, headers });
+  let fetch_form_ = _.update('urls', s => s.split('\n').filter(y => y))(fetch_form);
+  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, fetch_form);  //, fn
+  return doAddUrls.call(this, fetch_form_);
 });
 
 // handle process form submit
 export function doProcess(
   // $raw: Observable<string>,
   { processor, parselet, transformer }: Front.ProcessForm,
-  { urls, headers }: Front.FetchForm,
+  fetch_form: Front.FetchForm,
 ): void { // Observable<any>
-  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, { urls, headers }, fn);
+  // return processor == 'parselet' ? doParsley.call(this, urls, parselet) : doAddUrls.call(this, fetch_form, fn);
   const fn_map = {
     transformer: eval(transformer),
     parselet: parse(processParselet(parselet)),
@@ -170,7 +172,7 @@ export function doProcess(
   // return $raw.map(fn);
   this.extractor = fn;
   if(!_.size(this.raw)) {
-    this.doFetch({ processor, parselet, transformer }, { urls, headers });
+    this.doFetch({ processor, parselet, transformer }, fetch_form);
   }
 });
 

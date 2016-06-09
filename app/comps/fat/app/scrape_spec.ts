@@ -9,7 +9,7 @@ let mimeTypes = ['application/json','application/x-www-form-urlencoded','multipa
 
 export let fetch_spec: Front.Schema = {
   type: 'object',
-  required: ['urls', 'headers'],
+  required: ['urls', 'method', 'headers'],  //, 'body'
   properties: {
     'urls': {
       type: 'string',
@@ -17,6 +17,12 @@ export let fetch_spec: Front.Schema = {
       required: true,
       'x-template': 'textarea',
       description: 'the URLs to scrape and extract, delimited with line breaks (`\\n`)',
+    },
+    'method': {
+      type: 'string',
+      default: 'GET',
+      enum: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      required: true,
     },
     'headers': {
       description: 'Request Headers',
@@ -35,6 +41,16 @@ export let fetch_spec: Front.Schema = {
       },
       'x-keys': {
         suggestions: headers,
+      },
+    },
+    'body': {
+      type: 'string',
+      allowEmptyValue: true,
+      'x-template': 'textarea',
+      'x-bindings': {
+        attributes: {
+          hidden: `!['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.nav('../method', path))`,
+        },
       },
     },
   },
