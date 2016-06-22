@@ -54,7 +54,7 @@ export class FnUiComp extends BaseComp {
   // combInputs = () => combine((spec: Front.ApiSpec, oauth_sec: string, have: string[]) => {
   combInputs(): void {
     let { spec, oauth_sec, have } = this;
-    if(_.some(_.isNil)([spec, oauth_sec, have])) return;
+    if([spec, oauth_sec, have].some(_.isNil) return;
     this.tags = _.get(['tags'], spec) || [];
     let paths = _.get(['paths'], spec) || {};
     let misc_key;
@@ -78,7 +78,7 @@ export class FnUiComp extends BaseComp {
     // todo: add untagged functions
     let path_scopes = _.mapValues(path => {
       let secs = (_.get(['get', 'security'], path) || []);
-      let scopes = _.find(_.has(oauth_sec))(secs);
+      let scopes = secs.find(_.has(oauth_sec));
       return scopes ? scopes[oauth_sec] : [];
     }, paths);
     this.descs = _.mapValues(path =>

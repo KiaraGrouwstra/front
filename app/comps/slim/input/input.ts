@@ -293,7 +293,7 @@ export function getOptsNameSchemas(obj: Front.IObjectSchema<any>): Object {
 export function categorizeKeys(patterns, blacklist = []): (keys: string[]) => { rest: string, patts: {[key: string]: string} } {
   return (keys: string[]) => {
     let r = _.difference(keys, blacklist);
-    let sorter = v => _.find(patt => new RegExp(patt).test(v))(patterns);
+    let sorter = v => patterns.find(patt => new RegExp(patt).test(v));
     // let { undefined: rest, ...patts } = _.groupBy(sorter)(r); // without TS
     let grouped = _.groupBy(sorter)(r);
     let rest = grouped.undefined;

@@ -55,7 +55,7 @@ export class AuthUiComp extends BaseComp {
   // combInputs = () => combine((scopes: string[], have: string[]) => {
   combInputs(): void {
     let { scopes, have } = this;
-    if(_.some(_.isNil)([scopes, have])) return;
+    if([scopes, have].some(_.isNil)) return;
     this.have_scope = arr2obj(scopes, s => have.includes(s));
   // })(this.scopes, this.have);
   }

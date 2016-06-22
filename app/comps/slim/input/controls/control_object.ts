@@ -25,7 +25,7 @@ export class ControlObject extends ControlList {
 
   byName(k: string): AbstractControl {
     // return this.mapping[k];
-    return _.find(c => c.controls('name') == k)(this.controls).controls('val');
+    return this.controls.find(c => c.controls('name') == k).controls('val');
     // ^ terrible for performance. better: hook into add/remove/nameCtrl.valueChanges
   }
 

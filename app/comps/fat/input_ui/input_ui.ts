@@ -46,7 +46,7 @@ export class InputUiComp extends BaseComp {
   // combInputs = () => combine((spec: Front.ApiSpec, fn_path: string) => {
   combInputs(): void {
     let { spec, fn_path } = this;
-    if(_.some(_.isNil)([spec, fn_path])) return;
+    if([spec, fn_path].some(_.isNil)) return;
     // let { pars: this.pars, desc: this.desc } = methodPars(spec, fn_path);
     let obj = methodPars(spec, fn_path);
     this.pars = obj.pars;

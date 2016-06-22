@@ -10,9 +10,9 @@ export let inferType = (v: any) => Array.isArray(v) ? 'array' : _.isObject(v) ? 
 // (which seems fair for `oneOf` but blatantly disregards `allOf` and to lesser extent `anyOf`)
 export let trySchema = (val: any, schema: Front.Schema) => {
   let options = _.get(['oneOf'], schema) || _.get(['anyOf'], schema) || _.get(['allOf'], schema) || [];
-  let tp = _.find((schema, idx, arr) => validate(val, schema))(options);
+  let tp = options.find((schema, idx, arr) => validate(val, schema));
   return _.has(['type'])(tp) ? tp :
-    _.some(x => _.get([x], tp))(['oneOf','anyOf','allOf']) ?
+    ['oneOf','anyOf','allOf'].some(x => _.get([x], tp)) ?
     trySchema(val, tp) : null; //inferType(val)
 }
 
@@ -34,7 +34,7 @@ export function parseScalar(val: any, schema: Front.Schema): string {
   if (validateFormat(s, 'uri')) {
     const IMG_EXTS = ['jpg','jpeg','bmp','png','gif','tiff','svg','bpg','heif','hdr','webp','ppm','pgm','pbm','pnm']
         .map(ext => '\\.' + ext);
-    if (_.some(reg => new RegExp(reg, 'i').test(s))(IMG_EXTS)) {
+    if (IMG_EXTS.some(reg => new RegExp(reg, 'i').test(s))) {
       s = `<img src="${s}">`;
     } else {
       s = wrapUri(s);

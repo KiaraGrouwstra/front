@@ -55,7 +55,7 @@ export function getSchema(v: any, settings: Front.IGenSchemaSettings = {}): Fron
         minLength: v.length,
         // pattern
         enum: [v],
-        format: _.find(frmt => validateFormat(v, frmt))(_.keys(formatMap)) || null,
+        format: _.keys(formatMap).find(frmt => validateFormat(v, frmt)) || null,
         // I'd actually need to check all formats and have a way to recognize stricter formats...
       })
     }
@@ -213,7 +213,7 @@ const mergers = {
   maxItems: max,
   minItems: min,
   additionalItems: checkAdditional,
-  uniqueItems: opts => _.every(y => y)(opts) || undefined,
+  uniqueItems: opts => opts.every(y => y) || undefined,
 
   // OBJECTS:
   maxProperties: max,

@@ -24,7 +24,7 @@ export let loadUi = tryLog(async function(name: string) {
   )
 
   let sec_defs = api.securityDefinitions;
-  let oauth_sec = _.find((k) => sec_defs[k].type == 'oauth2', _.keys(sec_defs));
+  let oauth_sec = _.keys(sec_defs).find((k) => sec_defs[k].type == 'oauth2');
   let oauth_info = sec_defs[oauth_sec];
   let scopes = _.keys(oauth_info.scopes);
 

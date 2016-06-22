@@ -47,26 +47,27 @@ const valConds: {[key: string]: (v: any, par: any) => boolean} = {
       (v, par) => !validate(v, par),
   items:
       (v, par) => _.isArray(par) ?
-        _.every(
-          ([val, schema]) => _.some(_.isUndefined)([val, schema]) || validate(val, schema)
-        )(_.zip(v, par)) :
-        _.every(x => validate(x, par))(v),
+        _.zip(v, par).every(([val, schema]) =>
+          [val, schema].some(_.isUndefined) || validate(val, schema)
+        ) :
+            v.every(x => validate(x, par)),
   properties:
-      (v, par) => _.every(k => validate(v[k], par[k]))(_.keys(par)),
+      (v, par) => _.keys(par).every(k => validate(v[k], par[k])),
   patternProperties:
-      (v, par) => _.every(patt => _.every(k => validate(v[k], par[k]))(
-        _.keys(v).filter(k => new RegExp(patt).test(k))
-      ))(_.keys(par)),
+      (v, par) => _.keys(par).every(patt => _.keys(v)
+        .filter(k => new RegExp(patt).test(k))
+        .every(k => validate(v[k], par[k]))
+      ),
   anyOf:
-      (v, par) => _.some(x => validate(v, x))(par),
+      (v, par) => par.some(x => validate(v, x)),
   allOf:
-      (v, par) => _.every(x => validate(v, x))(par),
+      (v, par) => par.every(x => validate(v, x)),
   oneOf:
       (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
   additionalItems:
-      (v, par, schema) => _.every(
+      (v, par, schema) => v.slice(schema.items.length).every(
         val => _.isObject(par) ? validate(val, par) : par
-      )(v.slice(schema.items.length)),
+      ),
   additionalProperties:
       (v, par, schema) => {
         let specKeys = _.keys(schema.patternProperties)).concat(_.keys(schema.properties);
@@ -74,7 +75,7 @@ const valConds: {[key: string]: (v: any, par: any) => boolean} = {
           k => new RegExp(patt).test(k))
         )(specKeys);
         let restKeys = _.difference(_.keys(v), keysBySpec);
-        return _.every(val => validate(val, par))(restKeys);
+        return restKeys.every(val => validate(val, par));
       },
   format:
       (v, par) => validateFormat(v, par),
@@ -155,10 +156,12 @@ export function validateFormat(val: any, format: string) {
   //        'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'
 }
 
-export const validate = (v: any, schema: Front.Schema): boolean => !_.isNil(schema) && _.every(k => {
-  let fn = valConds[k];
-  return fn ? fn(v, schema[k], schema) : true;
-})(_.keys(schema))
+export const validate = (v: any, schema: Front.Schema): boolean =>
+    !_.isNil(schema) && _.keys(schema)
+    .every(k => {
+      let fn = valConds[k];
+      return fn ? fn(v, schema[k], schema) : true;
+    })
 // actually filter applicable keys by type: https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
 // this way can also add implicit type-specific validators, e.g. `uniqueKeys` for object.
 // should filter on value applied to; only works if the schema limits it to 1 `type`.
@@ -189,9 +192,9 @@ function matchesType(val: any, type: string): boolean {
   const matches = (tp: string) => matchesType(val, tp);
   return _.isString(type) ? mapping[type](val) :
     _.isObject(type) ?
-      _.has(['anyOf'], type) ? _.some(matches)(type.anyOf) :
-      _.has(['oneOf'], type) ? _.some(matches)(type.oneOf) :
-      _.has(['allOf'], type) ? _.every(matches)(type.allOf) :
+      _.has(['anyOf'], type) ? type.anyOf.some(matches) :
+      _.has(['oneOf'], type) ? type.oneOf.some(matches) :
+      _.has(['allOf'], type) ? type.allOf.every(matches) :
       false : // throw `bad type (object): ${type}`
     false; // throw `bad type (?): ${type}`
 }
@@ -252,7 +255,7 @@ export function getValidator(schema: Front.Schema): ValidatorFn {
     (acc, k) => acc.concat(_.get([k], schema) || [])
   , []).map(opt => getValidator(opt));
   let of_vldtrs = of_vals.map(opt => opt.validator);
-  let of_vldtr = (c) => _.some(x => !x)(of_vldtrs);
+  let of_vldtr = (c) => of_vldtrs.some(x => !x);
   let used_vals = VAL_KEYS.filter(k => schema[k] != null);
   let validators = used_vals.map(k => valFns[k](schema[k])).concat(of_vldtr);
   return Validators.compose(validators);

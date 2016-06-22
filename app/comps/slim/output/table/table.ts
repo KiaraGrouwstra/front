@@ -246,7 +246,7 @@ export class TableComp extends BaseOutputComp {
   combInputs(): void {
     let { path, val, schema } = this;
     let item_schema = _.get(['items'])(schema);
-    if(_.some(_.isNil)([path, val])) return;
+    if([path, val].some(_.isNil)) return;
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
     this.colMeta = arr2obj(this.col_keys, col => {
       let col_schema = keySchema(col, item_schema);
@@ -254,9 +254,9 @@ export class TableComp extends BaseOutputComp {
       let anyOf = _.get(['anyOf'])(type) || [];
       const NUM_TYPES = ['number','integer'];
       let isNum = NUM_TYPES.includes(type);
-      let hasNum = isNum || _.some(t => NUM_TYPES.includes(t))(anyOf);
+      let hasNum = isNum || anyOf.some(t => NUM_TYPES.includes(t));
       let isText = type == 'string';
-      let hasText = isText || _.some(y => y == 'string')(anyOf);
+      let hasText = isText || anyOf.some(y => y == 'string');
       let vals, min, max, isLog;
       if(hasNum) {
         vals = val.map(y => y[col]);
@@ -280,7 +280,7 @@ export class TableComp extends BaseOutputComp {
     let filters = this.filters;
     let filter_keys = _.keys(filters);
     let colMeta = this.colMeta;
-    this.filtered = _.filter((row) => _.every((k) => {
+    this.filtered = this.rows.filter((row) => filter_keys.every((k) => {
       let filter = filters[k];
       let val = row.cells[k].val;
       // if(colMeta[k].isNum) {
@@ -290,7 +290,7 @@ export class TableComp extends BaseOutputComp {
       } else {
         return val.toString().includes(filter);
       }
-    }, filter_keys), this.rows);
+    }));
     this.sort();
   }
 

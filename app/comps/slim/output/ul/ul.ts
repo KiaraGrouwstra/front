@@ -43,7 +43,7 @@ export class ULComp extends BaseOutputComp {
   // combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
   combInputs(): void {
     let { path, val, schema } = this;
-    if(_.some(_.isNil)([path, val])) return;
+    if([path, val].some(_.isNil)) return;
     this.rows = val.map((v, idx) => {
       let path_k = path.concat(idx);
       let row_schema = this.indexBased ? (_.get(['items', idx], schema) || schema.additionalItems) : _.get(['items'])(schema);

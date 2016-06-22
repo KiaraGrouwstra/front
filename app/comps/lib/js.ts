@@ -272,15 +272,14 @@ export function updateSpec(specification: Front.ApiSpec): Front.ApiSpec {
 // for a given object key get the appropriate entry in the schema
 export function keySchema(k: string, schema: Front.Schema): Front.Schema {
   return _.get(['properties', k], schema)
-  || _.get(['patternProperties', _.find(p => new RegExp(p).test(k))(
-    _.keys(_.get(['patternProperties'], schema))
-  )], schema)
+  || _.get(['patternProperties', _.keys(_.get(['patternProperties'], schema))
+      .find(p => new RegExp(p).test(k))], schema)
   || _.get(['additionalProperties'], schema);
 };
 
 // find the index of an item within a Set (indicating in what order the item was added).
 export function findIndexSet(x: any, set: Set): number {
-  return _.findIndex(y => y == x)(Array.from(set));
+  return Array.from(set).findIndex(y => y == x);
 }
 
 // editVals from elins; map values of an object using a mapper

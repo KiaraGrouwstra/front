@@ -47,7 +47,7 @@ export class ObjectComp extends BaseOutputComp {
   // combInputs = () => combine((path: Front.Path, val: Val, schema: Front.Schema) => {
   combInputs(): void {
     let { path, val, schema } = this;
-    if(_.some(_.isNil)([path, val])) return;
+    if([path, val].some(_.isNil)) return;
     let coll = getColl(path, val, schema);
     const TYPES = ['array','object','scalar'];
     TYPES.forEach(x => {

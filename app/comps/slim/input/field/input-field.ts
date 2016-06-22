@@ -73,7 +73,7 @@ export class FieldComp extends BaseInputComp {
 
   setSchema(x: Front.Schema): void {
     const ofs = ['anyOf','oneOf','allOf'];
-    this.of = _.find(k => x[k])(ofs) || _.findKey(x.type || {})(ofs);
+    this.of = ofs.find(k => x[k]) || _.findKey(x.type || {})(ofs);
     let schema = x;
     this.hidden = schema.type == 'hidden';
     this.label = marked(`**${schema.name}:** ${schema.description || ''}`);

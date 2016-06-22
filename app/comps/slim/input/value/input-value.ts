@@ -51,7 +51,7 @@ export class InputValueComp extends BaseInputComp {
 
   setSchema(x: Front.Schema): void {
     this.type = x.type;
-    if(SCALARS.includes(this.type) || _.some(k => x[k])(ofs) || _.some(x.type || {})(ofs)) this.type = 'scalar';
+    if(SCALARS.includes(this.type) || ofs.some(k => x[k]) || _.some(x.type || {})(ofs)) this.type = 'scalar';
   }
 
 }

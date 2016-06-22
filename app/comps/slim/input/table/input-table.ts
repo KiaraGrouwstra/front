@@ -59,7 +59,7 @@ export class InputTableComp extends BaseInputComp {
   }
 
   remove(item: number): void {
-    let idx = _.findIndex(y => y == item)(Array.from(this.items));
+    let idx = Array.from(this.items).findIndex(y => y == item);
     this.ctrl.removeAt(idx);
     this.items.delete(item);
   }
