@@ -33,6 +33,7 @@
               *ngFor=`let item of indices.properties; let i = index`
               '[dynamicAttrs]'=`schemaFixed(item)['x-bindings']?.attributes`
               '[extraVars]'=`{ path: path.concat(item) }`
+              @flyInOut=`'in'`
             )
               //- td
               //-   input-field(
@@ -55,11 +56,14 @@
               )
                 button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removeProperty(item)`)
                   | ×
-                
+
       //- actually check object length
       .pattern-props(*ngIf=`hasPatts`)
         b Pattern Properties
-        .patt(*ngFor=`let patt of g._.keys(patts)`)
+        .patt(
+          *ngFor=`let patt of g._.keys(patts)`
+          @flyInOut=`'in'`
+        )
           emp {{patt}}
           //- #newPatt
           //- input-field(
@@ -79,7 +83,10 @@
               th Value
               th
             tbody
-              tr(*ngFor=`let item of indices.patternProperties[patt]; let i = index`)
+              tr(
+                *ngFor=`let item of indices.patternProperties[patt]; let i = index`
+                @flyInOut=`'in'`
+              )
                 td
                   input-field(
                     '[named]'=`false`
@@ -111,6 +118,7 @@
               option(
                 *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
                 '[value]'=`idx`
+                @flyInOut=`'in'`
               )
                 | {{opt.type}}
         div(
@@ -125,7 +133,10 @@
               th
             tbody
               //- ; trackBy: customTrackBy
-              tr(*ngFor=`let item of indices.additionalProperties; let i = index`)
+              tr(
+                *ngFor=`let item of indices.additionalProperties; let i = index`
+                @flyInOut=`'in'`
+              )
                 td
                   input-field(
                     '[named]'=`false`

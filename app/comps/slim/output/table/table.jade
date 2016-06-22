@@ -34,6 +34,7 @@
         //- '*assignLocal'=`{ col: cols[name] }`
         th.tbl-hdr.waves-effect(
           '*ngFor'=`let name of colOrder; let idx = index`
+          @flyInOut=`'in'`
           '*assignLocal'=`{ col: cols[name] }`
           id=`{{cols[name].id}}`
           '[class.sort]'=`g._.keys(sortColsDesc).includes(name)`
@@ -94,6 +95,7 @@
         tr
           th(
             *ngFor=`let name of colOrder`
+            @flyInOut=`'in'`
           )
             form
               //- .numFilter
@@ -140,6 +142,7 @@
         tr(
           *ngFor=`let r of data`
           id=`{{r.id}}`
+          @flyInOut=`'in'`
         )
           //- *ngFor=`let c of r.cells`
           //- ; #c = r.cells[name]
@@ -148,6 +151,7 @@
             id=`{{r.cells[name].id}}`
             '[ngClass]'=`{ 'num-col': cellIsNum(name, r.cells[name].val) }`
             '[ngStyle]'=`{ 'background-color': valColor(name, r.cells[name].val) }`
+            @flyInOut=`'in'`
           )
             //- '[schema]'=`cellSchema(idx)`
             value(

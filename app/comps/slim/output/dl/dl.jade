@@ -5,6 +5,7 @@ table.bordered.highlight
     tr(
       *ngFor=`let r of rows`
       id=`{{r.id}}`
+      @flyInOut=`'in'`
     )
       th {{r.k}}
       td

@@ -3,7 +3,7 @@
     p.card-title(*ngIf='named') {{k}}
     //- '[ngControlGroup]'=`ctrl`
     form
-    
+
       //- select.jade
       .input-field(
         *ngIf=`isOneOf`
@@ -15,11 +15,12 @@
           option(
             *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
             '[value]'=`idx`
+            @flyInOut=`'in'`
           )
             | {{opt.type}}
       //- script.
       //-   $('select').material_select();
-      
+
       ul(
         *ngIf=`!isOneOf || option`
         '[ngControlGroup]'=`schema.name`
@@ -34,7 +35,10 @@
           //- id=`{{?.id}}`
           //- presumes lengths of items and the ControlArray will stay in sync
           //- ; #path_i = path.concat(item); ctrl_i = ctrl.at(i);
-          tr(*ngFor="let item of items; let i = index")
+          tr(
+            *ngFor="let item of items; let i = index"
+            @flyInOut=`'in'`
+          )
             //- td(*ngFor=`let key of keys`)
             //- ("#key = 'name'")
             td
@@ -64,6 +68,6 @@
       | Keys must be unique.
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
       | Must use and provide valid values for all types.
-        
+
     a.btn.waves-effect.waves-light.green('(click)'=`add()`)
       i.material-icons add

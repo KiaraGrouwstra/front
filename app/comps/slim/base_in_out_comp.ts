@@ -1,14 +1,17 @@
 let _ = require('lodash/fp');
-import { Input } from '@angular/core';
+import { Input, trigger } from '@angular/core';
 import { ExtComp } from '../lib/annotations';
 import { try_log } from '../lib/decorators';
 import { BaseSlimComp } from './base_slim_comp';
 import { getPaths } from './slim';
 // import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { IN_OUT } from '../lib/animations';
 
 type Val = any;
 
-@ExtComp({})
+@ExtComp({
+  animations: [trigger('flyInOut', IN_OUT)],
+})
 export abstract class BaseInOutComp extends BaseSlimComp {
 
   // TableComp: schema in front cuz optional, this way combInputs only gets called once

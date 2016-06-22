@@ -8,7 +8,10 @@
         '[ngControlGroup]'=`schema.name`
       )
         //- presumes lengths of items and the ControlArray will stay in sync
-        li.row(*ngFor=`let item of items; let i = index`)
+        li.row(
+          *ngFor=`let item of items; let i = index`
+          @flyInOut=`'in'`
+        )
           button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item)`)
             | ×
           //- based on ng-outputs/dl_table.jade
@@ -16,7 +19,10 @@
           table.bordered.highlight.col
             tbody
               //- id=`{{?.id}}`
-              tr(*ngFor=`let key of keys`)
+              tr(
+                *ngFor=`let key of keys`
+                @flyInOut=`'in'`
+              )
                 //- schema.items.properties[key].name
                 th {{key}}
                 td
