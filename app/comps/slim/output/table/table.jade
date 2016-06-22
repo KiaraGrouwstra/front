@@ -54,9 +54,9 @@
             'data-tooltip'='sort'
           )
             div('[ngSwitch]'=`sortColsDesc[name]`)
-              template('[ngSwitchWhen]'=`true`)
+              template('[ngSwitchCase]'=`true`)
                 | ▼
-              template('[ngSwitchWhen]'=`false`)
+              template('[ngSwitchCase]'=`false`)
                 | ▲
               template(ngSwitchDefault)
                 i.material-icons import_export

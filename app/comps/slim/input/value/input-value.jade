@@ -1,7 +1,7 @@
 div(
   '[ngSwitch]'=`type`
 )
-  template('[ngSwitchWhen]'=`'scalar'`)
+  template('[ngSwitchCase]'=`'scalar'`)
     //- '[name]'=`schema.name`
     input-field(
       '[named]'=`named`
@@ -9,7 +9,7 @@ div(
       '[schema]'=`schema`
       '[ctrl]'=`ctrl`
     )
-  template('[ngSwitchWhen]'=`'array'`)
+  template('[ngSwitchCase]'=`'array'`)
     input-field(
       *ngIf=`ctrl?.constructor?.name == 'ControlSet'`
       '[named]'=`named`
@@ -24,7 +24,7 @@ div(
       '[schema]'=`schema`
       '[ctrl]'=`ctrl`
     )
-  template('[ngSwitchWhen]'=`'object'`)
+  template('[ngSwitchCase]'=`'object'`)
     //- input-object(
     input-struct(
       '[named]'=`named`
@@ -32,7 +32,7 @@ div(
       '[schema]'=`schema`
       '[ctrl]'=`ctrl`
     )
-  template('[ngSwitchWhen]'=`'table'`)
+  template('[ngSwitchCase]'=`'table'`)
     input-table(
       '[named]'=`named`
       '[path]'=`path`

@@ -38,25 +38,25 @@ form
     '[ngClass]'=`{hidden: hidden}`
   )
     div('[ngSwitch]'='type')
-      template('[ngSwitchWhen]'=`'input'`)
+      template('[ngSwitchCase]'=`'input'`)
         include ../misc/input.jade
-      template('[ngSwitchWhen]'=`'range'`)
+      template('[ngSwitchCase]'=`'range'`)
         include ../misc/range.jade
-      template('[ngSwitchWhen]'=`'switch'`)
+      template('[ngSwitchCase]'=`'switch'`)
         include ../misc/switch.jade
-      template('[ngSwitchWhen]'=`'date'`)
+      template('[ngSwitchCase]'=`'date'`)
         include ../misc/date.jade
-      template('[ngSwitchWhen]'=`'file'`)
+      template('[ngSwitchCase]'=`'file'`)
         include ../misc/file.jade
-      template('[ngSwitchWhen]'=`'datalist'`)
+      template('[ngSwitchCase]'=`'datalist'`)
         include ../misc/datalist.jade
-      template('[ngSwitchWhen]'=`'select'`)
+      template('[ngSwitchCase]'=`'select'`)
         include ../misc/select.jade
-      template('[ngSwitchWhen]'=`'radio'`)
+      template('[ngSwitchCase]'=`'radio'`)
         include ../misc/radio.jade
-      template('[ngSwitchWhen]'=`'checkboxes'`)
+      template('[ngSwitchCase]'=`'checkboxes'`)
         include ../misc/checkboxes.jade
-      template('[ngSwitchWhen]'=`'textarea'`)
+      template('[ngSwitchCase]'=`'textarea'`)
         include ../misc/textarea.jade
       template(ngSwitchDefault)
         p UNIMPLEMENTED FIELD TYPE {{ type | json }}!
