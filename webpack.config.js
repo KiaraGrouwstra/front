@@ -5,23 +5,28 @@ var path = require('path');
 var webpack = require('webpack');
 var babelSettings = {
 	cacheDirectory: true,
-	'presets': [
-		// 'es2015-native-modules',
-		'es2015-webpack', // leaves ES6 modules intact; still required, for `let { foo: bar, ...baz } = obj`.
-		// 'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
-		'stage-0', // 0 for await, 1 for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
-		// 'lodash',
-	],
-	'plugins': [
-		'syntax-async-functions', // async/await
-		'transform-regenerator',
-		'transform-runtime',
-		'add-module-exports',
-		'transform-decorators-legacy', // @
-		'angular2-annotations',	// @Component, etc.
-		'transform-class-properties',
-		'transform-flow-strip-types',
-	],
+  'presets': [
+    // 'es2015-native-modules',
+    'es2015-webpack', // leaves ES6 modules intact; still required, for `let { foo: bar, ...baz } = obj`.
+    // 'es2015', // used for 'import', sweetjs calls this too; tried alt. `{ foo } = require('pkg')` but fails with lazy imports
+    // v async/await is already included in TS anyway
+    // 'stage-0', // 0 for await, 1 for [assigned methods](https://github.com/jeffmo/es-class-fields-and-static-properties)
+    // 'lodash',
+  ],
+  'plugins': [
+    'syntax-async-functions', // async/await
+    'transform-regenerator',
+    'transform-runtime',
+    'add-module-exports', // export
+    'transform-decorators-legacy', // @
+    'angular2-annotations',	// @Component, etc.
+    'transform-class-properties', // class foo { prop = val; }
+    'transform-flow-strip-types', // type annotations
+    // v unfortunately 0~2 stage TC39 proposals are not yet supported in TS anyway
+    'transform-object-rest-spread', // { ...rest }
+    'transform-function-bind', // obj::fn[(v)], ::obj.fn[(v)] over fn.bind(obj) / fn.call(obj, v)
+    'transform-eval', // Babel eval()... means Babel must be shipped to the client
+  ],
 };
 
 function q(loader, query) {
