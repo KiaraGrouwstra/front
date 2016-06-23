@@ -28,7 +28,7 @@ let singletons = [
   { provide: APP_CONFIG, useValue: CONFIG },
   FetcherService,
 ];
-// enableProdMode();
+enableProdMode();
 bootstrap(App, singletons);
 // .catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));
 
