@@ -5,7 +5,6 @@ form
     '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
     '[formControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
-    name='ctrl'
   )
   datalist(
     '[id]'=`attrs.id + '-datalist'`

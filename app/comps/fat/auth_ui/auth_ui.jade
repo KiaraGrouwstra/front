@@ -4,12 +4,10 @@
 //- p token: {{parent.auths.instagram?.token}}
 .row
   .input-field.col.s6(*ngFor=`let scope of scopes`)
-    //- warning: duplicate name
     input.filled-in(
       type='checkbox'
       '[id]'=`scope`
       '[(ngModel)]'=`want_scope[scope]`
-      name='want_scope[scope]'
     )
     label(
       '[attr.for]'=`scope`
