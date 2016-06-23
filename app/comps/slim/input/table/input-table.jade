@@ -2,12 +2,12 @@
 .card
   .card-content('[id]'=`id`)
     p.card-title(*ngIf='named') {{k}}
-    //- '[ngControlGroup]'=`ctrl`
+    //- '[ngModelGroup]'=`ctrl`
     form
       ul(
-        '[ngControlGroup]'=`schema.name`
+        '[ngModelGroup]'=`schema.name`
       )
-        //- presumes lengths of items and the ControlArray will stay in sync
+        //- presumes lengths of items and the FormArray will stay in sync
         li.row(
           *ngFor=`let item of items; let i = index`
           @flyInOut=`'in'`

@@ -1,10 +1,10 @@
 let _ = require('lodash/fp');
-import { Control } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { keySchema } from '../../../lib/js';
 import { Observable } from 'rxjs/Observable';
 
-export class ControlObjectValue extends Control {
+export class ControlObjectValue extends FormControl {
   valStruct: Front.IObjectSchema<ValidatorFn>;
 
   constructor(

@@ -1,11 +1,11 @@
 let _ = require('lodash/fp');
-import { Control } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 
 // ctrl.value .has(k) / .add(k) / .delete(k) all work, so don't need this -_-;
 // Syntax improves though, not to mention this clarifies use-case.
 // Should I have this know its schema to validate against the enum?
-export class ControlSet extends Control {
+export class ControlSet extends FormControl {
   constructor(
     enum_opts: string[],
     arr: any[] = [],

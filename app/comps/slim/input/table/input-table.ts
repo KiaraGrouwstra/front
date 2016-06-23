@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef } from '@angular/core';
-import { ControlGroup } from '@angular/common';
+import { FormGroup } from '@angular/forms';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
@@ -9,7 +9,7 @@ import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
-type Ctrl = ControlList<ControlGroup>;
+type Ctrl = ControlList<FormGroup>;
 
 @ExtComp({
   selector: 'input-table',
@@ -31,7 +31,7 @@ export class InputTableComp extends BaseInputComp {
 
   setCtrl(x: Ctrl): void {
     let schema = this.schema;
-    let seed = () => new ControlGroup(
+    let seed = () => new FormGroup(
       _.mapValues(x => inputControl(x))(schema.items.properties)
     );
     x.init(seed);

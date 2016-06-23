@@ -248,10 +248,16 @@ export class TableComp extends BaseOutputComp {
     let item_schema = _.get(['items'])(schema);
     if([path, val].some(_.isNil)) return;
     this.cols = arr2obj(this.col_keys, k => getPaths(path.concat(k))); //skip on schema change
+    console.log('combInputs');
     this.colMeta = arr2obj(this.col_keys, col => {
+      console.log('col', col);
+      console.log('item_schema', item_schema);
       let col_schema = keySchema(col, item_schema);
+      console.log('col_schema', col_schema);
       let type = _.get(['type'])(col_schema);
+      console.log('type', type);
       let anyOf = _.get(['anyOf'])(type) || [];
+      console.log('anyOf', anyOf);
       const NUM_TYPES = ['number','integer'];
       let isNum = NUM_TYPES.includes(type);
       let hasNum = isNum || anyOf.some(t => NUM_TYPES.includes(t));
@@ -279,7 +285,7 @@ export class TableComp extends BaseOutputComp {
   filter(): void {
     let filters = this.filters;
     let filter_keys = _.keys(filters);
-    let colMeta = this.colMeta;
+    // let colMeta = this.colMeta;
     this.filtered = this.rows.filter((row) => filter_keys.every((k) => {
       let filter = filters[k];
       let val = row.cells[k].val;

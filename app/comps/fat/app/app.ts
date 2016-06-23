@@ -1,6 +1,7 @@
 // import 'reflect-metadata';
 import { Component, ViewChild, ChangeDetectionStrategy, Inject, ViewEncapsulation } from '@angular/core';
-import { CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm } from '@angular/common';
+import { CORE_DIRECTIVES, NgForm } from '@angular/common';
+import { FORM_DIRECTIVES } from '@angular/forms';
 import { Router, ROUTER_DIRECTIVES } from '@angular/router';
 import { Http } from '@angular/http'; //Headers
 // import { Observable } from 'rxjs/Observable';

@@ -1,10 +1,10 @@
 let _ = require('lodash/fp');
-import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
+import { Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
 import { ListWrapper } from '@angular/core/src/facade/collection';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { Maybe } from 'ramda-fantasy';
 
-export class ControlVector extends ControlArray {
+export class ControlVector extends FormArray {
   _items: Front.CtrlFactory | Front.CtrlFactory[]; // one factory (homogeneous mode) or an array of factories (use `additionalItems` when all used)
   _additionalItems: Front.CtrlFactory;
   initialized: boolean;

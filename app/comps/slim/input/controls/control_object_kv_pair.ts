@@ -1,9 +1,9 @@
-import { ControlGroup } from '@angular/common';
+import { FormGroup } from '@angular/forms';
 import { ControlObjectValue } from './control_object_value';
 import { inputControl } from '../input';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 
-export class ControlObjectKvPair extends ControlGroup {
+export class ControlObjectKvPair extends FormGroup {
   constructor(
     valStruct: Front.IObjectSchema<ValidatorFn>,
   ) {

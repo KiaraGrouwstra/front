@@ -1,6 +1,6 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 let _ = require('lodash/fp');
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { ControlStruct } from './control_struct';
 import { inputControl } from '../input'
 
@@ -71,7 +71,7 @@ describe('ControlStruct', () => {
 
   // prepopulate all
 
-  it('should prepopulate required keys', () => {
+  it('should prepopulate keys', () => {
     expect(obj.value).toEqual({ foo: 0, bar: 0 });
     expect(obj.valid).toEqual(true);
   });

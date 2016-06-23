@@ -1,5 +1,5 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { ControlVector } from './control_vector';
 
 describe('ControlVector', () => {
@@ -7,10 +7,10 @@ describe('ControlVector', () => {
 
   beforeEach(() => {
     let items = [
-      () => new Control('a'),
-      () => new Control('b', c => ({ someError: true })),
+      () => new FormControl('a'),
+      () => new FormControl('b', c => ({ someError: true })),
     ];
-    let add = () => new Control('c');
+    let add = () => new FormControl('c');
     a = new ControlVector().init(items, add);
   });
 

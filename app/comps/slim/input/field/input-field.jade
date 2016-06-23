@@ -7,6 +7,7 @@ form
       //- '(input)'=`option = $event.target.value`
       select(
         '[(ngModel)]'=`option`
+        name='option'
       )
         option(
           *ngFor=`let opt of schema[of]; let idx = index`
@@ -60,7 +61,7 @@ form
         include ../misc/textarea.jade
       template(ngSwitchDefault)
         p UNIMPLEMENTED FIELD TYPE {{ type | json }}!
-        
+
     //- data-error='wrong'
     //- data-success='right'
     //- .active

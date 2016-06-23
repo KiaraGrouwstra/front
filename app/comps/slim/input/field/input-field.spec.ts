@@ -4,7 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 

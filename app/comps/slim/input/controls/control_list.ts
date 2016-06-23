@@ -1,8 +1,8 @@
 let _ = require('lodash/fp');
-import { Validators, Control, ControlArray, AbstractControl } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 
-export class ControlList extends ControlArray {
+export class ControlList extends FormArray {
   // <T extends AbstractControl>
   _factory: Front.CtrlFactory;
   initialized: boolean;

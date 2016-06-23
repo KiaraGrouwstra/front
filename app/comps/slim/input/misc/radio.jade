@@ -27,13 +27,15 @@ form
     //- '(change)'=`ctrl.updateValue($event.target.value)`
     //- //- hacked in a functional '[(ngModel)]' using `radio_value_accessor`
     //- //- https://github.com/angular/angular/issues/7642
+    //- warning: duplicate name
     input(
       type='radio'
       id=`{{attrs.id}}-{{opt}}`
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
-      '[ngFormControl]'=`ctrl`
+      '[formControl]'=`ctrl`
       '[value]'=`opt`
       '[(ngModel)]'=`ctrl.value`
+      name='ctrl'
     )
     label(
       'attr.for'=`{{attrs.id}}-{{opt}}`

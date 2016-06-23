@@ -2,7 +2,8 @@
 input.datepicker(
   type='date'
   '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
-  '[ngFormControl]'=`ctrl`
+  '[formControl]'=`ctrl`
   '[(ngModel)]'=`ctrl.value`
   '[setAttrs]'=`attrs`
+  name='ctrl'
 )

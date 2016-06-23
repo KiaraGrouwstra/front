@@ -8,6 +8,7 @@
         //- '[disabled]'=`!meat_opts?.length`
         select(
           '[(ngModel)]'=`meat`
+          name='meat'
         )
           option(
             *ngFor='let opt of meat_opts; let idx = index'
@@ -22,6 +23,7 @@
           type='checkbox'
           id=prefix+`auto_meat`
           '[(ngModel)]'=`auto_meat`
+          name='auto_meat'
         )
         label(
           for=prefix+`auto_meat`
@@ -32,6 +34,7 @@
           type='checkbox'
           id=prefix+`keep_metadata`
           '[(ngModel)]'=`keep_metadata`
+          name='keep_metadata'
         )
         label(
           for=prefix+`keep_metadata`
@@ -55,5 +58,5 @@
           pre('[innerHtml]'='colored')
         //- #rendered
         div(id=prefix+'rendered')
-          //- '[path]'=`path`, 
+          //- '[path]'=`path`,
           value('[val]'=`data`, '[schema]'=`zoomed_schema`)

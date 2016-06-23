@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 let marked = require('marked');
 import { inputAttrs, getTemplate } from '../input';
 import { valErrors, VAL_KEYS } from '../validators';
@@ -17,13 +17,15 @@ import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
 
-type Ctrl = Control;
+type Ctrl = FormControl;
 
 @ExtComp({
   selector: 'input-field',
   template: require('./input-field.jade'),
   directives: [
+    REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),
     // Select,
     RadioControlValueAccessor,

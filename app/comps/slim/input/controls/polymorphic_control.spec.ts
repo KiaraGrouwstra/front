@@ -1,13 +1,13 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { PolymorphicControl } from './polymorphic_control';
 
 describe('PolymorphicControl', () => {
   let poly, a, b;
 
   beforeEach(() => {
-    a = new Control('a'),
-    b = new Control('b', c => ({ someError: true }));
+    a = new FormControl('a'),
+    b = new FormControl('b', c => ({ someError: true }));
     poly = new PolymorphicControl();
   });
 

@@ -1,11 +1,11 @@
 let _ = require('lodash/fp');
-import { Control, AbstractControl } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormControl, AbstractControl } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { inputControl } from '../input'
 
-// crap, I'm gonna need to override all Control/AbstractControl methods...
+// crap, I'm gonna need to override all FormControl/AbstractControl methods...
 
-export class PolymorphicControl extends Control {
+export class PolymorphicControl extends FormControl {
   _ctrl: AbstractControl;
 
   constructor() {
@@ -14,7 +14,7 @@ export class PolymorphicControl extends Control {
 
   get ctrl(): AbstractControl {
     let x = this._ctrl;
-    if(_.isUndefined(x)) x = this._ctrl = new Control(null);
+    if(_.isUndefined(x)) x = this._ctrl = new FormControl(null);
     return x;
   }
   set ctrl(x: AbstractControl) {
@@ -45,7 +45,7 @@ export class PolymorphicControl extends Control {
 
   markAsPending(opts): void { this.ctrl.markAsPending(opts); }
 
-  // setParent(parent: ControlGroup | ControlArray): void { this.ctrl.setParent(parent); }
+  // setParent(parent: FormGroup | FormArray): void { this.ctrl.setParent(parent); }
 
   updateValueAndValidity(opts): void { this.ctrl.updateValueAndValidity(opts); }
 

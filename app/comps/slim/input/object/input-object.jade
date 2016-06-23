@@ -1,7 +1,7 @@
 .card
   .card-content('[id]'=`id`)
     p.card-title(*ngIf='named') {{k}}
-    //- '[ngControlGroup]'=`ctrl`
+    //- '[ngModelGroup]'=`ctrl`
     form
 
       //- select.jade
@@ -11,6 +11,7 @@
         //- '(input)'=`option = $event.target.value`
         select(
           '[(ngModel)]'=`option`
+          name='option'
         )
           option(
             *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
@@ -23,7 +24,7 @@
 
       ul(
         *ngIf=`!isOneOf || option`
-        '[ngControlGroup]'=`schema.name`
+        '[ngModelGroup]'=`schema.name`
       )
         table.bordered.highlight
         thead
@@ -33,7 +34,7 @@
           th
         tbody
           //- id=`{{?.id}}`
-          //- presumes lengths of items and the ControlArray will stay in sync
+          //- presumes lengths of items and the FormArray will stay in sync
           //- ; #path_i = path.concat(item); ctrl_i = ctrl.at(i);
           tr(
             *ngFor="let item of items; let i = index"

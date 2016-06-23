@@ -1,7 +1,6 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
 import { ExtComp } from './annotations';
 import { Component, Input, ChangeDetectionStrategy, InputMetadata } from '@angular/core';
-import { COMMON_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 
 const Push = ChangeDetectionStrategy.OnPush;
 

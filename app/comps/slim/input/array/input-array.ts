@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef } from '@angular/core';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
 import { ControlList } from '../controls';
@@ -9,7 +9,7 @@ import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
-type Ctrl = ControlList<Control>;
+type Ctrl = ControlList<FormControl>;
 
 @ExtComp({
   selector: 'input-array',

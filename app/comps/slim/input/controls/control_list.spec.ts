@@ -1,12 +1,12 @@
 import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
-import { Control } from '@angular/common';
+import { FormControl } from '@angular/forms';
 import { ControlList } from './control_list';
 
 describe('ControlList', () => {
   let a, fact;
 
   beforeEach(() => {
-    fact = () => new Control(1);
+    fact = () => new FormControl(1);
     a = new ControlList().init(fact);
   });
 

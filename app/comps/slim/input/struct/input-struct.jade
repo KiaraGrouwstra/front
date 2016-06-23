@@ -1,8 +1,8 @@
 .card
   .card-content('[id]'=`id`)
     p.card-title(*ngIf='named') {{k}}
-    //- '[ngControlGroup]'=`ctrl`
-    //- '[ngControlGroup]'=`schema.name`
+    //- '[ngModelGroup]'=`ctrl`
+    //- '[ngModelGroup]'=`schema.name`
     form
       .fixed-props(*ngIf=`hasFixed`)
         b Fixed Properties
@@ -114,6 +114,7 @@
           form
             select(
               '[(ngModel)]'=`option`
+              name='option'
             )
               option(
                 *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`

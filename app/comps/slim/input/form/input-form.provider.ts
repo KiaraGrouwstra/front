@@ -1,4 +1,4 @@
-// // import { FormBuilder } from '@angular/common';
+// // import { FormBuilder } from '@angular/forms';
 // import { FormComp } from './input-form';
 //
 // // I dunno how to inject things to create components yet. only try (app) failed.

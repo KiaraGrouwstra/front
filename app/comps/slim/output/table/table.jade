@@ -126,9 +126,11 @@
                   //- #tmp=`ngForm`
                   //- '[(ngModel)]'=`_filters[name]`
                   //- id=`{{cols[name].id}}-input`
+                  //- warning: duplicate name
                   input(
                     '[ngModel]'=`filters[name]`
                     '(input)'=`setFilter(name, $event.target.value)`
+                    name='filters[name]'
                   )
                   //- //-  || tmp.touched
                   //- label(

@@ -1,11 +1,11 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { Control, ControlGroup, ControlArray, AbstractControl } from '@angular/common';
+import { FormControl, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { ControlList, ControlVector, ControlObject, ControlObjectKvPair, ControlStruct, ControlSet } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal } from '../../lib/js';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 
 // get the default value for a value type
 function typeDefault(type: string): any {
@@ -121,7 +121,7 @@ export function inputControl(
         let cls = ControlList;
         if(doSeed) {
           let seed = props ?
-              () => new ControlGroup(_.mapValues(x => inputControl(x, false, true), props)) :
+              () => new FormGroup(_.mapValues(x => inputControl(x, false, true), props)) :
               inputControl(schema.items, true, true);
           factory = () => new cls().init(seed);
         } else {
@@ -141,7 +141,7 @@ export function inputControl(
     default:
       let val = getDefault(schema);
       let validator = getValidator(schema);
-      factory = () => new Control(val, validator); //, async_validator
+      factory = () => new FormControl(val, validator); //, async_validator
   }
   return asFactory ? factory : factory();
 }
@@ -199,7 +199,7 @@ export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.par
   let model = `form.controls.${key}`;
   let attrs = {
     // '[(ngModel)]': `${model}.value`,
-    // ngControl: key,
+    // formControlName: key,
     id,
     required: req,
     // exclusive, // used in input-object's `x-keys`
@@ -313,10 +313,10 @@ export function findControl(control: AbstractControl, path: Front.Path | string)
   return arrPath.reduce((acc, v, idx) => {
     let ctrl = acc.ctrl ? acc.ctrl : acc; // PolymorphicControl
     return _.isNumber(v) ?
-        ctrl.at ? ctrl.at(v) :   // ControlArray (ControlList)
+        ctrl.at ? ctrl.at(v) :   // FormArray (ControlList)
         ctrl.controls['additionalProperties'].at(v) : // ControlStruct: additional
         ctrl.byName ? acc.byName(v) :   // ControlStruct (ControlObject)
-        ctrl.controls[v];   // ControlGroup
+        ctrl.controls[v];   // FormGroup
   }, control);
 }
 

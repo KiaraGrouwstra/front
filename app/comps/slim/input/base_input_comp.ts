@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input } from '@angular/core';
-import { FORM_DIRECTIVES, AbstractControl } from '@angular/common';
+import { FORM_DIRECTIVES, AbstractControl } from '@angular/forms';
 import { ExtComp } from '../../lib/annotations';
 import { fallback } from '../../lib/decorators';
 // import { BaseSlimComp } from '../base_slim_comp';

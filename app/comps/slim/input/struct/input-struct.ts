@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl } from '@angular/common';
+import { AbstractControl } from '@angular/forms';
 import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';

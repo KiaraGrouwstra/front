@@ -2,6 +2,7 @@
 //- ng2 alt. w/o Materialize/jQuery: https://github.com/stevepapa/angular2-autosize
 textarea.materialize-textarea.validate.tooltipped(
   '[setAttrs]'=`attrs`
-  '[ngFormControl]'=`ctrl`
+  '[formControl]'=`ctrl`
   '[(ngModel)]'=`ctrl.value`
+  name='ctrl'
 )

@@ -18,9 +18,10 @@ form
   .input-field
     select(
       '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
-      '[ngFormControl]'=`ctrl`
+      '[formControl]'=`ctrl`
       '[ngModel]'=`ctrl.value`
       '[setAttrs]'=`attrs`
+      name='ctrl'
     )
       //- ; let idx = index
       option(
@@ -29,6 +30,6 @@ form
       )
         | {{opt}}
         //- | {{ meat_str_opts[idx] }}
-      
+
 //- script.
 //-   $('select').material_select();

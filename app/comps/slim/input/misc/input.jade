@@ -3,8 +3,9 @@
 //- ^ doesn't actually sync well :(, trying CSS instead
 input.validate.tooltipped(
   '[setAttrs]'=`attrs`
-  '[ngFormControl]'=`ctrl`
+  '[formControl]'=`ctrl`
   '[(ngModel)]'=`ctrl.value`
+  name='ctrl'
 )
 //- '[placeholder]'=`attrs.placeholder`
 //- ^ should not be used together with value?

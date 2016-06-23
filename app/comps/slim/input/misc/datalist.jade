@@ -3,8 +3,9 @@ form
     '[setAttrs]'=`attrs`
     '[attr.list]'=`attrs.id + '-datalist'`
     '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
-    '[ngFormControl]'=`ctrl`
+    '[formControl]'=`ctrl`
     '[(ngModel)]'=`ctrl.value`
+    name='ctrl'
   )
   datalist(
     '[id]'=`attrs.id + '-datalist'`

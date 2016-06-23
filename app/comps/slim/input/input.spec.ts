@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { mapSchema, inputControl, categorizeKeys } from './input';
-import { Control, ControlGroup } from '@angular/common';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ControlList, ControlStruct } from './controls';
 
 describe('input', () => {
@@ -12,7 +12,7 @@ describe('input', () => {
   })
 
   it('inputControl', () => {
-    expect(inputControl({ type: 'string' }).constructor).toEqual(Control);
+    expect(inputControl({ type: 'string' }).constructor).toEqual(FormControl);
     expect(inputControl({ type: 'array' }).constructor).toEqual(ControlList);
     expect(inputControl({ type: 'object' }).constructor).toEqual(ControlStruct);
   })

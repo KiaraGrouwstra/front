@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
-import { ControlGroup } from '@angular/common';
+import { FormGroup } from '@angular/forms';
 import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { ng2comp, keySchema } from '../../../lib/js';
@@ -11,7 +11,7 @@ import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 
-type Ctrl = ControlObject<ControlGroup>; // { name, val }
+type Ctrl = ControlObject<FormGroup>; // { name, val }
 @ExtComp({
   selector: 'input-object',
   template: require('./input-object.jade'),

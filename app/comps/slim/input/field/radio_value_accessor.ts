@@ -1,6 +1,6 @@
 import {Directive, Renderer, ElementRef, Self, forwardRef, Provider} from '@angular/core';
 
-import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/common';
+import {NG_VALUE_ACCESSOR, ControlValueAccessor} from '@angular/forms';
 
 const RADIO_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -18,7 +18,7 @@ const RADIO_VALUE_ACCESSOR: any = {
  */
 @Directive({
     selector:
-        'input[type=radio][ngControl],input[type=radio][ngFormControl],input[type=radio][ngModel]',
+        'input[type=radio][formControl],input[type=radio][ngModel]',
     host: {'(change)': 'onChange($event.target.value)', '(blur)': 'onTouched()'},
     bindings: [RADIO_VALUE_ACCESSOR]
 })

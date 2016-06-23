@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { ControlGroup, Validators, AbstractControl } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { ControlObject } from './control_object';
 import { uniqueKeys, inputControl, getOptsNameSchemas } from '../input';
 import { mapBoth, editValsLambda } from '../../../lib/js';
@@ -9,21 +9,21 @@ import { mapBoth, editValsLambda } from '../../../lib/js';
 let lens = (fn_obj, fn_grp) => (ctrl) => {
   let { properties: prop, patternProperties: patt, additionalProperties: add } = ctrl.controls;
   return _.flatten([
-    fn_grp(prop.value),
-    Object.values(patt.controls).map(y => y.controls.map(fn_obj)),
-    add.controls.map(fn_obj),
+    fn_grp(_.get(['value'])(prop) || {}),
+    Object.values(_.get(['controls'])(patt) || {}).map(y => y.controls.map(fn_obj)),
+    (_.get(['controls'])(add) || []).map(fn_obj),
   ]);
 };
 
-export class ControlStruct extends ControlGroup {
+export class ControlStruct extends FormGroup {
   factStruct: Front.IObjectSchema<number>;
   mapping: {[key: string]: AbstractControl};
   initialized: boolean;
 
   constructor(vldtr: ValidatorFn = null) {
     // factStruct: { properties: { foo: fact }, patternProperties: { patt: fact }, additionalProperties: fact }
-    // KvPair: ControlGroup<k,v>
-    // this: ControlGroup< properties: ControlGroup<v>, patternProperties: ControlGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >
+    // KvPair: FormGroup<k,v>
+    // this: FormGroup< properties: FormGroup<v>, patternProperties: FormGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >
 
     let validator = Validators.compose([
       uniqueKeys(lens(y => y.value.name, _.keys)),
@@ -31,8 +31,8 @@ export class ControlStruct extends ControlGroup {
     ]);
 
     let controls = {
-      properties: new ControlGroup({}),
-      patternProperties: new ControlGroup({}),
+      properties: new FormGroup({}),
+      patternProperties: new FormGroup({}),
       additionalProperties: new ControlObject(),
     };
     super(controls, {}, validator);
@@ -46,23 +46,24 @@ export class ControlStruct extends ControlGroup {
   ): ControlStruct {
     if(this.initialized) throw 'ControlStruct already initialized!';
 
-    // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `ControlGroup`
+      // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `FormGroup`
     let { nameSchemaPatt, nameSchemaAdd } = getOptsNameSchemas(factStruct);
     // nameSchema actually depends too, see input-object.
-    let kvFactory = (nameSchema, ctrlFactory) => () => new ControlGroup({
+    let kvFactory = (nameSchema, ctrlFactory) => () => new FormGroup({
       name: inputControl(nameSchema),
       val: ctrlFactory(),
     });
 
     let controls = editValsLambda({
-      properties: v => new ControlGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
-      patternProperties: v => new ControlGroup(mapBoth(v || {},
+      properties: v => new FormGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
+      patternProperties: v => new FormGroup(mapBoth(v || {},
         (fact, patt) => new ControlObject().init(kvFactory(nameSchemaPatt[patt], fact))
       )),
       additionalProperties: v => new ControlObject().init(kvFactory(nameSchemaAdd, v)),
     })(factStruct);
 
     _.each((ctrl, k) => {
+      this.removeControl(k);
       this.addControl(k, ctrl);
     })(controls);
 
@@ -75,10 +76,9 @@ export class ControlStruct extends ControlGroup {
 
   _updateValue(): void {
     // [object spread not yet in TS 1.9, now slated for 2.1](https://github.com/Microsoft/TypeScript/issues/2103)
-    // let { patternProperties: patt, ...rest } = this.controls;
-    let { patternProperties: patt } = this.controls;
-    let rest = _.omit(['patternProperties'])(this.controls);
-    this._value = Object.assign({}, ..._.values(patt.value), ..._.values(rest).map(y => y.value));
+    // { ...rest } = ..., ..._.values(rest)
+    let { properties: prop, patternProperties: patt, additionalProperties: add } = _.mapValues(y => y.value)(this.controls);
+    this._value = Object.assign({}, prop || {}, ..._.values(patt || {}), add || {});
   }
 
   addProperty(k: string): void {

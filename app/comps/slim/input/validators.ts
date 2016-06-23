@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
-import { Validators } from '@angular/common';
-import { ValidatorFn } from '@angular/common/src/forms/directives/validators';
+import { Validators } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { arr2obj, mapBoth } from '../../lib/js';
 
 // tv4: https://github.com/geraintluff/tv4
