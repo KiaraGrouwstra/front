@@ -22,7 +22,7 @@ export class FormComp extends BaseInputComp {
   @Input() desc: string;
   // _schema: Front.Schema;
   _desc: string;
-  @ViewChild(InputValueComp) v: InputValueComp;
+  @ViewChild(forwardRef(() => InputValueComp)) v: InputValueComp;
 
   setSchema(x: Front.Schema) {
     this.form = inputControl(x);

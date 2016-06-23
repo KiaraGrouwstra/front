@@ -35,11 +35,11 @@ export class InputValueComp extends BaseInputComp {
   type: string;
 
   // @Input() name: string;
-  @ViewChild(FieldComp) f: FieldComp;
-  @ViewChild(InputArrayComp) a: InputArrayComp;
-  // @ViewChild(InputObjectComp) o: InputObjectComp;
-  @ViewChild(InputStructComp) o: InputStructComp;
-  @ViewChild(InputTableComp) t: InputTableComp;
+  @ViewChild(forwardRef(() => FieldComp)) f: FieldComp;
+  @ViewChild(forwardRef(() => InputArrayComp)) a: InputArrayComp;
+  // @ViewChild(forwardRef(() => InputObjectComp)) o: InputObjectComp;
+  @ViewChild(forwardRef(() => InputStructComp)) o: InputStructComp;
+  @ViewChild(forwardRef(() => InputTableComp)) t: InputTableComp;
 
   constructor(
     // BaseComp

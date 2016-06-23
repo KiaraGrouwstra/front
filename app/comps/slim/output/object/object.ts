@@ -25,9 +25,9 @@ export class ObjectComp extends BaseOutputComp {
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
-  @ViewChild(DLComp) dl: DLComp;
-  @ViewChildren(ObjectComp) objects: QueryList<ObjectComp>;
-  @ViewChildren(ValueComp) arrays: QueryList<ValueComp>;
+  @ViewChild(forwardRef(() => DLComp)) dl: DLComp;
+  @ViewChildren(forwardRef(() => ObjectComp)) objects: QueryList<ObjectComp>;
+  @ViewChildren(forwardRef(() => ValueComp)) arrays: QueryList<ValueComp>;
   array: Front.IObjectCollection;
   object: Front.IObjectCollection;
   scalar: Front.IObjectCollection;

@@ -39,8 +39,8 @@ export class ValueComp extends BaseOutputComp {
   @Input() val: Val;
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
-  @ViewChild(ArrayComp) array: ArrayComp;
-  @ViewChild(ObjectComp) object: ObjectComp;
+  @ViewChild(forwardRef(() => ArrayComp)) array: ArrayComp;
+  @ViewChild(forwardRef(() => ObjectComp)) object: ObjectComp;
   new_schema: Front.Schema;
   type: string;
 

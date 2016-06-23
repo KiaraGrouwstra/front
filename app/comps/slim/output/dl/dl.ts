@@ -18,7 +18,7 @@ export class DLComp extends BaseOutputComp {
   @Input() path: Front.Path = [];
   @Input() val: Val;
   // @Input() schema: Front.Schema;
-  @ViewChildren(ValueComp) v: QueryList<ValueComp>;
+  @ViewChildren(forwardRef(() => ValueComp)) v: QueryList<ValueComp>;
   rows: Front.ICompMeta[];
 
   setVal(x: Val): void {

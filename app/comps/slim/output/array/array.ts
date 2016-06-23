@@ -25,8 +25,8 @@ export class ArrayComp extends BaseOutputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
   first: any;
   type: string;
-  @ViewChild(ULComp) ul: ULComp;
-  @ViewChild(TableComp) table: TableComp;
+  @ViewChild(forwardRef(() => ULComp)) ul: ULComp;
+  @ViewChild(forwardRef(() => TableComp)) table: TableComp;
 
   setVal(x: Val): void {
     this.first = _.get([0])(x);

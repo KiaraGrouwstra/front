@@ -21,7 +21,7 @@ export class InputUiComp extends BaseComp {
   _spec: Front.ApiSpec;
   _fn_path: string;
   _token: string;
-  @ViewChild(FormComp) form: FormComp;
+  @ViewChild(forwardRef(() => FormComp)) form: FormComp;
   desc = '';
   pars: Front.IPathSchema[];
 
