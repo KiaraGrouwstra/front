@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild } from '@angular/core';
-import { NgSwitch, ngSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { ULComp, TableComp } from '../../..';
 import { inferType, trySchema } from '../output'
 import { ng2comp, combine } from '../../../lib/js';
@@ -13,7 +13,7 @@ type Val = any; //Array<any>;
 @ExtComp({
   selector: 'array',
   template: require('./array.jade'),
-  directives: [NgSwitch, ngSwitchCase, NgSwitchDefault,
+  directives: [NgSwitch, NgSwitchCase, NgSwitchDefault,
     forwardRef(() => ULComp),
     forwardRef(() => TableComp),
   ],

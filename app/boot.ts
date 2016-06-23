@@ -9,7 +9,8 @@ import 'angular2/bundles/angular2-polyfills.js';
 // ^ what's the @angular equivalent here? [#8412](https://github.com/angular/angular/issues/8412)
 import { bootstrap } from '@angular/platform-browser-dynamic';
 // import { bootstrapStatic } from '@angular/platform-browser';
-import { ROUTER_PROVIDERS } from '@angular/router';
+// import { ROUTER_PROVIDERS } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { HTTP_BINDINGS } from '@angular/http';
 import { enableProdMode } from '@angular/core';
 
@@ -18,7 +19,9 @@ import { wsServiceProvider, requestServiceProvider, globalsServiceProvider, Fetc
 import { CONFIG, APP_CONFIG } from './config';
 
 let singletons = [
-  HTTP_BINDINGS, ROUTER_PROVIDERS,
+  HTTP_BINDINGS,
+  // ROUTER_PROVIDERS,
+  // provideRouter(MyRoutes),
   requestServiceProvider,
   wsServiceProvider,
   globalsServiceProvider,

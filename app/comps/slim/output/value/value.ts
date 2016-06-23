@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild } from '@angular/core';
-import { NgSwitch, ngSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { ArrayComp, ObjectComp, IframeComp } from '../../..';
 import { inferType, trySchema } from '../output'
 // import { Router, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router';
@@ -18,7 +18,7 @@ type Val = any; //Array<Object>;
   template: require('./value.jade'),
   // template: `<router-outlet></router-outlet>`,
   directives: [
-    NgSwitch, ngSwitchCase, NgSwitchDefault,
+    NgSwitch, NgSwitchCase, NgSwitchDefault,
     forwardRef(() => ArrayComp),
     forwardRef(() => ObjectComp),
     forwardRef(() => IframeComp),

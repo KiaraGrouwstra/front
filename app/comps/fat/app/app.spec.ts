@@ -2,7 +2,8 @@ import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xi
 import { ReflectiveInjector } from '@angular/core';
 import { WsService, RequestService, GlobalsService, wsServiceProvider, requestServiceProvider, globalsServiceProvider } from '../../services';
 import { CONFIG, APP_CONFIG } from '../../../config';
-import { ROUTER_PROVIDERS } from '@angular/router';
+// import { ROUTER_PROVIDERS } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { Router } from '@angular/router';
 import { Http } from '@angular/http'; //Headers
 import { HTTP_BINDINGS } from '@angular/http';
@@ -42,7 +43,9 @@ describe('App', () => {
   beforeEach(() => {
     injector = ReflectiveInjector.resolveAndCreate([
       appProvider,
-      HTTP_BINDINGS, ROUTER_PROVIDERS,
+      HTTP_BINDINGS,
+      // ROUTER_PROVIDERS,
+      // provideRouter(MyRoutes),
       requestServiceProvider,
       wsServiceProvider,
       { provide: APP_CONFIG, useValue: CONFIG },
