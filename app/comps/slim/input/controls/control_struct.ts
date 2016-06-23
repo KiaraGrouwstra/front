@@ -63,7 +63,6 @@ export class ControlStruct extends ControlGroup {
     })(factStruct);
 
     _.each((ctrl, k) => {
-      this.removeControl(k);
       this.addControl(k, ctrl);
     })(controls);
 
@@ -75,9 +74,11 @@ export class ControlStruct extends ControlGroup {
   }
 
   _updateValue(): void {
-    let { properties: prop, patternProperties: patt, additionalProperties: add } = this.controls;
-    // this._value = _.assign(prop.value, ...Object.values(patt.value), add.value); // FP only does two args
-    this._value = Object.assign({}, prop.value, ...Object.values(patt.value), add.value);
+    // [object spread not yet in TS 1.9, now slated for 2.1](https://github.com/Microsoft/TypeScript/issues/2103)
+    // let { patternProperties: patt, ...rest } = this.controls;
+    let { patternProperties: patt } = this.controls;
+    let rest = _.omit(['patternProperties'])(this.controls);
+    this._value = Object.assign({}, ..._.values(patt.value), ..._.values(rest).map(y => y.value));
   }
 
   addProperty(k: string): void {
