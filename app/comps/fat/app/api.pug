@@ -19,7 +19,7 @@
         '[ngClass]'=`{ 'active': !auths[api]?.token }`
       ) Scopes
       .collapsible-body
-        #auth(#auth)
+        #auth(#auth=false)
           auth-ui(
             '(handler)'=`handleImplicit($event)`
             '[name]'=`auth_ui_name`
@@ -27,7 +27,7 @@
             '[oauth_info]'=`auth_ui_oauth_info`
             '[have]'=`auth_ui_have`
           )
-      
+
 .row
   #functions.col.s3
     fn-ui(
@@ -36,7 +36,7 @@
       '[oauth_sec]'=`fn_ui_oauth_sec`
       '[have]'=`fn_ui_have`
     )
-  
+
   #input.col.s6
     input-ui(
       '(handler)'=`reqUrl($event)`
@@ -44,7 +44,7 @@
       '[fn_path]'=`fn_path`
       '[token]'=`input_ui_token`
     )
-  
+
   .resp.col.s9
     - prefix = 'api_'
     include ./resp.pug

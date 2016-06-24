@@ -4,13 +4,13 @@
       .card-content
         //- can't access template variable declared later... ViewChild not working either :(
         input-form(
-          #fetch_form
+          #fetch_form=false
           '[schema]'=`fetch_spec`
           '[desc]'=`'fetch what?'`
           '(submit)'=`doFetch($event, process_form.form.value)`
         )
         input-form(
-          #process_form
+          #process_form=false
           '[schema]'=`process_spec`
           '[desc]'=`'process how?'`
           '(submit)'=`doProcess($event, fetch_form.form.value)`
