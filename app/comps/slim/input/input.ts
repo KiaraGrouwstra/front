@@ -35,7 +35,7 @@ let inputType = (type: string) => _.get([type], {
   file: 'file',
 }) || type;
 
-// pick a Jade template
+// pick a pug template
 export function getTemplate(schema: Front.Schema, attrs: Front.IAttributes): string|void {
   return schema['x-template'] || _.get([schema.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].

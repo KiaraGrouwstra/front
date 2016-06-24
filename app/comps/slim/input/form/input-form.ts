@@ -10,7 +10,7 @@ import { REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
 
 @ExtComp({
   selector: 'input-form',
-  template: require('./input-form.jade'),
+  template: require('./input-form.pug'),
   directives: [
     REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),

@@ -9,7 +9,7 @@ type Val = any; //Object;
 
 @ExtComp({
   selector: 'mydl',
-  template: require('./dl.jade'),
+  template: require('./dl.pug'),
   directives: [
     forwardRef(() => ValueComp),
   ],

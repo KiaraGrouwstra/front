@@ -14,7 +14,7 @@ type Val = any; //Array<any>;
 
 @ExtComp({
   selector: 'myul',
-  template: require('./ul.jade'),
+  template: require('./ul.pug'),
   directives: [
     forwardRef(() => ValueComp),
   ],

@@ -16,7 +16,7 @@ type Val = any; //Array<Object>;
 
 @ExtComp({
   selector: 'mytable',
-  template: require('./table.jade'),
+  template: require('./table.pug'),
   directives: [
     AssignLocal,
     forwardRef(() => ValueComp),

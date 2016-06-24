@@ -80,7 +80,7 @@ module.exports = {
 			},
 			{ test: /\.json$/, loader: 'json' },
 			{ test: /\.html$/, loader: 'html' },
-			{ test: /\.jade$/, loader: 'html!jade-html' },
+			{ test: /\.pug$/, loader: 'pug-html' },
 			// style!css!cssnext!autoprefixer! over raw! for non-ng2 inclusion
 			// { test: /\.less$/, loader: 'raw!less' },	//raw is for ng2 `styles: [require('./style.less')]`
 			// ^ ng2 sucks for css though -- `css` loader pre-resolves urls, `style` injects into DOM.
@@ -105,7 +105,7 @@ module.exports = {
 	resolve: {
 		extensions: [
 			// you can now require('file') instead of require('file.coffee')
-			'', '.js', '.ts', '.json', '.jade', '.css', '.less', '.sass', '.scss', '.html'
+			'', '.js', '.ts', '.json', '.pug', '.css', '.less', '.sass', '.scss', '.html'
 		],
 		// root: ['node_modules', 'app'].map((folder) => path.join(__dirname, folder))
 		modulesDirectories: ['node_modules', 'app'],

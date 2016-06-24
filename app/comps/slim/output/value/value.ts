@@ -15,7 +15,7 @@ type Val = any; //Array<Object>;
 
 @ExtComp({
   selector: 'value',
-  template: require('./value.jade'),
+  template: require('./value.pug'),
   // template: `<router-outlet></router-outlet>`,
   directives: [
     NgSwitch, NgSwitchCase, NgSwitchDefault,

@@ -23,7 +23,7 @@ type Ctrl = FormControl;
 
 @ExtComp({
   selector: 'input-field',
-  template: require('./input-field.jade'),
+  template: require('./input-field.pug'),
   directives: [
     REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),

@@ -2,7 +2,7 @@
 form
   div(*ngIf=`of`)
 
-    //- select.jade
+    //- select.pug
     .input-field
       //- '(input)'=`option = $event.target.value`
       select(
@@ -40,25 +40,25 @@ form
   )
     div('[ngSwitch]'='type')
       template('[ngSwitchCase]'=`'input'`)
-        include ../misc/input.jade
+        include ../misc/input.pug
       template('[ngSwitchCase]'=`'range'`)
-        include ../misc/range.jade
+        include ../misc/range.pug
       template('[ngSwitchCase]'=`'switch'`)
-        include ../misc/switch.jade
+        include ../misc/switch.pug
       template('[ngSwitchCase]'=`'date'`)
-        include ../misc/date.jade
+        include ../misc/date.pug
       template('[ngSwitchCase]'=`'file'`)
-        include ../misc/file.jade
+        include ../misc/file.pug
       template('[ngSwitchCase]'=`'datalist'`)
-        include ../misc/datalist.jade
+        include ../misc/datalist.pug
       template('[ngSwitchCase]'=`'select'`)
-        include ../misc/select.jade
+        include ../misc/select.pug
       template('[ngSwitchCase]'=`'radio'`)
-        include ../misc/radio.jade
+        include ../misc/radio.pug
       template('[ngSwitchCase]'=`'checkboxes'`)
-        include ../misc/checkboxes.jade
+        include ../misc/checkboxes.pug
       template('[ngSwitchCase]'=`'textarea'`)
-        include ../misc/textarea.jade
+        include ../misc/textarea.pug
       template(ngSwitchDefault)
         p UNIMPLEMENTED FIELD TYPE {{ type | json }}!
 

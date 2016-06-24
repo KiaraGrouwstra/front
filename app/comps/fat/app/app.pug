@@ -2,23 +2,23 @@
   .container(style='width: 90%;')
     #floating-buttons
       - bool = { val: '(_ws.connected$ | async)', ok: 'connected', ng: 'connecting...', icon: 'power_settings_new' }
-      include ./bool.jade
+      include ./bool.pug
       - bool = { val: 'allowCors', ok: 'CORS requests enabled', ng: 'CORS restrictions active; considering running Chrome with flags `--disable-web-security --allow-running-insecure-content --user-data-dir=YOUR_DIRECTORY`', icon: 'loop' }
-      include ./bool.jade
+      include ./bool.pug
 
     .row
       .col.s12
         ul.tabs
           - tabs = { curl: 'Curl', web: 'web', api: 'API' }
-          - each id in Object.keys(tabs)
+          each id in Object.keys(tabs)
             li.tab.col.s4
               a(href=`#${id}`)= tabs[id]
       .col.s12
         .card
           .card-content
             #curl
-              include ./curl.jade
+              include ./curl.pug
             #web
-              include ./web.jade
+              include ./web.pug
             #api
-              include ./api.jade
+              include ./api.pug

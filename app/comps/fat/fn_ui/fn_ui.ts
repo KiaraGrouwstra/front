@@ -7,7 +7,7 @@ import { ExtComp } from '../../lib/annotations';
 
 @ExtComp({
   selector: 'fn-ui',
-  template: require('./fn_ui.jade'),
+  template: require('./fn_ui.pug'),
 })
 export class FnUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);

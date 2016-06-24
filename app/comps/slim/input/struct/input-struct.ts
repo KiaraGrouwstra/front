@@ -17,7 +17,7 @@ type Ctrl = ControlStruct;
 
 @ExtComp({
   selector: 'input-struct',
-  template: require('./input-struct.jade'),
+  template: require('./input-struct.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),

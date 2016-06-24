@@ -12,7 +12,7 @@ type Val = any; //Array<any>;
 
 @ExtComp({
   selector: 'array',
-  template: require('./array.jade'),
+  template: require('./array.pug'),
   directives: [NgSwitch, NgSwitchCase, NgSwitchDefault,
     forwardRef(() => ULComp),
     forwardRef(() => TableComp),

@@ -13,7 +13,7 @@ type Ctrl = ControlList<FormControl>;
 
 @ExtComp({
   selector: 'input-array',
-  template: require('./input-array.jade'),
+  template: require('./input-array.pug'),
   directives: [
     forwardRef(() => FieldComp),
   ],

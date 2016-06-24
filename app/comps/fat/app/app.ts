@@ -35,7 +35,7 @@ let pipes = [MarkedPipe];
 @Component({
   selector: 'app',
   //changeDetection: ChangeDetectionStrategy.CheckAlways,
-  template: require('./app.jade'),
+  template: require('./app.pug'),
   directives, // one instance per component   //viewDirectives: private from ng-content
   pipes,
   // encapsulation: ViewEncapsulation.Native,

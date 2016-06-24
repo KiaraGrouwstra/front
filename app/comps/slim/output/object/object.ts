@@ -12,7 +12,7 @@ type Val = any; //Object;
 
 @ExtComp({
   selector: 'object',
-  template: require('./object.jade'),
+  template: require('./object.pug'),
   directives: [
     forwardRef(() => DLComp),
     forwardRef(() => ArrayComp),

@@ -1,4 +1,4 @@
-//- convert to ng2 thing instead of using jade variable `prefix`? this ID thing as used by Materialize tabs is annoying.
+//- convert to ng2 thing instead of using pug variable `prefix`? this ID thing as used by Materialize tabs is annoying.
 .row
   //- '[ngClass]'=`{ 'light-green lighten-2': meat, 'red lighten-5': meat_opts?.length && !meat }`
   .card
@@ -41,7 +41,7 @@
   .col.s12
     ul.tabs
       - tabs = { rendered: 'Rendered', colored: 'Colored', raw: 'Raw' }
-      - each id in Object.keys(tabs)
+      each id in Object.keys(tabs)
         li.tab.col.s4
           a(href=`#${prefix+id}`)= tabs[id]
   .col.s12

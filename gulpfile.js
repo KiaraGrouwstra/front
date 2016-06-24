@@ -6,8 +6,7 @@
 import gulp from 'gulp';
 // path = require('path');
 import gutil from "gulp-util";
-import jade from 'jade';
-import gulpJade from 'gulp-jade';
+let pug = require('gulp-pug');
 // Server = require('karma').Server;
 // fs = require('fs');
 // _ = require('lodash/fp');
@@ -19,8 +18,7 @@ let paths = {
   vendor: './app/vendor/**/*.*',
   static: './app/static/**/*.*',
   swagger: './app/swagger/**/*.*',
-  index: './app/index.jade',
-  tests: './app/tests.jade',
+  index: './app/index.pug',
   images: './app/images/',
 };
 
@@ -45,9 +43,7 @@ let copy = (glob, op = gutil.noop(), to = paths.dist) => gulp
 gulp.task('vendor', () => copy(paths.vendor));
 gulp.task('static', () => copy(paths.static));
 gulp.task('swagger', () => copy(paths.swagger));
-gulp.task('jade', () => copy(paths.jade, gulpJade({jade, pretty: true})));
-gulp.task('index', () => copy(paths.index, gulpJade({jade, pretty: true})));
-gulp.task('tests', () => copy(paths.tests, gulpJade({jade, pretty: true}))); //, paths.src
+gulp.task('index', () => copy(paths.index, pug({ pretty: true })));
 // locals: YOUR_LOCALS
 
 gulp.task('download', () => {

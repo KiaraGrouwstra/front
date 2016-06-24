@@ -14,7 +14,7 @@ import { BooleanFieldValue } from '@angular2-material/core/annotations/field-val
 type Ctrl = ControlObject<FormGroup>; // { name, val }
 @ExtComp({
   selector: 'input-object',
-  template: require('./input-object.jade'),
+  template: require('./input-object.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),

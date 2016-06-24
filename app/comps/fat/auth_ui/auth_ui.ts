@@ -6,7 +6,7 @@ import { ExtComp } from '../../lib/annotations';
 
 @ExtComp({
   selector: 'auth-ui',
-  template: require('./auth_ui.jade'),
+  template: require('./auth_ui.pug'),
 })
 export class AuthUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);

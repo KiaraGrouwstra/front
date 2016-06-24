@@ -19,7 +19,7 @@ type Ctrl = AbstractControl;
 
 @ExtComp({
   selector: 'input-value',
-  template: require('./input-value.jade'),
+  template: require('./input-value.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputArrayComp),
