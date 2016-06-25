@@ -14,18 +14,19 @@ var babelSettings = {
     // 'lodash',
   ],
   'plugins': [
-    'syntax-async-functions', // async/await
-    'transform-regenerator',
-    'transform-runtime',
-    'add-module-exports', // export
-    'transform-decorators-legacy', // @
-    'angular2-annotations',	// @Component, etc.
-    'transform-class-properties', // class foo { prop = val; }
-    'transform-flow-strip-types', // type annotations
-    // v unfortunately 0~2 stage TC39 proposals are not yet supported in TS anyway
-    'transform-object-rest-spread', // { ...rest }
-    'transform-function-bind', // obj::fn[(v)], ::obj.fn[(v)] over fn.bind(obj) / fn.call(obj, v)
-    'transform-eval', // Babel eval()... means Babel must be shipped to the client
+		// v already part of TS
+		'transform-regenerator',
+		'transform-runtime',
+		'transform-class-properties', // class foo { prop = val; }
+		'add-module-exports', // export
+		'transform-decorators-legacy', // @
+		'angular2-annotations',	// @Component, etc.
+		'transform-flow-strip-types', // type annotations
+		'syntax-async-functions', // async/await
+		// v stage 0~2 proposals, not yet supported in TS
+		'transform-object-rest-spread', // { ...rest }
+		'transform-function-bind', // obj::fn[(v)], ::obj.fn[(v)] over fn.bind(obj) / fn.call(obj, v)
+		'transform-eval', // Babel eval()... means Babel must be shipped to the client
   ],
 };
 
