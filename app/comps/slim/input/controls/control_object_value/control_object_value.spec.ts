@@ -2,7 +2,7 @@ import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescri
 let _ = require('lodash/fp');
 import { ControlObjectValue } from './control_object_value';
 import { Subject } from 'rxjs';
-import { getValStruct } from '../input';
+import { getValStruct } from '../../input';
 
 describe('ControlObjectValue', () => {
   let v, name$;

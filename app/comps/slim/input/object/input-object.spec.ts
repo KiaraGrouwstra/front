@@ -15,7 +15,6 @@ let scalar = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
-  "required": true,
   "type": "string"
 };
 let schema = { type: "object", additionalProperties: scalar };

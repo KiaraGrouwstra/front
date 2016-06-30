@@ -16,7 +16,7 @@ let scalar = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
-  "required": true,
+  "required_field": true,
   "type": "string"
 };
 let array = { "type": "array", "items": scalar };
@@ -41,7 +41,7 @@ describe('InputValueComp', () => {
 
   it('should work with scalars', test(pars(scalar), ({ comp, el }) => {
     // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
-    expect(comp.ctrl.errors).toEqual({required: true});
+    expect(comp.ctrl.errors).toEqual({required_field: true});
   }));
 
   it('should work with arrays', test(pars(array), ({ comp, el }) => {

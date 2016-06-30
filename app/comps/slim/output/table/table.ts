@@ -133,7 +133,7 @@ export class TableComp extends BaseOutputComp {
   set condFormat(x: Front.CondFormat) {
     if(_.isUndefined(x)) return;
     this._condFormat = x;
-    this.condBoundaries = mapBoth(x, (colors, col) => {
+    this.condBoundaries = mapBoth((colors, col) => {
       if(!colors) return [];
       let { min, max, isLog } = this.colMeta[col];
       if(isLog) {
@@ -142,7 +142,7 @@ export class TableComp extends BaseOutputComp {
       }
       let bins = colors.length - 1;
       return colors.map((_v, idx) => min + idx / bins * (max - min));
-    });
+    })(x);
   }
 
   @try_log()

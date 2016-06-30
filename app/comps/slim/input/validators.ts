@@ -5,11 +5,12 @@ import { arr2obj, mapBoth } from '../../lib/js';
 
 // tv4: https://github.com/geraintluff/tv4
 // json-editor: https://github.com/jdorn/json-editor/blob/master/src/validator.js
-const valConds: {[key: string]: (v: any, par: any) => boolean} = {
-  // schema: (v, par) => (v, par),
-  // collectionFormat: (v, par) => (v, par),
-  required: // assumes string?
-      (v, par) => v.length,
+const valConds: {[key: string]: (v: any, par: any, schema: Front.Schema) => boolean} = {
+  required: // object
+      (v, par) => par.every(y => y in v),
+  required_field: // custom, implicit on fields of `required` to localize error messages
+      // must set `name`, pass schema. I now also set `required` prevent close buttons. :(
+      (v, par, schema) => _.size(v) || !(par == true || par.includes(schema.name)),
   maximum:
       (v, par) => (v <= par),
   exclusiveMaximum:
@@ -51,22 +52,16 @@ const valConds: {[key: string]: (v: any, par: any) => boolean} = {
           [val, schema].some(_.isUndefined) || validate(val, schema)
         ) :
             v.every(x => validate(x, par)),
+  additionalItems:
+      (v, par, schema) => v.slice(schema.items.length).every(
+        val => _.isObject(par) ? validate(val, par) : par
+      ),
   properties:
       (v, par) => _.keys(par).every(k => validate(v[k], par[k])),
   patternProperties:
       (v, par) => _.keys(par).every(patt => _.keys(v)
         .filter(k => new RegExp(patt).test(k))
         .every(k => validate(v[k], par[k]))
-      ),
-  anyOf:
-      (v, par) => par.some(x => validate(v, x)),
-  allOf:
-      (v, par) => par.every(x => validate(v, x)),
-  oneOf:
-      (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
-  additionalItems:
-      (v, par, schema) => v.slice(schema.items.length).every(
-        val => _.isObject(par) ? validate(val, par) : par
       ),
   additionalProperties:
       (v, par, schema) => {
@@ -77,8 +72,21 @@ const valConds: {[key: string]: (v: any, par: any) => boolean} = {
         let restKeys = _.difference(_.keys(v), keysBySpec);
         return restKeys.every(val => validate(val, par));
       },
+  anyOf:
+      (v, par) => par.some(x => validate(v, x)),
+  allOf:
+      (v, par) => par.every(x => validate(v, x)),
+  oneOf:
+      (v, par) => _.sum(par.map(x => validate(v, x))) == 1,
   format:
       (v, par) => validateFormat(v, par),
+  $ref:
+      (v, par) => false, // unimplemented here, expect $ref to be pre-resolved
+  // part of OpenAPI instead of json-schema
+  // schema: (v, par) => (v, par),
+  // collectionFormat: (v, par) => (v, par),
+  // uniqueKeys: (v, par) => true, // custom; must check before serialization
+  // // also need lens to keys (implementation-dependent), so got own function
 };
 
 function isNBit(n: number): boolean {
@@ -156,27 +164,69 @@ export function validateFormat(val: any, format: string) {
   //        'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'
 }
 
-export const validate = (v: any, schema: Front.Schema): boolean =>
-    !_.isNil(schema) && _.keys(schema)
-    .every(k => {
-      let fn = valConds[k];
-      return fn ? fn(v, schema[k], schema) : true;
-    })
-// actually filter applicable keys by type: https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
-// this way can also add implicit type-specific validators, e.g. `uniqueKeys` for object.
-// should filter on value applied to; only works if the schema limits it to 1 `type`.
-// solution: both filter by schema-type and do run-time checks (pass if wrong type) in validators?
+// validate a value with a schema
+export const validate = (v: any, schema: Front.Schema): boolean => {
+  if(_.isNil(schema)) return true;
+  let keys = relevantValidators(schema, VAL_FUN_KEYS);
+  return keys.every(k => {
+    let fn = valConds[k];
+    return fn ? fn(v, schema[k], schema) : true;
+  });
+}
 
+// give validator keys applicable to the top level of a schema
+export function relevantValidators(schema: Front.Schema, whitelist: string[] = []): string[] {
+  let keys = _.keys(schema);
+  if(_.size(whitelist)) keys = _.intersection(keys, whitelist);
+  let tp = schema.type;
+  // filtering keys only works for simple types; won't bother filtering on value applied to.
+  // could pass if wrong type in validators, or add checks, but I'd like to find the failures
+  if(_.isString(tp)) {
+    let relevant = validatorsForType(tp);
+    keys = _.intersection(keys, relevant);
+  }
+  return keys;
+}
+
+// get validator keys applicable to a type
+// cf. https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
+// could also add implicit type-specific validators, e.g. `uniqueKeys` for object.
+function validatorsForType(type: string): string[] {
+  // const keywords = [ '$schema', 'id', 'title', 'description', 'default' ];
+  // ^ keys in json-schema not relevant for validation
+  // const types = [ 'number', 'integer', 'string', 'array', 'object', 'boolean', 'null' ];
+  const NUM = ['maximum', 'minimum', 'multipleOf', 'exclusiveMaximum', 'exclusiveMinimum'];
+  const ALL = ['type', '$ref', 'enum', 'not', 'anyOf', 'oneOf', 'allOf'];
+  const validatorsByType = {
+    number: NUM,
+    integer: NUM,
+    string:
+        ['maxLength', 'minLength', 'pattern', 'format', 'required_field'], // last custom
+    array:
+        ['maxItems', 'minItems', 'uniqueItems'],
+        //, 'items', 'additionalItems' <- validation delegated
+    object:
+        ['maxProperties', 'minProperties', 'required']), //, 'dependencies'
+        // , 'properties', 'patternProperties', 'additionalProperties' <- delegated
+        // custom: uniqueKeys -- implied in object, don't intersect with spec keys
+    // boolean: [],
+    // null: [],
+  };
+  return ALL.concat(validatorsByType[type] || []);
+}
+
+// maps json-schema validators to validator functions used by Angular form controls
 const valFns: {[key: string]: (par: any) => ValidatorFn} =
-  mapBoth(valConds, (fn, k) => (par) => (c) =>
-  // mapBoth(valConds, _.curry((fn, k, par, c) =>
-    par != null && !fn(c.value, par) ? _.fromPairs([[k, true]]) : null
+  mapBoth((fn, k) => (par) => (c) =>
+  // mapBoth(_.curry((fn, k, par, c) =>
+    par != null && !fn(c.value, par, c.schema) ? _.fromPairs([[k, true]]) : null
     // { [k]: true }
-  );
+  )(valConds);
   // ));
 // ... _.keys(valConds).map((k) => ... valConds[k] ...
 // const ng_validators = _.assign(Validators, valFns);
 
+// check if a value matches a given type
 function matchesType(val: any, type: string): boolean {
   const mapping = {
     array: _.isArray,
@@ -206,7 +256,9 @@ function matchesType(val: any, type: string): boolean {
 // includes: dependencies, definitions, $ref, custom
 // [z-schema](https://github.com/zaggino/z-schema/blob/master/src/Errors.js)
 export const valErrors: {[key: string]: (x: any) => (v: any) => string} = {
-  required: x => v => `This field is required.`,
+  // required: x => v => `Required fields: ${JSON.stringify(x)}`, // objects, don't show error here
+  required_field: x => v => `This field is required.`,  // fields, custom, show error here instead
+      // ^ I had to override ng2's Validator key from `required` since I'm using their trigger.
   maximum: x => v => `Must not be more than ${x}.`,
   exclusiveMaximum: x => v => `Must be less than ${x}.`,
   minimum: x => v => `Must not be less than ${x}.`,
@@ -224,7 +276,6 @@ export const valErrors: {[key: string]: (x: any) => (v: any) => string} = {
   maxProperties: x => v => `Too many properties: ${_.size(v)}/${x}.`,
   minProperties: x => v => `Not enough properties: ${_.size(v)}/${x}.`,
   uniqueItems: x => v => `All items must be unique.`,
-  uniqueKeys: x => v => `All keys must be unique.`,
   enum: x => v => `Must be one of the following values: ${JSON.stringify(x)}.`,
   // enum: x => v => {
   //   let json = JSON.stringify(x);
@@ -236,17 +287,21 @@ export const valErrors: {[key: string]: (x: any) => (v: any) => string} = {
   type: x => v => `Should match type ${JSON.stringify(x)}.`,
   not: x => v => `Should not match schema ${JSON.stringify(x)}.`,
   items: x => v => `Items should match schema ${JSON.stringify(x)}.`,
+  additionalItems: x => v => `Additional items should match schema ${JSON.stringify(x)}.`,
   properties: x => v => `Properties should match schema ${JSON.stringify(x)}.`,
   patternProperties: x => v => `Pattern properties should match schema ${JSON.stringify(x)}.`,
-  additionalItems: x => v => `Additional items should match schema ${JSON.stringify(x)}.`,
   additionalProperties: x => v => `Additional properties should match schema ${JSON.stringify(x)}.`,
   anyOf: x => v => `Should match any of schemas ${JSON.stringify(x)}.`,
   allOf: x => v => `Should match all of schemas ${JSON.stringify(x)}.`,
   oneOf: x => v => `Should match one of schemas ${JSON.stringify(x)}.`,
   format: x => v => `Should match format '${x}'.`,
+  $ref: x => v => `Unresolved reference: '${x}'`,
+  // custom
+  uniqueKeys: x => v => `All keys must be unique.`,
 };
 
-export const VAL_KEYS: string[] = _.keys(valErrors);
+export const VAL_FUN_KEYS: string[] = _.keys(valConds);
+export const VAL_MSG_KEYS: string[] = _.keys(valErrors);
 
 // prepare the form control validators
 export function getValidator(schema: Front.Schema): ValidatorFn {
@@ -256,8 +311,8 @@ export function getValidator(schema: Front.Schema): ValidatorFn {
   , []).map(opt => getValidator(opt));
   let of_vldtrs = of_vals.map(opt => opt.validator);
   let of_vldtr = (c) => of_vldtrs.some(x => !x);
-  let used_vals = VAL_KEYS.filter(k => schema[k] != null);
-  let validators = used_vals.map(k => valFns[k](schema[k])).concat(of_vldtr);
+  let keys = relevantValidators(schema, VAL_FUN_KEYS);
+  let validators = keys.map(k => valFns[k](schema[k])).concat(of_vldtr);
   return Validators.compose(validators);
 }
 

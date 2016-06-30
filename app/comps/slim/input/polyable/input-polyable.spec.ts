@@ -5,23 +5,23 @@ import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { inputControl } from '../input'
+import { By } from '@angular/platform-browser';
 import { GlobalsService } from '../../../services';
 
-import { InputTableComp } from './input-table';
-let cls = testComp('input-table', InputTableComp);
+import { InputPolyableComp } from './input-polyable';
+let cls = testComp('input-polyable', InputPolyableComp);
 let path = ['test'];
-let scalar = {
+let schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
   "type": "string"
 };
-let schema = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
 let ctrl = inputControl(schema);
 let named = false;
 let pars = () => _.cloneDeep({ path, schema, ctrl, named });
 
-describe('InputTableComp', () => {
+xdescribe('InputPolyableComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
@@ -32,12 +32,7 @@ describe('InputTableComp', () => {
   }));
 
   it('should work', test(pars(), ({ comp, el }) => {
-    // expect(el).toHaveText('add');
-    expect(comp.ctrl.valid).toEqual(true);
-  }));
-
-  it('should work named', test([pars(), {named: true}], ({ comp, el }) => {
-    // expect(el).toHaveText('testadd');
+    expect(comp.ctrl.errors).toEqual(null);
     expect(comp.ctrl.valid).toEqual(true);
   }));
 

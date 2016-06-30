@@ -3,20 +3,22 @@ import { Input, forwardRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldComp } from '../field/input-field';
 import { getPaths } from '../../slim';
-import { ControlList } from '../controls';
-import { inputControl } from '../input'
+import { SchemaControlList, SchemaControlVector } from '../controls';
+import { inputControl, setRequired } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
+import { arr2obj } from '../../../lib/js';
 
-type Ctrl = ControlList<FormGroup>;
+type Ctrl = SchemaControlList<FormGroup> | SchemaControlVector<FormGroup>;
 
 @ExtComp({
   selector: 'input-table',
   template: require('./input-table.pug'),
   directives: [
     forwardRef(() => FieldComp),
-  ]
+  ],
 })
 export class InputTableComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
@@ -29,20 +31,15 @@ export class InputTableComp extends BaseInputComp {
   keys: Array<string>;
   indexBased: boolean;
 
-  setCtrl(x: Ctrl): void {
-    let schema = this.schema;
-    let seed = () => new FormGroup(
-      _.mapValues(x => inputControl(x))(schema.items.properties)
-    );
-    x.init(seed);
-  }
-
   setSchema(x: Front.Schema): void {
-    if(_.isArray(_.get(['items'], x))) {
+    let schema = this._schema = setRequired(x);
+    if(_.isArray(_.get(['items'], schema))) {
       this.indexBased = true;
     } else {
-      this.keys = _.keys(x.items.properties);
+      this.keys = _.keys(schema.items.properties);
     }
+    this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
+    this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }
 
   getSchema(idx: number, col: string): Front.Schema {

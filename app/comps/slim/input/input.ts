@@ -1,11 +1,12 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { FormControl, FormGroup, FormArray, AbstractControl } from '@angular/forms';
-import { ControlList, ControlVector, ControlObject, ControlObjectKvPair, ControlStruct, ControlSet } from './controls';
+import { FormGroup, FormArray, AbstractControl } from '@angular/forms';
+import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
-import { arr2obj, editValsOriginal } from '../../lib/js';
+import { arr2obj, editValsOriginal, mapBoth } from '../../lib/js';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { SchemaFormControl } from './controls';
 
 // get the default value for a value type
 function typeDefault(type: string): any {
@@ -21,7 +22,7 @@ function typeDefault(type: string): any {
   return _.get([type], def_vals);
 }
 
-function getDefault(schema: Front.Schema): any {
+export function getDefault(schema: Front.Schema): any {
   let def = schema.default;
   return (!_.isUndefined(def)) ? def : typeDefault(schema.type);
 }
@@ -66,8 +67,8 @@ function vldtrDefPair(schema: Front.Schema): Front.IVldtrDef {
 // map a schema's subschemas given a lambda
 export function mapSchema<T,U>(fn: (T) => U): Front.IObjectSchema<(T) => U> {
   return editValsOriginal({
-    properties: _.mapValues(fn),
-    patternProperties: _.mapValues(fn),
+    properties: mapBoth(fn),
+    patternProperties: mapBoth(fn),
     additionalProperties: fn,
   });
 }
@@ -77,72 +78,34 @@ export function mapSchema<T,U>(fn: (T) => U): Front.IObjectSchema<(T) => U> {
 export let getValStruct = mapSchema(vldtrDefPair);
 
 // `ControlObject` generator (kicked out of `inputControl`)
-export function objectControl(schema: Front.Schema, doSeed: boolean = false): ControlObject {
-  let ctrl = new ControlObject();
-  if(doSeed) {
-    // let allOf = _.get(['additionalProperties','allOf'], schema) || [];
-    let valStruct = getValStruct(schema);
-    let seed = () => new ControlObjectKvPair(valStruct);
-    ctrl.init(seed); //, allOf
-  }
+export function objectControl(schema: Front.Schema, doSeed: boolean = false): SchemaControlObject {
+  // let validator = getValidator(schema);
+  let ctrl = new SchemaControlObject(schema);
+  if(doSeed) ctrl.init();
   return ctrl;
 }
 
 // return initial key/value pair for the model
 export function inputControl(
   schema: Front.Schema = {},
+  path: string[] = [],
   asFactory: boolean = false,
-  doSeed: boolean = false,
 ): AbstractControl | Front.CtrlFactory {
-  let factory, seed;  //, allOf
-  switch(schema.type) {
-    case 'array':
-      // allOf = _.get(['items','allOf'], schema) || []; // oneOf is covered in the UI
+  const controlMap = {
+    array: (schema) =>
       // only tablize predictable collections
-      let props = _.get(['items','properties'], schema);
-      if(_.isArray(schema.items)) {
-        let cls = ControlVector;
-        if(doSeed) {
-          let seeds = schema.items.map(x => inputControl(x, true, true));
-          let add = schema.additionalItems;
-          let fallback = _.isPlainObject(add) ?
-              inputControl(add, true, true) :
-              add == true ?
-                  inputControl({}, true, true) :
-                  false;
-          factory = () => new cls().init(seeds, fallback);
-        } else {
-          factory = () => new cls();
-        }
-        // ^ ControlVector could also handle the simpler case below.
-      } else if(schema.uniqueItems && _.size(schema.enum)) {
-        factory = () => new ControlSet(schema.enum);
-      } else {
-        let cls = ControlList;
-        if(doSeed) {
-          let seed = props ?
-              () => new FormGroup(_.mapValues(x => inputControl(x, false, true), props)) :
-              inputControl(schema.items, true, true);
-          factory = () => new cls().init(seed);
-        } else {
-          factory = () => new cls();
-        }
-      }
-      break;
-    case 'object':
-      let cls = ControlStruct;
-      if(doSeed) {
-        let factStruct = mapSchema(x => inputControl(x, true, true))(schema);
-        factory = () => new cls().init(factStruct, schema.required || []);
-      } else {
-        factory = () => new cls();
-      }
-      break;
-    default:
-      let val = getDefault(schema);
-      let validator = getValidator(schema);
-      factory = () => new FormControl(val, validator); //, async_validator
-  }
+      _.isArray(schema.items) ?
+        SchemaControlVector :
+        // ^ SchemaControlVector could also handle the simpler case below.
+      schema.uniqueItems && _.size(schema.items.enum) ?
+        SchemaControlSet :
+        SchemaControlList,
+    // object: (schema) => (schema.patternProperties || schema.additionalProperties) ? SchemaControlStruct : SchemaFormGroup,
+    object: () => SchemaControlStruct,
+  };
+  let fn = controlMap[schema.type];
+  let cls = fn ? fn(schema) : SchemaFormControl;
+  let factory = () => new cls(schema, path);
   return asFactory ? factory : factory();
 }
 
@@ -152,61 +115,15 @@ const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
 // http://swagger.io/specification/#parameterObject
 export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.parameter | Front.Schema): Front.IAttributes {
   // general parameters
-  // // workaround for Sweet, which does not yet support aliased destructuring: `not implemented yet for: BindingPropertyProperty`
-  // let kind = spec.in || '';
-  // let desc = spec.description || '';
-  // let req = spec.required || false;
-  // let allow_empty = spec.allowEmptyValue || false;
-  // let def = spec.default || null;
-  // let inc_max = spec.maximum || Number.MAX_VALUE;
-  // let ex_max = spec.exclusiveMaximum || false;
-  // let inc_min = spec.minimum || Number.MIN_VALUE;
-  // let ex_min = spec.exclusiveMinimum || false;
-  // let enum_options = spec.enum || null;
-  // let {
-  //   name = '',
-  //   // in: kind = '',
-  //   // description: desc = '',
-  //   // required: req = false,
-  //   schema = {},
-  //   type = 'string',
-  //   format = '',
-  //   // allowEmptyValue: allow_empty = false,
-  //   items = {},
-  //   collectionFormat = 'csv',
-  //   // default: def = null,
-  //   // maximum: inc_max = Number.MAX_VALUE,
-  //   // exclusiveMaximum: ex_max = false,
-  //   // minimum: inc_min = Number.MIN_VALUE,
-  //   // exclusiveMinimum: ex_min = false,
-  //   pattern = '.*',
-  //   minLength = 0,
-  //   maxLength = 9007199254740991, //Math.pow(2, 53) - 1
-  //   maxItems = MAX_ITEMS,
-  //   minItems = 0,
-  //   maxProperties = MAX_ITEMS,
-  //   minProperties = 0,
-  //   uniqueItems = false,
-  //   // exclusive = false,
-  //   suggestions = [],
-  //   // enum: enum_options = null,
-  //   multipleOf = 1,
-  // } = spec;
-  let { name, in: kind, description: desc, required: req, schema, type, format, allowEmptyValue: allow_empty, items, collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, pattern, minLength, maxLength, maxItems, minItems, maxProperties, minProperties, uniqueItems, exclusive, suggestions, enum: enum_options, multipleOf, } = spec;
+  let { name, in: kind, description: desc, required: req, required_field: req_field, schema, type, format, allowEmptyValue: allow_empty, items, collectionFormat, default: def, maximum: inc_max, exclusiveMaximum: ex_max, minimum: inc_min, exclusiveMinimum: ex_min, pattern, minLength, maxLength, maxItems, minItems, maxProperties, minProperties, uniqueItems, exclusive, suggestions, enum: enum_options, multipleOf, } = spec;
   desc = marked(desc || '') //.stripOuter();
   let { id } = getPaths(path);  //, k, variable, model: elvis
   let key = name;  // variable
-  let model = `form.controls.${key}`;
   let attrs = {
-    // '[(ngModel)]': `${model}.value`,
-    // formControlName: key,
     id,
-    required: req,
-    // exclusive, // used in input-object's `x-keys`
     suggestions,
   };
   // if(desc) attrs.placeholder = description;
-  // attrs[`#${variable}`] = 'ngForm';
 
   // numbers:
   let max = inc_max || ex_max ? ex_max + 1 : null;
@@ -228,12 +145,12 @@ export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.par
     // case 'array':
     // parameters: items, collectionFormat:csv(/ssv/tsv/pipes/multi), maxItems, minItems, uniqueItems
     // case 'object':
-    // parameters: maxProperties, minProperties
+    // parameters: maxProperties, minProperties, required,
     //   break;
   }
   let AUTO_COMP = ['name', 'honorific-prefix', 'given-name', 'additional-name', 'family-name', 'honorific-suffix', 'nickname', 'email', 'username', 'new-password', 'current-password', 'organization-title', 'organization', 'street-address', 'address-line1', 'address-line2', 'address-line3', 'address-level4', 'address-level3', 'address-level2', 'address-level1', 'country', 'country-name', 'postal-code', 'cc-name', 'cc-given-name', 'cc-additional-name', 'cc-family-name', 'cc-number', 'cc-exp', 'cc-exp-month', 'cc-exp-year', 'cc-csc', 'cc-type', 'transaction-currency', 'transaction-amount', 'language', 'bday', 'bday-day', 'bday-month', 'bday-year', 'sex', 'tel', 'url', 'photo'];
 
-  // type-specific parameters
+  // type-specific html attributes
   let type_params = {
     string: {
       maxlength: maxLength,
@@ -260,6 +177,31 @@ export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.par
   return _.pickBy(_.negate(_.isNil))(attrs);
 }
 
+// // set `required_field` for an sub-schema based on the `required` property of its parent object schema
+// export function setItemRequired(schema: Front.Schema, obj_schema: Front.Schema, key: string): Front.Schema {
+//   return (obj_schema.required || []).includes(key) ?
+//       _.set(['required_field'], true)(schema) :
+//       schema;
+// }
+
+// set all `required_field` properties for an object schema based on its `required` property
+export function setRequired(schema: Front.Schema): Front.Schema {
+  let required = schema.required;
+  // return mapSchema(setter(required));
+  // ^ lazy, would force checking the whole array each time if I weren't using ng2's solution
+  let patterns = _.keys(schema.patternProperties);
+  let fixed = _.intersection(required, _.keys(schema.properties));
+  let unsorted = _.difference(required, fixed);
+  let { rest, patts } = categorizeKeys(patterns)(unsorted);
+  let setter = (v) => _.set(['required_field'], v);
+  return editValsOriginal({
+    // properties: mapBoth(setter(fixed)),
+    properties: mapBoth((item_schema, key) => setter(fixed.includes(key) ? true : undefined)(item_schema)),
+    patternProperties: mapBoth((item_schema, patt) => setter(patts[patt])(item_schema)),
+    additionalProperties: setter(rest),
+  })(schema);
+}
+
 // key uniqueness validator for ControlObject
 export function uniqueKeys(name_lens: (AbstractControl) => string): ValidatorFn {
   return (ctrl: AbstractControl) => {
@@ -278,7 +220,7 @@ export function getOptsNameSchemas(obj: Front.IObjectSchema<any>): Object {
   let sugg = categorizer(_.get(['x-keys', 'suggestions'], obj) || []);
   let { rest: addSugg, patts: pattSugg } = categorizer(_.get(['x-keys', 'suggestions'], obj) || []);
   let { rest: addEnum, patts: pattEnum } = categorizer(_.get(['x-keys', 'enum'], obj) || []);
-  let nameSchema = { name: 'name', type: 'string', required: true };
+  let nameSchema = { name: 'name', type: 'string', required_field: true };
   let nameSchemaFixed = _.assign(nameSchema, { enum: fixed });
   let nameSchemaPatt = arr2obj(patts, patt => _.assign(nameSchema,
     { enum: pattEnum[patt], suggestions: pattSugg[patt] }
@@ -289,11 +231,15 @@ export function getOptsNameSchemas(obj: Front.IObjectSchema<any>): Object {
   return { nameSchemaFixed, nameSchemaPatt, nameSchemaAdd, addSugg, pattSugg, addEnum, pattEnum };
 };
 
+// find the pattern matching a key
+export let patternSorter = (patterns: string[]) => (k: string) => patterns.find(patt => new RegExp(patt).test(k));
+
 // categorize keys to a pattern or additional
-export function categorizeKeys(patterns, blacklist = []): (keys: string[]) => { rest: string, patts: {[key: string]: string} } {
+export function categorizeKeys(patterns, blacklist = []):
+    (keys: string[]) => { rest: string[], patts: {[key: string]: string[]} } {
   return (keys: string[]) => {
     let r = _.difference(keys, blacklist);
-    let sorter = v => patterns.find(patt => new RegExp(patt).test(v));
+    let sorter = patternSorter(patterns);
     // let { undefined: rest, ...patts } = _.groupBy(sorter)(r); // without TS
     let grouped = _.groupBy(sorter)(r);
     let rest = grouped.undefined;

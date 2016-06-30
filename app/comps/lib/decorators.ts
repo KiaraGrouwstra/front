@@ -38,7 +38,7 @@ export function fallback(...args): Function {
       return fn.call(this, ...arguments);
     }
     catch(e) {
-      console.warn(`${key} fallback error:`, e);
+      console.warn('fallback error', e.stack);
       return def;
     }
   }), args);
@@ -51,7 +51,7 @@ export function try_log(...args): Function {
       return fn.call(this, ...arguments);
     }
     catch(e) {
-      console.warn(`${key} try_log error:`, e);
+      console.warn('try_log error', e.stack);
     }
   }), args);
 }

@@ -4,7 +4,7 @@ import { TestComponentBuilder } from '@angular/compiler/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
-import { inputControl } from '../input'
+// import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
 import { FormComp } from './input-form';
@@ -14,7 +14,6 @@ let scalar_schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
-  "required": true,
   "type": "string"
 };
 let schema = {
@@ -58,13 +57,12 @@ describe('FormComp', () => {
 
   it('should do scalar schemas', test([pars(), scalar_pars()], ({ comp, el }) => {
     // expect(el).toHaveText(desc + text + text + 'Submit');
-    // expect(comp.form.controls['foo'].errors).toEqual({required: true});
+    // expect(comp.form.controls['foo'].errors).toEqual({required_field: true});
     expect(comp.form.errors).toEqual(null);
     expect(comp.form.value).toEqual({ foo: '', bar: '' });
   }));
 
   it('should do array schemas', test([pars(), arr_pars()], ({ comp, el }) => {
-    // console.log('controls', comp.ctrl.controls);
     // expect(comp.form.controls['foo'].errors).toEqual(null);
     // expect(el).toHaveText('hifooaddbaraddSubmit');
     expect(comp.form.errors).toEqual(null);

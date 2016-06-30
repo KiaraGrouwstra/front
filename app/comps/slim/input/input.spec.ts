@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
-import { mapSchema, inputControl, categorizeKeys } from './input';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ControlList, ControlStruct } from './controls';
+import { mapSchema, inputControl, categorizeKeys, setRequired } from './input';
+import { FormGroup } from '@angular/forms';
+import { SchemaControlList, SchemaControlStruct, SchemaFormControl } from './controls';
 
 describe('input', () => {
 
@@ -12,13 +12,45 @@ describe('input', () => {
   })
 
   it('inputControl', () => {
-    expect(inputControl({ type: 'string' }).constructor).toEqual(FormControl);
-    expect(inputControl({ type: 'array' }).constructor).toEqual(ControlList);
-    expect(inputControl({ type: 'object' }).constructor).toEqual(ControlStruct);
+    expect(inputControl({ type: 'string' }).constructor).toEqual(SchemaFormControl);
+    expect(inputControl({ type: 'array' }).constructor).toEqual(SchemaControlList);
+    expect(inputControl({ type: 'object' }).constructor).toEqual(SchemaControlStruct);
   })
 
   it('categorizeKeys', () => {
     expect(categorizeKeys(['^x$', 'unused'])(['x', 'z'])).toEqual({ patts: { '^x$': ['x'] }, rest: ['z'] });
+  })
+
+  it('setRequired', () => {
+    let before = {
+      type: 'object',
+      required: ['a', 'b', 'c']
+      properties: {
+        a: {},
+      },
+      patternProperties: {
+        b: {},
+      },
+      additionalProperties: {},
+    };
+    let after = {
+      type: 'object',
+      required: ['a', 'b', 'c']
+      properties: {
+        a: {
+          required_field: true,
+        },
+      },
+      patternProperties: {
+        b: {
+          required_field: ['b'],
+        },
+      },
+      additionalProperties: {
+        required_field: ['c'],
+      },
+    };
+    expect(setRequired(before)).toEqual(after);
   })
 
   // it('', () => {

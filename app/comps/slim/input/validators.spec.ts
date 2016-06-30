@@ -1,12 +1,11 @@
 let _ = require('lodash/fp');
 import { validate } from './validators';
-import { mapBoth } from '../../lib/js';
 
 describe('validators', () => {
 
-  // it('required', () => {
-  //   expect(validate({}, { type: 'object', properties: { a: {} }, required: ['a'] })).toEqual(false);
-  // })
+  it('required', () => {
+    expect(validate({}, { type: 'object', properties: { a: {} }, required: ['a'] })).toEqual(false);
+  })
 
   for (let k in tests) {
     let { schema, valid, invalid } = tests[k];
@@ -477,24 +476,24 @@ let tests = {
             }
         ]
     },
-    properties: {
-        schema: {
-            type: "object",
-            properties: {
-                required: {
-                    type: "string"
-                }
-            },
-            additionalProperties: {
-                type: "number"
-            }
-        },
-        valid: [{required: "test"},{other: 1}],
-        invalid: [
-            {other: "test"},
-            {required: 1}
-        ]
-    },
+    // properties: {
+    //     schema: {
+    //         type: "object",
+    //         properties: {
+    //             required: {
+    //                 type: "string"
+    //             }
+    //         },
+    //         additionalProperties: {
+    //             type: "number"
+    //         }
+    //     },
+    //     valid: [{required: "test"},{other: 1}],
+    //     invalid: [
+    //         {other: "test"},
+    //         {required: 1}
+    //     ]
+    // },
     patternProperties: {
         schema: {
             type: "object",

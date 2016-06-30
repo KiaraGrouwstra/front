@@ -12,13 +12,13 @@ import { InputArrayComp } from './input-array';
 let cls = testComp('input-array', InputArrayComp);
 let path = ['test'];
 let scalar = {
-  "description": "The geography ID.",
-  "in": "path",
-  "name": "geo-id",
-  "required": true,
-  "type": "string"
+  description: 'The geography ID.',
+  in: 'path',
+  name: 'geo-id',
+  required_field: true,
+  type: 'string'
 };
-let schema = { "name": "arrr", "description": "dummy desc", "type": "array", "items": scalar };
+let schema = { 'name': 'arrr', 'description': 'dummy desc', 'type': 'array', 'items': scalar };
 let ctrl = inputControl(schema);
 let named = false;
 let pars = () => _.cloneDeep({

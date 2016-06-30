@@ -10,6 +10,7 @@ div(
       '[ctrl]'=`ctrl`
     )
   template('[ngSwitchCase]'=`'array'`)
+    //- *ngIf=`ctrl instanceof ControlSet`
     input-field(
       *ngIf=`ctrl?.constructor?.name == 'ControlSet'`
       '[named]'=`named`
@@ -17,6 +18,7 @@ div(
       '[schema]'=`schema`
       '[ctrl]'=`ctrl`
     )
+    //- *ngIf=`!(ctrl instanceof ControlSet)`
     input-array(
       *ngIf=`ctrl?.constructor?.name != 'ControlSet'`
       '[named]'=`named`

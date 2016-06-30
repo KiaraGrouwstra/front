@@ -13,7 +13,7 @@ describe('schema generator', () => {
     { user: 'fred',   age: 48 },
     { user: 'barney', age: 34 },
     { user: 'fred',   age: 40 },
-    { user: 'barney', age: 36 }
+    { user: 'barney', age: 36 },
   ];
   let tableSpec = { type: 'array', items: { properties: { user: { type: 'string' }, age: { type: 'integer' } }, type: 'object' } };
   let email = 'spam@yahoo.com';

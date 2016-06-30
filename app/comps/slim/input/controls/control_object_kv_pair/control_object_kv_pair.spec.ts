@@ -4,8 +4,8 @@ let _ = require('lodash/fp');
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { ControlObjectKvPair } from './control_object_kv_pair';
-import { getValStruct } from '../input';
-import { myAsync } from '../../../test';
+import { getValStruct } from '../../input';
+import { myAsync } from '../../../../test';
 
 let schema = {
   properties: {

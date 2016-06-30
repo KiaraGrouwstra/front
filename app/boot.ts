@@ -4,6 +4,7 @@
 require('./styles');
 import 'babel-core/register';
 import 'babel-polyfill';
+let _ = require('lodash/fp');
 
 import 'angular2/bundles/angular2-polyfills.js';
 // ^ what's the @angular equivalent here? [#8412](https://github.com/angular/angular/issues/8412)
@@ -32,7 +33,7 @@ enableProdMode();
 bootstrap(App, singletons);
 // .catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));
 
-window._ = require('lodash/fp');
+window._ = _;
 window.jQuery = window.$ = require('jquery');
 //Materialize
 require('materialize-css/dist/js/materialize');

@@ -12,11 +12,11 @@ import { FieldComp } from './input-field';
 let cls = testComp('input-field', FieldComp);
 let path = ['test'];
 let schema = {
-  "description": "The geography ID.",
-  "in": "path",
-  "name": "geo-id",
-  "required": true,
-  "type": "string"
+  'description': 'The geography ID.',
+  'in': 'path',
+  'name': 'geo-id',
+  'required_field': true,
+  'type': 'string'
 };
 let ctrl = inputControl(schema);
 let named = true;
@@ -41,11 +41,11 @@ describe('FieldComp', () => {
   }));
 
   it('should validate', test(pars(), ({ comp, el }) => {
-    expect(comp.ctrl.errors).toEqual({required: true});
+    expect(comp.ctrl.errors).toEqual({required_field: true});
   }));
 
   it('should hold appropriate error messages', test(pars(), ({ comp, el }) => {
-    expect(_.keys(comp.validator_msgs)).toEqual(['required','type']);
+    expect(_.keys(comp.validator_msgs)).toEqual(['type','required_field']);
   }));
 
   // I can't test properly like this, hidden messages (`type` here) still show with `toHaveText`...

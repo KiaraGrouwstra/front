@@ -31,6 +31,10 @@ export abstract class BaseInputComp extends BaseInOutComp {
   }
   setSchema(x: Front.Schema): void {}
 
+  showError(vldtr: string): string {
+    return (this.ctrl.errors||{})[vldtr];
+  }
+
   get ctrl(): Ctrl {
     return this._ctrl;
   }
@@ -39,14 +43,13 @@ export abstract class BaseInputComp extends BaseInOutComp {
     this._ctrl = x;
     this.setCtrl(x);
   }
-  setCtrl(x: Ctrl): void {}
+  setCtrl(x: Ctrl): void {
+    if(x.init) x.init();
+  }
 
   @fallback(undefined)
   nav(relativePath: string, path = this.path): any {
     let ctrl = relativeControl(this.ctrl.root, path, relativePath);
-    // ctrl.valueChanges.subscribe(x => {
-    //   this.cdr.markForCheck();
-    // });
     return ctrl.value;
   }
 

@@ -13,9 +13,11 @@ form(
   //- type='submit'
   //- '[disabled]'=`!form.valid`
   //- `button` emits an extra submit Event but `a` doesn't natively support `[disabled]`...
-  a.btn.waves-effect.waves-light(
-    '[ngClass]'=`{ 'disabled': !form.valid }`
+  //- a.btn.waves-effect.waves-light(
+  button.btn.waves-effect.waves-light(
     '(click)'=`submit.emit(form.value)`
+    '[disabled]'=`disabled$ | async`
+    '[ngClass]'=`{ 'disabled': disabled$ | async }`
   ) Submit
 
 //- h3 Form value:

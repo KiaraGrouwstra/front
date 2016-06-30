@@ -1,8 +1,12 @@
 // output
-export { ControlSet } from './control_set';
-export { ControlList } from './control_list';
-export { ControlVector } from './control_vector';
-export { ControlObjectValue } from './control_object_value';
-export { ControlObjectKvPair } from './control_object_kv_pair';
-export { ControlObject } from './control_object';
-export { ControlStruct } from './control_struct';
+export { ControlSet, SchemaControlSet } from './control_set/control_set';
+export { ControlList, SchemaControlList } from './control_list/control_list';
+export { ControlVector, SchemaControlVector } from './control_vector/control_vector';
+export { ControlObjectValue } from './control_object_value/control_object_value';
+export { ControlObjectKvPair } from './control_object_kv_pair/control_object_kv_pair';
+export { ControlObject, SchemaControlObject } from './control_object/control_object';
+export { ControlStruct, SchemaControlStruct } from './control_struct/control_struct';
+export { PolymorphicControl } from './polymorphic_control/polymorphic_control';
+export { ControlPolyable, SchemaControlPolyable } from './control_polyable/control_polyable';
+export { SchemaFormControl } from './schema_form_control/schema_form_control';
+export { SchemaFormGroup } from './schema_form_group/schema_form_group';

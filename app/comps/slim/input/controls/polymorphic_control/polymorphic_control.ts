@@ -1,9 +1,9 @@
 let _ = require('lodash/fp');
 import { FormControl, AbstractControl } from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
-import { inputControl } from '../input'
-
-// crap, I'm gonna need to override all FormControl/AbstractControl methods...
+import { inputControl } from '../../input'
+import { SchemaControl } from '../schema_control';
+import { try_log, fallback } from '../../../../lib/decorators';
 
 export class PolymorphicControl extends FormControl {
   _ctrl: AbstractControl;
@@ -23,9 +23,12 @@ export class PolymorphicControl extends FormControl {
     this._ctrl = x;
   }
 
+  @try_log()
   setSchema(schema: Front.Schema): void {
-    this.ctrl = inputControl(schema, false);
+    this.ctrl = inputControl(schema);
   }
+
+  // wrap all FormControl/AbstractControl methods
 
   get value(): any { return this.ctrl.value; }
   get status(): string { return this.ctrl.status; }
@@ -47,8 +50,27 @@ export class PolymorphicControl extends FormControl {
 
   // setParent(parent: FormGroup | FormArray): void { this.ctrl.setParent(parent); }
 
-  updateValueAndValidity(opts): void { this.ctrl.updateValueAndValidity(opts); }
+  updateValueAndValidity(opts): void { this.ctrl.updateValueAndValidity(_.assign(opts, { onlySelf: true })); }
 
   updateValue(value: any, opts): void { this.ctrl.updateValue(value, opts); }
+
+}
+
+// doesn't actually use one schema...
+export class SchemaPolymorphicControl extends SchemaControl(PolymorphicControl) {
+
+  constructor(
+    schema: Front.Schema,
+    path: string[] = [],
+  ) {
+    super();
+    this.schema = schema;
+    this.path = path;
+  }
+
+  @try_log()
+  setSchema(schema: Front.Schema): void {
+    this.ctrl = inputControl(schema, this.path);
+  }
 
 }

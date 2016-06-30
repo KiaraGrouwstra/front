@@ -1,8 +1,9 @@
 let _ = require('lodash/fp');
 import { FormControl } from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
-import { keySchema } from '../../../lib/js';
+import { keySchema } from '../../../../lib/js';
 import { Observable } from 'rxjs/Observable';
+import { try_log, fallback } from '../../../../lib/decorators';
 
 export class ControlObjectValue extends FormControl {
   valStruct: Front.IObjectSchema<ValidatorFn>;
@@ -18,6 +19,7 @@ export class ControlObjectValue extends FormControl {
     name$.subscribe(name => this.setName(name));
   }
 
+  @try_log()
   setName(name: string): void {
     let { val, vldtr } = keySchema(name, this.valStruct);
     if(this.validator != vldtr) {

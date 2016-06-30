@@ -1,0 +1,16 @@
+//- .alert.alert-danger(*ngIf=`${ctrl}.dirty && !ctrl.valid`)
+//- `ctrl.valid`
+ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors`)
+  //- '[hidden]'=`!(ctrl.errors||{})[vldtr]`
+  //- | {{vldtr}}: {{!showError(vldtr)}}
+  //- '[innerHtml]'=`validator_msgs[vldtr] ? validator_msgs[vldtr](ctrl.value) : 'error text unloaded for schema ' + vldtr`
+  li.error-item(
+    *ngFor=`let vldtr of validator_keys`
+    '[innerHtml]'=`validator_msgs[vldtr](ctrl.value) || 'error text unloaded for schema ' + vldtr`
+    '[hidden]'=`!showError(vldtr)`
+  )
+
+//- p ctrl.value: {{ctrl.value | json}}
+//- p ctrl.errors: {{ctrl.errors | json}}
+//- p validator_keys: {{validator_keys | json}}
+//- p ctrl.validator: {{ctrl._validator | json}}

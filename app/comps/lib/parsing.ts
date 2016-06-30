@@ -3,7 +3,7 @@ let lodash = require('lodash');
 // let cheerio = require('cheerio');
 // ^ cheerio's css-select was supposed to be way faster than jQuery's sizzle, but for me it gives []
 let $ = require('jquery');
-import { mapBoth, splitObj, ExtendableError } from './js';
+import { splitObj, ExtendableError } from './js';
 
 class SelectorError extends ExtendableError {
   constructor(m) {

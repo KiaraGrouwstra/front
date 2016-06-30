@@ -14,7 +14,6 @@ export let fetch_spec: Front.Schema = {
     'urls': {
       type: 'string',
       format: 'url',
-      required: true,
       'x-template': 'textarea',
       description: 'the URLs to scrape and extract, delimited with line breaks (`\\n`)',
     },
@@ -22,7 +21,6 @@ export let fetch_spec: Front.Schema = {
       type: 'string',
       default: 'GET',
       enum: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      required: true,
     },
     'headers': {
       description: 'Request Headers',
@@ -35,7 +33,6 @@ export let fetch_spec: Front.Schema = {
       },
       additionalProperties: {
         type: 'string',
-        required: true,
         name: 'header value',
         description: 'any string',
       },
@@ -47,11 +44,7 @@ export let fetch_spec: Front.Schema = {
       type: 'string',
       allowEmptyValue: true,
       'x-template': 'textarea',
-      'x-bindings': {
-        attributes: {
-          hidden: `!['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.nav('../method', path))`,
-        },
-      },
+      'x-applies': `['POST', 'PUT', 'PATCH', 'DELETE'].includes(this.nav('../method'))`,
     },
   },
 };
@@ -61,7 +54,6 @@ export let fetch_spec: Front.Schema = {
 let selector = {
   type: 'string',
   // format: 'json',
-  required: true,
   name: 'floki selector',
   description: 'use CSS selectors',
   // description: "use e.g. `a@src` to get a URL's `src` attribute, `a` to get its text, `a@` to get its inner html, or `a@@` to get its outer html.",
@@ -90,31 +82,22 @@ let parselet = {
       },
       'attribute': {
         type: 'string',
-        'x-bindings': {
-          // styles: {},
-          // classes: {},
-          attributes: {
-            hidden: `this.nav('../type', path) != 'attribute'`,
-          },
-        },
+        'x-applies': `this.nav('../type') == 'attribute'`,
+        // 'x-bindings': {
+        //   styles: {},
+        //   classes: {},
+        //   attributes: {},
+        // },
       },
     },
     additionalProperties: false,
   },
   minProperties: 1,
-  'x-bindings': {
-    attributes: {
-      hidden: `this.nav('../processor', path) != 'parselet'`,
-    },
-  },
+  'x-applies': `this.nav('../processor') == 'parselet'`,
 };
 
 let nested = _.assign(_.clone(parselet), {
-  'x-bindings': {
-    attributes: {
-      hidden: `this.nav('../type', path) != 'array'`,
-    },
-  },
+  'x-applies': `this.nav('../type') == 'array'`,
 });
 
 nested  .additionalProperties.properties.parselet = nested;
@@ -138,11 +121,7 @@ export let process_spec: Front.Schema = {
       type: 'string',
       default: `(json) => JSON.parse(json)`,
       'x-template': 'textarea',
-      'x-bindings': {
-        attributes: {
-          hidden: `this.nav('../processor', path) != 'transformer'`,
-        },
-      },
+      'x-applies': `this.nav('../processor') == 'transformer'`,
     },
   },
 };

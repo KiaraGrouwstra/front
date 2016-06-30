@@ -152,8 +152,8 @@ function typeSchema(type: string, obj: Front.Schema): Front.Schema {
 export function mergeSchemas(acc: Front.Schema, val: Front.Schema): Front.Schema {
   if(!val) return acc;
   if(!acc) return val;
-  // let mapped = mapBoth(mergers, (fn, k) => fn([acc[k], val[k]], [acc, val]));
-  let mapped = mapBoth(mergers, (fn, k) => fn([acc[k], val[k]], [acc, val]));
+  // let mapped = mapBoth((fn, k) => fn([acc[k], val[k]], [acc, val]))(mergers);
+  let mapped = mapBoth((fn, k) => fn([acc[k], val[k]], [acc, val]))(mergers);
   return _.pickBy(y => !_.isUndefined(y))(mapped);
 }
 

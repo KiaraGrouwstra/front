@@ -1,6 +1,5 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl } from '@angular/common';
 import { AbstractControl } from '@angular/forms';
 import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../..';
 // import { FieldComp } from '../field/input-field';
@@ -26,7 +25,7 @@ type Ctrl = AbstractControl;
     // forwardRef(() => InputObjectComp),
     forwardRef(() => InputStructComp),
     forwardRef(() => InputTableComp),
-  ]
+  ],
 })
 export class InputValueComp extends BaseInputComp {
   @Input() path: Front.Path = [];

@@ -186,6 +186,69 @@ export class DynamicAttrs extends DynamicDirective(ObjDirective) {
 
 }
 
+@Directive({
+  selector: '[applies]',
+  inputs: ['doesApply: applies', 'extraVars: extraVars'],
+})
+export class AppliesDirective extends DynamicDirective(ObjDirective) {
+
+  constructor(
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
+    private _registry: DomElementSchemaRegistry,
+    _viewContainer: ViewContainerRef,
+  ) {
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // DynamicDirective
+    this._extra = {};
+    // this
+    this._context = getContext(_viewContainer);
+    this._elName = this._el.tagName;
+  }
+
+  set doesApply(bool: boolean) {
+    this._renderer.setElementProperty(this._el, 'hidden', !bool);
+  }
+
+}
+
+@Directive({
+  selector: '[appliesExpr]',
+  inputs: ['doesApply: appliesExpr', 'extraVars: extraVars'],
+})
+export class AppliesExprDirective extends DynamicDirective(ObjDirective) {
+
+  constructor(
+    // ObjDirective
+    private _differs: KeyValueDiffers,
+    private _elRef: ElementRef,
+    private _renderer: Renderer,
+    // this
+    private _registry: DomElementSchemaRegistry,
+    _viewContainer: ViewContainerRef,
+  ) {
+    super();
+    // ObjDirective
+    this._el = _elRef.nativeElement;
+    // DynamicDirective
+    this._extra = {};
+    // this
+    this._context = getContext(_viewContainer);
+    this._elName = this._el.tagName;
+  }
+
+  set doesApply(evalStr: string) {
+    let val = evalStr ? evalExpr(this._context, this._extra)(evalStr) : true;
+    this._renderer.setElementProperty(this._el, 'hidden', !val);
+  }
+
+}
+
 // set styles dynamically (cf. NgStyle), using strings evaluated in the component context
 @Directive({
   selector: '[dynamicStyle]',

@@ -117,11 +117,11 @@ export function getKV(k: string): Maybe<any> {
 // let spawn_n = (fn, n = 5, interval = 1000) => range(n).forEach((x) => setTimeout(fn, x * interval));
 // let yaml2json = _.flow(YAML.parse, JSON.stringify);
 // let yaml2json = (yml) => JSON.stringify(YAML.parse(yml));
-export function mapBoth<T,U>(obj: {[key: string]: T}, fn: (T) => U): {[key: string]: U} {
+export let mapBoth = _.curry(function <T,U>(fn: (T) => U, obj: {[key: string]: T}): {[key: string]: U} {
   let keys = _.keys(obj);
   // return _.zipObject(keys, keys.map(k => fn(obj[k], k)));
   return arr2obj(keys, k => fn(obj[k], k));
-}
+});
 // _.mapValues.convert({ 'cap': false })
 // ^ I could ditch this mapBoth crap for Lodash/FP if I could use say JSPM to global-import it as follows:
 // let _ = require('lodash/fp').convert({ 'cap': false });
@@ -223,7 +223,7 @@ export function inputSchemas(path: Front.Path = []): (v: string, idx: number) =>
 export function methodPars(spec: Front.ApiSpec, fn_path: string): { pars: Front.Schema, desc: string } {
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => idCleanse(x));
-  // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', required: true, type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
+  // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let arr = _.get(hops, spec) || [];
   let schema = schemaFromArr(arr);
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
@@ -285,10 +285,10 @@ export function findIndexSet(x: any, set: Set): number {
 // editVals from elins; map values of an object using a mapper
 
 // only keep properties in original object
-export let editValsOriginal: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth(obj, (v, k) => {
+export let editValsOriginal: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth((v, k) => {
   let fn = fnObj[k];
   return fn ? fn(v) : v
-}));
+})(obj));
 
 // export let editVals = (fnObj) => (obj) => _.reduce((acc, fn, k) => _.update(k, fn(acc[k]))(acc), obj)(fnObj);
 // ^ no k in FP
@@ -297,10 +297,10 @@ export let editValsBoth: Front.ObjectMapper = _.curry((fnObj, obj) =>
     _.keys(fnObj).reduce((acc, k) => _.update(k, fnObj[k])(acc), obj));
 
 // only keep properties in mapper object, map even over keys not in the original object
-export let editValsLambda: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth(fnObj, (fn, k) => {
+export let editValsLambda: Front.ObjectMapper = _.curry((fnObj, obj) => mapBoth((fn, k) => {
   let v = obj[k];
   return fn ? fn(v) : v
-}));
+})(fnObj));
 
 // split an object into its keys and values: `let [keys, vals] = splitObj(obj);`
 export function splitObj(obj: {}): [keys: string[], values: any[]] {

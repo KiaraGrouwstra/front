@@ -3,7 +3,7 @@ import { Input, Output, forwardRef, ViewChild, EventEmitter, ChangeDetectorRef }
 import { FormControl } from '@angular/forms';
 let marked = require('marked');
 import { inputAttrs, getTemplate } from '../input';
-import { valErrors, VAL_KEYS } from '../validators';
+import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
@@ -54,14 +54,6 @@ export class FieldComp extends BaseInputComp {
   validator_keys: string[];
   validator_msgs: {[key: string]: (any) => string};
 
-  constructor(
-    // BaseComp
-    public cdr: ChangeDetectorRef,
-    // public g: GlobalsService,
-  ) {
-    super();
-  }
-
   ngOnInit() {
     // hidden, type:input|?, id, label, ctrl, validator_keys, validators
     let schema = this.schema;
@@ -79,16 +71,8 @@ export class FieldComp extends BaseInputComp {
     let schema = x;
     this.hidden = schema.type == 'hidden';
     this.label = marked(`**${schema.name}:** ${schema.description || ''}`);
-    // this.validator_msgs = getValidator(schema).val_msgs;
-    // this.validator_keys = _.keys(this.validator_msgs);
-    this.validator_keys = VAL_KEYS.filter(k => schema[k] != null);
-    // must filter, since validator_msgs without params are of no use
-    // this.validator_msgs = mapBoth(valErrors, (fn, k) => fn(schema[k]));
+    this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
-  }
-
-  showError(vldtr: string): string {
-    return (this.ctrl.errors||{})[vldtr];
   }
 
   resolveSchema(): Front.Schema {

@@ -5,7 +5,7 @@ import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { COMMON_DIRECTIVES } from '@angular/common';
 import { testComp, asyncTest, setInput, sendEvent, genClass } from '../test';
-import { SetAttrs, DynamicAttrs, DynamicStyle, DynamicClass, AssignLocal } from './directives';
+import { SetAttrs, DynamicAttrs, DynamicStyle, DynamicClass, AssignLocal, AppliesDirective, AppliesExprDirective } from './directives';
 import { ng2comp, print } from './js';
 import { Component, Input, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
@@ -19,7 +19,7 @@ describe('directives', () => {
 
   let component = {
     selector: 'test-cmp',
-    directives: [COMMON_DIRECTIVES, DynamicAttrs, SetAttrs, AssignLocal, DynamicStyle, DynamicClass],
+    directives: [COMMON_DIRECTIVES, DynamicAttrs, SetAttrs, AssignLocal, DynamicStyle, DynamicClass, AppliesDirective, AppliesExprDirective],
     template: '',
   };
 
@@ -68,6 +68,34 @@ describe('directives', () => {
     it('sets attributes', test(tmplt(`<div [dynamicAttrs]="{ 'pattern': strExpr }"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
       let el = debugEl.nativeElement.firstElementChild;
       expect(el.attributes.getNamedItem('pattern').value).toEqual('bar');
+    }));
+
+  })
+
+  describe('AppliesDirective', () => {
+
+    it('sets the hidden property', test(tmplt(`<div [applies]="true"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.hidden).toEqual(false);
+    }));
+
+    it('can deal with non-values', test(tmplt(`<div [applies]="false"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.hidden).toEqual(true);
+    }));
+
+  })
+
+  describe('AppliesExprDirective', () => {
+
+    it('sets the hidden property', test(tmplt(`<div [appliesExpr]="condExpr"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.hidden).toEqual(false);
+    }));
+
+    it('can deal with non-values', test(tmplt(`<div [appliesExpr]="null"></div>`), ({ test_cmp: comp, debugEl, fixture }) => {
+      let el = debugEl.nativeElement.firstElementChild;
+      expect(el.hidden).toEqual(false);
     }));
 
   })

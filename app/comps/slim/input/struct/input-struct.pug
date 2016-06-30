@@ -4,7 +4,10 @@
     //- '[ngModelGroup]'=`ctrl`
     //- '[ngModelGroup]'=`schema.name`
     form
-      .fixed-props(*ngIf=`hasFixed`)
+      //- '[applies]'=`schema.properties['x-applies']`
+      .fixed-props(
+        *ngIf=`hasFixed`
+      )
         b Fixed Properties
         .fixed-add(*ngIf=`nameSchemaFixedFiltered.enum.length`)
           //- #newFixed
@@ -29,8 +32,10 @@
           //-   th
           tbody
             //- assign schema to variable to prevent duplicate lookup
+            //- '[applies]'=`schemaFixed(item)['x-applies']`
             tr(
               *ngFor=`let item of indices.properties; let i = index`
+              '[applies]'=`ctrl.fixedApplies(item)`
               '[dynamicAttrs]'=`schemaFixed(item)['x-bindings']?.attributes`
               '[extraVars]'=`{ path: path.concat(item) }`
               @flyInOut=`'in'`
@@ -58,10 +63,15 @@
                   | ×
 
       //- actually check object length
-      .pattern-props(*ngIf=`hasPatts`)
+      //- '[applies]'=`schema.patternProperties['x-applies']`
+      .pattern-props(
+        *ngIf=`hasPatts`
+      )
         b Pattern Properties
+        //- '[applies]'=`schema.patternProperties[patt]['x-applies']`
         .patt(
           *ngFor=`let patt of g._.keys(patts)`
+          '[applies]'=`ctrl.patternApplies(patt)`
           @flyInOut=`'in'`
         )
           emp {{patt}}
@@ -105,7 +115,11 @@
                   button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`removePatternProperty(patt, item)`)
                     | ×
 
-      .additional-props(*ngIf=`hasAdd`)
+      //- '[applies]'=`schema.additionalProperties['x-applies']`
+      .additional-props(
+        *ngIf=`hasAdd`
+        '[applies]'=`ctrl.additionalApplies()`
+      )
         b Additional Properties
         //- select.pug copy for oneOf
         .input-field(
@@ -119,7 +133,6 @@
               option(
                 *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`
                 '[value]'=`idx`
-                @flyInOut=`'in'`
               )
                 | {{opt.type}}
         div(
@@ -149,7 +162,7 @@
                   input-value(
                     '[named]'=`false`
                     '[path]'=`path.concat(item).concat('val')`
-                    '[schema]'=`isOneOf ? schema.additionalProperties.oneOf[opt] : schema.additionalProperties`
+                    '[schema]'=`schemaAdd(i)`
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.val`
                   )
                 td
@@ -161,7 +174,4 @@
           )
             i.material-icons add
 
-    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
-      | Keys must be unique.
-    ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
-      | Must use and provide valid values for all types.
+    include ../errors.pug

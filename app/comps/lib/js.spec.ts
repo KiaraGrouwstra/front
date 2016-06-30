@@ -55,7 +55,7 @@ describe('js', () => {
   })
 
   it('mapBoth does a _.mapValues showing keys as well', () => {
-    expect(mapBoth({a: 1}, (v, k) => k)).toEqual({a: 'a'});
+    expect(mapBoth((v, k) => k)({a: 1})).toEqual({a: 'a'});
   })
 
   it('idCleanse strips strings to to make valid HTML element IDs (i.e. just alphanumeric characters and dashes)', () => {
@@ -194,6 +194,19 @@ describe('js', () => {
 
   it('evalExpr', () => {
     expect(evalExpr({ a: 1 })('a')).toEqual(1);
+  })
+
+  it('cartesian generator', () => {
+    let Combinatorics = require('js-combinatorics');
+    let cp = Combinatorics.cartesianProduct([0], [0, 10], [0, 100, 200]);
+    expect(cp.toArray()).toEqual([
+      [0, 0, 0],
+      [0, 10, 0],
+      [0, 0, 100],
+      [0, 10, 100],
+      [0, 0, 200],
+      [0, 10, 200],
+    ]);
   })
 
   // it('', () => {

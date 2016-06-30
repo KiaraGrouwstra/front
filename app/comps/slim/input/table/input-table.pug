@@ -35,5 +35,11 @@
                     '[ctrl]'=`ctrl.at(i).controls[key]`
                   )
 
-    a.btn.waves-effect.waves-light.green('(click)'=`add()`)
+    //- '[disabled]'=`indexBased && ctrl.length >= schema.items.length`
+    a.btn.waves-effect.waves-light.green(
+      '(click)'=`add()`
+      '[ngClass]'=`{ 'disabled': indexBased && ctrl.length >= schema.items.length }`
+    )
       i.material-icons add
+
+    include ../errors.pug

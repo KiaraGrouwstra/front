@@ -5,15 +5,16 @@ import { FieldComp } from '../field/input-field';
 import { InputValueComp } from '../value/input-value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
-import { inputControl, getOptsNameSchemas, mapSchema } from '../input';
-import { ControlStruct } from '../controls';
+import { inputControl, getOptsNameSchemas, mapSchema, setRequired } from '../input';
+import { SchemaControlStruct } from '../controls';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
-import { DynamicAttrs } from '../../../lib/directives';
+import { DynamicAttrs, AppliesDirective } from '../../../lib/directives';
 import { GlobalsService } from '../../../services';
+import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
 
-type Ctrl = ControlStruct;
+type Ctrl = SchemaControlStruct;
 
 @ExtComp({
   selector: 'input-struct',
@@ -22,6 +23,7 @@ type Ctrl = ControlStruct;
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),
     DynamicAttrs,
+    AppliesDirective,
   ],
 })
 export class InputStructComp extends BaseInputComp {
@@ -49,30 +51,26 @@ export class InputStructComp extends BaseInputComp {
     super();
   }
 
-  setCtrl(x: Ctrl): void {
-    let schema = this.schema;
-    let factStruct = mapSchema(s => inputControl(s, true))(schema);
-    x.init(factStruct, schema.required || []);
-  }
-
+  @try_log()
   setSchema(x: Front.Schema): void {
-    tryLog(() => {
-    let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = x;
+    let schema = this._schema = setRequired(x);
+    let { properties: props = {}, patternProperties: patts = {}, additionalProperties: add, required: req = [] } = schema;
     this.isOneOf = _.has(['oneOf'], add);
-    [this.hasFixed, this.hasPatts, this.hasAdd] = [props, patts, add].map(x => _.size(x));
+    [this.hasFixed, this.hasPatts, this.hasAdd] = [props, patts, add].map(_.size);
     // { addSugg: this.addSugg, pattSugg: this.pattSugg, addEnum: this.addEnum, pattEnum: this.pattEnum, nameSchemaFixed: this.nameSchemaFixed, nameSchemaPatt: this.nameSchemaPatt, nameSchemaAdd: this.nameSchemaAdd } = getOptsNameSchemas(x);
-    // Object.assign(this, getOptsNameSchemas(x));
-    _.forEach((v, k) => { this[k] = v; })(getOptsNameSchemas(x));
+    // Object.assign(this, getOptsNameSchemas(schema));
+    _.forEach((v, k) => { this[k] = v; })(getOptsNameSchemas(schema));
     this.nameCtrlFixed = inputControl(this.nameSchemaFixed);
     // let prepopulated = _.intersection(_.keys(props), req);
     let prepopulated = _.keys(props);
     this.indices = {
       properties: new Set(prepopulated),
-      patternProperties: _.mapValues(x => new Set([]))(patts),
+      patternProperties: _.mapValues(v => new Set([]))(patts),
       additionalProperties: new Set([]),
     };
     this.updateFixedList();
-    })();
+    this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS).concat('uniqueKeys');
+    this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }
 
   @fallback({})
@@ -82,8 +80,15 @@ export class InputStructComp extends BaseInputComp {
 
   @fallback({})
   schemaPatt(patt: string, i: number): Front.Schema {
-    let name = ctrl.patternProperties.controls[patt].at(i).controls.name.value;
+    let name = this.ctrl.patternProperties.controls[patt].at(i).controls.name.value;
     return _.set(['name'], name)(this.schema.patternProperties[patt]);
+  }
+
+  @fallback({})
+  schemaAdd(i: number): Front.Schema {
+    let name = this.ctrl.controls.additionalProperties.at(i).controls.name.value;
+    let add = this.schema.additionalProperties;
+    return this.isOneOf ? add.oneOf[this.option] : add;
   }
 
   @try_log()

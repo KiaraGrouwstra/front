@@ -48,7 +48,7 @@
               input-field(
                 '[named]'=`false`
                 '[path]'=`path.concat(item).concat('name')`
-                '[schema]'=`{ name: 'name', type: 'string', required: true, enum: keyEnum, suggestions: keySugg }`
+                '[schema]'=`{ name: 'name', type: 'string', enum: keyEnum, suggestions: keySugg }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
             //- ("#key = 'val'")
@@ -72,3 +72,5 @@
 
     a.btn.waves-effect.waves-light.green('(click)'=`add()`)
       i.material-icons add
+
+    include ../errors.pug
