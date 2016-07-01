@@ -1,8 +1,6 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
-import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { inject, addProviders, TestComponentBuilder, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { GlobalsService } from '../../../services';
 
@@ -23,26 +21,27 @@ describe('ValueComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
   it('should handle scalars', test([obs_pars, { val: scalar }], ({ comp, el }) => {
-    expect(el).toHaveText(scalar);
+    expect(el.textContent).toEqual(scalar);
   }));
 
   it('should handle arrays', test([obs_pars, { val: arr }], ({ comp, el }) => {
-    expect(el).toHaveText(arr.join(''));
+    expect(el.textContent).toEqual(arr.join(''));
   }));
 
   it('should handle objects', test([obs_pars, { val: obj }], ({ comp, el }) => {
-    expect(el).toHaveText('a1b2');
+    expect(el.textContent).toEqual('a1b2');
   }));
 
   xit('should handle tables', test([obs_pars, { val: table }], ({ comp, el }) => {
-    // expect(el).toHaveText('ab12AB');
+    // expect(el.textContent).toEqual('ab12AB');
     expect(comp.array.table.col_keys).toEqual(['a', 'b']);
   }));
 

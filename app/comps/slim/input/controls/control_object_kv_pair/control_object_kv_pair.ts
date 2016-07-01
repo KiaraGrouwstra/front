@@ -1,7 +1,6 @@
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValidatorFn } from '@angular/forms';
 import { ControlObjectValue } from '../control_object_value/control_object_value';
 import { inputControl } from '../../input';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
 
 export class ControlObjectKvPair extends FormGroup {
   constructor(

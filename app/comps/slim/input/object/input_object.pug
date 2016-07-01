@@ -11,7 +11,7 @@
         //- '(input)'=`option = $event.target.value`
         select(
           '[(ngModel)]'=`option`
-          name='option'
+          '[ngModelOptions]'=`{ standalone: true }`
         )
           option(
             *ngFor=`let opt of schema.additionalProperties.oneOf; let idx = index`

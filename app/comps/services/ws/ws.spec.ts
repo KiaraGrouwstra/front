@@ -1,4 +1,3 @@
-import { it, fit, xit, expect, afterEach, beforeEach, fdescribe, xdescribe, } from '@angular/core/testing';
 import { ReflectiveInjector } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WsService } from './ws';
@@ -37,7 +36,7 @@ describe('WebSocket', () => {
   })
 
   it('should expose an Observable', () => {
-    expect(ws.out).toBeAnInstanceOf(Subject)
+    expect(ws.out.constructor).toEqual(Subject)
   })
 
   it('should allow making requests', () => {

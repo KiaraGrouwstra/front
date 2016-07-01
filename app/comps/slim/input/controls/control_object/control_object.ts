@@ -1,7 +1,6 @@
 let _ = require('lodash/fp');
 import { uniqueKeys, inputControl, getValStruct, setRequired } from '../../input';
-import { Validators, AbstractControl } from '@angular/forms';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ControlList } from '../control_list/control_list';
 import { getValidator } from '../../validators';
 import { ControlObjectKvPair } from '../control_object_kv_pair/control_object_kv_pair';

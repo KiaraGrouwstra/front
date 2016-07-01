@@ -1,6 +1,5 @@
 let _ = require('lodash/fp');
-import { FormControl } from '@angular/forms';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { FormControl, ValidatorFn } from '@angular/forms';
 import { keySchema } from '../../../../lib/js';
 import { Observable } from 'rxjs/Observable';
 import { try_log, fallback } from '../../../../lib/decorators';

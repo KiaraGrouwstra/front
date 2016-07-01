@@ -1,6 +1,5 @@
 let _ = require('lodash/fp');
-import { FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
+import { FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ControlObject } from '../control_object/control_object';
 import { uniqueKeys, inputControl, getOptsNameSchemas, mapSchema, setRequired, patternSorter } from '../../input';
 import { mapBoth, editValsLambda, evalExpr } from '../../../../lib/js';
@@ -29,6 +28,7 @@ export class ControlStruct extends FormGroup {
     // KvPair: FormGroup<k,v>
     // this: FormGroup< properties: FormGroup<v>, patternProperties: FormGroup<ControlObject<KvPair>>, additionalProperties: ControlObject<KvPair> >
 
+    // let validators = [
     let validator = Validators.compose([
       uniqueKeys(lens(y => y.value.name, _.keys)),
       vldtr,
@@ -40,6 +40,7 @@ export class ControlStruct extends FormGroup {
       additionalProperties: new ControlObject(),
     };
     super(controls, {}, validator);
+    // this.setValidators(validators);
     this.mapping = {};
     this.initialized = false;
   }

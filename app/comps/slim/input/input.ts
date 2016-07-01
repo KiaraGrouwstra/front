@@ -1,11 +1,10 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
-import { FormGroup, FormArray, AbstractControl } from '@angular/forms';
+import { FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal, mapBoth } from '../../lib/js';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { SchemaFormControl } from './controls';
 
 // get the default value for a value type

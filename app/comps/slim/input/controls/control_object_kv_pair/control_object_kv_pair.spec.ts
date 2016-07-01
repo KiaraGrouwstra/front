@@ -1,8 +1,8 @@
-import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
+import { inject, addProviders } from '@angular/core/testing';
 let _ = require('lodash/fp');
 // import { FormControl } from '@angular/forms';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { ControlObjectKvPair } from './control_object_kv_pair';
 import { getValStruct } from '../../input';
 import { myAsync } from '../../../../test';

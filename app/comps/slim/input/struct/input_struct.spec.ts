@@ -1,8 +1,7 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
+import { ComponentFixture, inject, addProviders, TestComponentBuilder } from '@angular/core/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { inputControl } from '../input'
 import { By } from '@angular/platform-browser';
@@ -41,8 +40,9 @@ describe('InputStructComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
@@ -50,13 +50,7 @@ describe('InputStructComp', () => {
   it('should work', test(pars(), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
     expect(comp.ctrl.valid).toEqual(true);
-    // expect(el).toHaveText('NameValueadd');
   }));
-
-  // it('should work named', test([pars(), {named: true}], ({ comp, el }) => {
-  //   expect(el).toHaveText('testNameValueadd');
-  //   // tick(1000);
-  // }));
 
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 

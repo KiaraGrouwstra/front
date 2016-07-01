@@ -1,4 +1,4 @@
-import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
+import { inject, addProviders } from '@angular/core/testing';
 let _ = require('lodash/fp');
 import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
 import { getSchema } from './schema';

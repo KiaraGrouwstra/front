@@ -1,4 +1,4 @@
-import { inject, injectAsync, expect, it, fit, xit, describe, xdescribe, fdescribe, beforeEach, beforeEachProviders, afterEach } from '@angular/core/testing';
+import { inject, addProviders } from '@angular/core/testing';
 import { SchemaFormGroup } from './schema_form_group';
 
 const num = { type: 'number', default: 0 };

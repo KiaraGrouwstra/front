@@ -1,7 +1,6 @@
 let _ = require('lodash/fp');
-import { Validators, FormControl, FormArray, AbstractControl } from '@angular/forms';
+import { Validators, FormControl, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { ListWrapper } from '@angular/core/src/facade/collection';
-import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { Maybe } from 'ramda-fantasy';
 import { getValidator } from '../../validators';
 import { inputControl } from '../../input';

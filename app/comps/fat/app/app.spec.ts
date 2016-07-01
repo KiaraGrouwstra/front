@@ -1,4 +1,4 @@
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
+import { inject, addProviders } from '@angular/core/testing';
 import { ReflectiveInjector } from '@angular/core';
 import { WsService, RequestService, GlobalsService, wsServiceProvider, requestServiceProvider, globalsServiceProvider } from '../../services';
 import { CONFIG, APP_CONFIG } from '../../../config';

@@ -1,8 +1,7 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
+import { ComponentFixture, inject, addProviders, TestComponentBuilder } from '@angular/core/testing';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
@@ -33,20 +32,19 @@ describe('InputValueComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
   it('should work with scalars', test(pars(scalar), ({ comp, el }) => {
-    // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
     expect(comp.ctrl.errors).toEqual({required_field: true});
   }));
 
   it('should work with arrays', test(pars(array), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
-    // expect(el).toHaveText('testadd');
   }));
 
 });

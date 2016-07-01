@@ -1,8 +1,6 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
-import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { inject, addProviders, TestComponentBuilder, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { FormControl } from '@angular/forms';
 import { inputControl } from '../input'
@@ -34,8 +32,9 @@ describe('FieldComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
@@ -50,7 +49,7 @@ describe('FieldComp', () => {
 
   // I can't test properly like this, hidden messages (`type` here) still show with `toHaveText`...
   xit('should show error messages', test(pars(), ({ comp, el }) => {
-    expect(el).toHaveText('geo-id: The geography ID.\n' + req);
+    expect(el.textContent).toEqual('geo-id: The geography ID.\n' + req);
   }));
 
 });

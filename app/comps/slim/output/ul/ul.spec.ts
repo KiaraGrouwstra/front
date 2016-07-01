@@ -1,8 +1,6 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
-import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { inject, addProviders, TestComponentBuilder, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { GlobalsService } from '../../../services';
 
@@ -20,8 +18,9 @@ describe('ULComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
@@ -31,11 +30,11 @@ describe('ULComp', () => {
   }));
 
   it('should display scalars', test(pars, ({ comp, el }) => {
-    expect(el).toHaveText(val.join(''));
+    expect(el.textContent).toEqual(val.join(''));
   }));
 
   it('should allow named', test([pars, { named: true }], ({ comp, el }) => {
-    expect(el).toHaveText(path.concat(val).join(''));
+    expect(el.textContent).toEqual(path.concat(val).join(''));
   }));
 
 });

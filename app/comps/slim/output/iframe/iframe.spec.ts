@@ -1,6 +1,5 @@
 // let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
+import { inject, addProviders, TestComponentBuilder } from '@angular/core/testing';
 import { testComp, testCompHtml, asyncTest } from '../../../test';
 
 import { IframeComp } from './iframe';
@@ -21,7 +20,7 @@ describe('Iframe', () => {
 
   // how come this fails? can `toHaveText` not see through `iframe` boundaries?
   xit('should work', test(pars, ({ comp, el, fixture, debugEl }) => {
-    expect(el).toHaveText('foo');
+    expect(el.textContent).toEqual('foo');
   }));
 
 });

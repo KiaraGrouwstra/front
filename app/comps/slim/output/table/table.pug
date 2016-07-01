@@ -29,13 +29,13 @@
         //- https://github.com/angular/angular/issues/2451
         //- *ngFor=`let col of cols`
         //- ; #col = cols[name]
-        //- *assignLocal=`#col to cols[name]`
-        //- *assignLocal=`#isDesc to sortColsDesc[name]`
-        //- '*assignLocal'=`{ col: cols[name] }`
+        //- '[assignLocal]'=`#col to cols[name]`
+        //- '[assignLocal]'=`#isDesc to sortColsDesc[name]`
+        //- '[assignLocal]'=`{ col: cols[name] }`
         th.tbl-hdr.waves-effect(
           '*ngFor'=`let name of colOrder; let idx = index`
           @flyInOut=`'in'`
-          '*assignLocal'=`{ col: cols[name] }`
+          '[assignLocal]'=`{ col: cols[name] }`
           id=`{{cols[name].id}}`
           '[class.sort]'=`g._.keys(sortColsDesc).includes(name)`
           '[class.asc]'=`sortColsDesc[name] == false`

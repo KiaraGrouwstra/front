@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 // import { BehaviorSubject } from 'rxjs/subject/BehaviorSubject';
 import { BehaviorSubject } from 'rxjs';
 import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 
 // https://angular.io/docs/ts/latest/api/testing/ComponentFixture-class.html
 // https://angular.io/docs/ts/latest/api/testing/NgMatchers-interface.html
@@ -43,7 +43,7 @@ export let testCompHtml = (tmplt: string, cls: Class, static_pars = {}, obs_pars
 // export let makeComp = (tcb: TestComponentBuilder, test_class: Class): Front.ICompTest => {
 //   let fixture;
 //   // this recently started running only after the function already continued...
-//   tcb.createAsync(test_class).then(x => { fixture = x; }, e => { throw e; });
+//   let fixture = tcb.createSync(test_class);
 //   flushMicrotasks();
 //   tick(10000);
 //   ...
@@ -51,20 +51,15 @@ export let testCompHtml = (tmplt: string, cls: Class, static_pars = {}, obs_pars
 
 // create a component to test and return related stuff; must await result within an `async function` (not `fakeAsync`).
 // : Front.ICompTest
-export async function getComp(tcb: TestComponentBuilder, test_class: Class) {
-  try {
-    let fixture = await tcb.createAsync(test_class);
-    fixture.detectChanges();
-    let test_cmp = fixture.componentInstance;
-    let comp = test_cmp.comp;
-    fixture.detectChanges();
-    let debugEl = fixture.debugElement;
-    let el = debugEl.childNodes[0].nativeElement;
-    return { comp, el, fixture, debugEl, test_cmp };
-  }
-  catch(e) {
-    throw e;
-  }
+export function getComp(tcb: TestComponentBuilder, test_class: Class) {
+  let fixture = tcb.createSync(test_class);
+  fixture.detectChanges();
+  let test_cmp = fixture.componentInstance;
+  let comp = test_cmp.comp;
+  fixture.detectChanges();
+  let debugEl = fixture.debugElement;
+  let el = debugEl.childNodes[0].nativeElement;
+  return { comp, el, fixture, debugEl, test_cmp };
 }
 
 // hack to inject a tick into fakeAsync, since it appears usually needed...
@@ -81,8 +76,9 @@ export function sendEvent(el: Element, eventType: string): void {
   el.dispatchEvent(event);  //.nativeElement
 }
 
-// set the value of an input, and trigger the corresponding event. The input can be obtained using `debugEl.query(By.css(css))`.
-// trying to set a `select` element's value to something not contained in its option list sets it to '' instead...
+// set the value of an input, and trigger the corresponding event.
+// The input can be obtained using `debugEl.query(By.css(css))`.
+// trying to set a `select` to an unlisted option sets it to ''.
 export function setInput(input: ElementRef, val: any): void {
   let el = input.nativeElement;
   el.value = val;

@@ -1,8 +1,6 @@
 let _ = require('lodash/fp');
-import { ComponentFixture, inject, injectAsync, beforeEachProviders, it, fit, xit, expect, afterEach, beforeEach, } from '@angular/core/testing';
-import { TestComponentBuilder } from '@angular/compiler/testing';
-import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
-import { dispatchEvent } from '@angular/platform-browser/testing';
+import { inject, addProviders, TestComponentBuilder, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { dispatchEvent } from '@angular/platform-browser/testing/browser_util';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 // import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
@@ -49,14 +47,14 @@ describe('FormComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
-  beforeEachProviders(() => [GlobalsService]);
-
+  beforeEach(() => {
+    addProviders([GlobalsService]);
+  });
   beforeEach(inject([TestComponentBuilder], (builder) => {
     tcb = builder;
   }));
 
   it('should do scalar schemas', test([pars(), scalar_pars()], ({ comp, el }) => {
-    // expect(el).toHaveText(desc + text + text + 'Submit');
     // expect(comp.form.controls['foo'].errors).toEqual({required_field: true});
     expect(comp.form.errors).toEqual(null);
     expect(comp.form.value).toEqual({ foo: '', bar: '' });
@@ -64,7 +62,6 @@ describe('FormComp', () => {
 
   it('should do array schemas', test([pars(), arr_pars()], ({ comp, el }) => {
     // expect(comp.form.controls['foo'].errors).toEqual(null);
-    // expect(el).toHaveText('hifooaddbaraddSubmit');
     expect(comp.form.errors).toEqual(null);
     expect(comp.form.value).toEqual({ foo: [], bar: [] });
   }));
