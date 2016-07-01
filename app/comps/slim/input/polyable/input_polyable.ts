@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ControlPolyable } from '../controls/control_polyable';
-import { InputValueComp } from '../value/input-value';
+import { InputValueComp } from '../value/input_value';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -10,7 +10,7 @@ type Ctrl = SchemaControlPolyable;
 
 @ExtComp({
   selector: 'input-polyable',
-  template: require('./input-polyable.pug'),
+  template: require('./input_polyable.pug'),
   directives: [
     forwardRef(() => InputValueComp),
   ],

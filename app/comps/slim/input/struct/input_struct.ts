@@ -1,8 +1,8 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { FieldComp } from '../field/input-field';
-import { InputValueComp } from '../value/input-value';
+import { FieldComp } from '../field/input_field';
+import { InputValueComp } from '../value/input_value';
 import { arr2obj, findIndexSet, tryLog } from '../../../lib/js';
 import { try_log, fallback, getter, setter } from '../../../lib/decorators';
 import { inputControl, getOptsNameSchemas, mapSchema, setRequired } from '../input';
@@ -18,7 +18,7 @@ type Ctrl = SchemaControlStruct;
 
 @ExtComp({
   selector: 'input-struct',
-  template: require('./input-struct.pug'),
+  template: require('./input_struct.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),

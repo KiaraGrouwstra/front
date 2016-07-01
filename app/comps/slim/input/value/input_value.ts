@@ -2,11 +2,11 @@ let _ = require('lodash/fp');
 import { Input, forwardRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { FieldComp, InputArrayComp, InputObjectComp, InputStructComp, InputTableComp } from '../../..';
-// import { FieldComp } from '../field/input-field';
-// import { InputArrayComp } from '../array/input-array';
-// import { InputObjectComp } from '../object/input-object';
-// import { InputStructComp } from '../object/input-object';
-// import { InputTableComp } from '../table/input-table';
+// import { FieldComp } from '../field/input_field';
+// import { InputArrayComp } from '../array/input_array';
+// import { InputObjectComp } from '../object/input_object';
+// import { InputStructComp } from '../object/input_object';
+// import { InputTableComp } from '../table/input_table';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -18,7 +18,7 @@ type Ctrl = AbstractControl;
 
 @ExtComp({
   selector: 'input-value',
-  template: require('./input-value.pug'),
+  template: require('./input_value.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputArrayComp),

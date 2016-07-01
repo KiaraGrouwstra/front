@@ -7,7 +7,7 @@ import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
-import { InputTableComp } from './input-table';
+import { InputTableComp } from './input_table';
 let cls = testComp('input-table', InputTableComp);
 let path = ['test'];
 let scalar = {

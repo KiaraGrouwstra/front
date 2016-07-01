@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
-import { FieldComp } from './input-field';
+import { FieldComp } from './input_field';
 let cls = testComp('input-field', FieldComp);
 let path = ['test'];
 let schema = {

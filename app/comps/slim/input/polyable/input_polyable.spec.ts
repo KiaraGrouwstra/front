@@ -5,31 +5,23 @@ import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { dispatchEvent } from '@angular/platform-browser/testing';
 import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 import { inputControl } from '../input'
+import { By } from '@angular/platform-browser';
 import { GlobalsService } from '../../../services';
 
-import { InputValueComp } from './input-value';
-let cls = testComp('input-value', InputValueComp);
+import { InputPolyableComp } from './input_polyable';
+let cls = testComp('input-polyable', InputPolyableComp);
 let path = ['test'];
-let named = true;
-// let name = 'foo';
-let scalar = {
+let schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
-  "required_field": true,
   "type": "string"
 };
-let array = { "type": "array", "items": scalar };
-let pars = (schema) => ({
-  path,
-  schema,
-  named,
-  ctrl: inputControl(schema),
-  // name,
-});
-let req = 'This field is required.';
+let ctrl = inputControl(schema);
+let named = false;
+let pars = () => _.cloneDeep({ path, schema, ctrl, named });
 
-describe('InputValueComp', () => {
+xdescribe('InputPolyableComp', () => {
   let tcb;
   let test = (props, fn) => (done) => asyncTest(tcb, cls)(props, fn)(done);
 
@@ -39,14 +31,9 @@ describe('InputValueComp', () => {
     tcb = builder;
   }));
 
-  it('should work with scalars', test(pars(scalar), ({ comp, el }) => {
-    // expect(el).toHaveText('geo-id: The geography ID.\n' + req);
-    expect(comp.ctrl.errors).toEqual({required_field: true});
-  }));
-
-  it('should work with arrays', test(pars(array), ({ comp, el }) => {
+  it('should work', test(pars(), ({ comp, el }) => {
     expect(comp.ctrl.errors).toEqual(null);
-    // expect(el).toHaveText('testadd');
+    expect(comp.ctrl.valid).toEqual(true);
   }));
 
 });

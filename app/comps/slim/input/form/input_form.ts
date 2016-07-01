@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, Output, EventEmitter, ViewChild, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { InputValueComp } from '../value/input-value';
+import { InputValueComp } from '../value/input_value';
 import { inputControl } from '../input';
 // import { BaseSlimComp } from '../../base_slim_comp';
 import { BaseInputComp } from '../base_input_comp';
@@ -10,7 +10,7 @@ import { REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
 
 @ExtComp({
   selector: 'input-form',
-  template: require('./input-form.pug'),
+  template: require('./input_form.pug'),
   directives: [
     REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),

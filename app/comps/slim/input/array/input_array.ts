@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FieldComp } from '../field/input-field';
+import { FieldComp } from '../field/input_field';
 import { getPaths } from '../../slim';
 import { SchemaControlList, SchemaControlVector } from '../controls';
 // import { inputControl } from '../input'
@@ -16,7 +16,7 @@ type Ctrl = SchemaControlList<FormControl> | SchemaControlVector<FormControl>;
 
 @ExtComp({
   selector: 'input-array',
-  template: require('./input-array.pug'),
+  template: require('./input_array.pug'),
   directives: [
     forwardRef(() => FieldComp),
   ],

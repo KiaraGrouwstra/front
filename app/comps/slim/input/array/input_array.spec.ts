@@ -8,7 +8,7 @@ import { inputControl } from '../input'
 import { By } from '@angular/platform-browser';
 import { GlobalsService } from '../../../services';
 
-import { InputArrayComp } from './input-array';
+import { InputArrayComp } from './input_array';
 let cls = testComp('input-array', InputArrayComp);
 let path = ['test'];
 let scalar = {

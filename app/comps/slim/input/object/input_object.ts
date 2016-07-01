@@ -1,8 +1,8 @@
 let _ = require('lodash/fp');
 import { Input, forwardRef, ChangeDetectorRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldComp } from '../field/input-field';
-import { InputValueComp } from '../value/input-value';
+import { FieldComp } from '../field/input_field';
+import { InputValueComp } from '../value/input_value';
 import { ng2comp, keySchema, arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { SchemaControlObject, ControlObjectKvPair } from '../controls';
@@ -15,7 +15,7 @@ import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
 type Ctrl = SchemaControlObject<FormGroup>; // { name, val }
 @ExtComp({
   selector: 'input-object',
-  template: require('./input-object.pug'),
+  template: require('./input_object.pug'),
   directives: [
     forwardRef(() => FieldComp),
     forwardRef(() => InputValueComp),

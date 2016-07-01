@@ -7,7 +7,7 @@ import { ExtComp } from '../../lib/annotations';
 
 @ExtComp({
   selector: 'input-ui',
-  template: `<input-form [schema]="pars" [desc]="desc" (submit)="submit($event)"></input-form>`,
+  template: `<input-form [schema]="pars" [desc]="desc" (submit)="submit($event)"></input_form>`,
   directives: [
     // FormComp,
     forwardRef(() => FormComp),

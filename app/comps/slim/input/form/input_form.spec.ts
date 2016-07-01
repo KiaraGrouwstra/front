@@ -7,7 +7,7 @@ import { testComp, asyncTest, setInput, sendEvent } from '../../../test';
 // import { inputControl } from '../input'
 import { GlobalsService } from '../../../services';
 
-import { FormComp } from './input-form';
+import { FormComp } from './input_form';
 let cls = testComp('input-form', FormComp);
 let desc = 'hi';
 let scalar_schema = {

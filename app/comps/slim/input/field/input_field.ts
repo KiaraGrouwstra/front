@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 let marked = require('marked');
 import { inputAttrs, getTemplate } from '../input';
 import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
-import { InputValueComp } from '../value/input-value';
+import { InputValueComp } from '../value/input_value';
 import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
@@ -23,7 +23,7 @@ type Ctrl = FormControl;
 
 @ExtComp({
   selector: 'input-field',
-  template: require('./input-field.pug'),
+  template: require('./input_field.pug'),
   directives: [
     REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),
