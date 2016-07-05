@@ -30,16 +30,23 @@ export class ControlPolyable extends PolymorphicControl {
     this.ctrl = x ? this.multi : this.single;
   }
 
+  // wrap return value in a function for multi mode
+  get value(): any {
+    let v = this.ctrl._value;
+    return this.do_multi ? () => v : v;
+  }
+
 }
 
 export class SchemaControlPolyable extends SchemaControl(ControlPolyable) {
+  multi_schema: Front.Schema;
 
   constructor(
     schema: Front.Schema,
     path: string[] = [],
   ) {
     super();
-    this.schema = schema;
+    this.schema = _.omit(['x-polyable'])(schema);
     this.path = path;
   }
 
@@ -47,8 +54,9 @@ export class SchemaControlPolyable extends SchemaControl(ControlPolyable) {
   init(): SchemaControlPolyable {
     let schema = this.schema;
     let single = inputControl(schema, this.path.concat('single'));
-    let multi_schema = { type: 'array', minItems: 1, items: schema };
-    let multi = inputControl(multi_schema, this.path.concat('multi'));
+    this.multi_schema = { type: 'array', minItems: 1, uniqueItems: true, items: schema };
+    let multi = inputControl(this.multi_schema, this.path.concat('multi'));
 		return super.seed(single, multi);
   }
+
 }

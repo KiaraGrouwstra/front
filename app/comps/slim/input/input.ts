@@ -1,7 +1,7 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
-import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet } from './controls';
+import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet, SchemaControlPolyable } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal, mapBoth } from '../../lib/js';
@@ -101,9 +101,10 @@ export function inputControl(
         SchemaControlList,
     // object: (schema) => (schema.patternProperties || schema.additionalProperties) ? SchemaControlStruct : SchemaFormGroup,
     object: () => SchemaControlStruct,
+    // SchemaControlObject
   };
   let fn = controlMap[schema.type];
-  let cls = fn ? fn(schema) : SchemaFormControl;
+  let cls = schema['x-polyable'] ? SchemaControlPolyable : fn ? fn(schema) : SchemaFormControl;
   let factory = () => new cls(schema, path);
   return asFactory ? factory : factory();
 }

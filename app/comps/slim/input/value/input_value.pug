@@ -1,4 +1,12 @@
+input-polyable(
+  *ngIf=`ctrl?.constructor?.name == 'SchemaControlPolyable'`
+  '[named]'=`named`
+  '[path]'=`path`
+  '[schema]'=`schema`
+  '[ctrl]'=`ctrl`
+)
 div(
+  *ngIf=`ctrl?.constructor?.name != 'SchemaControlPolyable'`
   '[ngSwitch]'=`type`
 )
   template('[ngSwitchCase]'=`'scalar'`)
@@ -12,7 +20,7 @@ div(
   template('[ngSwitchCase]'=`'array'`)
     //- *ngIf=`ctrl instanceof ControlSet`
     input-field(
-      *ngIf=`ctrl?.constructor?.name == 'ControlSet'`
+      *ngIf=`ctrl?.constructor?.name == 'SchemaControlSet'`
       '[named]'=`named`
       '[path]'=`path`
       '[schema]'=`schema`
@@ -20,7 +28,7 @@ div(
     )
     //- *ngIf=`!(ctrl instanceof ControlSet)`
     input-array(
-      *ngIf=`ctrl?.constructor?.name != 'ControlSet'`
+      *ngIf=`ctrl?.constructor?.name != 'SchemaControlSet'`
       '[named]'=`named`
       '[path]'=`path`
       '[schema]'=`schema`

@@ -12,7 +12,7 @@ import { Http } from '@angular/http'; //Headers
 // import 'rxjs/add/observable/from';
 // import 'rxjs/add/observable/forkJoin';
 // https://github.com/ReactiveX/RxJS/tree/master/src/add/operator
-// global.Rx = require('rxjs');
+global.Rx = require('rxjs/Rx');
 // global.ng = require('@angular/core');
 let _ = require('lodash/fp');
 // let Immutable = require('immutable');

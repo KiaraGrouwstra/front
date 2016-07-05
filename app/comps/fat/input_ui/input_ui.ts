@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, Output, EventEmitter, ViewChild, forwardRef } from '@angular/core';
-import { arr2obj, ng2comp, combine, methodPars } from '../../lib/js';
+import { arr2obj, ng2comp, combine, methodPars, extractIterables, parameterizeStructure, cartesian } from '../../lib/js';
 import { FormComp } from '../..';
 import { BaseComp } from '../../base_comp';
 import { ExtComp } from '../../lib/annotations';
@@ -48,7 +48,7 @@ export class InputUiComp extends BaseComp {
     let { spec, fn_path } = this;
     if([spec, fn_path].some(_.isNil)) return;
     // let { pars: this.pars, desc: this.desc } = methodPars(spec, fn_path);
-    let obj = methodPars(spec, fn_path);
+    let obj = methodPars(spec, fn_path, true);
     this.pars = obj.pars;
     this.desc = obj.desc || '';
   // })(this.spec, this.fn_path);
@@ -58,6 +58,24 @@ export class InputUiComp extends BaseComp {
   submit(form_val: {}): void {
     if(form_val instanceof Event) return;
     // why is the EventEmitter first yielding an Event?
+    let reqMetas; //= [];
+    let coll = extractIterables(form_val);
+    if(_.size(coll)) {
+      let fn = parameterizeStructure(form_val, coll);
+      let iterables = coll.map(([path, arr]) => arr);
+      let cp = cartesian(...iterables);
+      let combinations = cp.map(pars => fn(...pars));
+      // for (let comb in combinations) {
+      //   reqMetas.push(this.request(comb);
+      // }
+      reqMetas = combinations.map(comb => this.makeMeta(comb));
+    } else {
+      reqMetas = [this.makeMeta(form_val)];
+    }
+    this.handler.emit(reqMetas);
+  }
+
+  makeMeta(form_val: {}): Front.ReqMeta {
     let kind_map = _.mapValues(y => y.in)(this.pars.properties);
     // let spec = this.spec;
     // let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes} // Swagger
@@ -80,10 +98,7 @@ export class InputUiComp extends BaseComp {
     // if(_.size(p_form) && _.any(x => p_header['Content-Type'].includes(x))
     //   (['application/x-www-form-urlencoded', 'multipart/form-data']))
     //     throw "consider adding a form-appropriate header!";
-    let method = 'GET';
-    let req = { urls: url, headers: p_header, method, body };
-    this.handler.emit(req);
-    // return url;
+    return { urls: url, headers: p_header, method: 'GET', body };
 
     //case 'form':
       // post payload (mutex with body)

@@ -33,7 +33,7 @@ export function setToSet<T,U>(a: Set<T>, b: Set<U>): Set<T|U> {
 }
 
 // set of logging functions to use in Observable.subscribe (see `notify`)
-export function loggers(kw: string): [(v: any) => void, (e: string) => void, () => void] {
+export function loggers(kw: string = 'obs'): [(v: any) => void, (e: string) => void, () => void] {
   return [
     v => console.log(kw + " next", v),
     e => console.error(kw + " error", e),

@@ -1,6 +1,6 @@
 import { inject, addProviders } from '@angular/core/testing';
 let _ = require('lodash/fp');
-import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr } from './js';
+import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr, cartesian, extractIterables, parameterizeStructure } from './js';
 import { getSchema } from './schema';
 
 describe('js', () => {
@@ -196,17 +196,47 @@ describe('js', () => {
     expect(evalExpr({ a: 1 })('a')).toEqual(1);
   })
 
-  it('cartesian generator', () => {
-    let Combinatorics = require('js-combinatorics');
-    let cp = Combinatorics.cartesianProduct([0], [0, 10], [0, 100, 200]);
-    expect(cp.toArray()).toEqual([
-      [0, 0, 0],
-      [0, 10, 0],
-      [0, 0, 100],
-      [0, 10, 100],
-      [0, 0, 200],
-      [0, 10, 200],
-    ]);
+  describe('polyable iteration', () => {
+
+    it('extractIterables', () => {
+      let v = { foo: () => [1], bar: [0, { baz: () => [2] }], hi: 'bye' };
+      let res = [
+        [['foo'], [1]],
+        [['bar', 1, 'baz'], [2]],
+      ];
+      expect(extractIterables(v)).toEqual(res);
+    })
+
+    it('parameterizeStructure', () => {
+      let v = { foo: () => [1], bar: [0, { baz: () => [2] }], hi: 'bye' };
+      let coll = extractIterables(v);
+      let out = { foo: 1, bar: [0, { baz: 2 }], hi: 'bye' };
+      expect(parameterizeStructure(v, coll)(1, 2)).toEqual(out);
+    })
+
+    it('cartesian generator', () => {
+      let cp = cartesian([0], [0, 10], [0, 100, 200]);
+      expect(cp).toEqual([
+        [0, 0, 0],
+        [0, 0, 100],
+        [0, 0, 200],
+        [0, 10, 0],
+        [0, 10, 100],
+        [0, 10, 200],
+      ]);
+    })
+
+    it('cartesian iteration', () => {
+      let v = { foo: () => [1], bar: [0, { baz: () => [2] }], hi: 'bye' };
+      let coll = extractIterables(v);
+      let fn = parameterizeStructure(v, coll);
+      let iterables = coll.map(([path, arr]) => arr);
+      let cp = cartesian(...iterables);
+      let res = cp.map(pars => fn(...pars));
+      let out = { foo: 1, bar: [0, { baz: 2 }], hi: 'bye' };
+      expect(res).toEqual([out]);
+    })
+
   })
 
   // it('', () => {

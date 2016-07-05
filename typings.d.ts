@@ -145,7 +145,7 @@ module Front {
   export type ProcessForm = { processor: string, parselet: Parselet, transformer: string };
 
   // request
-  export type ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string, body?: string };
+  export type ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string };
 
   // config
   export interface Config {

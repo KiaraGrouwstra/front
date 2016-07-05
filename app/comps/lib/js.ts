@@ -220,11 +220,12 @@ export function inputSchemas(path: Front.Path = []): (v: string, idx: number) =>
 }
 
 // pars to make a form for a given API function. json-path?
-export function methodPars(spec: Front.ApiSpec, fn_path: string): { pars: Front.Schema, desc: string } {
+export function methodPars(spec: Front.ApiSpec, fn_path: string, polyable: boolean = false): { pars: Front.Schema, desc: string } {
   let hops = ['paths', fn_path, 'get', 'parameters'];
   let path = hops.map(x => idCleanse(x));
   // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let arr = _.get(hops, spec) || [];
+  if(polyable) arr = arr.map(_.set(['x-polyable'], true));
   let schema = schemaFromArr(arr);
   let desc = marked(_.get(_.dropRight(hops, 1).concat('description'))(spec) || '');
   return { pars: schema, desc };
@@ -333,6 +334,7 @@ export function transformWhile<T>(predicate: (T) => boolean, transformer: (T) =>
   return v;
 }
 
+// intended to allow sub-classing to create custom errors
 export class ExtendableError extends Error {
   constructor(message) {
     super(message);
@@ -346,8 +348,36 @@ export class ExtendableError extends Error {
   }
 }
 
+// like _.get, but safe, i.e. not exploding on bad (e.g. empty) paths
 export function getSafe(path: string[]): Function {
   return _.isArray && _.size(path) ? _.get(path) : y => y;
+}
+
+// [source](https://gist.github.com/tansongyang/9695563ad9f1fa5309b0af8aa6b3e7e3)
+// Cartesian product of n arrays; TODO: use generators (no FP) to conserve memory on big iteration.
+export const cartesian = (...rest) => _.reduce((a, b) => _.flatMap(x => _.map(y => x.concat([y]))(b))(a))([[]])(rest);
+
+// extract any iterables wrapped in functions from a json structure as a collection of <path, iterable> tuples
+export function extractIterables(v: any, path: string[] = [], iters: Array<Array<Front.Path, any[]>> = []): Array<Array<Front.Path, any[]>> {
+  if(_.isArray(v)) {
+    v.map((x, i) => extractIterables(x, path.concat(i), iters));
+  } else if(_.isPlainObject(v)) {
+    mapBoth((x, k) => extractIterables(x, path.concat(k), iters))(v);
+  } else if(_.isFunction(v)) {
+    iters.push([path, v()]);
+  }
+  return iters;
+}
+
+// parameterize a JSON structure with variables (slots to be iterated over) into a function
+export function parameterizeStructure(val: any, iterableColl: Array<Array<Front.Path, any[]>>): Function {
+  // go over the paths so as to unset each 'gap'
+  let slotted = iterableColl.reduce((v, [path, iterable]) => _.set(path, undefined)(v), val);
+  // make reducer iterating over paths to inject a value into each from a parameter
+  return function() {
+    let paramColl = iterableColl.map(([path, iter], idx) => [path, arguments[idx]]));
+    return paramColl.reduce((v, [path, param]) => _.set(path, param)(v), slotted);
+  }
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

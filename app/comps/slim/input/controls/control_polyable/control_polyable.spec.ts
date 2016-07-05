@@ -19,10 +19,12 @@ describe('ControlPolyable', () => {
     expect(poly.value).toEqual(0);
     expect(poly.errors).toEqual(null);
     poly.do_multi = true;
-    expect(poly.value).toEqual([]);
+    // expect(poly.value).toEqual([]);
+    expect(poly.value()).toEqual([]);
     expect(poly.errors).toEqual({ minItems: true });
     poly.ctrl.add();
-    expect(poly.value).toEqual([0]);
+    // expect(poly.value).toEqual([0]);
+    expect(poly.value()).toEqual([0]);
     expect(poly.errors).toEqual(null);
   });
 
@@ -39,10 +41,12 @@ describe('SchemaControlPolyable', () => {
     expect(poly.value).toEqual(0);
     expect(poly.errors).toEqual(null);
     poly.do_multi = true;
-    expect(poly.value).toEqual([]);
+    // expect(poly.value).toEqual([]);
+    expect(poly.value()).toEqual([]);
     expect(poly.errors).toEqual({ minItems: true });
     poly.ctrl.add();
-    expect(poly.value).toEqual([0]);
+    // expect(poly.value).toEqual([0]);
+    expect(poly.value()).toEqual([0]);
     expect(poly.errors).toEqual(null);
   });
 

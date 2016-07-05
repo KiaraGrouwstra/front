@@ -32,6 +32,7 @@ export class InputTableComp extends BaseInputComp {
   indexBased: boolean;
 
   setSchema(x: Front.Schema): void {
+    this.combInputs();
     let schema = this._schema = setRequired(x);
     if(_.isArray(_.get(['items'], schema))) {
       this.indexBased = true;
@@ -40,6 +41,19 @@ export class InputTableComp extends BaseInputComp {
     }
     this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
+  }
+
+  setCtrl(x: Ctrl): void {
+    if(x.init) x.init();
+    this.combInputs();
+  }
+
+  combInputs(): void {
+    let { schema, ctrl } = this;
+    if([schema, ctrl].some(_.isNil) return;
+    this.clear();
+    let { minItems = 0 } = schema;
+    _.times(() => this.add())(minItems);
   }
 
   getSchema(idx: number, col: string): Front.Schema {
@@ -60,4 +74,11 @@ export class InputTableComp extends BaseInputComp {
     this.ctrl.removeAt(idx);
     this.items.delete(item);
   }
+
+  clear(): void {
+    this.counter = 0;
+    this.items = new Set([]);
+    _.times(() => this.ctrl.removeAt(0))(this.ctrl.length);
+  }
+
 }

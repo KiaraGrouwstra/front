@@ -20,17 +20,31 @@ const BASE_INIT = {
 @Injectable()
 export class FetcherService {
   // add default init?
+  delay: integer = 500;
 
-  // ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string }
-  // fetch URL content (and optionally Parsley parse)
-  addUrls(pars: Front.ReqMeta): Observable<any> { // reqs: Request[]
+  _meta2init(pars: Front.ReqMeta): Request.Init {
     let form_init = {
       headers: new Headers(pars.headers || {}),
       method: pars.method || 'GET',
       body: ['POST', 'PUT', 'PATCH', 'DELETE'].includes(pars.method) ? pars.body : null,
     };
-    let init = _.assign(BASE_INIT, form_init);
+    return _.assign(BASE_INIT, form_init);
+  }
+
+  // ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string }
+  // fetch URL content from ReqMeta with potentially multiple URLs
+  addUrls(pars: Front.ReqMeta): Observable<any> {
+    let init = this._meta2init(pars);
     let reqs = pars.urls.map(url => new Request(url, init));
+    return this.ask(reqs);
+  }
+
+  // fetch URLs from multiple ReqMeta
+  addReqs(metas: Front.ReqMeta[]): Observable<any> { // reqs: Request[]
+    let reqs = metas.map(meta => {
+      let init = this._meta2init(meta);
+      return new Request(meta.urls, init);
+    });
     return this.ask(reqs);
     // pars.parselet ? .map(parse(pars.parselet))
   }
@@ -63,9 +77,11 @@ export class FetcherService {
   }
 
   ask(reqs: Request[]): Observable {
+    let delay = this.delay;
     return Observable.from(reqs)
-      // .debounce(500) //, scheduler
-      .debounce(x => Observable.timer(500))
+      // .debounce(delay) //, scheduler
+      // .debounce(x => Observable.timer(delay))
+      .map(v => Rx.Observable.from([v]).delay(delay)).concatAll()
       .flatMap(req => fetch(req))
       .flatMap(decode);
   }

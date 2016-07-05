@@ -17,6 +17,7 @@ export { InputObjectComp  } from './slim/input/object/input_object';
 export { InputStructComp  } from './slim/input/struct/input_struct';
 export { InputTableComp   } from './slim/input/table/input_table';
 export { InputValueComp   } from './slim/input/value/input_value';
+export { InputPolyableComp } from './slim/input/polyable/input_polyable';
 export { FormComp         } from './slim/input/form/input_form';
 
 // misc

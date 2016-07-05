@@ -97,13 +97,26 @@ function submitReq(fn: Front.Submitter): Front.Submitter {
   });
 }
 
-// run addUrls (fetch, optionally with transformer)
+// run addUrls (fetch, optionally transform)
 function doAddUrls(meta: Front.ReqMeta, transformer = y => y): Front.ObsInfo {
   let { urls } = meta;
-  meta.urls = urls.split('\n').filter(y => y);
+  urls = urls.split('\n').filter(y => y);
+  meta.urls = urls;
   // let meta_ = _.update('urls', s => s.split('\n').filter(y => y))(fetch_form);
+  let obs = this.fetcher.addUrls(meta).map(transformer);
+  return urlObsInfo(obs, urls);
+}
+
+// run addReqs (fetch, optionally transform)
+function doAddReqs(metas: Front.ReqMeta[], transformer = y => y): Front.ObsInfo {
+  let urls = metas.map(y => y.urls);
+  let obs = this.fetcher.addReqs(metas).map(transformer);
+  return urlObsInfo(obs, urls);
+}
+
+function urlObsInfo(obs: Observable, urls: string[]): Front.ObsInfo {
   return {
-    obs: this.fetcher.addUrls(meta).map(transformer),
+    obs,
     start: `starting fetch request`,
     next: `GET ${urls}`,
     done: `got ${urls}`,
@@ -143,8 +156,8 @@ function doParsley(meta: Front.ReqMeta, parselet: Front.Parselet): Front.ObsInfo
 }
 
 // handle emit api input_ui
-export let reqUrl: Front.Submitter = submitReq(function(v: Front.ReqMeta) {
-  return doAddUrls.call(this, v, x => JSON.parse(x));
+export let reqUrl: Front.Submitter = submitReq(function(v: Front.ReqMeta[]) {
+  return doAddReqs.call(this, v, x => JSON.parse(x));
   // ^ assume JSON API
 });
 

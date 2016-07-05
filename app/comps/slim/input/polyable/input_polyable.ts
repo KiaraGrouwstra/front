@@ -25,4 +25,16 @@ export class InputPolyableComp extends BaseInputComp {
   // @ViewChild('multi') multi: InputValueComp;
 
   rand_id: string = 'polyable_' + Math.floor(Math.random() * 100000);
+
+  // setSchema(x: Front.Schema) {
+  //   this._schema = _.omit(['x-polyable'])(x);
+  // }
+
+  get schema(): Front.Schema {
+    return this._schema;
+  }
+  set schema(x: Front.Schema) {
+    this._schema = _.omit(['x-polyable'])(x);
+  }
+
 }

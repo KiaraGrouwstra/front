@@ -34,7 +34,6 @@
     "harmonize": "^1.4.4",
     "immutable": "^3.7.6",
     "jquery": "^2.2.3",
-    "js-combinatorics": "^0.5.2",
     "json-schema-ref-parser": "^3.1.2",
     "lodash": "^4.11.1",
     "map-iterator": "^1.1.0",

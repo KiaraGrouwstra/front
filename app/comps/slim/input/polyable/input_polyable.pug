@@ -1,3 +1,25 @@
+//- '[hidden]'=`ctrl.do_multi`
+//- #single=false
+//- '[path]'=`path.concat('single')`
+input-value(
+  *ngIf=`!ctrl.do_multi`
+  '[path]'=`path`
+  '[schema]'=`ctrl.schema`
+  '[named]'=`named`
+  '[ctrl]'=`ctrl.single`
+)
+
+//- '[hidden]'=`!ctrl.do_multi`
+//- #multi=false
+//- '[path]'=`path.concat('multi')`
+input-value(
+  *ngIf=`ctrl.do_multi`
+  '[path]'=`path`
+  '[schema]'=`ctrl.multi_schema`
+  '[named]'=`named`
+  '[ctrl]'=`ctrl.multi`
+)
+
 - rand = Math.floor(Math.random() * 100000)
 .input-field
   input.filled-in(
@@ -9,23 +31,3 @@
     '[attr.for]'=`rand_id`
   )
     | multiple
-
-//- '[hidden]'=`ctrl.do_multi`
-//- #single=false
-input-value(
-  *ngIf=`!ctrl.do_multi`
-  '[path]'=`path.concat('single')`
-  '[schema]'=`schema`
-  '[named]'=`named`
-  '[ctrl]'=`ctrl`
-)
-
-//- '[hidden]'=`!ctrl.do_multi`
-//- #multi=false
-input-value(
-  *ngIf=`ctrl.do_multi`
-  '[path]'=`path.concat('multi')`
-  '[schema]'=`arrSchema`
-  '[named]'=`named`
-  '[ctrl]'=`arrCtrl`
-)

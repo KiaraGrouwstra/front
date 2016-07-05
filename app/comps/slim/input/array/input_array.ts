@@ -37,6 +37,7 @@ export class InputArrayComp extends BaseInputComp {
     // reason I'm not just passing the index instead is that I don't wanna trigger change detection every time item 1 is deleted and all the indices shift.
 
   setSchema(x: Front.Schema): void {
+    this.combInputs();
     this.indexBased = _.isArray(_.get(['items'], x));
     this.inAdditional = _.has(['additionalItems', 'oneOf'], x);
     this.isOneOf = this.inAdditional || _.has(['items', 'oneOf'], x);
@@ -44,6 +45,19 @@ export class InputArrayComp extends BaseInputComp {
     let schema = x;
     this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
+  }
+
+  setCtrl(x: Ctrl): void {
+    if(x.init) x.init();
+    this.combInputs();
+  }
+
+  combInputs(): void {
+    let { schema, ctrl } = this;
+    if([schema, ctrl].some(_.isNil) return;
+    this.clear();
+    let { minItems = 0 } = schema;
+    _.times(() => this.add())(minItems);
   }
 
   getSchema(idx: number): Front.Schema {
@@ -68,6 +82,12 @@ export class InputArrayComp extends BaseInputComp {
     let idx = Array.from(this.items).findIndex(y => y == item);
     this.ctrl.removeAt(idx);
     this.items.delete(item);
+  }
+
+  clear(): void {
+    this.counter = 0;
+    this.items = new Set([]);
+    _.times(() => this.ctrl.removeAt(0))(this.ctrl.length);
   }
 
 }
