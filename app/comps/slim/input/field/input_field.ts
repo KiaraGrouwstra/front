@@ -9,11 +9,9 @@ import { arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
 // import { Select } from 'ng2-select';
-import { RadioControlValueAccessor } from './radio_value_accessor';
-// from Angular2RadioButton/modules/ng-school/controls/radio/radio_value_accessor, but crashes with that
-import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
-import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
-import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
+// import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
+// import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
+// import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -28,15 +26,14 @@ type Ctrl = FormControl;
     REACTIVE_FORM_DIRECTIVES,
     forwardRef(() => InputValueComp),
     // Select,
-    RadioControlValueAccessor,
-    MdRadioGroup,
-    MdRadioButton,
+    // MdRadioGroup,
+    // MdRadioButton,
     SetAttrs,
     // DynamicAttrs,
   ],
-  providers: [
-    MdRadioDispatcher,
-  ],
+  // providers: [
+  //   // MdRadioDispatcher,
+  // ],
 })
 export class FieldComp extends BaseInputComp {
   // type: Observable<string>;
