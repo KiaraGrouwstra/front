@@ -383,9 +383,30 @@ export function getSafe(path: string[]): Function {
   return _.isArray && _.size(path) ? _.get(path) : y => y;
 }
 
-// [source](https://gist.github.com/tansongyang/9695563ad9f1fa5309b0af8aa6b3e7e3)
-// Cartesian product of n arrays; TODO: use generators (no FP) to conserve memory on big iteration.
-export const cartesian = (...rest) => _.reduce((a, b) => _.flatMap(x => _.map(y => x.concat([y]))(b))(a))([[]])(rest);
+// Cartesian product of n arrays, as a generator to conserve memory on big iteration.
+export const cartesian = function*(...rest) {
+  let sizes = rest.map(_.size);
+  if(sizes.some(y => y == 0)) return;
+  let indices = sizes.map(x => 0);
+  let last = _.size(rest);
+  yield rest.map((arr, idx) => arr[indices[idx]]);
+  while(true) {
+    for(let i = last; i--; i >= 0) {
+      indices[i]++;
+      if(indices[i] < sizes[i]) {
+        break;
+      } else {
+        if(i > 0) {
+          indices[i] = 0;
+          continue;
+        } else {
+          return;
+        }
+      }
+    }
+    yield rest.map((arr, idx) => arr[indices[idx]]);
+  }
+}
 
 // extract any iterables wrapped in functions from a json structure as a collection of <path, iterable> tuples
 export function extractIterables(v: any, path: string[] = [], iters: Array<Array<Front.Path, any[]>> = []): Array<Array<Front.Path, any[]>> {

@@ -2,6 +2,7 @@ import { inject, addProviders } from '@angular/core/testing';
 let _ = require('lodash/fp');
 import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr, cartesian, extractIterables, parameterizeStructure, encrypt, decrypt, toQuery, fromQuery } from './js';
 import { getSchema } from './schema';
+let map_iterator = require('map-iterator');
 
 describe('js', () => {
 
@@ -216,7 +217,7 @@ describe('js', () => {
 
     it('cartesian generator', () => {
       let cp = cartesian([0], [0, 10], [0, 100, 200]);
-      expect(cp).toEqual([
+      expect(Array.from(cp)).toEqual([
         [0, 0, 0],
         [0, 0, 100],
         [0, 0, 200],
@@ -232,9 +233,10 @@ describe('js', () => {
       let fn = parameterizeStructure(v, coll);
       let iterables = coll.map(([path, arr]) => arr);
       let cp = cartesian(...iterables);
-      let res = cp.map(pars => fn(...pars));
+      // let res = cp.map(pars => fn(...pars));
+      let res = map_iterator(cp, pars => fn(...pars));
       let out = { foo: 1, bar: [0, { baz: 2 }], hi: 'bye' };
-      expect(res).toEqual([out]);
+      expect(Array.from(res)).toEqual([out]);
     })
 
   })

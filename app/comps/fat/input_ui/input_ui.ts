@@ -1,4 +1,5 @@
 let _ = require('lodash/fp');
+let map_iterator = require('map-iterator');
 import { Input, Output, EventEmitter, ViewChild, forwardRef } from '@angular/core';
 import { arr2obj, ng2comp, combine, methodPars, extractIterables, parameterizeStructure, cartesian, toQuery } from '../../lib/js';
 import { FormComp } from '../..';
@@ -64,11 +65,11 @@ export class InputUiComp extends BaseComp {
       let fn = parameterizeStructure(form_val, coll);
       let iterables = coll.map(([path, arr]) => arr);
       let cp = cartesian(...iterables);
-      let combinations = cp.map(pars => fn(...pars));
+      let combinations = map_iterator(cp, pars => fn(...pars));
       // for (let comb in combinations) {
       //   reqMetas.push(this.request(comb);
       // }
-      reqMetas = combinations.map(comb => this.makeMeta(comb));
+      reqMetas = Array.from(map_iterator(combinations, comb => this.makeMeta(comb)));
     } else {
       reqMetas = [this.makeMeta(form_val)];
     }
