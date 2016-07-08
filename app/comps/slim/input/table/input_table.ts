@@ -1,11 +1,9 @@
 let _ = require('lodash/fp');
-import { Input, forwardRef } from '@angular/core';
+import { Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldComp } from '../field/input_field';
-import { getPaths } from '../../slim';
 import { SchemaControlList, SchemaControlVector } from '../controls';
-import { inputControl, setRequired } from '../input'
-import { BaseInputComp } from '../base_input_comp';
+import { setRequired } from '../input'
+import { InputAddable } from '../input_addable';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { valErrors, VAL_MSG_KEYS, relevantValidators } from '../validators';
@@ -16,20 +14,13 @@ type Ctrl = SchemaControlList<FormGroup> | SchemaControlVector<FormGroup>;
 @ExtComp({
   selector: 'input-table',
   template: require('./input_table.pug'),
-  directives: [
-    forwardRef(() => FieldComp),
-  ],
 })
-export class InputTableComp extends BaseInputComp {
+export class InputTableComp extends InputAddable {
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
-  // type: Observable<string>;
-  counter = 0;
-  items: Set<number> = new Set([]);
   keys: Array<string>;
-  indexBased: boolean;
 
   setSchema(x: Front.Schema): void {
     this.combInputs();
@@ -43,42 +34,12 @@ export class InputTableComp extends BaseInputComp {
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }
 
-  setCtrl(x: Ctrl): void {
-    if(x.init) x.init();
-    this.combInputs();
-  }
-
-  combInputs(): void {
-    let { schema, ctrl } = this;
-    if([schema, ctrl].some(_.isNil) return;
-    this.clear();
-    let { minItems = 0 } = schema;
-    _.times(() => this.add())(minItems);
-  }
-
   getSchema(idx: number, col: string): Front.Schema {
     let schema = this.schema;
     let row_schema = this.indexBased ?
       (_.get(['items', idx])(schema) || schema.additionalItems) :
       _.get(['items'], schema);
     return row_schema.properties[col];
-  }
-
-  add(): void {
-    this.items.add(this.counter++);
-    this.ctrl.add();
-  }
-
-  remove(item: number): void {
-    let idx = Array.from(this.items).findIndex(y => y == item);
-    this.ctrl.removeAt(idx);
-    this.items.delete(item);
-  }
-
-  clear(): void {
-    this.counter = 0;
-    this.items = new Set([]);
-    _.times(() => this.ctrl.removeAt(0))(this.ctrl.length);
   }
 
 }
