@@ -1,7 +1,7 @@
 //- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
 //- '[ngClass]'=`{ valid: ctrl.valid, invalid: !ctrl.valid }`
 //- ^ doesn't actually sync well :(, trying CSS instead
-input.validate.tooltipped(
+input.validate(
   '[setAttrs]'=`attrs`
   '[formControl]'=`ctrl`
   '[(ngModel)]'=`ctrl.value`

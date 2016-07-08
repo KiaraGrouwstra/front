@@ -34,9 +34,10 @@ form
 
   //- '[hidden]'=`hidden`
   //- ^ I don't know why, but it seemed to dislike this version for some reason...
-  .input-field(
+  .input-field.tooltipped(
     *ngIf=`!of`
     '[ngClass]'=`{hidden: hidden}`
+    '[attr.data-tooltip]'=`tooltip`
   )
     div('[ngSwitch]'='type')
       template('[ngSwitchCase]'=`'input'`)
@@ -77,4 +78,4 @@ form
     //- ^ does {{label}} need to be raw HTML?
     //- p= `val: {{ ${ctrl}.value }}`
     //- p= `errors: {{ ${ctrl}.errors | json }}`
-    include ../errors.pug
+    //- include ../errors.pug

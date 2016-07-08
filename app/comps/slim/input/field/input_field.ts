@@ -76,6 +76,15 @@ export class FieldComp extends BaseInputComp {
     return this.schema[this.of][this.option];
   }
 
+  get tooltip(): string {
+    let ctrl = this.ctrl;
+    let msgs = this.validator_keys
+      .filter(k => this.showError(k))
+      .map(k => this.validator_msgs[k](ctrl.value) || `error text unloaded for schema ${k}`)
+      .join('<br/>');
+    return ctrl.errors ? msgs : '';
+  }
+
   // print(v) {
   //   console.log('print', v);
   //   console.log('this.ctrl.value', this.ctrl.value);
