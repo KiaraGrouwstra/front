@@ -4,6 +4,8 @@
 **/*.ngfactory.js
 
 app/vendor
+app/secret.ts
+app/secret.js
 !.gitkeep
 
 # @AngularClass

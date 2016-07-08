@@ -27,17 +27,18 @@ export let loadUi = tryLog(async function(name: string) {
   let oauth_sec = _.keys(sec_defs).find((k) => sec_defs[k].type == 'oauth2');
   let oauth_info = sec_defs[oauth_sec];
   let scopes = _.keys(oauth_info.scopes);
+  let auth = this.auths[name];
 
   this.auth_ui_name = name;
   this.auth_ui_scopes = scopes;
+  this.auth_ui_have = _.get(['scopes_have'], auth) || [];
   this.auth_ui_oauth_info = oauth_info;
-  this.auth_ui_have = _.get([name, 'scopes_have'], this.auths) || [];
 
-  let token = this.auths[name].token;
+  let token = _.get(['token'])(auth);
   this.input_ui_token = token;
   this.spec = api;
   this.fn_ui_oauth_sec = oauth_sec;
-  this.fn_ui_have = this.auths[name].scopes_have;
+  this.fn_ui_have = _.get(['scopes_have'])(auth);
 
   global.$('.collapsible#fn-list').collapsible();
   // spawn_n(() => {

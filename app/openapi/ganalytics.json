@@ -35,7 +35,7 @@
   },
   "securityDefinitions": {
     "Oauth2": {
-      "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+      "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
       "description": "Oauth 2.0 authentication",
       "flow": "implicit",
       "scopes": {

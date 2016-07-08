@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { Input, Output, EventEmitter, ViewChild, forwardRef } from '@angular/core';
-import { arr2obj, ng2comp, combine, methodPars, extractIterables, parameterizeStructure, cartesian } from '../../lib/js';
+import { arr2obj, ng2comp, combine, methodPars, extractIterables, parameterizeStructure, cartesian, toQuery } from '../../lib/js';
 import { FormComp } from '../..';
 import { BaseComp } from '../../base_comp';
 import { ExtComp } from '../../lib/annotations';
@@ -78,17 +78,23 @@ export class InputUiComp extends BaseComp {
   makeMeta(form_val: {}): Front.ReqMeta {
     let kind_map = _.mapValues(y => y.in)(this.pars.properties);
     // let spec = this.spec;
-    // let base = `{uri_scheme}://${spec.host}${spec.basePath}`;  //${spec.schemes} // Swagger
+    // Swagger
+    // let { host, basePath } = spec;  //, schemes
+    // let base = `{uri_scheme}://${host}${basePath}`;  //${spec.schemes}
+    // OpenAPI
     let host = this.spec.hosts[0];
-    let base = `${host.scheme}://${host.host}${host.basePath}`;  // OpenAPI
+    let { host: domain, basePath, scheme } = host;
+    let base = `${scheme}://${domain}${basePath}`;
+    base = base.replace(/\/$/, '');
     let [p_path, p_query, p_header, p_form, p_body] = ['path', 'query', 'header', 'form', 'body'].map(x => {
       let good_keys = _.keys(_.pickBy(y => y == x)(kind_map));
       return arr2obj(good_keys, k => form_val[k]);
     });
     let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
     let query = _.assign({ access_token: this.token }, p_query);
+    // alt: header { Authorization: `token ${this.token}` }
     let url = _.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`)
-        + (_.size(query) ? '?' + global.$.param(query) : '');
+        + (_.size(query) ? '?' + toQuery(query) : '');
     // this.handler.emit(url);
     let body_keys = _.keys(p_body);
     if(body_keys.length > 1) throw "cannot have multiple body params!";

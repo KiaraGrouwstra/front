@@ -4,6 +4,7 @@ let ng = require('@angular/core');
 let marked = require('marked');
 import { ComponentMetadata } from '@angular/core';
 import { Maybe } from 'ramda-fantasy';
+let CryptoJS = require('crypto-js');
 
 require('materialize-css/dist/js/materialize.min');
 // let YAML = require('yamljs');
@@ -11,16 +12,19 @@ require('materialize-css/dist/js/materialize.min');
 // export let RegExp_escape = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 // obsolete: use _.escapeRegExp
 
+// make an object from an array with mapper function
 // _.mixin?
 export function arr2obj<T>(arr: string[], fn: (string) => T): {[key: string]: T} {
   return _.zipObject(arr, arr.map(fn));
 }
 // let arr2obj = (arr, fn) => _.fromPairs(arr.map(k => [k, fn(k)]));
 
+// make a Map from an array with mapper function
 export function arr2map<T,U>(arr: Array<T>, fn: (T) => U): Map<T,U> {
   return arr.reduce((map, k) => map.set(k, fn(k)), new Map());
 }
 
+// execute a function and return the input unchanged, to allow chaining
 export function doReturn<T>(fn: (T) => void): (v: T) => T {
   return (v) => {
     fn(v);
@@ -28,30 +32,52 @@ export function doReturn<T>(fn: (T) => void): (v: T) => T {
   };
 }
 
+// Promise method to print the result in a toast
 export function promToast(msg: string): Promise {
   // return this.do(_v => toast.success(msg), e => toast.error(e));
   return this.then(doReturn(_v => toast.success(msg)), doReturn(e => toast.error(e)));
 };
 Promise.prototype.toastResult = promToast;
 
+// return the hash or get parts of a Location as an object
 function urlBit(url: Location, part: string): Object {
   let par_str = url[part].substring(1);
-  let params = decodeURIComponent(par_str).split('&');
+  return fromQuery(par_str);
+}
+
+// convert a GET query string (part after `?`) to an object
+export function fromQuery(str: string): Object {
+  let params = decodeURIComponent(str).split('&');
   return _.fromPairs(params.map(y => y.split('=')));
 }
 
-export function handleAuth(url: Location, fn: (get: string, hash: string) => void): void {
+// convert an object to a GET query string (part after `?`) -- replaces jQuery's param()
+export function toQuery(obj: {}): string {
+  let enc = _.mapValues(decodeURIComponent)(obj);
+  return _.toPairs(enc).map(y => y.join('=')).join('&');
+}
+
+// handle a successfully redirected auth popup with a callback function
+export function handleAuth(url: Location): Promise<{ get, hash }> {
   let urlGetHash = (url: Location) => ['search', 'hash'].map(x => urlBit(url, x));
+  // this.routeParams.get(foo): only available in router-instantiated components.
   let [get, hash] = urlGetHash(url);
-  if(get.callback) {
-    // this.routeParams.get(foo): only available in router-instantiated components.
-    fn(get, hash);
-  } else {
-    // ?: error=access_denied&error_reason=user_denied&error_description=The+user+denied+your+request
-    if(get.error) console.warn(get);
-  }
+  // Instagram implicit query (user denied): { error, error_reason, error_description }
+  return checkObjError(get).then(x => ({ get, hash }));
 };
 
+export function checkObjError(obj: {}): Promise<{}> {
+  return new Promise((resolve, reject) => {
+    if(obj.error) {
+      reject(obj);
+      console.error(obj);
+    } else {
+      resolve(obj);
+    }
+  });
+}
+
+// create an auth popup, and try intercepting the result once it matches a given watch url
 export function popup(popup_url: string, watch_url: string): Promise {
   return new Promise((resolve, reject) => {
     let win = window.open(popup_url);
@@ -59,7 +85,7 @@ export function popup(popup_url: string, watch_url: string): Promise {
       try {
         if(win.location.pathname) {
           let url = win.location.href;
-          if (url.includes(watch_url)) {
+          if (url.startsWith(watch_url)) {  //includes
             window.clearInterval(pollTimer);
             resolve(win.location);
             win.close();
@@ -75,6 +101,7 @@ export function popup(popup_url: string, watch_url: string): Promise {
   }).toastResult(`got auth result!`);
 }
 
+// internal toast data
 const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
   debug: { val: 0, class: 'grey', icon: require('../../images/debug.png'), logger: 'debug' },
   info: { val: 1, class: 'blue', icon: require('../../images/info.png'), logger: 'info' },
@@ -85,6 +112,7 @@ const toasts: Front.ILogLevels<{ val: number, class: string, icon: string }> = {
 const TOAST_LEVEL = toasts.success.val;
 const LOG_LEVEL = toasts.info.val;
 
+// make a toast notification for a given message.
 // somehow the native Notification API slows down my app a bunch (make table), why?
 // ditch `ms` param if ditching Materialize in favor of Notification API.
 // { icon?: string, body?: string, lang, tag, data, vibrate, renotify, silent, sound, noscreen, sticky }
@@ -104,10 +132,12 @@ export let toast: Front.ILogLevels<(msg: string, opts: Notification.options, ms?
     }
 });
 
+// store a key-value pair
 export function setKV(k: string, v: any): void {
   localStorage.setItem(k, JSON.stringify(v));
 }
 
+// load a value by key
 export function getKV(k: string): Maybe<any> {
   let data = localStorage.getItem(k);
   return Maybe(data).map(x => JSON.parse(x));
@@ -378,6 +408,16 @@ export function parameterizeStructure(val: any, iterableColl: Array<Array<Front.
     let paramColl = iterableColl.map(([path, iter], idx) => [path, arguments[idx]]));
     return paramColl.reduce((v, [path, param]) => _.set(path, param)(v), slotted);
   }
+}
+
+// encrypt a message by key
+export function encrypt(msg: string, key: string): string {
+  return CryptoJS.AES.encrypt(msg, key).toString();
+}
+
+// decrypt a cipher by key
+export function decrypt(cipher: string, key: string): string {
+  return CryptoJS.AES.decrypt(cipher, key).toString(CryptoJS.enc.Utf8);
 }
 
 // [ng1 material components](https://github.com/Textalk/angular-schema-form-material/tree/develop/src)

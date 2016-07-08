@@ -21,13 +21,14 @@ let _ = require('lodash/fp');
 import { MarkedPipe } from '../../lib/pipes';
 import { APP_CONFIG } from '../../../config';
 import { WsService, RequestService, GlobalsService, FetcherService } from '../../services';
-import { handleAuth, toast, setKV, getKV, prettyPrint, inputSchemas, getSafe } from '../../lib/js';
+import { toast, setKV, getKV, prettyPrint, inputSchemas, getSafe } from '../../lib/js';
 import { loadUi, get_submit, reqUrl, pickFn, doFetch, doProcess, doCurl } from './ui';
 import { ValueComp, FormComp, AuthUiComp, FnUiComp, InputUiComp } from '../..';
 import { curl_spec } from './curl_spec';
 import { fetch_spec, process_spec } from './scrape_spec';
 import { getSchema } from '../../lib/schema';
 import { validate } from '../../slim/input/validators';
+let moment = require('moment');
 
 let directives = [CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm, ValueComp, AuthUiComp, FnUiComp, InputUiComp, FormComp];  // , ROUTER_DIRECTIVES
 let pipes = [MarkedPipe];
@@ -116,7 +117,7 @@ export class App {
         if(name == api) $('#scope-list .collapsible-header').click();
       })
       .catch(() => {
-        toast.error(`key ${name} not found`);
+        toast.warn(`key ${name} not found`);
       })
     });
 
@@ -124,7 +125,7 @@ export class App {
     this.fetch_spec = fetch_spec;
     this.process_spec = process_spec;
 
-    this.handleImplicit(window.location);
+    // this.handleImplicit(window.location);
     this.loadUi(api);
   };
 
@@ -232,18 +233,37 @@ export class App {
     this.zoomed_schema = getSafe(path)(this.schema);
   }
 
-  // sets and saves the auth token + scopes from the given get/hash
-  handleImplicit = (url: string) => handleAuth(url, (get: string, hash: string) => {
-    let name = get.callback;
-    let auth = {
-      name,
-      token: hash.access_token,
-      scopes_have: get.scope.replace(/\+/g, ' ').split(' '),
+  // can I mark this as pure to prevent duplicate calls?
+  api_tooltip(api: string): string {
+    let { token, expires_at } = this.auths[api];
+    if(token) {
+      let valid = expires_at ?
+          moment(expires_at).format('YYYY/MM/DD HH:mm:ss') : // `.fromNow()` would make it impure
+          'indefinite';
+      return `auth token: ${token}, valid: ${valid}`;
+    } else {
+      return `connect to ${api}`;
+    }
+  }
+
+  // @impure
+  api_class(api: string): string {
+    let { token, expires_at } = this.auths[api];
+    let isAuthd = token;
+    let isValid = !expires_at || expires_at >= Date.now();
+    return {
+      'green-text': isAuthd && isValid,
+      'orange-text': isAuthd && !isValid,
     };
+  }
+
+  // sets and saves the auth token + scopes
+  handleToken(auth: Front.Auth): void {
+    let { name } = auth;
     this.auths[name] = auth;
     //localStorage.setItem(name, JSON.stringify(auth));
     setKV(name, auth);
-  });
+  }
 
   loadUi = loadUi;
   reqUrl = reqUrl;

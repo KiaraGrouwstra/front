@@ -76,6 +76,7 @@ export class FetcherService {
     .scan(setter, {});
   }
 
+  // make a series of requests
   ask(reqs: Request[]): Observable {
     let delay = this.delay;
     return Observable.from(reqs)
@@ -84,6 +85,12 @@ export class FetcherService {
       .map(v => Rx.Observable.from([v]).delay(delay)).concatAll()
       .flatMap(req => fetch(req))
       .flatMap(decode);
+  }
+
+  // make a single request
+  askReq(req: Request): Promise {
+    // return decode(fetch(req));
+    return this.ask([req]).toPromise();
   }
 
 }

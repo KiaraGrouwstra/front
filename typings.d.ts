@@ -17,6 +17,28 @@ module Front {
     schema: Schema,
   }
 
+  export interface Auth {
+    name: string,
+    token: string,
+    scopes_have: string[],
+    expires_at: number,
+  }
+
+  export interface Hash {
+    access_token?: string, // actual token needed to make requests, flow: implicit
+    token_type?: string, // Bearer
+    expires_in?: string<number>, // optional validity in seconds, e.g. 3600
+    code?: string, // code to be exchange for an access token, flow: accessCode
+    state: string,  // encrypted meta
+  }
+
+  export interface TokenResponse {
+    access_token: string,
+    token_type: string,
+    expires_in?: string<number>, // also in?
+    scope: string,  // space-delimited, indicates scopes granted (cf. requested)
+  }
+
   // input
 
   export type CtrlFactory = () => AbstractControl;
@@ -151,6 +173,12 @@ module Front {
   export interface Config {
     endpoint: string,
     chan_name: string,
+    cipher_key: string,
+    credentials: {[key: string]: {
+      client_id: string,
+      client_secret: string,
+    }},
+    app_url: string,
   }
 
   // decorators

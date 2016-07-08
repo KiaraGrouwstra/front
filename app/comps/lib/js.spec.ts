@@ -1,6 +1,6 @@
 import { inject, addProviders } from '@angular/core/testing';
 let _ = require('lodash/fp');
-import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr, cartesian, extractIterables, parameterizeStructure } from './js';
+import { handleAuth, popup, toast, setKV, getKV, arr2obj, arr2map, mapBoth, idCleanse, typed, fallback, ng2comp, combine, findTables, keySchema, findIndexSet, editValsOriginal, editValsBoth, editValsLambda, evalExpr, cartesian, extractIterables, parameterizeStructure, encrypt, decrypt, toQuery, fromQuery } from './js';
 import { getSchema } from './schema';
 
 describe('js', () => {
@@ -237,6 +237,20 @@ describe('js', () => {
       expect(res).toEqual([out]);
     })
 
+  })
+
+  it('crypto cyphers', () => {
+    let key = "i'm a key";
+    let msg = 'TOP SECRET';
+    let cipher = encrypt(msg, key);
+    let plain = decrypt(cipher, key);
+    expect(plain).toEqual(msg);
+  })
+
+  it('query conversion', () => {
+    let obj = { foo: 'bar' };
+    let query = toQuery(obj);
+    expect(fromQuery(query)).toEqual(obj);
   })
 
   // it('', () => {

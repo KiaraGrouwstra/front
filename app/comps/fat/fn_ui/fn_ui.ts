@@ -55,25 +55,23 @@ export class FnUiComp extends BaseComp {
   combInputs(): void {
     let { spec, oauth_sec, have } = this;
     if([spec, oauth_sec, have].some(_.isNil) return;
-    this.tags = _.get(['tags'], spec) || [];
-    let paths = _.get(['paths'], spec) || {};
+    let { tags = [], paths = {} } = spec;
     let misc_key;
     if(this.tags) {
       misc_key = 'misc';
-      let pathsByTag = arr2obj(this.tags.map(y => y.name), tag =>
+      let pathsByTag = arr2obj(tags.map(y => y.name), tag =>
         _.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
       );
-      this.tag_paths = _.assign(pathsByTag,
-        { [misc_key]: _.keys(paths).filter(
-          path => _.isEmpty(_.get(['get', 'tags'], paths[path]))
-        ) }
+      let filtered = _.keys(paths).filter(path =>
+        _.isEmpty(_.get(['get', 'tags'], paths[path]))
       );
+      this.tag_paths = _.assign(pathsByTag, { [misc_key]: filtered });
     } else {
-      this.tags = [];
+      tags = [];
       misc_key = 'functions';
       this.tag_paths = {[misc_key]: _.keys(paths)};
     }
-    this.tags.push({ name: misc_key });
+    this.tags = tags.concat({ name: misc_key });
 
     // todo: add untagged functions
     let path_scopes = _.mapValues(path => {
