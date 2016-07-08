@@ -9,9 +9,13 @@ import { GlobalsService } from './services';
   ],
 })
 export abstract class BaseComp {
+
   // constructor(
   //   // BaseComp
   //   public cdr: ChangeDetectorRef,
   //   public g: GlobalsService,
-  // ) {}
+  // ) {
+  //   super();
+  // }
+
 }

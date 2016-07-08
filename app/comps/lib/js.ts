@@ -250,8 +250,8 @@ export function inputSchemas(path: Front.Path = []): (v: string, idx: number) =>
 }
 
 // pars to make a form for a given API function. json-path?
-export function methodPars(spec: Front.ApiSpec, fn_path: string, polyable: boolean = false): { pars: Front.Schema, desc: string } {
-  let hops = ['paths', fn_path, 'get', 'parameters'];
+export function methodPars(spec: Front.ApiSpec, fn_path: Front.FnPath, polyable: boolean = false): { pars: Front.Schema, desc: string } {
+  let hops = ['paths', ...fn_path, 'parameters'];
   let path = hops.map(x => idCleanse(x));
   // let scheme = { path: ['schemes'], spec: {name: 'uri_scheme', in: 'path', description: 'The URI scheme to be used for the request.', type: 'hidden', allowEmptyValue: false, default: spec.schemes[0], enum: spec.schemes}};
   let arr = _.get(hops, spec) || [];

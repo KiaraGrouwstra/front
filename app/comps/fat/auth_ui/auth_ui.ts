@@ -21,8 +21,8 @@ export class AuthUiComp extends BaseComp {
   _oauth_info: swagger_io.v2.Oauth2ImplicitSecurity;
   _have: string[];
   scope_descs: swagger_io.v2.Oauth2Scopes;
-  want_scope: {[key: string]: boolean};
-  have_scope: {[key: string]: boolean};
+  want_scope: {[scope: string]: boolean};
+  have_scope: {[scope: string]: boolean};
 
   constructor(
     // // BaseComp
@@ -115,13 +115,9 @@ export class AuthUiComp extends BaseComp {
     let pars = { client_id, client_secret, code, redirect_uri, state };
     // let url = `${tokenUrl}?${toQuery(pars)}`;
     let url = tokenUrl;
-    let body = _.toPairs(pars).reduce((acc, pair) => {
-      acc.append(...pair);
-      return acc;
-    }, new FormData);
     let init = {
       method: 'POST',
-      body,
+      body: pars,
       // headers: new Headers({         // access_token=&scope=&token_type=bearer
       //   Accept: 'application/json',  // {access_token,scope,token_type}
       //   Accept: 'application/xml',   // <OAuth><token_type/><scope/><access_token/></OAuth>

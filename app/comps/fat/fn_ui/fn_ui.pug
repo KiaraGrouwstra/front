@@ -9,15 +9,20 @@ ul.collapsible#fn-list(data-collapsible='accordion')
     ) {{tag.name}}
     .collapsible-body
       .collection
-        //- '(click)'=`handler.emit(path)`
-        a.collection-item.tooltipped(
-          *ngFor=`let path of tag_paths[tag.name]`
-          '[ngClass]'=`{ 'grey lighten-2 grey-text disabled-link': !have_scopes[path]  }`
-          '[attr.data-tooltip]'=`have_scopes[path] ? descs[path] : path_tooltips[path]`
-          href='#'
-          '(click)'=`handler.emit(path)`
+        .endpoint(
+          *ngFor=`let path of g._.keys(tag_paths[tag.name])`
         )
-          //- ^ can I optionally disable the click attribute if `!have_scopes[path]`? I could only make it `load_form(path)` if `have_scopes[path]` but that's kinda lame/ugly...
-          //- .chip.get GET
-          | {{path}}
-    //- paper-tooltip {{ tag?.description }}
+          //- '(click)'=`handler.emit(path)`
+          a.collection-item.tooltipped(
+            *ngFor=`let method of tag_paths[tag.name][path]`
+            '[ngClass]'=`{ 'grey lighten-2 grey-text disabled-link': !have_scopes[path][method]  }`
+            '[attr.data-tooltip]'=`have_scopes[path][method] ? descs[path][method] : path_tooltips[path][method]`
+            href='#'
+            '(click)'=`handler.emit([path, method])`
+          )
+            //- ^ can I optionally disable the click attribute if `!have_scopes[path]`? I could only make it `load_form(path)` if `have_scopes[path]` but that's kinda lame/ugly...
+            .chip.white-text(
+              '[ngClass]'=`{ 'green': method == 'get', 'orange': method == 'put', 'yellow': method == 'post', 'red': method == 'delete', 'teal': method == 'options', 'purple': method == 'head', 'blue': method == 'patch' }`
+            )
+              | {{method}}
+            | {{path}}

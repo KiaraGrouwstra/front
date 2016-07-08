@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 import { Subject, Observable } from 'rxjs'; //, BehaviorSubject
 import { Injectable } from '@angular/core';
+// import { makeBody } from '../../lib/js';
 
 const FOLLOW = true;
 // https://developer.mozilla.org/en-US/docs/Web/API/GlobalFetch/fetch
@@ -22,11 +23,22 @@ export class FetcherService {
   // add default init?
   delay: integer = 500;
 
+  // make a Request body from an object
+  makeBody(pars: {}): FormData {
+    return _.toPairs(pars).reduce((acc, pair) => {
+      acc.append(...pair);
+      return acc;
+    }, new FormData);
+  }
+
   _meta2init(pars: Front.ReqMeta): Request.Init {
+    let { body, method, headers } = pars;
+    let useBody = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase());
+    if(_.isPlainObject(body)) body = this.makeBody(body);
     let form_init = {
-      headers: new Headers(pars.headers || {}),
-      method: pars.method || 'GET',
-      body: ['POST', 'PUT', 'PATCH', 'DELETE'].includes(pars.method) ? pars.body : null,
+      headers: new Headers(headers || {}),
+      method: method || 'GET',
+      body: useBody ? body : null,
     };
     return _.assign(BASE_INIT, form_init);
   }

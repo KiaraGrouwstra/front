@@ -81,6 +81,7 @@ export class App {
   zoomed_schema: Front.Schema;
   extractor: Function;
   allowCors: boolean = false; // cannot await promise here
+  fn_path: Front.FnPath;
 
   constructor(
     // public router: Router,

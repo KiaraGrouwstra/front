@@ -4,6 +4,9 @@ import { arr2obj, combine } from '../../lib/js';
 let marked = require('marked');
 import { BaseComp } from '../../base_comp';
 import { ExtComp } from '../../lib/annotations';
+import { GlobalsService } from '../../services';
+
+const METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'];
 
 @ExtComp({
   selector: 'fn-ui',
@@ -18,11 +21,19 @@ export class FnUiComp extends BaseComp {
   _oauth_sec: string;
   _have: string[];
   tags: swagger_io.v2.Schemajson.tags;
-  tag_paths: {[key: string]: string[]};
-  descs: string[];
-  have_scopes: {[key: string]: boolean};
-  path_tooltips: {[key: string]: string};
-  has_usable: {[key: string]: boolean};
+  tag_paths: {[tag: string]: Front.Endpoints};
+  descs: Front.EndpointsT<string>;
+  have_scopes: Front.EndpointsT<boolean>;
+  path_tooltips: Front.EndpointsT<string>;
+  has_usable: {[tag: string]: boolean};
+
+  constructor(
+    // BaseComp
+    // public cdr: ChangeDetectorRef,
+    public g: GlobalsService,
+  ) {
+    super();
+  }
 
   get spec(): Front.ApiSpec {
     return this._spec;
@@ -55,41 +66,51 @@ export class FnUiComp extends BaseComp {
   combInputs(): void {
     let { spec, oauth_sec, have } = this;
     if([spec, oauth_sec, have].some(_.isNil) return;
+
+    // set tags (categories) and their respective endpoint paths
     let { tags = [], paths = {} } = spec;
     let misc_key;
-    if(this.tags) {
+    let hasUntagged = true;
+    if(_.size(tags)) {
       misc_key = 'misc';
       let pathsByTag = arr2obj(tags.map(y => y.name), tag =>
-        _.keys(paths).filter(path => (_.get(['get', 'tags'], paths[path]) || []).includes(tag))
+        _.mapValues(path => _.keys(path)
+          .filter(method => (_.get([method, 'tags'])(path) || []).includes(tag))
+        )(paths)
       );
-      let filtered = _.keys(paths).filter(path =>
-        _.isEmpty(_.get(['get', 'tags'], paths[path]))
-      );
-      this.tag_paths = _.assign(pathsByTag, { [misc_key]: filtered });
+      let untagged = _.flow([
+        _.mapValues(path =>
+          _.keys(path).filter(method => _.isEmpty(_.get([method, 'tags'], path)))
+        ),
+        _.pickBy(_.size),
+      ])(paths);
+      hasUntagged = _.size(untagged);
+      this.tag_paths = hasUntagged ? _.assign(pathsByTag, { [misc_key]: untagged }) : pathsByTag;
     } else {
       tags = [];
       misc_key = 'functions';
       this.tag_paths = {[misc_key]: _.keys(paths)};
     }
-    this.tags = tags.concat({ name: misc_key });
+    this.tags = hasUntagged ? tags.concat({ name: misc_key }) : tags;
 
-    // todo: add untagged functions
-    let path_scopes = _.mapValues(path => {
-      let secs = (_.get(['get', 'security'], path) || []);
+    let path_scopes = _.mapValues(_.mapValues(method => {
+      let secs = _.get(['security'])(method) || [];
       let scopes = secs.find(_.has(oauth_sec));
-      return scopes ? scopes[oauth_sec] : [];
-    }, paths);
-    this.descs = _.mapValues(path =>
-      marked((_.get(['get', 'description'], path) || '')) //.stripOuter()
-    )(paths);
-    this.have_scopes = _.mapValues(_.every(s => have.includes(s)))(path_scopes);
-    // this.path_tooltips = _.mapValues(s => `required scopes: ${s.join(', ')}`)(path_scopes);
-    this.path_tooltips = _.mapValues(s => {
+      return _.get([oauth_sec])(scopes) || [];
+    }))(paths);
+    this.descs = _.mapValues(_.mapValues(method =>
+      marked((_.get(['description'], method) || '')) //.stripOuter()
+    ))(paths);
+    this.have_scopes = _.mapValues(_.mapValues(_.every(s => have.includes(s))))(path_scopes);
+    // this.path_tooltips = _.mapValues(_.mapValues(s => `required scopes: ${s.join(', ')}`))(path_scopes);
+    this.path_tooltips = _.mapValues(_.mapValues(s => {
       let joined = s.join(', ');
       let str = `required scopes: ${joined}`;
       return str;
-    })(path_scopes);
-    this.has_usable = _.mapValues(_.some(p => this.have_scopes[p]))(this.tag_paths);
+    }))(path_scopes);
+    this.has_usable = _.mapValues(_.mapValues(path => _.some(method =>
+      _.get([path, method])(this.have_scopes)
+    )))(this.tag_paths);
     setTimeout(() => {
       global.$('#fn-list .collapsible-header').eq(0).click();
       global.$('.tooltipped').tooltip({delay: 0})

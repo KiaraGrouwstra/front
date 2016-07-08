@@ -39,6 +39,8 @@ module Front {
     scope: string,  // space-delimited, indicates scopes granted (cf. requested)
   }
 
+  export type FnPath = Array<endpoint: string, method: string>;
+
   // input
 
   export type CtrlFactory = () => AbstractControl;
@@ -132,7 +134,7 @@ module Front {
     a?: number,
   }
 
-  export type CondFormat = { [key: string]: Front.IColor[] };
+  export type CondFormat = { [col: string]: Front.IColor[] };
 
   // output/object
 
@@ -166,6 +168,20 @@ module Front {
   export type FetchForm = { urls: string, method: string, headers: {[key: string]: string}, body: string };
   export type ProcessForm = { processor: string, parselet: Parselet, transformer: string };
 
+  // fn_ui
+  Methods = string[];
+  MethodsT<T> = {
+    get: T,
+    put: T,
+    post: T,
+    delete: T,
+    options: T,
+    head: T,
+    patch: T,
+  };
+  Endpoints = {[key: string]: Methods};
+  EndpointsT<T> = {[key: string]: MethodsT<T>};
+
   // request
   export type ReqMeta = { urls: string[], headers: {}, method?: string, body?: string, parselet?: string };
 
@@ -174,7 +190,7 @@ module Front {
     endpoint: string,
     chan_name: string,
     cipher_key: string,
-    credentials: {[key: string]: {
+    credentials: {[api_name: string]: {
       client_id: string,
       client_secret: string,
     }},

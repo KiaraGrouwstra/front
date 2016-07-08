@@ -34,23 +34,23 @@ export class TableComp extends BaseOutputComp {
   @Input() path: Front.Path = [];
   @Input() val: Val;
   @Input() colOrder: string[];
-  @Input() sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
-  @Input() filters: {[key: string]: string};
+  @Input() sortColsDesc: {[col: string]: boolean};  // order matters, like OrderedMap
+  @Input() filters: {[col: string]: string};
   @Input() condFormat: Front.CondFormat;
   _colOrder: string[];
-  _sortColsDesc: {[key: string]: boolean};  // order matters, like OrderedMap
-  _filters: {[key: string]: string};
+  _sortColsDesc: {[col: string]: boolean};  // order matters, like OrderedMap
+  _filters: {[col: string]: string};
   _condFormat: Front.CondFormat;
   data: Front.Rows;
   rows: Front.Rows;
   filtered: Front.Rows;
-  cols: {[key: string]: {
+  cols: {[col: string]: {
     k: string,
     id: string,
     model: string,
     variable: string,
   }};
-  colMeta: {[key: string]: {
+  colMeta: {[col: string]: {
     isNum: boolean,
     hasNum: boolean,
     isText: boolean,
@@ -61,7 +61,7 @@ export class TableComp extends BaseOutputComp {
   }};
   // indexBased: boolean;
   col_keys: string[];
-  condBoundaries: {[key: string]: number[]};
+  condBoundaries: {[col: string]: number[]};
   modalCol: string;
 
   constructor(
@@ -112,13 +112,13 @@ export class TableComp extends BaseOutputComp {
     this.colOrder = _.difference(this.colOrder, [name]);
   }
 
-  get sortColsDesc(): {[key: string]: boolean} {
+  get sortColsDesc(): {[col: string]: boolean} {
     // console.log('get:sortColsDesc');
     let x = this._sortColsDesc;
     if(_.isUndefined(x)) x = this.sortColsDesc = {};
     return x;
   }
-  set sortColsDesc(x: {[key: string]: boolean}) {
+  set sortColsDesc(x: {[col: string]: boolean}) {
     // console.log('set:sortColsDesc', x);
     if(_.isUndefined(x)) return;
     this._sortColsDesc = x;
@@ -190,12 +190,12 @@ export class TableComp extends BaseOutputComp {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
 
-  get filters(): {[key: string]: string} {
+  get filters(): {[col: string]: string} {
     let x = this._filters;
     if(_.isUndefined(x)) x = this.filters = {};
     return x;
   }
-  set filters(x: {[key: string]: string}) {
+  set filters(x: {[col: string]: string}) {
     if(_.isUndefined(x)) return;
     this._filters = x;
     this.filter();

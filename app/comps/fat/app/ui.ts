@@ -48,11 +48,11 @@ export let loadUi = tryLog(async function(name: string) {
 })
 
 // handle emit fn_ui: picked a function, clear json and load fn inputs
-export let pickFn = tryLog(function(fn_path: string) {
+export let pickFn = tryLog(function(fn_path: Front.FnPath) {
   this.raw = [];
   // this.input_ui.fn_path = fn_path;
   this.fn_path = fn_path;
-  this.path = ['paths', fn_path, 'get', 'responses', '200'];
+  this.path = ['paths', ...fn_path, 'responses', '200'];
 });
 
 // handle the meat/schema/Rx/logging boilerplate for submission requests

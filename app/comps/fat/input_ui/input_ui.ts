@@ -16,10 +16,10 @@ import { ExtComp } from '../../lib/annotations';
 export class InputUiComp extends BaseComp {
   @Output() handler = new EventEmitter(false);
   @Input() spec: Front.ApiSpec;
-  @Input() fn_path: string;
+  @Input() fn_path: Front.FnPath;
   @Input() token: string;
   _spec: Front.ApiSpec;
-  _fn_path: string;
+  _fn_path: Front.FnPath;
   _token: string;
   @ViewChild(forwardRef(() => FormComp)) form: FormComp;
   desc = '';
@@ -34,16 +34,16 @@ export class InputUiComp extends BaseComp {
     this.combInputs();
   }
 
-  get fn_path(): string {
+  get fn_path(): Front.FnPath {
     return this._fn_path;
   }
-  set fn_path(x: string) {
+  set fn_path(x: Front.FnPath) {
     if(_.isUndefined(x)) return;
     this._fn_path = x;
     this.combInputs();
   }
 
-  // combInputs = () => combine((spec: Front.ApiSpec, fn_path: string) => {
+  // combInputs = () => combine((spec: Front.ApiSpec, fn_path: Front.FnPath) => {
   combInputs(): void {
     let { spec, fn_path } = this;
     if([spec, fn_path].some(_.isNil)) return;
@@ -93,7 +93,8 @@ export class InputUiComp extends BaseComp {
     let fold_fn = (acc, v, idx, arr) => acc.replace(`{${v}}`, p_path[v]);
     let query = _.assign({ access_token: this.token }, p_query);
     // alt: header { Authorization: `token ${this.token}` }
-    let url = _.keys(p_path).reduce(fold_fn, `${base}${this.fn_path}`)
+    let [endpoint, method] = this.fn_path;
+    let url = _.keys(p_path).reduce(fold_fn, `${base}${endpoint}`)
         + (_.size(query) ? '?' + toQuery(query) : '');
     // this.handler.emit(url);
     let body_keys = _.keys(p_body);
@@ -104,7 +105,7 @@ export class InputUiComp extends BaseComp {
     // if(_.size(p_form) && _.any(x => p_header['Content-Type'].includes(x))
     //   (['application/x-www-form-urlencoded', 'multipart/form-data']))
     //     throw "consider adding a form-appropriate header!";
-    return { urls: url, headers: p_header, method: 'GET', body };
+    return { urls: url, headers: p_header, method, body };
 
     //case 'form':
       // post payload (mutex with body)

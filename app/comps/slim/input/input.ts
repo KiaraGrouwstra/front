@@ -236,7 +236,7 @@ export let patternSorter = (patterns: string[]) => (k: string) => patterns.find(
 
 // categorize keys to a pattern or additional
 export function categorizeKeys(patterns, blacklist = []):
-    (keys: string[]) => { rest: string[], patts: {[key: string]: string[]} } {
+    (keys: string[]) => { rest: string[], patts: {[patt: string]: string[]} } {
   return (keys: string[]) => {
     let r = _.difference(keys, blacklist);
     let sorter = patternSorter(patterns);
