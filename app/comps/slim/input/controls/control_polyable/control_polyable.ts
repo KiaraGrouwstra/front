@@ -31,6 +31,8 @@ export class ControlPolyable extends PolymorphicControl {
   }
 
   // wrap return value in a function for multi mode
+  // Defeats running validations on this control in `valFns` (but ok cuz delegated):
+  // `c.value` wouldn't work cuz `() =>`, `c._value` wouldn't cuz `this.ctrl._value`
   get value(): any {
     let v = this.ctrl._value;
     return this.do_multi ? () => v : v;
@@ -54,7 +56,8 @@ export class SchemaControlPolyable extends SchemaControl(ControlPolyable) {
   init(): SchemaControlPolyable {
     let schema = this.schema;
     let single = inputControl(schema, this.path.concat('single'));
-    this.multi_schema = { type: 'array', minItems: 1, uniqueItems: true, items: schema };
+    let { name, description } = schema;
+    this.multi_schema = { type: 'array', minItems: 1, uniqueItems: true, items: schema, name, description, in: schema.in };
     let multi = inputControl(this.multi_schema, this.path.concat('multi'));
 		return super.seed(single, multi);
   }

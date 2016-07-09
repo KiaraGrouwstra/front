@@ -11,7 +11,7 @@ import { SetAttrs, DynamicAttrs } from '../../../lib/directives';
 // import { Select } from 'ng2-select';
 // import { MdRadioButton, MdRadioGroup, MdRadioChange } from '@angular2-material/radio/radio';
 // import { MdRadioDispatcher } from '@angular2-material/radio/radio_dispatcher';
-// import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
+import { MdCheckbox } from '@angular2-material/checkbox/checkbox';
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -28,6 +28,7 @@ type Ctrl = FormControl;
     // Select,
     // MdRadioGroup,
     // MdRadioButton,
+    MdCheckbox,
     SetAttrs,
     // DynamicAttrs,
   ],
@@ -50,6 +51,7 @@ export class FieldComp extends BaseInputComp {
   label: string;
   validator_keys: string[];
   validator_msgs: {[key: string]: (any) => string};
+  rand_id: string = 'ifield_' + Math.floor(Math.random() * 100000);
 
   ngOnInit() {
     // hidden, type:input|?, id, label, ctrl, validator_keys, validators
@@ -68,6 +70,7 @@ export class FieldComp extends BaseInputComp {
     let schema = x;
     this.hidden = schema.type == 'hidden';
     this.label = marked(`**${schema.name}:** ${schema.description || ''}`);
+    let verbose = _.get(['type'])(x) == 'array';  // ControlSet, TextareaArrayControl
     this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
   }

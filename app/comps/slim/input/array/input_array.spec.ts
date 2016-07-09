@@ -14,7 +14,7 @@ let scalar = {
   in: 'path',
   name: 'geo-id',
   required_field: true,
-  type: 'string'
+  type: 'integer'
 };
 let schema = { 'name': 'arrr', 'description': 'dummy desc', 'type': 'array', 'items': scalar };
 let ctrl = inputControl(schema);
@@ -30,17 +30,17 @@ let validationSchema = {
   type: 'array',
   items: [
     {
-      type: 'string',
-      enum: ['a'],
+      type: 'integer',
+      enum: [11],
     },
     {
-      type: 'string',
-      enum: ['b'],
+      type: 'integer',
+      enum: [22],
     },
   ],
   additionalItems: {
-    type: 'string',
-    enum: ['c'],
+    type: 'integer',
+    enum: [33],
   },
 };
 let validationCtrl = inputControl(validationSchema);
@@ -85,15 +85,21 @@ describe('InputArrayComp', () => {
     let i2 = debugEl.query(By.css('#test-1'));
     let i3 = debugEl.query(By.css('#test-2'));
     let [c1,c2,c3] = comp.ctrl.controls;
+
     expect(c1.errors).not.toEqual(null);
-    setInput(i1, 'a');
+    setInput(i1, 11);
     expect(c1.errors).toEqual(null);
+    expect(c1.value).toEqual('11');
+
     expect(c2.errors).not.toEqual(null);
-    setInput(i2, 'b');
+    setInput(i2, 22);
     expect(c2.errors).toEqual(null);
+    expect(c2.value).toEqual('22');
+
     expect(c3.errors).not.toEqual(null);
-    setInput(i3, 'c');
+    setInput(i3, 33);
     expect(c3.errors).toEqual(null);
+    expect(c3.value).toEqual('33');
   }));
 
 });

@@ -234,7 +234,7 @@ export class App {
     this.zoomed_schema = getSafe(path)(this.schema);
   }
 
-  // can I mark this as pure to prevent duplicate calls?
+  // if @pure I could _.memoize, but auth can change
   api_tooltip(api: string): string {
     let { token, expires_at } = this.auths[api];
     if(token) {

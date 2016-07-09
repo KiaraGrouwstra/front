@@ -1,9 +1,23 @@
 //- for use with ControlSet
 ul
-  li(*ngFor='let opt of schema.enum')
-    md-checkbox(
-      '[checked]'=`ctrl.has(opt)`
-      '(change)'=`$event ? ctrl.add(opt) : ctrl.delete(opt)`
-    )
-      | {{ opt }}
-      //- if I did `enumNames` like `react-json-editor`, use those here
+  li(*ngFor='let opt of schema.items.enum')
+    .input-field
+      input.filled-in(
+        type='checkbox'
+        '[id]'=`rand_id + opt`
+        '[checked]'=`ctrl.has(opt)`
+        '(ngModelChange)'=`$event ? ctrl.add(opt) : ctrl.delete(opt)`
+        '(ngModel)'=`$event ? ctrl.add(opt) : ctrl.delete(opt)`
+        '[ngModelOptions]'=`{ standalone: true }`
+      )
+      label(
+        '[attr.for]'=`rand_id + opt`
+      )
+        | {{ opt }}
+    //- //- Materialize clashes with Material2, but I can't use ViewEncapsulation on just this part of input-field
+    //- md-checkbox(
+    //-   '[checked]'=`ctrl.has(opt)`
+    //-   '(change)'=`$event ? ctrl.add(opt) : ctrl.delete(opt)`
+    //- )
+    //-   | {{ opt }}
+    //-   //- if I did `enumNames` like `react-json-editor`, use those here

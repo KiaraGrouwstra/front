@@ -1,11 +1,10 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
-import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet, SchemaControlPolyable } from './controls';
+import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet, SchemaControlPolyable, SchemaFormControl, SchemaTextareaArrayControl } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal, mapBoth } from '../../lib/js';
-import { SchemaFormControl } from './controls';
 
 // get the default value for a value type
 function typeDefault(type: string): any {
@@ -35,7 +34,7 @@ let inputType = (type: string) => _.get([type], {
   file: 'file',
 }) || type;
 
-// pick a pug template
+// pick a pug template to use in input-field
 export function getTemplate(schema: Front.Schema, attrs: Front.IAttributes): string|void {
   return schema['x-template'] || _.get([schema.type], {
     //enum: white-listed values (esp. for string) -- in this case make scalars like radioboxes/drop-downs for input, or checkboxes for enum'd string[].
@@ -48,7 +47,12 @@ export function getTemplate(schema: Front.Schema, attrs: Front.IAttributes): str
     boolean: 'switch',
     date: 'date',
     file: 'file',
-    // array: schema.uniqueItems && _.size(schema.enum) ? 'checkboxes' : null,
+    array: // logic from inputControl
+      schema.uniqueItems && _.size(schema.items.enum) ?
+        'checkboxes' :
+        _.get(['items', 'type'])(schema) == 'string' ?
+          'textarea' :
+          null,
     // how to trigger, since only `input-field` runs by here?
     // ^ I'll assume `enum` implies scalar (checking in the face of *Of may be hard); otherwise how could I visualize?
     // object: [fieldset],
@@ -98,7 +102,9 @@ export function inputControl(
         // ^ SchemaControlVector could also handle the simpler case below.
       schema.uniqueItems && _.size(schema.items.enum) ?
         SchemaControlSet :
-        SchemaControlList,
+        _.get(['items', 'type'])(schema) == 'string' ?
+          SchemaTextareaArrayControl :
+          SchemaControlList,
     // object: (schema) => (schema.patternProperties || schema.additionalProperties) ? SchemaControlStruct : SchemaFormGroup,
     object: () => SchemaControlStruct,
     // SchemaControlObject
@@ -136,8 +142,8 @@ export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.par
       if(allow_empty) minLength = 0;
       // format: http://swagger.io/specification/#dataTypeFormat
       // int32, int64, float, double, byte, binary, date, date-time, password, hostname, ipv4, ipv6, uri; any other like email, uuid, ...
-      let INPUT_TYPES = ['button', 'checkbox', 'color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'hidden', 'image',
-              'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'];
+      let INPUT_TYPES = ['color', 'date', 'datetime', 'datetime-local', 'email', 'file', 'image',
+              'month', 'number', 'password', 'range', 'tel', 'text', 'time', 'url', 'week'];
       if(format == 'date-time') format = 'datetime';
       if(INPUT_TYPES.includes(format)) type = format;
       // if(enum_options && !pattern) pattern = enum_options.map(_.escapeRegExp).join('|');
@@ -170,7 +176,7 @@ export function inputAttrs(path: Front.Path, spec: Front.ApiSpec.definitions.par
       min,
       step: multipleOf || 1,
     },
-  }
+  };
   let extra = _.get([type], type_params) || {};
   Object.assign(attrs, extra);
   attrs.type = inputType(type);

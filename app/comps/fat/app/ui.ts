@@ -20,6 +20,7 @@ export let loadUi = tryLog(async function(name: string) {
     // })
     .map(x => JSON.parse(x._body))
     .mergeMap((api) => $RefParser.dereference(api))
+    // ^ replaces a `$ref`'s host object with the destination, i.e. no merging
     .toPromise()
   )
 

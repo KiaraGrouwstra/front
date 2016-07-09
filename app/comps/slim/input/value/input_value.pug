@@ -19,21 +19,23 @@ div(
     )
   template('[ngSwitchCase]'=`'array'`)
     //- *ngIf=`ctrl instanceof ControlSet`
-    input-field(
-      *ngIf=`ctrl?.constructor?.name == 'SchemaControlSet'`
-      '[named]'=`named`
-      '[path]'=`path`
-      '[schema]'=`schema`
-      '[ctrl]'=`ctrl`
+    div(
+      '[ngSwitch]'=`['SchemaControlSet','SchemaTextareaArrayControl'].includes(ctrl?.constructor?.name)`
     )
-    //- *ngIf=`!(ctrl instanceof ControlSet)`
-    input-array(
-      *ngIf=`ctrl?.constructor?.name != 'SchemaControlSet'`
-      '[named]'=`named`
-      '[path]'=`path`
-      '[schema]'=`schema`
-      '[ctrl]'=`ctrl`
-    )
+      template('[ngSwitchCase]'=`true`)
+        input-field(
+          '[named]'=`named`
+          '[path]'=`path`
+          '[schema]'=`schema`
+          '[ctrl]'=`ctrl`
+        )
+      template(ngSwitchDefault)
+        input-array(
+          '[named]'=`named`
+          '[path]'=`path`
+          '[schema]'=`schema`
+          '[ctrl]'=`ctrl`
+        )
   template('[ngSwitchCase]'=`'object'`)
     //- input-object(
     input-struct(

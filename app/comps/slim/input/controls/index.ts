@@ -10,3 +10,4 @@ export { PolymorphicControl } from './polymorphic_control/polymorphic_control';
 export { ControlPolyable, SchemaControlPolyable } from './control_polyable/control_polyable';
 export { SchemaFormControl } from './schema_form_control/schema_form_control';
 export { SchemaFormGroup } from './schema_form_group/schema_form_group';
+export { TextareaArrayControl, SchemaTextareaArrayControl } from './textarea_array_control/textarea_array_control';

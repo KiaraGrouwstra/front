@@ -12,7 +12,7 @@ let scalar_schema = {
   "description": "The geography ID.",
   "in": "path",
   "name": "geo-id",
-  "type": "string"
+  "type": "integer"
 };
 let schema = {
   type: 'object',
@@ -57,7 +57,7 @@ describe('FormComp', () => {
   it('should do scalar schemas', test([pars(), scalar_pars()], ({ comp, el }) => {
     // expect(comp.form.controls['foo'].errors).toEqual({required_field: true});
     expect(comp.form.errors).toEqual(null);
-    expect(comp.form.value).toEqual({ foo: '', bar: '' });
+    expect(comp.form.value).toEqual({ foo: 0, bar: 0 });
   }));
 
   it('should do array schemas', test([pars(), arr_pars()], ({ comp, el }) => {

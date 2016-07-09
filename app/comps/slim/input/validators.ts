@@ -12,13 +12,13 @@ const valConds: {[key: string]: (v: any, par: any, schema: Front.Schema) => bool
       // must set `name`, pass schema. I now also set `required` prevent close buttons. :(
       (v, par, schema) => _.size(v) || !(par == true || par.includes(schema.name)),
   maximum:
-      (v, par) => (v <= par),
+      (v, par) => (Number(v) <= par),
   exclusiveMaximum:
-      (v, par) => (v < par),
+      (v, par) => (Number(v) < par),
   minimum:
-      (v, par) => (v >= par),
+      (v, par) => (Number(v) >= par),
   exclusiveMinimum:
-      (v, par) => (v > par),
+      (v, par) => (Number(v) > par),
   maxLength: //predefined
       (v, par) => (v.length <= par),
   minLength: //predefined
@@ -38,10 +38,9 @@ const valConds: {[key: string]: (v: any, par: any, schema: Front.Schema) => bool
   uniqueItems:
       (v, par) => (!par || _.uniq(v).length == v.length),
   enum:
-      (v, par) => par.includes(v),
-      // actually different for array, which has to iterate, see ControlSet
+      (v, par) => par.map(y => y.toString()).includes(v),
   multipleOf:
-      (v, par) => (v % par == 0),
+      (v, par) => (Number(v) % par == 0),
   type:
       (v, par) => matchesType(v, par),
   not:
@@ -85,7 +84,8 @@ const valConds: {[key: string]: (v: any, par: any, schema: Front.Schema) => bool
   // part of OpenAPI instead of json-schema
   // schema: (v, par) => (v, par),
   // collectionFormat: (v, par) => (v, par),
-  // uniqueKeys: (v, par) => true, // custom; must check before serialization
+  // custom
+  // uniqueKeys: (v, par) => true, // fails, must check before serialization
   // // also need lens to keys (implementation-dependent), so got own function
 };
 
@@ -175,14 +175,14 @@ export const validate = (v: any, schema: Front.Schema): boolean => {
 }
 
 // give validator keys applicable to the top level of a schema
-export function relevantValidators(schema: Front.Schema, whitelist: string[] = []): string[] {
+export function relevantValidators(schema: Front.Schema, whitelist: string[] = [], verbose: boolean = false): string[] {
   let keys = _.keys(schema);
   if(_.size(whitelist)) keys = _.intersection(keys, whitelist);
   let tp = schema.type;
   // filtering keys only works for simple types; won't bother filtering on value applied to.
   // could pass if wrong type in validators, or add checks, but I'd like to find the failures
   if(_.isString(tp)) {
-    let relevant = validatorsForType(tp);
+    let relevant = validatorsForType(tp, verbose);
     keys = _.intersection(keys, relevant);
   }
   return keys;
@@ -191,7 +191,7 @@ export function relevantValidators(schema: Front.Schema, whitelist: string[] = [
 // get validator keys applicable to a type
 // cf. https://github.com/epoberezkin/ajv/blob/master/lib/compile/rules.js
 // could also add implicit type-specific validators, e.g. `uniqueKeys` for object.
-function validatorsForType(type: string): string[] {
+function validatorsForType(type: string, verbose: boolean = false): string[] {
   // const keywords = [ '$schema', 'id', 'title', 'description', 'default' ];
   // ^ keys in json-schema not relevant for validation
   // const types = [ 'number', 'integer', 'string', 'array', 'object', 'boolean', 'null' ];
@@ -203,11 +203,11 @@ function validatorsForType(type: string): string[] {
     string:
         ['maxLength', 'minLength', 'pattern', 'format', 'required_field'], // last custom
     array:
-        ['maxItems', 'minItems', 'uniqueItems'],
-        //, 'items', 'additionalItems' <- validation delegated
+        ['maxItems', 'minItems', 'uniqueItems']
+            .concat(verbose ? ['items', 'additionalItems'] : []),
     object:
-        ['maxProperties', 'minProperties', 'required']), //, 'dependencies'
-        // , 'properties', 'patternProperties', 'additionalProperties' <- delegated
+        ['maxProperties', 'minProperties', 'required'] //, 'dependencies'
+            .concat(verbose ? ['properties', 'patternProperties', 'additionalProperties'] : []),
         // custom: uniqueKeys -- implied in object, don't intersect with spec keys
     // boolean: [],
     // null: [],

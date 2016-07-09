@@ -29,7 +29,7 @@ let singletons = [
   { provide: APP_CONFIG, useValue: CONFIG },
   FetcherService,
 ];
-enableProdMode();
+enableProdMode();  // Augury needs dev mode... but is slow
 bootstrap(App, singletons);
 // .catch(err => console.error('ERROR CAUGHT BY BOOT:' + err));
 
