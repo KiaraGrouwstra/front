@@ -1,10 +1,11 @@
 let _ = require('lodash/fp');
 let marked = require('marked');
 import { FormGroup, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
-import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet, SchemaControlPolyable, SchemaFormControl, SchemaTextareaArrayControl } from './controls';
+import { SchemaControlList, SchemaControlVector, SchemaControlObject, ControlObjectKvPair, SchemaControlStruct, SchemaControlSet, SchemaControlPolyable, SchemaFormControl, SchemaTextareaArrayControl, SchemaControlOption } from './controls';
 import { getPaths } from '../slim';
 import { validate, getValidator } from './validators';
 import { arr2obj, editValsOriginal, mapBoth } from '../../lib/js';
+import { mergeSchemas, SCALARS } from '../../lib/schema';
 
 // get the default value for a value type
 function typeDefault(type: string): any {
@@ -20,6 +21,7 @@ function typeDefault(type: string): any {
   return _.get([type], def_vals);
 }
 
+// return the default control value for a given schema, notably based on its type
 export function getDefault(schema: Front.Schema): any {
   let def = schema.default;
   return (!_.isUndefined(def)) ? def : typeDefault(schema.type);
@@ -88,31 +90,64 @@ export function objectControl(schema: Front.Schema, doSeed: boolean = false): Sc
   return ctrl;
 }
 
+// Control class by type/schema
+const controlMap = {
+  array: (schema) =>
+    // only tablize predictable collections
+    _.isArray(schema.items) ?
+      SchemaControlVector :
+      // ^ SchemaControlVector could also handle the simpler case below.
+    schema.uniqueItems && _.size(schema.items.enum) ?
+      SchemaControlSet :
+      _.get(['items', 'type'])(schema) == 'string' ?
+        { textarea: SchemaTextareaArrayControl, list: SchemaControlList } :
+        SchemaControlList,
+  // object: (schema) => (schema.patternProperties || schema.additionalProperties) ? SchemaControlStruct : SchemaFormGroup,
+  object: () => SchemaControlStruct,
+  // SchemaControlObject
+};
+
 // return initial key/value pair for the model
 export function inputControl(
   schema: Front.Schema = {},
   path: string[] = [],
   asFactory: boolean = false,
 ): AbstractControl | Front.CtrlFactory {
-  const controlMap = {
-    array: (schema) =>
-      // only tablize predictable collections
-      _.isArray(schema.items) ?
-        SchemaControlVector :
-        // ^ SchemaControlVector could also handle the simpler case below.
-      schema.uniqueItems && _.size(schema.items.enum) ?
-        SchemaControlSet :
-        _.get(['items', 'type'])(schema) == 'string' ?
-          SchemaTextareaArrayControl :
-          SchemaControlList,
-    // object: (schema) => (schema.patternProperties || schema.additionalProperties) ? SchemaControlStruct : SchemaFormGroup,
-    object: () => SchemaControlStruct,
-    // SchemaControlObject
-  };
+  // merge `allOf` in (override trumps on tie). have views use the controls' schemas so I don't need to do this twice.
+  if(schema.allOf) schema = schema.allOf.reduce((acc, val) => mergeSchemas(acc, val, true), _.omit('allOf')(schema));
+  // oneOf/anyOf give an array of eligible schemas
+  let xOf = schema.oneOf ? 'oneOf' : schema.anyOf ? 'anyOf' : null;
+  if(xOf) {
+    let stripped = _.omit(xOf)(schema);
+    var ofs = schema[xOf].map(x => mergeSchemas(stripped, x, true));
+    var ofOpts = convertOptionArr(ofs, path);
+    // don't bother if these *Of options are the same Control class and type though (scalar cuz predictable)
+    const same = (arr) => _.uniq(arr).length == 1;
+    if(same(ofs.map(y => y.type)) && same(ofOpts.map(y => y.control.constructor.name)) && SCALARS.includes(ofs[0].type)) ofs = null;
+  }
+
+  // find the right Control for the given type/schema
   let fn = controlMap[schema.type];
-  let cls = schema['x-polyable'] ? SchemaControlPolyable : fn ? fn(schema) : SchemaFormControl;
-  let factory = () => new cls(schema, path);
+  let ctrl = schema['x-polyable'] ? SchemaControlPolyable :
+      ofs ? ofs :
+      fn ? fn(schema) :
+      SchemaFormControl;
+  let factory = _.isPlainObject(ctrl) ? // object of options
+      () => new SchemaControlOption(schema, path, convertOptionObj(schema, ctrl, path)) :
+      _.isArray(ctrl) ? // array of `*Of` options
+      () => new SchemaControlOption(schema, path, ofOpts) :
+      () => new ctrl(schema, path);
   return asFactory ? factory : factory();
+}
+
+// helper for `inputControl` to get `SchemaControlOption` input params from named control classes
+function convertOptionObj(schema: Front.Schema, ctrlObject: {[key: string]: Class<SchemaControl>}, path: Front.Path): Front.OptionCollection {
+  return _.toPairs(ctrlObject).map(([label, cls]) => ({ label, schema, control: new cls(schema, path.concat(label)) }));
+}
+
+// helper for `inputControl` to get `SchemaControlOption` input params from unnamed schemas
+function convertOptionArr(schemaArr: Front.Schema[]}, path: Front.Path): Front.OptionCollection {
+  return schemaArr.map((schema, idx) => ({ label: idx.toString(), schema, control: inputControl(schema, path.concat(idx)) }));
 }
 
 const MAX_ITEMS = _.toLength(Infinity); // Math.pow(2, 32) - 1 // 4294967295
@@ -264,11 +299,17 @@ export function findControl(control: AbstractControl, path: Front.Path | string)
   let arrPath = _.isArray(path) ? path : splitPath(path);
   return arrPath.reduce((acc, v, idx) => {
     let ctrl = acc.ctrl ? acc.ctrl : acc; // PolymorphicControl
-    return _.isNumber(v) ?
-        ctrl.at ? ctrl.at(v) :   // FormArray (ControlList)
-        ctrl.controls['additionalProperties'].at(v) : // ControlStruct: additional
-        ctrl.byName ? acc.byName(v) :   // ControlStruct (ControlObject)
-        ctrl.controls[v];   // FormGroup
+    return ctrl.option_coll ?
+      ctrl.option_coll[v].control : // ControlOption
+      ctrl[v] ?
+        ctrl[v] :  // ControlPolyable
+        _.isNumber(v) ?
+          ctrl.at ?
+            ctrl.at(v) :   // FormArray (ControlList)
+            ctrl.controls['additionalProperties'].at(v) : // ControlStruct: additional
+          ctrl.byName ?
+            acc.byName(v) :   // ControlStruct (ControlObject)
+            ctrl.controls[v];   // FormGroup
   }, control);
 }
 
@@ -284,3 +325,10 @@ export function relativeControl(control: AbstractControl, currentPath: Front.Pat
   let mergedPath = mergePath(currentPath, relativePath);
   return findControl(control, mergedPath);
 }
+
+// take the worst status out of VALID/PENDING/INVALID
+export function worstStatus(a: string, b: string): string { // all string<Status>
+  let arr = [a, b];
+  return arr.some(y => y == INVALID) ? INVALID :
+         arr.some(y => y == PENDING) ? PENDING : VALID;
+};

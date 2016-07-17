@@ -1,6 +1,7 @@
 let _ = require('lodash/fp');
 import { Input } from '@angular/core';
 import { FORM_DIRECTIVES, AbstractControl } from '@angular/forms';
+import { COMMON_DIRECTIVES } from '@angular/common';
 import { ExtComp } from '../../lib/annotations';
 import { fallback } from '../../lib/decorators';
 // import { BaseSlimComp } from '../base_slim_comp';
@@ -10,7 +11,7 @@ import { relativeControl } from './input';  //, getPaths
 type Ctrl = AbstractControl;
 
 @ExtComp({
-  directives: [FORM_DIRECTIVES],
+  directives: [FORM_DIRECTIVES, COMMON_DIRECTIVES],
 })
 export abstract class BaseInputComp extends BaseInOutComp {
 

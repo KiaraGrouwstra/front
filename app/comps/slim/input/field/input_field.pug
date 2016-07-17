@@ -1,41 +1,8 @@
 //- {html, id, key, model, ctrl, label, validators: {k -> msg}, hidden}
 form
-  div(*ngIf=`of`)
-
-    //- select.pug
-    .input-field
-      //- '(input)'=`option = $event.target.value`
-      select(
-        '[(ngModel)]'=`option`
-        '[ngModelOptions]'=`{ standalone: true }`
-      )
-        option(
-          *ngFor=`let opt of schema[of]; let idx = index`
-          '[value]'=`idx`
-        )
-          | {{opt.type}}
-    //- script.
-    //-   $('select').material_select();
-    //- ng2-select(
-    //-   '[items]'=`schema[of]`
-    //-   '(data)'=`print('(data)')`
-    //-   '(selected)'=`print('(selected)')`
-    //-   '(removed)'=`print('(removed)')`
-    //-   '(typed)'=`print('(typed)')`
-    //- )
-
-    input-value(
-      *ngIf=`option`
-      '[path]'=`path`
-      '[schema]'=`resolveSchema()`
-      '[named]'=`named`
-      '[ctrl]'=`ctrl`
-    )
-
   //- '[hidden]'=`hidden`
   //- ^ I don't know why, but it seemed to dislike this version for some reason...
   .input-field.tooltipped(
-    *ngIf=`!of`
     '[ngClass]'=`{hidden: hidden}`
     '[attr.data-tooltip]'=`tooltip`
   )
@@ -65,7 +32,6 @@ form
 
     //- data-error='wrong'
     //- data-success='right'
-    //- .active
     //- '[ngClass]'=`{ 'active': attrs.default }`
     label.active(
       *ngIf=`named`
@@ -74,8 +40,4 @@ form
     )
     //- ^ .active normally added dynamically by materialize.js when selecting the input.
     //- when the inputs have initial values the label/input text would initially clash though.
-    //- | {{label}}
-    //- ^ does {{label}} need to be raw HTML?
-    //- p= `val: {{ ${ctrl}.value }}`
-    //- p= `errors: {{ ${ctrl}.errors | json }}`
     //- include ../errors.pug

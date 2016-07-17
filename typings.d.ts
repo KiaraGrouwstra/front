@@ -39,6 +39,12 @@ module Front {
     scope: string,  // space-delimited, indicates scopes granted (cf. requested)
   }
 
+  export type OptionCollection = Array<{
+    label: string,
+    schema: Schema,
+    control: SchemaControl,
+  }>
+
   export type FnPath = Array<endpoint: string, method: string>;
 
   // input

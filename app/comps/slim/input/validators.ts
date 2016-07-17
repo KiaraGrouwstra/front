@@ -2,6 +2,7 @@ let _ = require('lodash/fp');
 import { Validators } from '@angular/forms';
 import { ValidatorFn } from '@angular/forms/src/directives/validators';
 import { arr2obj, mapBoth } from '../../lib/js';
+import { OFS } from '../../lib/schema';
 
 // tv4: https://github.com/geraintluff/tv4
 // json-editor: https://github.com/jdorn/json-editor/blob/master/src/validator.js
@@ -305,8 +306,7 @@ export const VAL_MSG_KEYS: string[] = _.keys(valErrors);
 
 // prepare the form control validators
 export function getValidator(schema: Front.Schema): ValidatorFn {
-  const ofs = ['anyOf','oneOf','allOf'];
-  let of_vals = ofs.reduce(
+  let of_vals = OFS.reduce(
     (acc, k) => acc.concat(_.get([k], schema) || [])
   , []).map(opt => getValidator(opt));
   let of_vldtrs = of_vals.map(opt => opt.validator);

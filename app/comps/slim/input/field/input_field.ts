@@ -46,7 +46,6 @@ export class FieldComp extends BaseInputComp {
   @Input() ctrl: Ctrl;
   attrs: Front.IAttributes;
   type: string;
-  of: string; // that enum?
   hidden: boolean;
   label: string;
   validator_keys: string[];
@@ -65,18 +64,12 @@ export class FieldComp extends BaseInputComp {
   }
 
   setSchema(x: Front.Schema): void {
-    const ofs = ['anyOf','oneOf','allOf'];
-    this.of = ofs.find(k => x[k]) || _.findKey(x.type || {})(ofs);
     let schema = x;
     this.hidden = schema.type == 'hidden';
     this.label = marked(`**${schema.name}:** ${schema.description || ''}`);
     let verbose = _.get(['type'])(x) == 'array';  // ControlSet, TextareaArrayControl
     this.validator_keys = relevantValidators(schema, VAL_MSG_KEYS);
     this.validator_msgs = arr2obj(this.validator_keys, k => valErrors[k](schema[k]));
-  }
-
-  resolveSchema(): Front.Schema {
-    return this.schema[this.of][this.option];
   }
 
   get tooltip(): string {

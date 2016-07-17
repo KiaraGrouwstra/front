@@ -1,5 +1,6 @@
 import { relativeControl } from '../input';
 import { Observable } from '@rxjs';
+import { VALID } from '@angular/forms/src/model';
 
 export const SchemaControl = Sup => class extends Sup {
   schema: Front.Schema;
@@ -20,7 +21,7 @@ export const SchemaControl = Sup => class extends Sup {
   }
 
   get validChanges(): Observable<boolean> {
-    return this.statusChanges.map(y => y == 'VALID');
+    return this.statusChanges.map(y => y == VALID);
   }
 
   setPath(path: Array<string|integer>) {  //: this

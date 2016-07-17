@@ -10,6 +10,8 @@ import { ExtComp } from '../../../lib/annotations';
 import { try_log } from '../../../lib/decorators';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { ScalarPipe } from '../../../lib/pipes';
+import { SCALARS } from '../../../lib/schema';
+const SCALARS_ = SCALARS.concat(['file', 'hidden']);
 
 type Val = any; //Array<Object>;
 
@@ -60,8 +62,7 @@ export class ValueComp extends BaseOutputComp {
     this.new_schema = _.get(['type'], schema) ? schema : trySchema(val, schema);
     this.type = _.get(['type'])(schema) || inferType(val);
     // ^ handles anyOf/oneOf/allOf as well; good.
-    let SCALARS = ['string', 'number', 'integer', 'boolean', 'file', 'hidden'];
-    if(SCALARS.includes(this.type)) this.type = 'scalar';
+    if(SCALARS_.includes(this.type)) this.type = 'scalar';
   // }, { schema: true }))(this.val, this.schema);
   }
 

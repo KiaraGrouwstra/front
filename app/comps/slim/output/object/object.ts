@@ -7,6 +7,7 @@ import { inferType } from '../output';
 import { BaseOutputComp } from '../base_output_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
+import { SCALARS } from '../../../lib/schema';
 
 type Val = any; //Object;
 
@@ -59,7 +60,6 @@ export class ObjectComp extends BaseOutputComp {
 }
 
 function getColl(path: Front.Path, val: Val, schema: Front.Schema) {
-  const SCALARS = ['boolean', 'integer', 'number', 'string', 'null', 'scalar'];
   let keys = _.keys(val);
   return keys.map(k => {
     let new_schema = keySchema(k, schema);

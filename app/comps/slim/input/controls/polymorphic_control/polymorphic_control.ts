@@ -1,8 +1,10 @@
 let _ = require('lodash/fp');
 import { FormControl, AbstractControl, ValidatorFn } from '@angular/forms';
-import { inputControl } from '../../input'
+import { VALID, INVALID, PENDING } from '@angular/forms/src/model';
+import { inputControl, worstStatus } from '../../input'
 import { SchemaControl } from '../schema_control';
 import { try_log, fallback } from '../../../../lib/decorators';
+import { Observable } from 'rxjs';
 
 export class PolymorphicControl extends FormControl {
   _ctrl: AbstractControl;
@@ -27,8 +29,9 @@ export class PolymorphicControl extends FormControl {
   // proxy: Proxy;
   // // ^ should interface with the outside instead of this.
 
-  constructor() {
-    super(null);
+  constructor(vldtr: ValidatorFn = null) {
+    super(null, vldtr);
+    // Tried proxy over wrapping methods, but test errored on reference not accessing a property?
     // this.proxy = new Proxy(this, this.handler);
     // return this.proxy;
   }
@@ -58,14 +61,14 @@ export class PolymorphicControl extends FormControl {
 
   get value(): any { return this.ctrl.value; }
   get status(): string { return this.ctrl.status; }
-  get valid(): boolean { return this.ctrl.valid; }
-  get errors(): {[key: string]: any} { return this.ctrl.errors; }
+  // get valid(): boolean { return this.ctrl.valid; }
+  // get errors(): {[key: string]: any} { return this.ctrl.errors; }
   get pristine(): boolean { return this.ctrl.pristine; }
   get dirty(): boolean { return this.ctrl.dirty; }
   get touched(): boolean { return this.ctrl.touched; }
   get untouched(): boolean { return this.ctrl.untouched; }
   get valueChanges(): Observable<any> { return this.ctrl.valueChanges; }
-  get statusChanges(): Observable<any> { return this.ctrl.statusChanges; }
+  // get statusChanges(): Observable<any> { return this.ctrl.statusChanges; }
   get pending(): boolean { return this.ctrl.pending; }
   setAsyncValidators(newValidator): void { this.ctrl.setAsyncValidators(newValidator); }
   clearAsyncValidators(): void { this.ctrl.clearAsyncValidators(); }
@@ -76,6 +79,23 @@ export class PolymorphicControl extends FormControl {
   markAsPending(opts): void { this.ctrl.markAsPending(opts); }  //_.assign(opts, { onlySelf: true })
   updateValueAndValidity(opts): void { this.ctrl.updateValueAndValidity(opts); }  //_.assign(opts, { onlySelf: true })
   updateValue(value: any, opts): void { this.ctrl.updateValue(value, opts); }
+
+  // overrides
+
+  get valid(): boolean {
+    let valid = _.isNil(!_.isNil(this.validator) ? this.validator(this.ctrl) : null);
+    return valid && this.ctrl.valid;
+  }
+
+  get errors(): {[key: string]: any} {
+    let errors = !_.isNil(this.validator) ? this.validator(this.ctrl) : null;
+    let merged = _.assign(errors, this.ctrl.errors);
+    return _.size(merged) ? merged : null;
+  }
+
+  get statusChanges(): Observable<any> {
+    return Observable.combineLatest(this._statusChanges, this.ctrl.statusChanges, worstStatus);
+  }
 
 }
 

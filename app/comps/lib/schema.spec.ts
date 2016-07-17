@@ -35,7 +35,8 @@ describe('schema generator', () => {
   })
 
   it('getSchema verbose', () => {
-    expect(getSchema(numArr, { verbose: true })).toEqual(numArrSpecVerb);
+    let schema = getSchema(numArr, { verbose: true });
+    expect(schema).toEqual(numArrSpecVerb);
   })
   it('getSchema verbose - format', () => {
     expect(getSchema(email, { verbose: true })).toEqual(emailSpec);

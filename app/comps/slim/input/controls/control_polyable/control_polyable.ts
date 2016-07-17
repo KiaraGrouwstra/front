@@ -32,9 +32,9 @@ export class ControlPolyable extends PolymorphicControl {
 
   // wrap return value in a function for multi mode
   // Defeats running validations on this control in `valFns` (but ok cuz delegated):
-  // `c.value` wouldn't work cuz `() =>`, `c._value` wouldn't cuz `this.ctrl._value`
+  // `c.value` wouldn't work cuz `() =>` (polyable), `c._value` wouldn't cuz `this.ctrl._value` (polyable e.g. option)
   get value(): any {
-    let v = this.ctrl._value;
+    let v = this.ctrl.value;
     return this.do_multi ? () => v : v;
   }
 

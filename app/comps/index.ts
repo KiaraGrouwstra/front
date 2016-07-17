@@ -19,6 +19,7 @@ export { InputTableComp   } from './slim/input/table/input_table';
 export { InputValueComp   } from './slim/input/value/input_value';
 export { InputPolyableComp } from './slim/input/polyable/input_polyable';
 export { FormComp         } from './slim/input/form/input_form';
+export { InputOptionComp } from './slim/input/option/input_option';
 
 // misc
 export { App          } from './fat/app/app';

@@ -55,6 +55,7 @@ export class ControlStruct extends FormGroup {
     // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `FormGroup`
     let { nameSchemaPatt, nameSchemaAdd } = getOptsNameSchemas(factStruct);
     // nameSchema actually depends too, see input-object.
+    // ugly, by using `SchemaFormGroup` over `FormGroup` I'm convoluting agnostic vs. path-aware versions
     let kvFactory = (nameSchema, ctrlFactory) => () => new SchemaFormGroup(null, [], { // new FormGroup({
       name: inputControl(nameSchema),
       val: ctrlFactory(),

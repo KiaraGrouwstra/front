@@ -11,3 +11,4 @@ export { ControlPolyable, SchemaControlPolyable } from './control_polyable/contr
 export { SchemaFormControl } from './schema_form_control/schema_form_control';
 export { SchemaFormGroup } from './schema_form_group/schema_form_group';
 export { TextareaArrayControl, SchemaTextareaArrayControl } from './textarea_array_control/textarea_array_control';
+export { ControlOption, SchemaControlOption } from './control_option/control_option';

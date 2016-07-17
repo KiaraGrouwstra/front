@@ -1,0 +1,43 @@
+//- from input_field.pug
+
+//- select.pug
+.input-field
+  //- '(input)'=`option = $event.target.value`
+  select(
+    '[(ngModel)]'=`ctrl.mode`
+    '[ngModelOptions]'=`{ standalone: true }`
+  )
+    option(
+      *ngFor=`let opt of ctrl.option_coll; let idx = index`
+      '[value]'=`idx`
+    )
+      | {{opt.label}}
+//- script.
+//-   $('select').material_select();
+//- ng2-select(
+//-   '[items]'=`schema[of]`
+//-   '(data)'=`print('(data)')`
+//-   '(selected)'=`print('(selected)')`
+//-   '(removed)'=`print('(removed)')`
+//-   '(typed)'=`print('(typed)')`
+//- )
+
+//- *ngIf=`ctrl.mode`
+//- input-value(
+//-   '[path]'=`path`
+//-   '[schema]'=`ctrl.current.schema`
+//-   '[named]'=`named`
+//-   '[ctrl]'=`ctrl.current.control`
+//- )
+
+//- '[path]'=`path.concat(opt.label)`
+.option(
+  '*ngFor'=`let opt of ctrl.option_coll; let idx = index`
+)
+  input-value(
+    '*ngIf'=`ctrl.mode == idx`
+    '[path]'=`opt.control.path`
+    '[schema]'=`opt.schema`
+    '[named]'=`named`
+    '[ctrl]'=`opt.control`
+  )
