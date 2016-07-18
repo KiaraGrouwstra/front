@@ -1,9 +1,7 @@
 //- '[hidden]'=`ctrl.do_multi`
 //- #single=false
-//- '[path]'=`path.concat('single')`
 input-value(
   *ngIf=`!ctrl.do_multi`
-  '[path]'=`path`
   '[schema]'=`ctrl.schema`
   '[named]'=`named`
   '[ctrl]'=`ctrl.single`
@@ -11,10 +9,8 @@ input-value(
 
 //- '[hidden]'=`!ctrl.do_multi`
 //- #multi=false
-//- '[path]'=`path.concat('multi')`
 input-value(
   *ngIf=`ctrl.do_multi`
-  '[path]'=`path`
   '[schema]'=`ctrl.multi_schema`
   '[named]'=`named`
   '[ctrl]'=`ctrl.multi`

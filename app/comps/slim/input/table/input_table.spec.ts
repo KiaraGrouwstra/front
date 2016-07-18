@@ -8,7 +8,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputTableComp } from './input_table';
 let cls = testComp('input-table', InputTableComp);
-let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
   "in": "path",
@@ -18,7 +17,7 @@ let scalar = {
 let schema = { "name": "arrr", "description": "dummy desc", "type": "array", "items": {type: "object", properties: { foo: scalar } } };
 let ctrl = inputControl(schema);
 let named = false;
-let pars = () => _.cloneDeep({ path, schema, ctrl, named });
+let pars = () => _.cloneDeep({ schema, ctrl, named });
 
 describe('InputTableComp', () => {
   let tcb;

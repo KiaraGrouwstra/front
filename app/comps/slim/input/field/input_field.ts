@@ -41,7 +41,6 @@ export class FieldComp extends BaseInputComp {
   option = null;
   @Output() changes = new EventEmitter(false);
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   attrs: Front.IAttributes;
@@ -52,12 +51,12 @@ export class FieldComp extends BaseInputComp {
   validator_msgs: {[key: string]: (any) => string};
   rand_id: string = 'ifield_' + Math.floor(Math.random() * 100000);
 
-  ngOnInit() {
+  setCtrl(x: Ctrl) {
     // hidden, type:input|?, id, label, ctrl, validator_keys, validators
     let schema = this.schema;
     // let key = schema.name;  // variable
     // this.ctrl: from controls[key];
-    this.attrs = inputAttrs(this.path, schema);
+    this.attrs = inputAttrs(this.ctrl.path, schema);
     this.type = getTemplate(schema, this.attrs);
     // this.changes = this.ctrl.valueChanges;
     this.ctrl.valueChanges.subscribe(e => { this.changes.emit(e); });

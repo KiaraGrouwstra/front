@@ -1,6 +1,6 @@
 let _ = require('lodash/fp');
 import { FormGroup, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
-import { ControlObject } from '../control_object/control_object';
+import { ControlObject, SchemaControlObject } from '../control_object/control_object';
 import { uniqueKeys, inputControl, getOptsNameSchemas, mapSchema, setRequired, patternSorter } from '../../input';
 import { mapBoth, editValsLambda, evalExpr } from '../../../../lib/js';
 import { getValidator } from '../../validators';
@@ -55,21 +55,21 @@ export class ControlStruct extends FormGroup {
     // could also make post-add names uneditable, in which case replace `ControlObject<kv>` with `FormGroup`
     let { nameSchemaPatt, nameSchemaAdd } = getOptsNameSchemas(factStruct);
     // nameSchema actually depends too, see input-object.
-    // ugly, by using `SchemaFormGroup` over `FormGroup` I'm convoluting agnostic vs. path-aware versions
-    let kvFactory = (nameSchema, ctrlFactory) => () => new SchemaFormGroup(null, [], { // new FormGroup({
-      name: inputControl(nameSchema),
+    // ugly, by using `path`, (`this.path`) and `SchemaFormGroup` (over `FormGroup`) I'm convoluting agnostic vs. path-aware versions
+    let kvFactory = (nameSchema, ctrlFactory) => () => new SchemaFormGroup(null, this.path, { // new FormGroup({
+      name: inputControl(nameSchema, this.path),
       val: ctrlFactory(),
     });
 
     let controls = editValsLambda({
-      properties: v => new FormGroup(_.mapValues(y => y())(v)),  //_.pick(required)(v)
+      properties: v => new FormGroup(mapBoth((fact, k) => fact().appendPath(k))(v)),  //_.mapValues(y => y())
       patternProperties: v => new FormGroup(mapBoth(
-        (fact, patt) => new ControlObject().seed(kvFactory(nameSchemaPatt[patt], fact))
+        (fact, patt) => new SchemaControlObject(null, this.path).seed(kvFactory(nameSchemaPatt[patt], fact)) //ControlObject()
       )(v || {})),
-      additionalProperties: v => new ControlObject().seed(kvFactory(nameSchemaAdd, v)),
+      additionalProperties: v => new SchemaControlObject(null, this.path).seed(kvFactory(nameSchemaAdd, v)), //ControlObject()
     })(factStruct);
 
-    _.each((ctrl, k) => {
+    _.each((ctrl, k) => {  // mapBoth?
       this.removeControl(k);
       this.addControl(k, ctrl);
     })(controls);
@@ -78,6 +78,7 @@ export class ControlStruct extends FormGroup {
     this.updateValueAndValidity(); // {onlySelf: true, emitEvent: false}
     this.factStruct = factStruct;
     this.mapping = _.clone(controls.properties.controls);
+    // _.each((ctrl, k) => this.addProperty(k))(controls.properties.controls);  // mapBoth?
     this.initialized = true;
     return this;
   }
@@ -159,6 +160,7 @@ export class ControlStruct extends FormGroup {
 }
 
 export class SchemaControlStruct extends SchemaControl(ControlStruct) {
+  indices: { properties: Set, patternProperties: { [key: string]: Set }, additionalProperties: Set };
 
   constructor(
     schema: Front.Schema,
@@ -167,6 +169,14 @@ export class SchemaControlStruct extends SchemaControl(ControlStruct) {
     super(getValidator(schema));
     this.schema = schema;
     this.path = path;
+    let { properties: props = {}, patternProperties: patts = {} } = schema;  //, additionalProperties: add, required: req = []
+    // let prepopulated = _.intersection(_.keys(props), req);
+    let prepopulated = _.keys(props);
+    this.indices = {
+      properties: new Set(prepopulated),
+      patternProperties: _.mapValues(v => new Set([]))(patts),
+      additionalProperties: new Set([]),
+    };
   }
 
   @fallback(this)
@@ -178,17 +188,42 @@ export class SchemaControlStruct extends SchemaControl(ControlStruct) {
 
   @fallback(undefined)
   addProperty(k: string): AbstractControl {
+    this.indices.properties.add(k);
     return super.addProperty(k).setPath(this.path.concat(k));
+  }
+
+  @try_log()
+  removeProperty(k: string): void {
+    this.indices.properties.delete(k);
+    super.removeProperty(k);
   }
 
   @fallback(undefined)
   addPatternProperty(patt: string, k: string): AbstractControl {
-    return super.addPatternProperty(patt, k).setPath(this.path.concat(k));
+    this.indices.patternProperties[patt].add();
+    return super.addPatternProperty(patt, k);
+  }
+
+  @try_log()
+  removePatternPropertyByName(patt: string, item: string): void {
+    let set = this.indices.patternProperties[patt];
+    let idx = findIndexSet(item, set);
+    super.removePatternProperty(patt, idx);
+    set.delete(item);
   }
 
   @fallback(undefined)
   addAdditionalProperty(k: string): AbstractControl {
-    return super.addAdditionalProperty(k).setPath(this.path.concat(k));
+    this.indices.additionalProperties.add();
+    return super.addAdditionalProperty(k);
+  }
+
+  @try_log()
+  removeAdditionalPropertyByName(item: string): void {
+    let set = this.indices.additionalProperties;
+    let idx = findIndexSet(item, set);
+    super.removeAdditionalProperty(idx);
+    set.delete(item);
   }
 
   @fallback(true)

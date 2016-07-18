@@ -10,7 +10,7 @@ export class SchemaFormGroup extends SchemaControl(FormGroup) {
   constructor(
     schema: Front.Schema, // unused if `ctrlObj` specified. oh well.
     path: string[] = [],
-    ctrlObj: { [key: string]: AbstractControl } = mapBoth((schema, k) => inputControl(schema, path.concat(k)))(schema.properties),
+    ctrlObj: { [key: string]: AbstractControl } = mapBoth((schema_, k) => inputControl(schema_, path.concat(k)))(schema.properties),
   ) {
     super(ctrlObj);
     this.schema = schema;
@@ -18,11 +18,8 @@ export class SchemaFormGroup extends SchemaControl(FormGroup) {
   }
 
   @fallback(this)
-  appendPath(v: any) {  //: this
-    this.path = this.path.concat(v);
-    mapBoth((ctrl, k) => {
-      ctrl.path = this.path.concat(k);
-    })(this.controls);
+  setPath(path: Front.Path) {  //: this
+    mapBoth((ctrl, k) => ctrl.setPath(path.concat(k)))(this.controls);
     return this;
   }
 

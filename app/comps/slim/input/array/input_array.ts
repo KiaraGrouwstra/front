@@ -16,7 +16,6 @@ type Ctrl = SchemaControlList<FormControl> | SchemaControlVector<FormControl>;
 })
 export class InputArrayComp extends InputAddable {
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;
@@ -24,7 +23,6 @@ export class InputArrayComp extends InputAddable {
   isOneOf: boolean;
 
   setSchema(x: Front.Schema): void {
-    this.combInputs();
     this.indexBased = _.isArray(_.get(['items'], x));
     this.inAdditional = _.has(['additionalItems', 'oneOf'], x);
     this.isOneOf = this.inAdditional || _.has(['items', 'oneOf'], x);

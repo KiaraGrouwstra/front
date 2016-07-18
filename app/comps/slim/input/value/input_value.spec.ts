@@ -8,7 +8,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputValueComp } from './input_value';
 let cls = testComp('input-value', InputValueComp);
-let path = ['test'];
 let named = true;
 // let name = 'foo';
 let scalar = {
@@ -20,7 +19,6 @@ let scalar = {
 };
 let array = { "type": "array", "items": scalar };
 let pars = (schema) => ({
-  path,
   schema,
   named,
   ctrl: inputControl(schema),

@@ -2,7 +2,6 @@ ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
   template('[ngSwitchCase]'=`'SchemaControlPolyable'`)
     input-polyable(
       '[named]'=`named`
-      '[path]'=`path`
       '[schema]'=`schema`
       '[ctrl]'=`ctrl`
     )
@@ -10,7 +9,6 @@ ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
     //- '[schema]'=`schema`
     input-option(
       '[named]'=`named`
-      '[path]'=`path`
       '[ctrl]'=`ctrl`
     )
   template(ngSwitchDefault)
@@ -19,7 +17,6 @@ ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
         //- '[name]'=`schema.name`
         input-field(
           '[named]'=`named`
-          '[path]'=`path`
           '[schema]'=`schema`
           '[ctrl]'=`ctrl`
         )
@@ -31,14 +28,12 @@ ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
           template('[ngSwitchCase]'=`true`)
             input-field(
               '[named]'=`named`
-              '[path]'=`path`
               '[schema]'=`schema`
               '[ctrl]'=`ctrl`
             )
           template(ngSwitchDefault)
             input-array(
               '[named]'=`named`
-              '[path]'=`path`
               '[schema]'=`schema`
               '[ctrl]'=`ctrl`
             )
@@ -46,14 +41,12 @@ ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
         //- input-object(
         input-struct(
           '[named]'=`named`
-          '[path]'=`path`
           '[schema]'=`schema`
           '[ctrl]'=`ctrl`
         )
       template('[ngSwitchCase]'=`'table'`)
         input-table(
           '[named]'=`named`
-          '[path]'=`path`
           '[schema]'=`schema`
           '[ctrl]'=`ctrl`
         )

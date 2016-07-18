@@ -82,12 +82,12 @@ export function mapSchema<T,U>(fn: (T) => U): Front.IObjectSchema<(T) => U> {
 // : Front.IObjectSchema<(Front.Schema) => Front.IVldtrDef>
 export let getValStruct = mapSchema(vldtrDefPair);
 
+const TEST_PATH = ['test'];
+
 // `ControlObject` generator (kicked out of `inputControl`)
-export function objectControl(schema: Front.Schema, doSeed: boolean = false): SchemaControlObject {
+export function objectControl(schema: Front.Schema, path: Front.Path = TEST_PATH): SchemaControlObject {
   // let validator = getValidator(schema);
-  let ctrl = new SchemaControlObject(schema);
-  if(doSeed) ctrl.init();
-  return ctrl;
+  return new SchemaControlObject(schema, path);
 }
 
 // Control class by type/schema
@@ -110,7 +110,7 @@ const controlMap = {
 // return initial key/value pair for the model
 export function inputControl(
   schema: Front.Schema = {},
-  path: string[] = [],
+  path: Front.Path = TEST_PATH,
   asFactory: boolean = false,
 ): AbstractControl | Front.CtrlFactory {
   // merge `allOf` in (override trumps on tie). have views use the controls' schemas so I don't need to do this twice.

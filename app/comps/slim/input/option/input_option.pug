@@ -24,19 +24,16 @@
 
 //- *ngIf=`ctrl.mode`
 //- input-value(
-//-   '[path]'=`path`
 //-   '[schema]'=`ctrl.current.schema`
 //-   '[named]'=`named`
 //-   '[ctrl]'=`ctrl.current.control`
 //- )
 
-//- '[path]'=`path.concat(opt.label)`
 .option(
   '*ngFor'=`let opt of ctrl.option_coll; let idx = index`
 )
   input-value(
     '*ngIf'=`ctrl.mode == idx`
-    '[path]'=`opt.control.path`
     '[schema]'=`opt.schema`
     '[named]'=`named`
     '[ctrl]'=`opt.control`

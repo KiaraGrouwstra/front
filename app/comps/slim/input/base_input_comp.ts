@@ -42,14 +42,14 @@ export abstract class BaseInputComp extends BaseInOutComp {
   set ctrl(x: Ctrl) {
     if(_.isUndefined(x)) return;
     this._ctrl = x;
+    this.setPathStuff(x.path);
     this.setCtrl(x);
-  }
-  setCtrl(x: Ctrl): void {
     if(x.init) x.init();
   }
+  setCtrl(x: Ctrl): void {}
 
   @fallback(undefined)
-  nav(relativePath: string, path = this.path): any {
+  nav(relativePath: string, path = this.ctrl.path): any {
     let ctrl = relativeControl(this.ctrl.root, path, relativePath);
     return ctrl.value;
   }

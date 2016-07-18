@@ -35,7 +35,7 @@ export class FormComp extends BaseInputComp {
   }
 
   setSchema(x: Front.Schema) {
-    this.form = inputControl(x);
+    this.form = inputControl(x, []);
     // ^ inefficient to redo on each set, and ditches old `value` state too; switch to additive mutations?
     // update submit button validity
     this.disabled$ = this.form.validChanges.map(x => !x);

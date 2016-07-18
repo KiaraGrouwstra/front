@@ -11,9 +11,11 @@ export abstract class BaseOutputComp extends BaseInOutComp {
 
   // @Input() schema: Front.Schema;
   // @Input() val: Val;
+  // @Input() path: Front.Path = [];
 
   _schema: Front.Schema;
   _val: Val;
+  _path: Front.Path;
 
   get schema(): Front.Schema {
     return this._schema;
@@ -34,5 +36,16 @@ export abstract class BaseOutputComp extends BaseInOutComp {
     this.setVal(x);
   }
   setVal(x: Val): void {}
+
+  get path(): Front.Path {
+    return this._path;
+  }
+  set path(x: Front.Path) {
+    if(_.isUndefined(x)) return;
+    this._path = x;
+    this.setPathStuff(x);
+    this.setPath(x);
+  }
+  setPath(x: Front.Path): void {}
 
 }

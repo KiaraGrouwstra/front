@@ -1,6 +1,5 @@
 let _ = require('lodash/fp');
 import { PolymorphicControl } from '../polymorphic_control/polymorphic_control';
-// import { inputControl } from '../../input';
 import { SchemaControl } from '../schema_control';
 import { try_log, fallback } from '../../../../lib/decorators';
 import { getValidator } from '../../validators';

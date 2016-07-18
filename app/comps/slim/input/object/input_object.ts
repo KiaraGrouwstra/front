@@ -6,7 +6,7 @@ import { InputValueComp } from '../value/input_value';
 import { ng2comp, keySchema, arr2obj } from '../../../lib/js';
 import { getPaths } from '../../slim';
 import { SchemaControlObject, ControlObjectKvPair } from '../controls';
-import { inputControl, mapSchema, getValStruct, setRequired } from '../input'
+import { mapSchema, getValStruct, setRequired } from '../input'
 import { BaseInputComp } from '../base_input_comp';
 import { ExtComp } from '../../../lib/annotations';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
@@ -23,12 +23,9 @@ type Ctrl = SchemaControlObject<FormGroup>; // { name, val }
 })
 export class InputObjectComp extends BaseInputComp {
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   option = null;
-  counter: number = 0;
-  items = new Set([]);
   keys: Array<string> = ['name', 'val'];
   isOneOf: boolean;
   keySugg: string[];
@@ -61,17 +58,6 @@ export class InputObjectComp extends BaseInputComp {
       keySchema(name, schema) :
       schema.additionalProperties;
     return (this.isOneOf && ret == schema.additionalProperties) ? ret.oneOf[opt] : ret;
-  }
-
-  add(): void {
-    this.items.add(this.counter++);
-    this.ctrl.add();
-  }
-
-  remove(item: string): void {
-    let idx = Array.from(this.items).findIndex(y => y == item);
-    this.ctrl.removeAt(idx);
-    this.items.delete(item);
   }
 
 }

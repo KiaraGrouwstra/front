@@ -35,19 +35,17 @@
         tbody
           //- id=`{{?.id}}`
           //- presumes lengths of items and the FormArray will stay in sync
-          //- ; #path_i = path.concat(item); ctrl_i = ctrl.at(i);
+          //- ; #ctrl_i = ctrl.at(i);
           tr(
-            *ngFor="let item of items; let i = index"
+            *ngFor="let item of ctrl.indices; let i = index"
             @flyInOut=`'in'`
           )
             //- td(*ngFor=`let key of keys`)
             //- ("#key = 'name'")
             td
-              //- '[path]'=`path_i.concat(key)`
               //- '[ctrl]'=`ctrl_i.controls[key]`
               input-field(
                 '[named]'=`false`
-                '[path]'=`path.concat(item).concat('name')`
                 '[schema]'=`{ name: 'name', type: 'string', enum: keyEnum, suggestions: keySugg }`
                 '[ctrl]'=`ctrl.at(i).controls.name`
               )
@@ -57,12 +55,11 @@
               //- '[schema]'=`((schema?.properties && i) ? schema?.properties[ctrl.at(i).controls.name] : null) || schema.additionalProperties`
               input-value(
                 '[named]'=`false`
-                '[path]'=`path.concat(item).concat('val')`
                 '[schema]'=`resolveSchema(i)`
                 '[ctrl]'=`ctrl.at(i).controls.val`
               )
             td
-              button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`remove(item)`)
+              button.btn.waves-effect.waves-light.btn-floating.red('(click)'=`ctrl.remove(item)`)
                 | ×
 
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.uniqueKeys`)
@@ -70,7 +67,7 @@
     ul.errors.card-panel.red-text.red.lighten-5('[hidden]'=`!ctrl.errors?.allOf`)
       | Must use and provide valid values for all types.
 
-    a.btn.waves-effect.waves-light.green('(click)'=`add()`)
+    a.btn.waves-effect.waves-light.green('(click)'=`ctrl.add()`)
       i.material-icons add
 
     include ../errors.pug

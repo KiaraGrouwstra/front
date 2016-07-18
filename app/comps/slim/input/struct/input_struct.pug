@@ -9,13 +9,12 @@
         *ngIf=`hasFixed`
       )
         b Fixed Properties
-        .fixed-add(*ngIf=`nameSchemaFixedFiltered.enum.length`)
+        .fixed-add(*ngIf=`nameSchemaFixedFiltered.enum?.length`)
           //- #newFixed
           //- '[schema]'=`nameSchemaFixed`
           //- '(changes)'=`print($event)`
           input-field(
             '[named]'=`false`
-            '[path]'=`path.concat('newFixed')`
             '[schema]'=`nameSchemaFixedFiltered`
             '[ctrl]'=`nameCtrlFixed`
             '(changes)'=`addProperty($event)`
@@ -34,16 +33,15 @@
             //- assign schema to variable to prevent duplicate lookup
             //- '[applies]'=`schemaFixed(item)['x-applies']`
             tr(
-              *ngFor=`let item of indices.properties; let i = index`
+              *ngFor=`let item of ctrl.indices.properties; let i = index`
               '[applies]'=`ctrl.fixedApplies(item)`
               '[dynamicAttrs]'=`schemaFixed(item)['x-bindings']?.attributes`
-              '[extraVars]'=`{ path: path.concat(item) }`
+              '[extraVars]'=`{ path: ctrl.path.concat(item) }`
               @flyInOut=`'in'`
             )
               //- td
               //-   input-field(
               //-     '[named]'=`false`
-              //-     '[path]'=`path.concat(item).concat('name')`
               //-     '[schema]'=`nameSchemaFixed`
               //-     '[ctrl]'=`ctrl.controls.properties.controls[item].controls.name`
               //-   )
@@ -52,7 +50,6 @@
                 //- set schema's name: item
                 input-value(
                   '[named]'=`true`
-                  '[path]'=`path.concat(item)`
                   '[schema]'=`schemaFixed(item)`
                   '[ctrl]'=`ctrl.controls.properties.controls[item]`
                 )
@@ -78,7 +75,6 @@
           //- #newPatt
           //- input-field(
           //-   '[named]'=`false`
-          //-   '[path]'=`path.concat(item).concat('name')`
           //-   '[schema]'=`nameSchemaPatt[patt]`
           //-   '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
           //- )
@@ -94,20 +90,18 @@
               th
             tbody
               tr(
-                *ngFor=`let item of indices.patternProperties[patt]; let i = index`
+                *ngFor=`let item of ctrl.indices.patternProperties[patt]; let i = index`
                 @flyInOut=`'in'`
               )
                 td
                   input-field(
                     '[named]'=`false`
-                    '[path]'=`path.concat(item).concat('name')`
                     '[schema]'=`nameSchemaPatt[patt]`
                     '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.name`
                   )
                 td
                   input-value(
                     '[named]'=`false`
-                    '[path]'=`path.concat(item).concat('val')`
                     '[schema]'=`schemaPatt(patt,i)`
                     '[ctrl]'=`ctrl.controls.patternProperties.controls[patt].at(i).controls.val`
                   )
@@ -148,20 +142,18 @@
             tbody
               //- ; trackBy: customTrackBy
               tr(
-                *ngFor=`let item of indices.additionalProperties; let i = index`
+                *ngFor=`let item of ctrl.indices.additionalProperties; let i = index`
                 @flyInOut=`'in'`
               )
                 td
                   input-field(
                     '[named]'=`false`
-                    '[path]'=`path.concat(item).concat('name')`
                     '[schema]'=`nameSchemaAdd`
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.name`
                   )
                 td
                   input-value(
                     '[named]'=`false`
-                    '[path]'=`path.concat(item).concat('val')`
                     '[schema]'=`schemaAdd(i)`
                     '[ctrl]'=`ctrl.controls.additionalProperties.at(i).controls.val`
                   )

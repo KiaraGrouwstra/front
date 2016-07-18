@@ -81,7 +81,7 @@ const DynamicDirective = Sup => class extends Sup {
         });
       }
     }
-    _.each((v, k) => {
+    _.each((v, k) => {  // mapBoth?
       this._setItem(k, v);
     })(obj);
   }
@@ -324,7 +324,7 @@ export class AssignLocal {
     this._context = getContext(_viewContainer);
   }
   set localVariable(obj) {
-    _.each((v, k) => {
+    _.each((v, k) => {  // mapBoth?
       let context = this._context;
       context[k] = v;
       // Object.assign(context, { [k]: v });

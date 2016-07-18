@@ -9,7 +9,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputStructComp } from './input_struct';
 let cls = testComp('input-struct', InputStructComp);
-let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
   "in": "path",
@@ -19,7 +18,7 @@ let scalar = {
 let schema = { type: "object", additionalProperties: scalar };
 let ctrl = inputControl(schema);
 let named = false;
-let pars = () => _.cloneDeep({ path, schema, ctrl, named });
+let pars = () => _.cloneDeep({ schema, ctrl, named });
 
 let validationSchema = {
   type: 'object',
@@ -34,7 +33,7 @@ let validationSchema = {
     enum: ['additional'],
   },
 };
-let validationPars = () => ({ path, schema: validationSchema, ctrl: inputControl(validationSchema), named });
+let validationPars = () => ({ schema: validationSchema, ctrl: inputControl(validationSchema), named });
 
 describe('InputStructComp', () => {
   let tcb;

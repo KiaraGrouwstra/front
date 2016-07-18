@@ -1,10 +1,11 @@
 import { relativeControl } from '../input';
 import { Observable } from '@rxjs';
+import { Validators, ValidatorFn } from '@angular/forms';
 import { VALID } from '@angular/forms/src/model';
 
 export const SchemaControl = Sup => class extends Sup {
   schema: Front.Schema;
-  path: Array<string|integer>;
+  path: Front.Path;
 
   // constructor(
   //   // SchemaControl
@@ -24,14 +25,17 @@ export const SchemaControl = Sup => class extends Sup {
     return this.statusChanges.map(y => y == VALID);
   }
 
-  setPath(path: Array<string|integer>) {  //: this
+  addValidators(newValidator: ValidatorFn|ValidatorFn[]): void {
+    this.validator = Validators.compose([this.validator].concat(newValidator));
+  }
+
+  setPath(path: Front.Path) {  //: this
     this.path = path;
     return this;
   }
 
   appendPath(v: any) {  //: this
-    this.path = this.path.concat(v);
-    return this;
+    return this.setPath(this.path.concat(v));
   }
 
   nav(relativePath: string): any {

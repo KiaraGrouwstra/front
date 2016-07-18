@@ -8,7 +8,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputObjectComp } from './input_object';
 let cls = testComp('input-object', InputObjectComp);
-let path = ['test'];
 let scalar = {
   "description": "The geography ID.",
   "in": "path",
@@ -18,7 +17,7 @@ let scalar = {
 let schema = { type: "object", additionalProperties: scalar };
 let ctrl = objectControl(schema); //inputControl
 let named = false;
-let pars = () => _.cloneDeep({ path, schema, ctrl, named });
+let pars = () => _.cloneDeep({ schema, ctrl, named });
 
 let validationSchema = {
   type: 'object',
@@ -33,7 +32,7 @@ let validationSchema = {
     enum: ['additional'],
   },
 };
-let validationPars = () => ({ path, schema: validationSchema, ctrl: objectControl(validationSchema), named });  //inputControl
+let validationPars = () => ({ schema: validationSchema, ctrl: objectControl(validationSchema), named });  //inputControl
 
 describe('InputObjectComp', () => {
   let tcb;
@@ -53,9 +52,9 @@ describe('InputObjectComp', () => {
   // it should allow an `x-keys` property with keys as `enum` (exhaustive) or `suggestions` (non-exhaustive)
 
   it('should validate key uniqueness', test(pars(), ({ comp, el }) => {
-    comp.add();
+    comp.ctrl.add();
     expect(comp.ctrl.errors).toEqual(null);
-    comp.add();
+    comp.ctrl.add();
     expect(comp.ctrl.errors).toEqual({ uniqueKeys: true });
   }));
 

@@ -33,7 +33,6 @@ type Ctrl = AbstractControl;
   ],
 })
 export class InputValueComp extends BaseInputComp {
-  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() @BooleanFieldValue() named: boolean = false;
   @Input() ctrl: Ctrl;

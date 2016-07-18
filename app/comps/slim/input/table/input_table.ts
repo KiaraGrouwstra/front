@@ -17,13 +17,11 @@ type Ctrl = SchemaControlList<FormGroup> | SchemaControlVector<FormGroup>;
 })
 export class InputTableComp extends InputAddable {
   @Input() @BooleanFieldValue() named: boolean = false;
-  @Input() path: Front.Path = [];
   @Input() schema: Front.Schema;
   @Input() ctrl: Ctrl;
   keys: Array<string>;
 
   setSchema(x: Front.Schema): void {
-    this.combInputs();
     let schema = this._schema = setRequired(x);
     if(_.isArray(_.get(['items'], schema))) {
       this.indexBased = true;

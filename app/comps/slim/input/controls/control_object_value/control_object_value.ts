@@ -3,19 +3,22 @@ import { FormControl, ValidatorFn } from '@angular/forms';
 import { keySchema } from '../../../../lib/js';
 import { Observable } from 'rxjs/Observable';
 import { try_log, fallback } from '../../../../lib/decorators';
+import { SchemaControl } from '../schema_control';
 
-export class ControlObjectValue extends FormControl {
+export class ControlObjectValue extends SchemaControl(FormControl) {
   valStruct: Front.IObjectSchema<ValidatorFn>;
 
   constructor(
     name$: Observable<string>,
     valStruct: Front.IObjectSchema<ValidatorFn>, //public
+    path: Front.Path = [],
   ) {
     let { val, vldtr } = valStruct.additionalProperties;
     // let asyncValidator = null;
     super(val, vldtr);
     this.valStruct = valStruct;
     name$.subscribe(name => this.setName(name));
+    this.path = path;
   }
 
   @try_log()

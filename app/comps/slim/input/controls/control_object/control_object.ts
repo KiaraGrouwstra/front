@@ -1,26 +1,17 @@
 let _ = require('lodash/fp');
-import { uniqueKeys, inputControl, getValStruct, setRequired } from '../../input';
+import { uniqueKeys, getValStruct, setRequired } from '../../input';
 import { Validators, AbstractControl, ValidatorFn } from '@angular/forms';
-import { ControlList } from '../control_list/control_list';
+import { ControlList, SchemaControlList } from '../control_list/control_list';
 import { getValidator } from '../../validators';
-import { ControlObjectKvPair } from '../control_object_kv_pair/control_object_kv_pair';
+import { ControlObjectKvPair, SchemaControlObjectKvPair } from '../control_object_kv_pair/control_object_kv_pair';
 import { SchemaControl } from '../schema_control';
 import { try_log, fallback } from '../../../../lib/decorators';
 
-// export class ControlObject<T extends AbstractControl> extends ControlList<T> {
-export class ControlObject extends ControlList {
-  // mapping: {[key: string]: AbstractControl} = {};
+const lens = (fn) => y => y.controls.map(fn);
+const nameLens = lens(y => y.value.name);
 
-  constructor(
-    vldtr: ValidatorFn = null,
-  ) { //: AbstractControl, : AbstractControl[]
-    let lens = (fn) => y => y.controls.map(fn);
-    let validator = Validators.compose([
-      uniqueKeys(lens(y => y.value.name)),
-      vldtr,
-    ]);
-    super(validator);  //, allOf
-  }
+const ControlObjectShared = Sup => class extends Sup {
+  // mapping: {[key: string]: AbstractControl} = {};
 
   @try_log()
   _updateValue(): void {
@@ -36,21 +27,38 @@ export class ControlObject extends ControlList {
 
 }
 
-export class SchemaControlObject extends SchemaControl(ControlObject) {
+// export class ControlObject<T extends AbstractControl> extends ControlList<T> {
+export class ControlObject extends ControlObjectShared(ControlList) {
+
+  constructor(
+    vldtr: ValidatorFn = null,
+  ) { //: AbstractControl, : AbstractControl[]
+    const uniqueVldtr = uniqueKeys(nameLens);
+    let validator = Validators.compose([
+      uniqueVldtr,
+      vldtr,
+    ]);
+    super(validator);  //, allOf
+  }
+
+}
+
+export class SchemaControlObject extends ControlObjectShared(SchemaControlList) {
 
   constructor(
     schema: Front.Schema,
-    path: string[] = [],
+    path: Front.Path = [],
   ) {
-    super(getValidator(schema));
-    this.schema = schema;
-    this.path = path;
+    super(schema, path);
+    const uniqueVldtr = uniqueKeys(nameLens);
+    this.addValidators(uniqueVldtr);
   }
 
   @fallback(this)
   init(): SchemaControlObject {
     let valStruct = getValStruct(setRequired(this.schema));
-    let fact = () => new ControlObjectKvPair(valStruct);
+    let fact = () => new ControlObjectKvPair(valStruct, this.path); //SchemaControlObjectKvPair
     return super.seed(fact);
   }
+
 }

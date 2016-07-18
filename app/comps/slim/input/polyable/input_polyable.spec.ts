@@ -9,7 +9,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputPolyableComp } from './input_polyable';
 let cls = testComp('input-polyable', InputPolyableComp);
-let path = ['test'];
 let schema = {
   "description": "The geography ID.",
   "in": "path",
@@ -18,7 +17,7 @@ let schema = {
 };
 let ctrl = inputControl(schema);
 let named = false;
-let pars = () => _.cloneDeep({ path, schema, ctrl, named });
+let pars = () => _.cloneDeep({ schema, ctrl, named });
 
 xdescribe('InputPolyableComp', () => {
   let tcb;

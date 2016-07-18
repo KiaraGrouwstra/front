@@ -8,7 +8,6 @@ import { GlobalsService } from '../../../services';
 
 import { FieldComp } from './input_field';
 let cls = testComp('input-field', FieldComp);
-let path = ['test'];
 let schema = {
   'description': 'The geography ID.',
   'in': 'path',
@@ -20,7 +19,6 @@ let ctrl = inputControl(schema);
 let named = true;
 // let name = 'foo';
 let pars = () => _.cloneDeep({
-  path,
   schema,
   ctrl,
   named,

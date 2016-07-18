@@ -9,7 +9,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputOptionComp } from './input_option';
 let cls = testComp('input-option', InputOptionComp);
-// let path = ['test'];
 const str = { type: 'string', default: 'a' };
 const arr = { type: 'array', items: str };
 let ctrl = inputControl(arr);

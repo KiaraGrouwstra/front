@@ -26,26 +26,25 @@
         *ngIf=`!isOneOf || option`
         '[ngModelGroup]'=`schema.name`
       )
-        //- presumes lengths of items and the FormArray will stay in sync
+        //- presumes lengths of ctrl.indices and the FormArray will stay in sync
         li.row(
-          *ngFor=`let item of items; let i = index`
+          *ngFor=`let item of ctrl.indices; let i = index`
           @flyInOut=`'in'`
         )
-          button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`remove(item, i)`)
+          button.btn.waves-effect.waves-light.btn-floating.red.col('(click)'=`ctrl.remove(item, i)`)
             | ×
           //- '[name]'=`i`
           //- '[schema]'=`schema.items`
           input-field.col(
             '[named]'=`false`
-            '[path]'=`path.concat(item)`
             '[schema]'=`resolveSchema(i)`
             '[ctrl]'=`ctrl.at(i)`
           )
 
-    //- '[disabled]'=`indexBased && ctrl.length >= schema.items.length`
+    //- '[disabled]'=`ctrl.isFull`
     a.btn.waves-effect.waves-light.green(
-      '(click)'=`add()`
-      '[ngClass]'=`{ 'disabled': indexBased && ctrl.length >= schema.items.length }`
+      '(click)'=`ctrl.add()`
+      '[ngClass]'=`{ 'disabled': ctrl.isFull }`
     )
       i.material-icons add
 

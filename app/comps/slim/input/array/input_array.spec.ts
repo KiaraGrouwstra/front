@@ -8,7 +8,6 @@ import { GlobalsService } from '../../../services';
 
 import { InputArrayComp } from './input_array';
 let cls = testComp('input-array', InputArrayComp);
-let path = ['test'];
 let scalar = {
   description: 'The geography ID.',
   in: 'path',
@@ -20,7 +19,6 @@ let schema = { 'name': 'arrr', 'description': 'dummy desc', 'type': 'array', 'it
 let ctrl = inputControl(schema);
 let named = false;
 let pars = () => _.cloneDeep({
-  path,
   schema,
   ctrl,
   named,
@@ -44,7 +42,7 @@ let validationSchema = {
   },
 };
 let validationCtrl = inputControl(validationSchema);
-let validationPars = () => _.cloneDeep({ path, schema: validationSchema, ctrl: validationCtrl, named });
+let validationPars = () => _.cloneDeep({ schema: validationSchema, ctrl: validationCtrl, named });
 
 describe('InputArrayComp', () => {
   let tcb;
@@ -63,7 +61,7 @@ describe('InputArrayComp', () => {
 
   it('should add items programmatically', test(pars(), ({ comp }) => {
     expect(comp.ctrl.length).toEqual(0);
-    comp.add();
+    comp.ctrl.add();
     expect(comp.ctrl.length).toEqual(1);
   }));
 
