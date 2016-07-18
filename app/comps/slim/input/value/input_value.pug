@@ -1,4 +1,4 @@
-div('[ngSwitch]'=`ctrl?.constructor?.name`)
+ng-container('[ngSwitch]'=`ctrl?.constructor?.name`)
   template('[ngSwitchCase]'=`'SchemaControlPolyable'`)
     input-polyable(
       '[named]'=`named`
@@ -14,9 +14,7 @@ div('[ngSwitch]'=`ctrl?.constructor?.name`)
       '[ctrl]'=`ctrl`
     )
   template(ngSwitchDefault)
-    div(
-      '[ngSwitch]'=`type`
-    )
+    ng-container('[ngSwitch]'=`type`)
       template('[ngSwitchCase]'=`'scalar'`)
         //- '[name]'=`schema.name`
         input-field(
@@ -27,7 +25,7 @@ div('[ngSwitch]'=`ctrl?.constructor?.name`)
         )
       template('[ngSwitchCase]'=`'array'`)
         //- *ngIf=`ctrl instanceof ControlSet`
-        div(
+        ng-container(
           '[ngSwitch]'=`['SchemaControlSet','SchemaTextareaArrayControl'].includes(ctrl?.constructor?.name)`
         )
           template('[ngSwitchCase]'=`true`)

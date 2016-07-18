@@ -53,7 +53,7 @@
           button.btn-floating.waves-effect.waves-light.btn-margin.tooltipped.yellow(
             'data-tooltip'='sort'
           )
-            div('[ngSwitch]'=`sortColsDesc[name]`)
+            ng-container('[ngSwitch]'=`sortColsDesc[name]`)
               template('[ngSwitchCase]'=`true`)
                 | ▼
               template('[ngSwitchCase]'=`false`)

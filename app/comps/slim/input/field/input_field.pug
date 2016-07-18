@@ -6,7 +6,7 @@ form
     '[ngClass]'=`{hidden: hidden}`
     '[attr.data-tooltip]'=`tooltip`
   )
-    div('[ngSwitch]'='type')
+    ng-container('[ngSwitch]'='type')
       template('[ngSwitchCase]'=`'input'`)
         include ../misc/input.pug
       template('[ngSwitchCase]'=`'range'`)

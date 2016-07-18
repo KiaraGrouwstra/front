@@ -1,4 +1,4 @@
-div([ngSwitch]='type')
+ng-container([ngSwitch]='type')
   template([ngSwitchCase]=`'object'`)
     mytable('[path]'=`path`, '[val]'=`val`, '[schema]'=`schema`, '[named]'=`named`)
   template(ngSwitchDefault)
